@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.1 2005/04/05 03:10:22 k4st Exp $
+* @version $Id: index.php,v 1.2 2005/04/06 00:48:48 k4st Exp $
 * @package k42
 */
 
@@ -33,13 +33,20 @@ error_reporting(E_ALL);
 
 require 'forum.inc.php';
 
-/*
-global $_DBA;
-$query = "";
 
-foreach(explode(";", $query) as $q)
-	$_DBA->executeUpdate($q);
-*/
+//global $_DBA;
+//$query = "";
+
+//foreach(explode(";", $query) as $q)
+//	$_DBA->executeUpdate($q);
+/*$result = $_DBA->executeQuery("select * from ". MAPS ." ORDER BY row_left ASC");
+while($result->next()) {
+	$temp = $result->current();
+	$query = "INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value)";
+	$query .= " VALUES (". $temp['row_left'] .", ". $temp['row_right'] .", ". $temp['row_level'] .", '". $temp['name'] ."', '". $temp['varname'] ."', ". $temp['is_global'] .", ". $temp['category_id'] .", ". $temp['forum_id'] .", ". $temp['group_id'] .", ". $temp['user_id'] .", ". $temp['can_view'] .", ". $temp['can_add'] .", ". $temp['can_edit'] .", ". $temp['can_del'] .", '". @$temp['value'] ."');\r\n";
+	echo $query;
+}
+exit; */
 
 class DefaultEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {

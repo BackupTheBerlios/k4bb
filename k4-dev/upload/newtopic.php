@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: newtopic.php,v 1.1 2005/04/05 03:10:22 k4st Exp $
+* @version $Id: newtopic.php,v 1.2 2005/04/06 00:48:48 k4st Exp $
 * @package k42
 */
 
@@ -82,6 +82,10 @@ class DefaultEvent extends Event {
 
 		$template->setVar('emoticons_per_row', $template->getVar('smcolumns'));
 		$template->setVar('emoticons_per_row_remainder', $template->getVar('smcolumns')-1);
+		
+		/* Set the forum info to the template */
+		foreach($forum as $key => $val)
+			$template->setVar('forum_'. $key, $val);
 
 		/* set the breadcrumbs bit */
 		$template	= BreadCrumbs($template, $template->getVar('L_POSTTOPIC'), $forum['row_left'], $forum['row_right']);
