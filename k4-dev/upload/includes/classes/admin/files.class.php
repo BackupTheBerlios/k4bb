@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: files.class.php,v 1.2 2005/04/05 21:26:04 k4st Exp $
+* @version $Id: files.class.php,v 1.3 2005/04/05 21:27:07 k4st Exp $
 * @package k42
 */
 
@@ -94,7 +94,7 @@ class AdminFileBrowser extends Event {
 						$temp['filename']		= $request['dir'] . '/' . $file;
 						$temp['file']			= $exts[0];
 
-						} if(in_array($temp['fileext'], $filetypes['html'])) {
+						if(in_array($temp['fileext'], $filetypes['html'])) {
 							$temp['filetype']	= 'html';
 						} else if(in_array($temp['fileext'], $filetypes['php'])) {
 							$temp['filetype']	= 'php';
