@@ -158,7 +158,7 @@ INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'privallowsmilies','1','yesno',4);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'privallowicons','1','yesno',6);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'pmquota','70','',7);
-INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'checknewpm,'1','yesno',8);
+INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'checknewpm','1','yesno',8);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'pmmaxchars','1000','',9);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'pmcancelledword','Cancelled:','',10);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'pmcancelkill',0,'yesno',11);
