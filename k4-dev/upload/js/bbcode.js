@@ -24,12 +24,13 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.js,v 1.3 2005/04/05 21:39:29 k4st Exp $
+* @version $Id: bbcode.js,v 1.4 2005/04/06 00:35:39 k4st Exp $
 * @package k42
 */
 
 var bbcode_editors			= new Array()
 var bbcode_buttons			= new Array('b', 'i', 'u', 'quote', 'code', 'php')
+var bbcode_button_styles	= new Array('font-weight: bold;', 'font-style: italic;', 'text-decoration: underline;')
 var bbcode_adv				= new Array('color', 'font', 'size')
 var bbcode_opentags			= new Array()
 var bbcode_button_objects	= new Array()
@@ -370,7 +371,7 @@ function bbcodex_init(name, id, rows, cols, classname, style, button_style) {
 	
 	/* loop the buttons array, then spit out the data */
 	for(var i = 0; i < bbcode_buttons.length; i++) {
-		document.write('<input type="button" name="' + bbcode_buttons[i] + '" id="' + bbcode_buttons[i] + '_' + id + 'codex" value="' + bbcode_buttons[i].toUpperCase() + '" class="' + button_style + '" accesskey="' + bbcode_buttons[i] + '" onclick="bbcodex_button_click(' + i + ')" onmouseover="bbcodex_helpline(\'' + bbcode_buttons[i] + '\', \'' + bbcode_buttons[i] + '_' + id + 'codex\')" />');
+		document.write('<input type="button" name="' + bbcode_buttons[i] + '" id="' + bbcode_buttons[i] + '_' + id + 'codex" value="' + bbcode_buttons[i].toUpperCase() + '" class="' + button_style + '" style="' + (bbcode_button_styles[i] ? bbcode_button_styles[i] : '') + '" accesskey="' + bbcode_buttons[i] + '" onclick="bbcodex_button_click(' + i + ')" onmouseover="bbcodex_helpline(\'' + bbcode_buttons[i] + '\', \'' + bbcode_buttons[i] + '_' + id + 'codex\')" />');
 		bbcode_button_objects.push(bbcode_buttons[i] + '_' + id + 'codex');
 	}
 
