@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.1 2005/04/05 03:19:18 k4st Exp $
+* @version $Id: forums.class.php,v 1.2 2005/04/05 23:29:04 k4st Exp $
 * @package k42
 */
 
@@ -33,18 +33,32 @@
 function forum_icon($instance, $temp) {
 	
 	$icon = '';
-
+	
 	/* Set the forum Icon */
-	if(isset($_COOKIE['forums']['forum'. $temp['id']])) {
+	if(isset($_COOKIE['forums'])) {
 		
-		/* Get the value of the forum cookie */
-		$cookie_val	= unserialize($_COOKIE['forum'. $temp['id']]);
+		$forums			= $_COOKIE['forums'] != null && $_COOKIE['forums'] != '' ? @unserialize($_COOKIE['forums']) : array();
 		
-		/* If there are threads stored in this forum or not */
-		if(is_array($cookie_val) && !empty($cookie_val)) {
-			$icon		= 'on';
+		if(isset($forums[$temp['id']])) {
+
+			/* Get the value of the forum cookie */
+			$cookie_val		= $forums[$temp['id']];
+			
+			/* If there are threads stored in this forum or not */
+			if(is_array($cookie_val) && !empty($cookie_val)) {
+				$icon		= 'on';
+			} else {
+				$icon		= 'off';
+			}
 		} else {
-			$icon		= 'off';
+			
+			$forums[$temp['id']]	= $temp;
+			$forums					= serialize($forums);
+
+			/** Set a cookie to be cached in the session to be executed on the next refresh,
+			 * The cookie will expire when the session is meant to expire 
+			 */
+			bb_setcookie_cache('forums', $forums, time() + ini_get('session.gc_maxlifetime'));
 		}
 	} else {
 		
@@ -55,9 +69,12 @@ function forum_icon($instance, $temp) {
 			$icon		= 'off';
 		}
 		
-		/* Set a cookie to be cached in the session to be executed on the next refresh,
-		The cookie will expire when the session is meant to expire */
-		bb_setcookie_cache('forums[forum'. $temp['id'] .']', 'a:0:{}', ini_get('session.gc_maxlifetime'));
+		$curr_forum		= serialize($temp);
+
+		/** Set a cookie to be cached in the session to be executed on the next refresh,
+		 * The cookie will expire when the session is meant to expire 
+		 */
+		bb_setcookie_cache('forums', $curr_forum, time() + ini_get('session.gc_maxlifetime'));
 	}
 
 	/* Check if this user's perms are less than is needed to post in this forum */

@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.4 2005/04/05 20:43:15 k4st Exp $
+* @version $Id: session.php,v 1.5 2005/04/05 23:28:48 k4st Exp $
 * @package k42
 */
 
@@ -103,7 +103,7 @@ class FADBSession {
 		
 		$rs				= &$this->dba->getRow("SELECT * FROM ". SESSIONS ." WHERE id = '". md5($sessid) ."'");
 		
-		$data			= is_array($rs) && !empty($rs) ? unserialize($rs['data']) : array();
+		$data			= is_array($rs) && !empty($rs) && $rs['data'] != '' ? @unserialize($rs['data']) : array();
 		
 		$data			= session_user_status($data, md5($sessid));
 
