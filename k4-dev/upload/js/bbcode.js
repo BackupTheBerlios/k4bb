@@ -24,7 +24,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.js,v 1.2 2005/04/05 20:23:54 k4st Exp $
+* @version $Id: bbcode.js,v 1.3 2005/04/05 21:39:29 k4st Exp $
 * @package k42
 */
 
@@ -419,7 +419,7 @@ function draw_select(name, id, values, styles, options) {
 	if(values.length > 0) {
 		
 		/* Open the select tag */
-		document.write('<select size="3" name="' + name + '" id="' + id + '" onchange="bbcodex_button_click(' + bbcode_button_objects.length + ')" onmouseover="bbcodex_helpline(\'' + name + '\', \'' + id + '\')">');
+		document.write('<select name="' + name + '" id="' + id + '" onchange="bbcodex_button_click(' + bbcode_button_objects.length + ')" onmouseover="bbcodex_helpline(\'' + name + '\', \'' + id + '\')">');
 		
 		/* Loop through the options and populate the select */
 		for(var i = 0; i < values.length; i++) {
