@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.1 2005/04/05 03:18:59 k4st Exp $
+* @version $Id: session.php,v 1.2 2005/04/05 20:38:21 k4st Exp $
 * @package k42
 */
 
@@ -124,9 +124,9 @@ class FADBSession {
 		}
 
 		/* Secondary Garbage collecting measures */
-		$this->gc_stmt->setInt(1, time());
-		$this->gc_stmt->setInt(2, ini_get('session.gc_maxlifetime'));
-		$this->gc_stmt->executeUpdate();
+		//$this->gc_stmt->setInt(1, time());
+		//$this->gc_stmt->setInt(2, ini_get('session.gc_maxlifetime'));
+		//$this->gc_stmt->executeUpdate();
 		
 		if(isset($data['bbcache']))
 			$_SESSION['bbcache'] = $data['bbcache'];
@@ -140,9 +140,9 @@ class FADBSession {
 
 	function write($sessid) {
 		
-		$bbcache	= isset($_SESSION['bbcache']) ? $_SESSION['bbcache'] : array();
+		$bbcache			= isset($_SESSION['bbcache']) ? $_SESSION['bbcache'] : array();
 		
-		$session	= &Globals::getGlobal('session');
+		$session			= &Globals::getGlobal('session');
 		$session['bbcache'] = $bbcache;
 		
 		$this->update_stmt->setString(1, serialize($session)); // Globals::getGlobal('session')
