@@ -1,0 +1,15 @@
+2.0 Alpha 3
+===========
+	* upload/includes/common.php:
+	Session ID was being returned as User ID.
+
+	* upload/includes/classes/forums.class.php
+	Removed some uneeded code
+
+2.0 Alpha 2
+===========
+Fixed sessions bug
+
+2.0 Alpha 1
+===========
+Initial Release
