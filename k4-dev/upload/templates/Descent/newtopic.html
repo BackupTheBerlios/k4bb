@@ -1,6 +1,6 @@
-<form:form name="posttopic_form" id="pottopic_form" action="{$a_add_topic}" method="post" enctype="multipart/form-data">
-<div id="form_errors" style="display:none;"> </div>
-<script language="JavaScript" type="text/javascript">
+<form:form name="posttopic_form" id="pottopic_form" action="newtopic.php?act=posttopic" method="post" enctype="multipart/form-data">
+<input type="hidden" name="forum_id" value="{$forum_id}" />
+<script type="text/javascript">
 // <!--
 
 function showTable(Id) {
@@ -39,7 +39,13 @@ function emoticon(typed) {
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<core:block id="post_topic">
 	<tr class="thead" colspan="2">
-		<td colspan="2">{$L_POSTTOPIC}</td>
+		<td colspan="2">
+			<div style="float:right;" class="smalltext">
+				<strong>{$L_FORUM}:</strong>
+				<a href="viewforum.php?id={$forum_id}" class="smalltext" style="font-weight: normal;" title="{$forum_name}">{$forum_name}</a>
+				</div>
+			{$L_POSTTOPIC}
+		</td>
 	</tr>
 	</core:block>
 	<core:block id="edit_post" hidden="yes">
