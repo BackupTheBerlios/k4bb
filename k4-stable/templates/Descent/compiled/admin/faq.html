@@ -1,0 +1,258 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<script type="text/javascript">
+//
+function checkDelete(message)
+{
+	ht = document.getElementsByTagName("html");
+	ht[0].style.filter = "progid:DXImageTransform.Microsoft.BasicImage(grayscale=1)";
+	var the_confirm = (message == 0) ? "<?php echo $template["L_CHECKDELFAQCAT"]; ?>" : "<?php echo $template["L_CHECKDELFAQ"]; ?>";
+	if (confirm(the_confirm)) {
+		return true;
+	} else {
+		ht[0].style.filter = "";
+		return false;
+	}
+}
+
+function drawCategories(selected_id) {
+	document.write('<select name="parent_id">');
+	// 
+	<?php if ($template->all_faq != NULL): ?>
+	<?php $all_faq = new CachingIterator(get_iterator($template->all_faq));  foreach($all_faq as $obj1):  $template->Push($obj1); ?>
+	if(<?php echo $template["id"]; ?> == selected_id) {
+		document.write('<option value="<?php echo $template["id"]; ?>" selected="selected"><?php echo $template["name"]; ?></option>');
+	} else {
+		document.write('<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>');
+	}
+	<?php $template->Pop();  endforeach; ?>
+	<?php endif; ?>//
+	document.write('</select>');
+}
+// 
+</script>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_FAQ"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box"><?php echo $template["L_FAQMESSAGE"]; ?></div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_MODFAQ"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td align="center"><u><?php echo $template["L_ADDCATEGORY"]; ?></u></td>
+		<td align="center"><u><?php echo $template["L_DELCATEGORY"]; ?></u></td>
+	</tr>
+	<tr class="panel">
+		<td align="center">
+			<form action="admin.php?act=add_faqcat" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+			<?php echo $template["L_NAME"]; ?>: <input type="text" name="name" value="" id="<?php echo $template["L_NAME"]; ?>" />
+			<br />
+			<input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" />
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=del_faqcat" method="post" enctype="multipart/form-data" onSubmit="return checkDelete(0);">
+			<?php echo $template["L_NAME"]; ?>: 
+			<script language="javascript" type="text/javascript">drawCategories(0)</script>
+			<input type="submit" class="button" value="<?php echo $template["L_DELETE"]; ?>" />
+			</form>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td align="center" colspan="2"><u><?php echo $template["L_DELFAQ"]; ?></u></td>
+	</tr>
+	<tr class="panel">
+		<td colspan="2">
+			<form action="admin.php?act=del_faq" method="post" enctype="multipart/form-data" onSubmit="return checkDelete(1);">
+			<?php echo $template["L_NAME"]; ?>: 
+			<select name="id" id="<?php echo $template["L_NAME"]; ?>">
+			<?php if ($template->all_faq != NULL): ?>
+			<?php $all_faq = new CachingIterator(get_iterator($template->all_faq));  foreach($all_faq as $obj2):  $template->Push($obj2); ?>
+				<optgroup label="<?php echo $template["name"]; ?>" />
+				<?php if ($template->all_faq && method_exists($template->all_faq, 'GetChildren') && $template->obj3 = $template->all_faq->GetChildren()): ?>
+				<?php $obj3 = new CachingIterator(get_iterator($template->obj3));  foreach($obj3 as $obj4):  $template->Push($obj4); ?>
+				<option value="<?php echo $template["id"]; ?>"><?php echo $template["question"]; ?></option>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+			</select>
+			<input type="submit" class="button" value="<?php echo $template["L_DELETE"]; ?>" />
+			</form>
+		</td>
+	</tr>
+</table>
+<br />
+<form action="admin.php?act=add_faq" method="post" name="post" id="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<script type="text/javascript">
+//
+u_enter_url				= "<?php echo $template["L_ENTERURL"]; ?>";
+u_enter_pagetitle		= "<?php echo $template["L_ENTERPAGETITLE"]; ?>";
+s_webpage_title			= "<?php echo $template["L_PAGETITLE"]; ?>";
+u_error_enter_url		= " <?php echo $template["L_ERRORENTERURL"]; ?>";
+s_found_errors			= " <?php echo $template["L_ERRORENTERTITLE"]; ?>";
+s_error					= "<?php echo $template["L_ERROR"]; ?>";
+u_error_img				= "<?php echo $template["L_ENTERIMG"]; ?>";
+u_error_enter_img		= " <?php echo $template["L_ERRORENTERIMG"]; ?>";
+
+b_help = "<?php echo $template["L_BBCODE_B_HELP"]; ?>"; // Bold
+i_help = "<?php echo $template["L_BBCODE_I_HELP"]; ?>"; // Italic
+u_help = "<?php echo $template["L_BBCODE_U_HELP"]; ?>"; // Underline
+q_help = "<?php echo $template["L_BBCODE_Q_HELP"]; ?>"; // Quote
+c_help = "<?php echo $template["L_BBCODE_C_HELP"]; ?>"; // Code
+l_help = "<?php echo $template["L_BBCODE_L_HELP"]; ?>"; // List
+o_help = "<?php echo $template["L_BBCODE_O_HELP"]; ?>"; // Ordered List
+p_help = "<?php echo $template["L_BBCODE_P_HELP"]; ?>"; // Image
+w_help = "<?php echo $template["L_BBCODE_W_HELP"]; ?>"; // URL
+a_help = "<?php echo $template["L_BBCODE_A_HELP"]; ?>"; // Close all tags
+s_help = "<?php echo $template["L_BBCODE_S_HELP"]; ?>"; // Color
+f_help = "<?php echo $template["L_BBCODE_F_HELP"]; ?>"; // Font Size
+n_help = "<?php echo $template["L_BBCODE_N_HELP"]; ?>"; // Font
+x_help = "<?php echo $template["L_BBCODE_X_HELP"]; ?>"; // Omit
+// 
+</script>
+<input type="hidden" name="add" value="1" />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_ADDFAQ"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<?php echo $template["L_CATEGORY"]; ?>: 
+			<script language="javascript" type="text/javascript" check="true">drawCategories(<?php echo $template["parent_id"]; ?>)</script>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<label for="<?php echo $template["L_QUESTION"]; ?>"><?php echo $template["L_QUESTION"]; ?></label> <input type="text" class="inputbox" name="question" id="<?php echo $template["L_QUESTION"]; ?>" value="" size="70" check="true" />
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div style="float:left; width:80%;">
+			<label for="<?php echo $template["L_ANSWER"]; ?>"><?php echo $template["L_ANSWER"]; ?></label>
+			<br />
+			<input type="button" class="button" accesskey="b" name="addbbcode0" value=" B " style="font-weight:bold; width: 30px" onClick="bbstyle(0)" onMouseOver="helpline('b')" />
+			<input type="button" class="button" accesskey="i" name="addbbcode2" value=" i " style="font-style:italic; width: 30px" onClick="bbstyle(2)" onMouseOver="helpline('i')" />
+			<input type="button" class="button" accesskey="u" name="addbbcode4" value=" u " style="text-decoration: underline; width: 30px" onClick="bbstyle(4)" onMouseOver="helpline('u')" />
+			<input type="button" class="button" accesskey="q" name="addbbcode6" value="Quote" style="width: 50px" onClick="bbstyle(6)" onMouseOver="helpline('q')" />
+			<input type="button" class="button" accesskey="c" name="addbbcode8" value="Code" style="width: 40px" onClick="bbstyle(8)" onMouseOver="helpline('c')" />
+			<input type="button" class="button" name="img" value="IMG" style="width: 40px" onClick="BBCimg()" onMouseOver="helpline('p')" />
+			<input type="button" class="button" name="url" value="URL" style="text-decoration: underline; width: 40px" onClick="BBCurl()" onMouseOver="helpline('w')" />
+			<input type="button" class="button" name="addbbcode12" value="OMIT" style="color: crimson; width: 40px" onClick="bbstyle(12)" onMouseOver="helpline('x')" />
+			<br />
+			<select name="addbbcode18" onchange="bbfontstyle('[color=' + this.form.addbbcode18.options[this.form.addbbcode18.selectedIndex].value + ']', '[/color]');this.selectedIndex=0;" onMouseOver="helpline('s')">
+				<option style="color:black;" value="black" class="genmed"><?php echo $template["L_FONT_COLOR"]; ?></option>
+				<option value="skyblue" style="color:skyblue"><?php echo $template["L_SKYBLUE"]; ?></option>
+				<option value="royalblue" style="color:royalblue"><?php echo $template["L_ROYALBLUE"]; ?></option>
+				<option value="blue" style="color:blue"><?php echo $template["L_BLUE"]; ?></option>
+				<option value="darkblue" style="color:darkblue"><?php echo $template["L_DARKBLUE"]; ?></option>
+				<option value="orange" style="color:orange"><?php echo $template["L_ORANGE"]; ?></option>
+				<option value="orangered" style="color:orangered"><?php echo $template["L_ORANGERED"]; ?></option>
+				<option value="crimson" style="color:crimson"><?php echo $template["L_CRIMSON"]; ?></option>
+				<option value="red" style="color:red"><?php echo $template["L_RED"]; ?></option>
+				<option value="firebrick" style="color:firebrick"><?php echo $template["L_FIREBRICK"]; ?></option>
+				<option value="darkred" style="color:darkred"><?php echo $template["L_DARKRED"]; ?></option>
+				<option value="green" style="color:green"><?php echo $template["L_GREEN"]; ?></option>
+				<option value="limegreen" style="color:limegreen"><?php echo $template["L_LIMEGREEN"]; ?></option>
+				<option value="seagreen" style="color:seagreen"><?php echo $template["L_SEAGREEN"]; ?></option>
+				<option value="deeppink" style="color:deeppink"><?php echo $template["L_DEEPPINK"]; ?></option>
+				<option value="tomato" style="color:tomato"><?php echo $template["L_TOMATO"]; ?></option>
+				<option value="coral" style="color:coral"><?php echo $template["L_CORAL"]; ?></option>
+				<option value="purple" style="color:purple"><?php echo $template["L_PURPLE"]; ?></option>
+				<option value="indigo" style="color:indigo"><?php echo $template["L_INDIGO"]; ?></option>
+				<option value="burlywood" style="color:burlywood"><?php echo $template["L_BURLYWOOD"]; ?></option>
+				<option value="sandybrown" style="color:sandybrown"><?php echo $template["L_SANDYBROWN"]; ?></option>
+				<option value="sienna" style="color:sienna"><?php echo $template["L_SIENNA"]; ?></option>
+				<option value="chocolate" style="color:chocolate"><?php echo $template["L_CHOCOLATE"]; ?></option>
+				<option value="teal" style="color:teal"><?php echo $template["L_TEAL"]; ?></option>
+				<option value="silver" style="color:silver"><?php echo $template["L_SILVER"]; ?></option>
+			</select>
+			<select name="addbbcode20" onchange="bbfontstyle('[size=' + this.form.addbbcode20.options[this.form.addbbcode20.selectedIndex].value + ']', '[/size]')" onMouseOver="helpline('f')">
+				<option><?php echo $template["L_FONT_SIZE"]; ?></option>
+				<option value="12" class="genmed"><?php echo $template["L_FONT_NORMAL"]; ?></option>
+				<option value="7" class="genmed"><?php echo $template["L_FONT_TINY"]; ?></option>
+				<option value="9" class="genmed"><?php echo $template["L_FONT_SMALL"]; ?></option>
+				<option value="18" class="genmed"><?php echo $template["L_FONT_LARGE"]; ?></option>
+				<option value="24" class="genmed"><?php echo $template["L_FONT_HUGE"]; ?></option>
+			</select>
+			<a href="javascript:bbstyle(-1)" onmouseover="helpline('a')"><?php echo $template["L_BBCODE_CLOSE_TAGS"]; ?></a>
+			<br />
+			<input type="text" name="helpbox" id="helpbox" size="45" maxlength="100" style="width:450px; font-size:10px" class="helpline" value="<?php echo $template["L_STYLES_TIP"]; ?>" readonly="readonly" />
+			<br />
+			<textarea name="message" id="<?php echo $template["L_ANSWER"]; ?>" class="inputbox" rows="10" cols="100" style="width:100%;" onKeyPress="changeBack(this)" onSelect="storeCaret(this);" onClick="storeCaret(this);" onKeyup="storeCaret(this);" check="true"><?php echo $template["description"]; ?></textarea>
+			</div>
+			<fieldset style="float:right;">
+				<legend><?php echo $template["L_EMOTICONS"]; ?></legend>
+				<table cellpadding="3" cellspacing="1" border="0" id="posticons" width="100%">
+					<tr class="panel">
+						<?php if ($template->emoticons != NULL): ?>
+						<?php $emoticons = new CachingIterator(get_iterator($template->emoticons));  foreach($emoticons as $obj5):  $template->Push($obj5); ?>
+						<?php switch($emoticons->key() % 4):  case 0: $template->Push(array('row' => ' ')); break;  case 1: $template->Push(array('row' => ' ')); break;  case 2: $template->Push(array('row' => '')); break;  case 3: $template->Push(array('row' => '</tr><tr class=\'panel\'>')); break;  default: $template->Push(array());  endswitch; ?>
+						<td nowrap="nowrap">
+							<a href="javascript:emoticon('<?php echo $template["typed"]; ?>')"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/Emoticons/<?php echo $template["image"]; ?>" alt="<?php echo $template["description"]; ?>" title="<?php echo $template["description"]; ?>" border="0" /></a>
+						</td>
+						<?php echo $template["row"]; ?>
+						<?php $template->Pop(); ?>
+						<?php $template->Pop();  endforeach; ?>
+						<?php endif; ?>
+					</tr>	
+				</table>
+			</fieldset>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td><input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" /></td>
+	</tr>
+</table>
+</form>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_EDITFAQ"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td class="outset_box">
+			<?php if ($template->all_faq != NULL): ?>
+			<?php $all_faq = new CachingIterator(get_iterator($template->all_faq));  foreach($all_faq as $obj7):  $template->Push($obj7); ?>
+				<fieldset>
+				<legend><?php echo $template["name"]; ?></legend>
+				<?php if ($template->all_faq && method_exists($template->all_faq, 'GetChildren') && $template->obj8 = $template->all_faq->GetChildren()): ?>
+				<?php $obj8 = new CachingIterator(get_iterator($template->obj8));  foreach($obj8 as $obj9):  $template->Push($obj9); ?>
+				<form action="admin.php?act=update_faq" method="post" name="post" id="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+				<input type="hidden" name="add" value="0" />
+				<input type="hidden" name="id" value="<?php echo $template["id"]; ?>" />
+				<table width="100%" cellpadding="0" cellspacing="1" border="0">
+					<tr class="tcat">
+						<td><strong><?php echo $template["L_CATEGORY"]; ?></strong>: <script language="javascript" type="text/javascript">drawCategories(<?php echo $template["parent_id"]; ?>)</script></td>
+					</tr>
+					<tr class="panel">
+						<td><strong><?php echo $template["L_QUESTION"]; ?></strong>: <input type="text" name="question" size="70" id="<?php echo $template["L_QUESTION"]; ?>" value="<?php echo $template["question"]; ?>" check="true" /></td>
+					</tr>
+					<tr class="panel">
+						<td><strong><?php echo $template["L_ANSWER"]; ?></strong>:<br /><textarea name="message" id="<?php echo $template["L_ANSWER"]; ?>" style="width:100%;" rows="5" class="smalltext" onKeyPress="changeBack(this)" check="true"><?php echo $template["answer"]; ?></textarea></td>
+					</tr>
+					<tr class="thead">
+						<td><input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" /></td>
+					</tr>
+				</table>
+				</form>
+				<?php if ($obj8->HasNext()): ?><br /><?php endif; ?>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+				</fieldset>
+				<?php if ($all_faq->HasNext()): ?><br /><?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>

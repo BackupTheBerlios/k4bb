@@ -1,0 +1,41 @@
+<?php if ($_SESSION['user'] instanceof Member): ?>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_BUDDYLIST"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td width="50%" align="center"><?php echo $template["L_FRIENDS"]; ?></td>
+		<td width="50%" align="center"><?php echo $template["L_ENNEMIES"]; ?></td>
+	</tr>
+	<tr class="panel">
+	<?php if ($template->buddy_list != NULL): ?>
+		<td>
+			<?php $buddy_list = new CachingIterator(get_iterator($template->buddy_list));  foreach($buddy_list as $obj1):  $template->Push($obj1); ?>
+			<a href="member.php?id=<?php echo $template["user_id"]; ?>"><?php echo $template["user_name"]; ?></a> - <a href="member.php?act=remove_buddy&id=<?php echo $template["user_id"]; ?>" style="text-decoration:underline;"><?php echo $template["L_DELETE"]; ?></a>
+			<?php if ($buddy_list->HasNext()): ?><br /><?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+		</td>
+		<?php endif; ?>
+		<?php if ($template->enemy_list != NULL): ?>
+		<td>
+			<?php $enemy_list = new CachingIterator(get_iterator($template->enemy_list));  foreach($enemy_list as $obj3):  $template->Push($obj3); ?>
+			<a href="member.php?id=<?php echo $template["user_id"]; ?>"><?php echo $template["user_name"]; ?></a> - <a href="member.php?act=remove_buddy&id=<?php echo $template["user_id"]; ?>" style="text-decoration:underline;"><?php echo $template["L_DELETE"]; ?></a>
+			<?php if ($enemy_list->HasNext()): ?><br /><?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+		</td>
+		<?php endif; ?>
+	</tr>
+	<tr class="panel">
+		<td colspan="2">
+			<form action="member.php?act=add_buddy" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="Reset(this);">
+			<div id="form_errors" style=""> </div>
+			<?php echo $template["L_USERNAME"]; ?>: <input type="text" name="user_name" class="inputbox" value="" id="<?php echo $template["L_USERNAME"]; ?>" size="16" maxlength="16" check="true" />
+			<?php echo $template["L_FRIEND"]; ?>: <select name="user_liked" class="inputbox"><option value="1"><?php echo $template["L_YES"]; ?></option><option value="0"><?php echo $template["L_NO"]; ?></option></select>
+			<input type="submit" value="<?php echo $template["L_SAVE"]; ?>" /><input type="reset" value="<?php echo $template["L_RESET"]; ?>" />
+			</form>
+		</td>
+	</tr>
+</table>
+</div>
+<?php endif; ?>

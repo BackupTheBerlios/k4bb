@@ -1,0 +1,36 @@
+<div id="form_errors" style="">
+	<list:list id="form_errors">
+		<ul>
+			<list:item>
+				<li>{$message}</li>
+			</list:item>
+		</ul>
+	</list:list>
+</div>
+<div class="forum_content">
+<form action="{$a_login}" enctype="multipart/form-data" method="post" id="login_form" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2" align="left"><strong>{$L_LOGIN}</strong></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%" align="left"><label for="name">{$L_USERNAME}</label></td>
+		<td width="50%" align="left"><input type="text" name="name" id="username" class="inputbox" maxlength="16" value="" onKeyPress="changeBack(this)" check="true" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%" align="left"><label for="pass">{$L_PASSWORD}</label></td>
+		<td width="50%" align="left"><input type="password" name="pass" id="password" class="inputbox" maxlength="16" value="" onKeyPress="changeBack(this)" check="true" /></td>
+	</tr>
+	<tr class="thead">
+		<td width="50%" align="left"><input type="submit" class="button" value="{$L_LOGIN}" /><input type="reset" class="button" value="{$L_RESET}" /></td>
+		<td width="50%" align="left"><input type="checkbox" class="button" name="rememberme" id="rememberme" checked="checked" /><label for="rememberme">&nbsp;{$L_REMEMBERME}</label></td>
+	</tr>
+	<tr class="panel">
+		<td colspan="2" align="center" style="padding: 3px 0px 0px 0px; ">
+			<a href="member.php?act=forgotpw">{$L_FORGOTPW}</a>
+			<h4><a href="member.php?act=register" class="">{$L_REGISTER}</a></h4>
+		</td>
+	</tr>
+</table>
+</form>
+</div>

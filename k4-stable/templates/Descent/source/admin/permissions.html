@@ -1,0 +1,37 @@
+<isadmin>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_PERMISSIONS}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">{$L_PERMSMESSAGE}</div>
+		</td>
+	</tr>
+</table>
+<br />
+<form action="admin.php" method="GET" enctype="multipart/form-data">
+<input type="hidden" name="act" value="mod_perms" />
+<table width="100%" cellpadding="0" cellspacing="1">
+	<tr class="tcat">
+		<td>{$L_SELECTFORUM}</td>
+	</tr>
+	<tr class="panel">
+		<td align="center">
+			<list:list id="forums">
+			<select name="forum" id="forum">
+			<list:item>
+				<option value="{$id}">{$name}</option>
+			</list:item>
+			</select>
+			</list:list>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td align="left">
+			<input type="submit" class="button" value="{$L_SELECT}" />
+		</td>
+	</tr>
+</table>
+</form>
+</isadmin>

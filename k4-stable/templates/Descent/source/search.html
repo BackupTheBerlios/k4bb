@@ -1,0 +1,102 @@
+<form action="search.php?act=search&amp;start=0&amp;limit=30" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<div id="form_errors" style="display:none;"> </div>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat" colspan="2">
+		<td>{$L_SEARCHFORUMS}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<table width="100%" cellpadding="0" cellspacing="1" border="0">
+				<tr class="thead">
+					<td>{$L_SEARCHPARAMS}</td>
+				</tr>
+				<tr>
+					<td class="outset_box" valign="top">
+						<fieldset style="width:45%;float:left;">
+							<legend>{$L_SEARCHBYKEYWORD}</legend>
+							<span class="smalltext">
+							{$L_KEYWORDS}:<br />
+							<input type="text" name="keywords" size="40" value="" class="inputbox" /><br />
+							<select name="search_where" class="inputbox">
+								<option value="1">{$L_SEARCHENTIREPOSTS}</option>
+								<option value="2">{$L_SEARCHTITLES}</option>
+							</select>
+							</span>
+						</fieldset>
+						<fieldset style="width:45%;float:right;">
+							<legend>{$L_SEARCHBYUSERNAME}</legend>
+							<span class="smalltext">
+							{$L_USERNAME}:<br />
+							<input type="text" name="username" value="" size="16" maxlength="16" class="inputbox" /><br />
+							<select name="user_where" class="inputbox">
+								<option value="1">{$L_FINDPOSTSBYUSER}</option>
+								<option value="2">{$L_FINDTHREADSBYUSER}</option>
+							</select>
+							<input type="checkbox" checked="checked" name="exact" />&nbsp;{$L_EXACTNAME}
+							</span>
+						</fieldset>
+					</td>
+				</tr>
+				<tr class="thead">
+					<td>{$L_SEARCHOPTIONS}</td>
+				</tr>
+				<tr>
+					<td class="outset_box" valign="top">
+						<fieldset style="width:45%;float:right;">
+							<legend>{$L_SEARCHINFORUMS}</legend>
+							<span class="smalltext">
+							<list:list id="forums">
+							<select name="forums[]" size="13" multiple="multiple" class="inputbox" style="width:95%;">
+								<list:item>
+								<option value="{$id}" selected="selected">{$indent}{$name}</option>
+								</list:item>
+							</select>
+							</list:list>
+							</span>
+						</fieldset>
+						<!--<fieldset style="width:45%;float:left;">
+							<legend>{$L_FINDTHREADSWITH}</legend>
+							<span class="smalltext">
+							<select name="at_least" class="intputbox" style="width: 50%;">
+								<option value="1">{$L_ATLEAST}</option>
+								<option value="2">{$L_ATMOST}</option>
+							</select>
+							<input type="text" size="3" maxlength="5" name="num_posts" value="0" />&nbsp;{$L_REPLIES}
+							</span>
+						</fieldset>-->
+						<fieldset style="width:45%;float:left;">
+							<legend>{$L_FINDPOSTSFROM}</legend>
+							<span class="smalltext">
+							<select name="posts_from" class="intputbox" style="width: 50%;">
+								<option value="0">{$L_ANYDATE}</option>
+								<option value="{$yesterday}">{$L_YESTERDAY}</option>
+								<option value="{$oneweek}">{$L_ONEWEEKAGO}</option>
+								<option value="{$twoweeks}">{$L_TWOWEEKSAGO}</option>
+								<option value="{$threeweeks}">{$L_THREEWEEKSAGO}</option>
+							</select>
+							<select name="posts_oldnew" class="intputbox">
+								<option value="1">{$L_ANDNEWER}</option>
+								<option value="2">{$L_ANDOLDER}</option>
+							</select>
+							</span>
+						</fieldset>
+						<fieldset style="width:45%;float:left;">
+							<legend>{$L_SORTRESULTSBY}</legend>
+							<span class="smalltext">
+							<select name="sort" class="intputbox">
+								<option value="1">{$L_DESCENDING}</option>
+								<option value="2">{$L_ASCENDING}</option>
+							</select>
+							</span>
+						</fieldset>
+					</td>
+				</tr>
+			</table>
+			<br />
+			<div align="center"><input type="submit" class="button" value="{$L_SEARCH}" /><input type="reset" class="button" value="{$L_RESET}" /></div>
+		</td>
+	</tr>
+</table>
+</div>
+</form>

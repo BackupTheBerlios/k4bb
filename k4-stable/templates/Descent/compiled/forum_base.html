@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+<head>
+	<title><?php echo $template["bbtitle"]; ?> - <?php echo $template["title"]; ?> - Powered by k4</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<meta name="generator" content="k4 Bulletin Board <?php echo $template["VERSION"]; ?>" />
+	<meta name="robots" content="all" />
+	<meta name="revisit-after" content="1 Days" />
+	<meta http-equiv="Expires" content="1" />
+	<meta name="description" content="<?php echo $template["bbsearchdescription"]; ?>" />
+	<meta name="keywords" content="<?php echo $template["bbkeywords"]; ?>" />
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+	<meta name="author" content="k4 Bulletin Board" />
+	<meta name="distribution" content="GLOBAL" />
+	<meta name="rating" content="general" />
+	<style type="text/css">
+	<?php if ($template->css_styles != NULL): ?>
+	<?php $css_styles = new CachingIterator(get_iterator($template->css_styles));  foreach($css_styles as $obj0):  $template->Push($obj0); ?>
+	<?php echo $template["name"]; ?> { <?php echo $template["properties"]; ?> }
+	<?php if ($css_styles->HasNext()): ?>
+	<?php endif; ?>
+	<?php $template->Pop();  endforeach; ?>
+	<?php endif; ?>
+			/* Do the dropdown menus */
+			ul.nav  { padding: 0; margin: 0; margin-right: 15px; list-style: none; z-index: 1000; }
+			.nav { z-index: 1000; }
+			.nav span { font: bold 11px tahoma, verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif; background-image:url('Images/<?php echo $template["IMG_DIR"]; ?>/Icons/menu_open.gif'); background-position:right center; background-repeat:no-repeat; padding-right: 15px; }
+			.nav ul .tcat { text-decoration:underline; }
+			.nav li { text-align:left; position: relative; font-size:10px; font-weight: bold; }
+			.nav li ul { display: none; position: absolute; top: 1em; left: 0; }
+			li>ul { top: auto; left: auto; }
+			li:hover ul, li.over ul { display: block; }
+			li.nodisplay ul { display: none; }
+			tr.tcat td ul { cursor: hand; cursor: pointer; }
+			/* Required info box */
+			.required_info { border: 1px solid #FF0000;font-size:11px;background-color:#FFEEFF;padding:5px; }
+			.required_info a { font-size:11px; }
+	</style>
+	<script language="javascript" type="text/javascript" src="js/form_check.js">/* Easter Egg */</script>
+	<script language="javascript" type="text/javascript" src="js/javascript.js">/* Easter Egg */</script>
+	<script language="javascript" type="text/javascript" src="js/bbcode.js">/* Easter Egg */</script>
+	<script language="javascript" type="text/javascript">
+	// 
+	function log_out()
+	{
+		ht = document.getElementsByTagName("html");
+		ht[0].style.filter = "progid:DXImageTransform.Microsoft.BasicImage(grayscale=1)";
+		if (confirm('<?php echo $template["L_CHECKLOGOUT"]; ?>'))
+		{
+			return true;
+		}
+		else
+		{
+			ht[0].style.filter = "";
+			return false;
+		}
+	}
+	String.prototype.ucfirst = function() { return this.charAt(0).toUpperCase() + this.substr(1); }
+	function checkForm(form) {
+		var objects = new Array() 
+		var formErrors = "<ul>";	
+		var elements = form.elements;
+		for(i=0; i<elements.length; i++) {
+			if(elements[i].getAttribute('check')) {
+				if(elements[i].value.length == 0) {
+					elements[i].className = 'inputfailed';
+					switchClasses(elements[i].id);
+					formErrors += "<li><?php echo $template["L_REQUIREDFIELDS"]; ?>: <strong>" + (elements[i].id).ucfirst() + "</strong></li>";
+				}
+			}
+		}
+		take_errors(formErrors);
+		if(formErrors != "<ul>") { return false; } else { formErrors += "</ul>"; return true; }
+	}
+	// 
+	</script>
+</head>
+<body>
+<div align="center">
+<div align="left" class="forum_base">
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+	<tr class="logo_header">
+		<td><a href="index.php" name="top" id="top"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/logo.gif" alt="" border="0" /></a></td>
+		<td valign="middle" align="center"><h1><?php echo $template["bbdescription"]; ?></h1></td>
+	</tr>
+</table>
+<div class="forum_header" id="forum_header">
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+	<tr>
+		<td align="left" width="90%">
+			<img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/navbits_start.gif" alt="" />
+			<?php if ($template->ancestors != NULL): ?>
+			<?php $ancestors = new CachingIterator(get_iterator($template->ancestors));  foreach($ancestors as $obj2):  $template->Push($obj2); ?>
+			<a href="viewforum.php?id=<?php echo $template["id"]; ?>"><strong><?php echo $template["name"]; ?></strong></a>
+			<?php if ($ancestors->HasNext()): ?>><?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+			<br />
+			<img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/navbits_finallink.gif" alt="" /> <strong><?php echo $template["current_location"]; ?></strong>
+		</td>
+		<td width="10%" nowrap="nowrap">
+			<span class="minitext">
+			<?php echo $template["date"]; ?>
+			</span>
+		</td>
+	</tr>
+	
+</table>
+</div>
+<div class="alt1" align="right">
+<table width="100%" cellpadding="3" cellspacing="0" border="0" class="nav_table">
+	<tr class="alt3">
+		<td nowrap="nowrap" align="right">
+			<a href="index.php"><?php echo $template["L_HOME"]; ?></a> 
+			<?php if (!isset($template->calendar_link['hide']) || !$template->calendar_link['hide']):  $template->Push($template->calendar_link); ?>| <a href="calendar.php"><?php echo $template["L_CALENDAR"]; ?></a><?php $template->Pop();  endif; ?>
+			<?php if (!isset($template->memberlist_link['hide']) || !$template->memberlist_link['hide']):  $template->Push($template->memberlist_link); ?>| <a href="member.php?act=list&start=0&limit=30&sort=*"><?php echo $template["L_MEMBERLIST"]; ?></a><?php $template->Pop();  endif; ?>
+			| <a href="search.php"><?php echo $template["L_SEARCH"]; ?></a>
+			| <a href="faq.php"><?php echo $template["L_FAQ"]; ?></a>
+			| <a href="member.php?act=usergroups"><?php echo $template["L_USERGROUPS"]; ?></a>
+			<?php if ($_SESSION['user'] instanceof Member): ?>| <a href="member.php?act=profile"><?php echo $template["L_USERCP"]; ?></a>
+			| <a href="member.php?act=logout" onClick="return log_out();"><?php echo $template["L_LOGOUT"]; ?> [<strong><?php echo $template["user_name"]; ?></strong>]</a><?php endif; ?>
+			<?php if (!$_SESSION['user'] instanceof Member): ?>| <a href="member.php?act=register"><?php echo $template["L_REGISTER"]; ?></a>
+			| <a href="member.php?act=login"><?php echo $template["L_LOGIN"]; ?></a><?php endif; ?>
+			<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>| <a href="admin_index.php" id="admin_link" target="_blank"><strong><?php echo $template["L_ADMINPANEL"]; ?></strong></a><?php endif; ?>
+		</td>
+	</tr>
+</table>
+</div>
+<?php if (!isset($template->new_pms['hide']) || !$template->new_pms['hide']):  $template->Push($template->new_pms); ?>
+<div class="required_info" align="center">
+<a href="member.php?act=view_folder&id=1"><?php echo $template["L_NEWMESSAGE"]; ?></a>
+</div>
+<?php $template->Pop();  endif; ?>
+<div class="forum_main" id="forum_main">
+<br />
+<?php if (isset($template->content['file']) && $t = new Template($template->content['file'])):  $template->Push($template->content);  $t->Import($template);  $template->Pop();  endif; ?>
+<?php echo $template["content_extra"]; ?>
+</div>
+<div class="forum_footer" id="forum_footer">
+<br />
+<table cellpadding="0" cellspacing="1" border="0" width="100%">
+	<tr>
+		<td align="left" width="100%">
+			<?php if ($template->ancestors != NULL): ?>
+			<?php $ancestors = new CachingIterator(get_iterator($template->ancestors));  foreach($ancestors as $obj7):  $template->Push($obj7); ?>
+			<a href="viewforum.php?id=<?php echo $template["id"]; ?>"><strong><?php echo $template["name"]; ?></strong></a>
+			<?php if ($ancestors->HasNext()): ?>><?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+			> <strong><?php echo $template["current_location"]; ?></strong>
+			<?php endif; ?>
+		</td>
+		
+	</tr>
+</table>
+<?php if (isset($template->users_online['file']) && $t = new Template($template->users_online['file'])):  $template->Push($template->users_online);  $t->Import($template);  $template->Pop();  endif; ?>
+<?php if (isset($template->todays_bdays['file']) && $t = new Template($template->todays_bdays['file'])):  $template->Push($template->todays_bdays);  $t->Import($template);  $template->Pop();  endif; ?>
+</div>
+<div class="alt1" align="right">
+<table width="100%" cellpadding="3" cellspacing="0" border="0" class="alt1">
+	<tr class="alt3">
+		<td align="right">
+			<a href="<?php echo $template["contactuslink"]; ?>" alt="<?php echo $template["L_CONTACTUS"]; ?>"><?php echo $template["L_CONTACTUS"]; ?></a> - <a href="#top"><?php echo $template["L_TOP"]; ?></a>
+		</td>
+	</tr>
+</table>
+</div>
+</div>
+</div>
+<br />
+<!--
+
+// Please keep this copyright notice in place, this forum took a hell of a long time to make, and I deserve credit.
+
+/**********************************************************************************
+ *     k4 Bulletin Board
+ *     Copyright (c) 2004, Peter Goodman
+
+ *     Permission is hereby granted, free of charge, to any person obtaining 
+ *     a copy of this software and associated documentation files (the 
+ *     "Software"), to deal in the Software without restriction, including 
+ *     without limitation the rights to use, copy, modify, merge, publish, 
+ *     distribute, sublicense, and/or sell copies of the Software, and to 
+ *     permit persons to whom the Software is furnished to do so, subject to 
+ *     the following conditions:
+
+ *     The above copyright notice and this permission notice shall be 
+ *     included in all copies or substantial portions of the Software.
+
+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+ *     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS 
+ *     BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN 
+ *     ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+ *     CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ *     SOFTWARE.
+ *********************************************************************************/
+-->
+<div align="center"><div style="width:400px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">[ <a href="http://www.newmediums.net" alt="k4 Home Page" title="k4 Home Page" target="_blank">Powered By: k4 v.<?php echo $template["VERSION"]; ?></a> ] [ Load time: <?php echo $template["load_time"]; ?> ] [ Num Queries: <?php echo $template["num_queries"]; ?> ]<br /><?php echo $template["copyrighttext"]; ?></div></div>
+<a name="bottom" id="bottom" />
+</body>
+</html>

@@ -1,0 +1,26 @@
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="3"><?php echo $template["L_CALENDAR"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td align="center"><a href="calendar.php?act=week"><?php echo $template["L_WEEKLY"]; ?></a></td>
+		<td align="center"><a href="calendar.php" style="text-decoration:underline;"><?php echo $template["L_MONTHLY"]; ?></a></td>
+		<td align="center"><a href="calendar.php?act=year"><?php echo $template["L_YEARLY"]; ?></a></td>
+	</tr>
+</table>
+</div>
+<br />
+<div class="forum_content"><?php echo $template["main_calendar"]; ?></div><br />
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="3"><?php echo $template["L_OTHERMONTHS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td align="left" class="outset_box"><div class="forum_content"><?php echo $template["prev_month"]; ?></div></td>
+		<td align="left" class="outset_box"><div class="forum_content"><?php echo $template["next_month"]; ?></div></td>
+		<td width="80%" />
+	</tr>
+</table>
+</div>

@@ -1,0 +1,40 @@
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<block:block id="welcome_msg">
+	<tr class="thead">
+		<td colspan="5">{$welcome_title}</td>
+	</tr>
+	<tr class="panel">
+		<td colspan="5">{$welcome_msg}</td>
+	</tr>
+	</block:block>
+	<tr class="tcat">
+		<td>&nbsp;</td>
+		<td align="center" class="minitext">{$L_NAME}</td>
+		<td align="center" class="minitext">&nbsp;{$L_POSTS}&nbsp;</td>
+		<td align="center" class="minitext">&nbsp;{$L_THREADS}&nbsp;</td>
+		<td align="center" class="minitext">{$L_LASTPOST}</td>
+	</tr>
+	<list:list id="categories">
+	<list:item>
+	<tr class="thead">
+		<td colspan="5"><a href="viewforum.php?id={$id}"><strong>{$name}</strong></a></td>
+	</tr>
+		<list:sublist parent="categories" function="GetChildren">
+		<list:item>
+		<tr class="{$class}">
+			<td width="5%" align="center"><img src="Images/{$IMG_DIR}/Icons/{$forum_icon}.gif" alt="{$forum_alt}" title="{$forum_alt}" height="28" width="28" border="0" /></td>
+			<td width="60%"><a href="viewforum.php?id={$id}"><strong>{$name}</strong></a><br /><span class="minitext">{$description}<br />{$sub_forums}</span></td>
+			<td align="center" class="alt1">{$posts}</td>
+			<td align="center" class="alt1">{$threads}</td>
+			<td class="minitext" nowrap="nowrap" align="center">
+				<span id="forum{$id}"></span>
+				<script language="Javascript"><![CDATA[ var forum = document.getElementById('forum{$id}');if('{$thread_id}' == '' || '{$thread_id}' == 0) { forum.innerHTML = '--'; } else { forum.innerHTML = "<a href=\"viewthread.php?id={$thread_id}\"><strong>{$thread_name}</strong></a><br />{$L_BY} <a href=\"member.php?id={$thread_uid}\"><strong>{$thread_uname}</strong></a>&nbsp;{$L_ON}&nbsp;{$thread_created}"; }]]></script>
+			</td>
+		</tr>
+		</list:item>
+		</list:sublist>
+	</list:item>
+	</list:list>
+</table>
+</div>

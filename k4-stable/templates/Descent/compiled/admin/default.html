@@ -1,0 +1,20 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_WELCOMEACP"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<fieldset>
+				<legend><strong>Credits</strong></legend>
+				<strong>Peter Goodman</strong> - Main development, board design, etc.<br />
+				<strong>Geoffrey Goodman</strong> - Pagecraft framework and main database abstraction layer.<br /><br />
+				<div align="center"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/pagecraft.gif" alt="Pagecraft" /></div>
+			</fieldset>
+			<br />
+			<?php echo $template["L_ACPWELCOME"]; ?>
+			<?php echo $template["L_ACPFEATURES"]; ?>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>

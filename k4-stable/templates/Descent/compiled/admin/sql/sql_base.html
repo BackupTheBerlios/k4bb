@@ -1,0 +1,37 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<title><?php echo $template["forum_name"]; ?> - <?php echo $template["title"]; ?> - Powered by k4</title>
+	
+	<style type="text/css">
+	<?php if ($template->css_styles != NULL): ?>
+	<?php $css_styles = new CachingIterator(get_iterator($template->css_styles));  foreach($css_styles as $obj1):  $template->Push($obj1); ?>
+	<?php echo $template["name"]; ?> { <?php echo $template["properties"]; ?> }
+	<?php if ($css_styles->HasNext()): ?>
+	<?php endif; ?>
+	<?php $template->Pop();  endforeach; ?>
+	<?php endif; ?>
+	</style>
+	<script language="javascript" type="text/javascript" src="js/form_check.js">/* Easter Egg */</script>
+	<script language="javascript" type="text/javascript" src="js/javascript.js">/* Easter Egg */</script>
+</head>
+<body>
+<div class="forum_base">
+<table cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<td>
+			<a href="sql.admin.php?table=<?php echo $template["table_name"]; ?>"><?php echo $template["L_STRUCTURE"]; ?></a> | <a href="sql.admin.php?act=browse&table=<?php echo $template["table_name"]; ?>"><?php echo $template["L_BROWSE"]; ?></a> | <?php echo $template["L_EMPTY"]; ?> | <?php echo $template["L_DROP"]; ?><br />
+			<hr />
+		</td>
+	</tr>
+</table>
+<?php if (isset($template->sql_content['file']) && $t = new Template($template->sql_content['file'])):  $template->Push($template->sql_content);  $t->Import($template);  $template->Pop();  endif; ?>
+</div>
+<br />
+<div align="center" nowrap="nowrap"><a name="bottom" id="bottom" class="smalltext">[ Powered By: k4 ] [ Load time: <?php echo $template["load_time"]; ?> ] [ Num Queries: <?php echo $template["num_queries"]; ?> ]</a></div>
+</body>
+</html>
+<?php endif; ?>

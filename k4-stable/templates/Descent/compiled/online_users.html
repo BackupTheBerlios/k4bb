@@ -1,0 +1,25 @@
+<br />
+<div class="forum_content">
+<table width="100%" border="0" cellpadding="0" cellspacing="1">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_ONLINEUSERS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td rowspan="2" width="5%" align="center" valign="middle"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/forum_stats.gif" /></td>
+		<td class="minitext">
+			<?php echo $template["newest_member"]; ?>
+			<br />
+			<?php echo $template["total_posts"]; ?>
+			<br />
+			<?php echo $template["total_users"]; ?>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td class="minitext">
+			<?php echo $template["online_stats"]; ?>    [ <span style="color:#FFA34F"><?php echo $template["L_ADMINISTRATOR"]; ?></span> ]  [ <span style="color:#006600"><?php echo $template["L_MODERATOR"]; ?></span> ]
+			<br />
+			<?php if ($template->online_users != NULL):  echo $template["L_REGISTEREDUSERS"]; ?>: <?php $online_users = new CachingIterator(get_iterator($template->online_users));  foreach($online_users as $obj0):  $template->Push($obj0); ?><a href="member.php?id=<?php echo $template["id"]; ?>" style="text-decoration: underline;" class="minitext"><?php echo $template["name"]; ?></a><?php if ($online_users->HasNext()): ?>, <?php endif;  $template->Pop();  endforeach;  endif; ?>
+		</td>
+	</tr>
+</table>
+</div>

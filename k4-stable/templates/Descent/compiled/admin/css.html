@@ -1,0 +1,183 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<script type="text/javascript">
+// 
+function popupExport(t) {
+	window.open("files.php?act=export_css", t, "width=100,height=100");
+	return true;
+}
+// 
+</script>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_CSS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box"><?php echo $template["L_CSSMESSAGE"]; ?></div>
+		</td>
+	</tr>
+</table>
+<br />
+<form action="admin.php" method="GET" enctype="multipart/form-data">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_CSS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_STYLESET"]; ?></td>
+		<td>
+			<input type="hidden" name="act" value="edit_style" />
+			<select name="id" id="style">
+				<?php if ($template->cssstyles != NULL): ?>
+				<?php $cssstyles = new CachingIterator(get_iterator($template->cssstyles));  foreach($cssstyles as $obj1):  $template->Push($obj1); ?>
+				<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</select>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><input type="submit" value="<?php echo $template["L_EDIT"]; ?>" class="button" /></td>
+	</tr>
+</table>
+</form>
+<br />
+<div id="form_errors" style="display:none;">
+	<?php if ($template->form_errors != NULL): ?>
+		<ul>
+			<?php $form_errors = new CachingIterator(get_iterator($template->form_errors));  foreach($form_errors as $obj2):  $template->Push($obj2); ?>
+				<li><?php echo $template["message"]; ?></li>
+			<?php $template->Pop();  endforeach; ?>
+		</ul>
+	<?php endif; ?>
+</div>
+<form action="admin.php?act=add_cssstyle" method="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<input type="hidden" name="properties" value="/* Change Me */" />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_ADDCLASS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_NAME"]; ?></td>
+		<td><input type="text" name="name" id="<?php echo $template["L_NAME"]; ?>" value="" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_DESCRIPTION"]; ?></td>
+		<td><input type="text" name="description" id="<?php echo $template["L_DESCRIPTION"]; ?>" value="" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_STYLESETTOADDTO"]; ?></td>
+		<td>
+			<select name="style_id" id="style" check="true">
+				<?php if ($template->css_stylesets != NULL): ?>
+				<?php $css_stylesets = new CachingIterator(get_iterator($template->css_stylesets));  foreach($css_stylesets as $obj3):  $template->Push($obj3); ?>
+				<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</select>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" /></td>
+	</tr>
+</table>
+</form>
+<br />
+<form action="admin.php?act=add_style" method="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_CREATESTYLESET"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_NAME"]; ?></td>
+		<td><input type="text" name="name" id="<?php echo $template["L_NAME"]; ?>" value="" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_DESCRIPTION"]; ?></td>
+		<td><input type="text" name="description" id="<?php echo $template["L_DESCRIPTION"]; ?>" value="" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_STYLESETTOUSE"]; ?></td>
+		<td>
+			<select name="id" id="style" check="true">
+				<?php if ($template->stylesets != NULL): ?>
+				<?php $stylesets = new CachingIterator(get_iterator($template->stylesets));  foreach($stylesets as $obj4):  $template->Push($obj4); ?>
+				<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</select>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" /></td>
+	</tr>
+</table>
+</form>
+<br />
+<form action="admin.php?act=delete_style" method="post" enctype="multipart/form-data">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_DELETESTYLESET"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_STYLESET"]; ?></td>
+		<td>
+			<select name="id" id="style">
+				<?php if ($template->stylesetd != NULL): ?>
+				<?php $stylesetd = new CachingIterator(get_iterator($template->stylesetd));  foreach($stylesetd as $obj5):  $template->Push($obj5); ?>
+				<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+				<?php if ($stylesetd->HasNext()): ?>
+				<?php endif; ?>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</select>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><input type="submit" value="<?php echo $template["L_DELETE"]; ?>" class="button" /></td>
+	</tr>
+</table>
+</form>
+<br />
+<form action="files.php?act=export_css" method="post" enctype="multipart/form-data" onSubmit="return popupExport(this.target)" target="files_file">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_EXPORTCSS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_STYLESET"]; ?></td>
+		<td>
+			<select name="styleset_id" id="style">
+				<?php if ($template->export_styleset != NULL): ?>
+				<?php $export_styleset = new CachingIterator(get_iterator($template->export_styleset));  foreach($export_styleset as $obj7):  $template->Push($obj7); ?>
+				<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+				<?php if ($export_styleset->HasNext()): ?>
+				<?php endif; ?>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</select>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><input type="submit" value="<?php echo $template["L_EXPORT"]; ?>" class="button" /></td>
+	</tr>
+</table>
+</form>
+<br />
+<form action="admin.php?act=import_style" method="post" enctype="multipart/form-data">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_IMPORTCSS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_STYLESET"]; ?></td>
+		<td>
+			<input type="file" name="imported_file" class="inputbox" value="" size="40" />
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><input type="submit" value="<?php echo $template["L_IMPORT"]; ?>" class="button" /></td>
+	</tr>
+</table>
+</form>
+<?php endif; ?>

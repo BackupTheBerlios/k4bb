@@ -1,0 +1,24 @@
+<form action="member.php" method="GET" name="post" enctype="multipart/form-data">
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_USERGROUPS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_LOOKUPGROUP"]; ?><input type="hidden" name="act" value="lookup" /></td>
+		<td width="50%">
+			<select name="gid">
+			<?php if ($template->usergroups != NULL): ?>
+			<?php $usergroups = new CachingIterator(get_iterator($template->usergroups));  foreach($usergroups as $obj0):  $template->Push($obj0); ?>
+			<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+			</select>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><input type="submit" class="button" value="<?php echo $template["L_LOOKUP"]; ?>" /></td>
+	</tr>
+</table>
+</div>
+</form>

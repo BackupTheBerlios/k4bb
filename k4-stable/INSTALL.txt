@@ -1,0 +1,30 @@
+INSTALLATION GUIDE FOR K4 BULLETIN BOARD
+
+/*********** INSTALLATION ***********/
+
+To install, copy the files to your webserver. Make sure that the 'sqlite' and 'template' directories are underneath 
+your document root. The rest of the files, in this case, all of the files within the 'public_html' folder can be 
+copied to any new folder above your document root (ie: public_html/,public_html/k4/, etc). before installing, if you
+are on a webserver on the internet, make sure you know your FTP username, password and server. Without this knowlege,
+the forum will not be able to change the file permissions on any of the templates, upload areas, etc. Now, go into
+whatever browser you use, frankly I prefer Firefox to any other, and navigate to where you put your forum. it should
+redirect you to the /Install folder and a file called 'install.php'. Now, just fill out all of the necessary 
+information, click 'Install it Baby', or whatever buttons are down there, and you're good to go. The install will
+refresh itself through several steps, and when it's finished, it will be quite evident. Once the installation is
+finished, you will need to wither rename or delete the 'Install' folder. You will find that if you're using SQLite 
+as your database type, it has created a database hopefully in your 'sqlite' folder (under the document root), and 
+that it has created a file called 'install.lock.php'. This file is required for the forum to work, and if it does 
+not exist, then you either have to mock one up, or delete the database and re-rename the 'Install' folder. Well,
+You should be good to go, so have fun!
+
+/*********** STYLESETS ***********/
+The 'k4 Stylesets' folder includes all of the currently available Stylesets for k4. Not only can k4 look great on
+its own, but it can look like any other bulletin board system out there! All of the necessary images are currently
+in k4, so don't worry about those! Here's what you do with them: Copy them to somewhere on your computer. After you
+have installed the forum and done all of that other stuff, log in as the user that you set in the installer. Then,
+click the 'Admin Panel' button on the rightmost side of the navigation bar. It will pop open the Admin Control Panel.
+Once you are in the ACP, click on the 'CSS' link on the left navigation bar. It will load a page with all sorts of
+things in it. Scroll down to the bottom of that page, and look for anything that says 'Import'. There will be a file
+field. Click it, navigate to one of the stylesets, and click 'Import'. It will do the rest!
+
+- Peter Goodman, peter.goodman@gmail.com

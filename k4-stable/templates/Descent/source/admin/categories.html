@@ -1,0 +1,126 @@
+<isadmin>
+<script language="javascript" type="text/javascript">
+function delete_category()
+{
+	ht = document.getElementsByTagName("html");
+	ht[0].style.filter = "progid:DXImageTransform.Microsoft.BasicImage(grayscale=1)";
+	if (confirm('{$L_CHECKDELCAT}')) {
+		return true;
+	} else {
+		ht[0].style.filter = "";
+		return false;
+	}
+}
+</script>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_CATEGORIES}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">{$L_CATEGORIESMESSAGE}</div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="5">{$L_MODCATEGORIES}</td>
+	</tr>
+	<tr class="thead">
+		<td align="center"><u>{$L_DELETECATEGORY}</u></td>
+		<td align="center"><u>{$L_ADDCATEGORY}</u></td>
+		<td align="center"><u>{$L_SUSPENDCAT}</u></td>
+		<td align="center"><u>{$L_UNSUSPENDCAT}</u></td>
+		<td align="center"><u>{$L_QUICKJUMP}</u></td>
+	</tr>
+	<tr class="panel">
+		<td align="center">
+			<form action="admin.php?act=delete_single&amp;type=2" method="post" name="post" enctype="multipart/form-data">
+			<list:list id="categories">
+			<select name="id" id="{$L_FORUM}" check="true" class="inputbox">
+			<list:item>
+			<option value="{$id}">{$indent_level}{$name}</option>
+			</list:item>
+			</select>
+			<br />
+			<input type="submit" class="button" value="{$L_DELETE}" />
+			</list:list>
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=add_cat" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+			{$L_CATNAME}<br />
+			<input type="text" name="name" class="inputbox" id="{$L_CATNAME}" check="true" value="" />
+			<br />
+			<input type="submit" class="button" value="{$L_SAVE}" /><input type="reset" class="button" value="{$L_RESET}" />
+			</form>	
+		</td>
+		<td align="center">
+			<form action="admin.php?act=suspend" method="post" name="post" enctype="multipart/form-data" onSubmit="return delete_category();">
+			<list:list id="suspend_categories">
+			<select name="categories" id="{$L_CATEGORY}" check="true" class="inputbox">
+			<list:item>
+			<option value="{$id}">{$name}</option>
+			</list:item>
+			</select>
+			<input type="submit" class="button" value="{$L_SUSPEND}" />
+			</list:list>
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=unsuspend" method="post" name="post" enctype="multipart/form-data">
+			<list:list id="unsuspend_categories">
+			<select name="categories" id="{$L_CATEGORY}" class="inputbox">
+			<list:item>
+			<option value="{$id}">{$name}</option>
+			</list:item>
+			</select>
+			<input type="submit" class="button" value="{$L_UNSUSPEND}" />
+			</list:list>
+			</form>
+		</td>
+		<td align="center">
+			<list:list id="quick_jump">
+			<select name="categories" id="quick_jump" class="inputbox" onChange="return QuickJump(this);">
+			<option value="-1">{$L_SELCATEGORY}</option>
+			<list:item>
+			<option value="{$id}">{$name}</option>
+			</list:item>
+			</select>
+			</list:list>
+		</td>
+	</tr>
+</table>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2">{$L_EDITCATEGORIES}</td>
+	</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="outset_box">
+	<tr>
+		<td>
+			<list:list id="categories">
+			<list:item>
+			<a name="{$id}" id="{$id}"></a>
+			<table width="100%" cellpadding="0" cellspacing="1" border="0">
+				<tr class="tcat">
+					<td>{$name}</td>
+				</tr>
+				<tr class="panel">
+					<td>
+						<form action="admin.php?act=update" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+						<input type="hidden" name="id" value="{$id}" />{$L_POSITION}:&nbsp;<input type="text" class="inputbox" name="position" value="{$f_order}" size="3" check="true" id="{$L_POSITION}" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$L_NAME}:&nbsp;<input type="text" class="inputbox" name="name" value="{$name}" size="40" check="true" id="{$L_NAME}" />&nbsp;&nbsp;<input type="submit" class="button" value="{$L_UPDATE}" /><input type="reset" class="button" value="{$L_RESET}" />
+						</form>
+					</td>
+				</tr>
+			</table>
+			<list:separator><br /></list:separator>
+			</list:item>
+			</list:list>
+		</td>
+	</tr>
+</table>
+</isadmin>

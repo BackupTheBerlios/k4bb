@@ -1,0 +1,212 @@
+<isadmin>
+<script language="javascript" type="text/javascript">
+	function suspend_forum()
+	{
+		ht = document.getElementsByTagName("html");
+		ht[0].style.filter = "progid:DXImageTransform.Microsoft.BasicImage(grayscale=1)";
+		if (confirm('{$L_CHECKDELFORUM}'))
+		{
+			return true;
+		}
+		else
+		{
+			ht[0].style.filter = "";
+			return false;
+		}
+	}
+</script>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_FORUMS}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">{$L_FORUMSMESSAGE}</div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="5">{$L_MODFORUMS}</td>
+	</tr>
+	<tr class="thead">
+		<td align="center"><u>{$L_DELETEFORUM}</u></td>
+		<td align="center"><u>{$L_SUSPENDFORUM}</u></td>
+		<td align="center"><u>{$L_UNSUSPENDFORUM}</u></td>
+		<td align="center"><u>{$L_LOCKFORUM}</u></td>
+		<td align="center"><u>{$L_UNLOCKFORUM}</u></td>
+	</tr>
+	<tr class="panel">
+		<td align="center">
+			<form action="admin.php?act=delete_single&amp;type=2" method="post" name="post" enctype="multipart/form-data">
+			<list:list id="forums_list">
+			<select name="id" id="{$L_FORUM}" check="true" class="inputbox">
+			<list:item>
+			<option value="{$id}">{$indent_level}{$name}</option>
+			</list:item>
+			</select>
+			<br />
+			<input type="submit" class="button" value="{$L_DELETE}" />
+			</list:list>
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=suspend" method="post" name="post" enctype="multipart/form-data" onSubmit="return suspend_forum();">
+			<list:list id="suspend_forums">
+			<select name="forums" id="{$L_FORUM}" check="true" class="inputbox">
+			<list:item>
+			<option value="{$id}">{$name}</option>
+			</list:item>
+			</select>
+			<input type="submit" class="button" value="{$L_SUSPEND}" />
+			</list:list>
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=unsuspend" method="post" name="post" enctype="multipart/form-data">
+			<list:list id="unsuspend_forums">
+			<select name="forums" id="{$L_FORUM}" class="inputbox">
+			<list:item>
+			<option value="{$id}">{$name}</option>
+			</list:item>
+			</select>
+			<input type="submit" class="button" value="{$L_UNSUSPEND}" />
+			</list:list>
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=lock" method="post" name="post" enctype="multipart/form-data">
+			<list:list id="lock_forums">
+			<select name="forums" id="{$L_FORUM}" class="inputbox">
+			<list:item>
+			<option value="{$id}">{$name}</option>
+			</list:item>
+			</select>
+			<input type="submit" class="button" value="{$L_LOCK}" />
+			</list:list>
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=unlock" method="post" name="post" enctype="multipart/form-data">
+			<list:list id="unlock_forums">
+			<select name="forums" id="{$L_FORUM}" class="inputbox">
+			<list:item>
+			<option value="{$id}">{$name}</option>
+			</list:item>
+			</select>
+			<input type="submit" class="button" value="{$L_UNLOCK}" />
+			</list:list>
+			</form>
+		</td>
+	</tr>
+</table>
+<br />
+<form action="admin.php?act=addforum" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2">{$L_ADDFORUM}</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_CHILDOF}:</td>
+		<td>
+			<list:list id="forums_list">
+			<select name="parent_id" id="{$L_FORUM}" class="inputbox">
+			<list:item>
+			<option value="{$id}">{$indent_level}{$name}</option>
+			</list:item>
+			</select>
+			</list:list>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_NAME}:</td>
+		<td><input type="text" name="name" id="{$L_NAME}" value="" class="inputbox" check="true" /></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_DESCRIPTION}:</td>
+		<td><input type="text" name="description" id="{$L_DESCRIPTION}" value="" class="inputbox" check="true" /></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_LINKURL}:</td>
+		<td><input type="text" name="link_href" value="http://" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_FORUMPASSWORD}</td>
+		<td><input type="text" name="pass" class="inputbox" /></td>
+	</tr>
+	<!--<tr class="panel">
+		<td>{$L_POSITION}</td>
+		<td><input type="text" name="position" id="{$L_POSITION}" size="3" value="" class="inputbox" /></td>
+	</tr>-->
+	<tr class="panel">
+		<td>{$L_LOCKED}:</td>
+		<td><label for="radio1"><input type="radio" name="lock" id="radio1" value="1" />&nbsp;{$L_YES}</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="radio2"><input type="radio" name="lock" id="radio2" checked="checked" value="0" />&nbsp;{$L_NO}</label></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_SUSPENDED}:</td>
+		<td><label for="radio3"><input type="radio" name="suspend" id="radio3" value="1" />&nbsp;{$L_YES}</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="radio4"><input type="radio" name="suspend" id="radio4" checked="checked" value="0" />&nbsp;{$L_NO}</label></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_ISLINK}:</td>
+		<td><label for="radio5"><input type="radio" name="is_link" id="radio5" value="1" />&nbsp;{$L_YES}</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="radio6"><input type="radio" name="is_link" id="radio6" checked="checked" value="0" />&nbsp;{$L_NO}</label></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_ISPRIVATE}:</td>
+		<td><label for="radio7"><input type="radio" name="private" id="radio7" value="1" />&nbsp;{$L_YES}</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="radio8"><input type="radio" name="private" id="radio8" checked="checked" value="0" />&nbsp;{$L_NO}</label></td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><input type="submit" class="button" value="{$L_SAVE}" /><input type="reset" class="button" value="{$L_RESET}" /></td>
+	</tr>
+</table>
+</form>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2">{$L_EDITFORUMS}</td>
+	</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="outset_box">
+	<tr>
+		<td>
+			<list:list id="categories">
+			<list:item>
+			<fieldset>
+			<legend><strong>{$name}</strong>&nbsp;</legend>
+			<list:separator><br /></list:separator>
+				<list:sublist parent="categories" function="GetChildren">
+				<list:item>
+				<table width="100%" cellpadding="0" cellspacing="1" border="0">
+					<tr class="tcat">
+						<td>{$name}</td>
+					</tr>
+					<tr class="panel">
+						<td align="center">
+							<form action="admin.php?act=update" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+							<div align="left">
+								<input type="hidden" name="id" value="{$id}" />{$L_POSITION}:&nbsp;<input type="text" class="inputbox" name="position" value="{$f_order}" size="3" check="true" id="{$L_POSITION}" />
+								<br />{$L_NAME}:&nbsp;<input type="text" class="inputbox" name="name" value="{$name}" size="30" check="true" id="{$L_NAME}" />
+								<br />{$L_DESCRIPTION}:&nbsp;<input type="text" class="inputbox" name="description" value="{$description}" size="30" check="true" id="{$L_DESCRIPTION}" />
+								<br />{$L_LINKURL}: <input type="text" name="link_href" value="{$link_href}" class="inputbox" />
+								<br />{$L_ISLINK}: <select name="is_link" id="is_link_{$id}"><option value="0">{$L_NO}</option><option value="1">{$L_YES}</option></select>
+								<br />{$L_FORUMPASSWORD}: <input type="text" name="pass" value="{$pass}" class="inputbox" />
+								<br />{$L_ISPRIVATE}: <select name="private" id="private{$id}"><option value="0">{$L_NO}</option><option value="1">{$L_YES}</option></select>
+								<br />
+							</div>
+							<input type="submit" class="button" value="{$L_UPDATE}" /><input type="reset" class="button" value="{$L_RESET}" />
+							<script type="text/javascript">setIndex({$is_link}, 'is_link_{$id}');setIndex({$private}, 'private{$id}');</script>
+							</form>
+						</td>
+					</tr>
+				</table>
+				<list:separator><br /></list:separator>
+				</list:item>
+				</list:sublist>
+			</fieldset>
+			</list:item>
+			</list:list>
+		</td>
+	</tr>
+</table>
+</isadmin>

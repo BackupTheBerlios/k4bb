@@ -1,0 +1,48 @@
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_FAQ}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">
+				<list:list id="all_faq">
+				<list:item>
+					<a href="#t{$id}"><strong>{$name}</strong></a><br />
+					<list:sublist parent="all_faq" function="GetChildren">
+					<list:item>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#{$id}">{$question}</a>
+					<list:separator><br /></list:separator>
+					</list:item>
+					</list:sublist>
+					<list:separator><br /><br /></list:separator>
+				</list:item>
+				</list:list>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+<br />
+<list:list id="all_faq">
+<list:item>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$name}<a name="t{$id}" id="t{$id}"> </a></td>
+	</tr>
+	<list:sublist parent="all_faq" function="GetChildren">
+	<list:item>
+	<tr class="thead">
+		<td>{$question}<a name="{$id}" id="{$id}"> </a></td>
+	</tr>
+	<tr class="panel">
+		<td>{$answer}<br /><a href="#top">{$L_TOP}</a></td>
+	</tr>
+	</list:item>
+	</list:sublist>
+</table>
+</div>
+<list:separator><br /></list:separator>
+</list:item>
+</list:list>

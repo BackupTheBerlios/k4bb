@@ -1,0 +1,91 @@
+<isadmin>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_USERS}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">{$L_USERSMESSAGE}</div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<form action="admin.php?act=redirect_eu" method="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_EDITUSER}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			{$L_USERNAME}:&nbsp;<input type="text" name="name" value="" class="inputbox" check="true" />
+			<input type="submit" value="{$L_EDIT}" name="edit" class="button" /><input type="submit" value="{$L_DELETE}" name="delete" class="button" />
+			<br /><input type="button" class="button" value="{$L_FINDUSER}" />
+		</td>
+	</tr>
+</table>
+</form>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_DISALLOWNAME}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<form action="admin.php?act=add_badname" method="POST" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+			{$L_USERNAME}:&nbsp;<input type="text" name="name" class="inputbox" id="{$L_USERNAME}" value="" check="true" />
+			&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="{$L_DISALLOW}" class="button" />
+			</form>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td>{$L_DISALLOWEDNAMES}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box" style="height:100px; overflow:auto; padding:5px;">
+			<list:list id="disallowed_nicks">
+			<list:item>
+			<form action="admin.php?act=update_daun" method="POST" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+			<input type="hidden" name="id" value="{$id}" />
+			{$L_USERNAME}:&nbsp;<input type="text" name="name" class="inputbox" id="{$L_USERNAME}" value="{$name}" check="true" />
+			&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" value="{$L_SAVE}" />&nbsp;&nbsp;&nbsp;&nbsp;<a href="admin.php?act=remove_badnick&amp;id={$id}">{$L_DELETE}</a>
+			</form>
+			<list:separator><hr /></list:separator>
+			</list:item>
+			</list:list>
+			</div>
+		</td>
+	</tr>
+</table>
+<br />
+<form action="admin.php?act=ban_user" method="POST" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_BANUSER}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			{$L_USERNAME}:&nbsp;<input type="text" name="name" value="" class="inputbox" />
+			<input type="submit" class="button" value="{$L_BANUSER}" />
+			<input type="button" class="button" value="{$L_FINDUSER}" />
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td>{$L_BANNEDUSERS}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box" style="height:100px; overflow:auto; padding:5px;">
+			<list:list id="banned_users">
+			<list:item>
+			{$L_USERNAME}:&nbsp;<strong>{$name}</strong>&nbsp;&nbsp;&nbsp;&nbsp;<a href="admin.php?act=unban_user&amp;name={$name}">{$L_UNBAN}</a>
+			<list:separator><hr /></list:separator>
+			</list:item>
+			</list:list>
+			</div>
+		</td>
+	</tr>
+</table>
+</form>
+</isadmin>

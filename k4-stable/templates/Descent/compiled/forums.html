@@ -1,0 +1,40 @@
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<?php if (!isset($template->welcome_msg['hide']) || !$template->welcome_msg['hide']):  $template->Push($template->welcome_msg); ?>
+	<tr class="thead">
+		<td colspan="5"><?php echo $template["welcome_title"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td colspan="5"><?php echo $template["welcome_msg"]; ?></td>
+	</tr>
+	<?php $template->Pop();  endif; ?>
+	<tr class="tcat">
+		<td> </td>
+		<td align="center" class="minitext"><?php echo $template["L_NAME"]; ?></td>
+		<td align="center" class="minitext"> <?php echo $template["L_POSTS"]; ?> </td>
+		<td align="center" class="minitext"> <?php echo $template["L_THREADS"]; ?> </td>
+		<td align="center" class="minitext"><?php echo $template["L_LASTPOST"]; ?></td>
+	</tr>
+	<?php if ($template->categories != NULL): ?>
+	<?php $categories = new CachingIterator(get_iterator($template->categories));  foreach($categories as $obj0):  $template->Push($obj0); ?>
+	<tr class="thead">
+		<td colspan="5"><a href="viewforum.php?id=<?php echo $template["id"]; ?>"><strong><?php echo $template["name"]; ?></strong></a></td>
+	</tr>
+		<?php if ($template->categories && method_exists($template->categories, 'GetChildren') && $template->obj1 = $template->categories->GetChildren()): ?>
+		<?php $obj1 = new CachingIterator(get_iterator($template->obj1));  foreach($obj1 as $obj2):  $template->Push($obj2); ?>
+		<tr class="<?php echo $template["class"]; ?>">
+			<td width="5%" align="center"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/<?php echo $template["forum_icon"]; ?>.gif" alt="<?php echo $template["forum_alt"]; ?>" title="<?php echo $template["forum_alt"]; ?>" height="28" width="28" border="0" /></td>
+			<td width="60%"><a href="viewforum.php?id=<?php echo $template["id"]; ?>"><strong><?php echo $template["name"]; ?></strong></a><br /><span class="minitext"><?php echo $template["description"]; ?><br /><?php echo $template["sub_forums"]; ?></span></td>
+			<td align="center" class="alt1"><?php echo $template["posts"]; ?></td>
+			<td align="center" class="alt1"><?php echo $template["threads"]; ?></td>
+			<td class="minitext" nowrap="nowrap" align="center">
+				<span id="forum<?php echo $template["id"]; ?>" />
+				<script language="Javascript"> var forum = document.getElementById('forum<?php echo $template["id"]; ?>');if('<?php echo $template["thread_id"]; ?>' == '' || '<?php echo $template["thread_id"]; ?>' == 0) { forum.innerHTML = '--'; } else { forum.innerHTML = "<a href=\"viewthread.php?id=<?php echo $template["thread_id"]; ?>\"><strong><?php echo $template["thread_name"]; ?></strong></a><br /><?php echo $template["L_BY"]; ?> <a href=\"member.php?id=<?php echo $template["thread_uid"]; ?>\"><strong><?php echo $template["thread_uname"]; ?></strong></a>&#160;<?php echo $template["L_ON"]; ?>&#160;<?php echo $template["thread_created"]; ?>"; }</script>
+			</td>
+		</tr>
+		<?php $template->Pop();  endforeach; ?>
+		<?php endif; ?>
+	<?php $template->Pop();  endforeach; ?>
+	<?php endif; ?>
+</table>
+</div>

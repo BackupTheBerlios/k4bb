@@ -1,0 +1,71 @@
+<isadmin>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_CENSORING}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">{$L_CENSORINGMESSAGE}</div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="4">{$L_BWCENSORING}</td>
+	</tr>
+	<tr class="thead">
+		<td align="center">
+			<u>{$L_ADDBWFILTER}</u>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td align="center">
+			<form action="admin.php?act=addbw" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+			{$L_BADWORD}:&nbsp;<input class="inputbox" type="text" name="word" id="{$L_BADWORD}" value="" check="true" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$L_REPLACEMENT}:&nbsp;<input type="text" class="inputbox" name="replacement" id="{$L_REPLACEMENT}" value="" check="true" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$L_METHOD}:&nbsp;<select name="method"><option value="0">{$L_EXACT}</option><option value="1">{$L_LOOSE}</option></select>
+			<br />
+			<input type="submit" class="button" value="{$L_SAVE}" /><input type="reset" class="button" value="{$L_RESET}" />
+			</form>
+		</td>
+	</tr>
+</table>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2">{$L_EDITBADWORDS}</td>
+	</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="outset_box">
+	<tr>
+		<td>
+			<list:list id="badwords">
+			<list:item>
+			<table width="100%" cellpadding="0" cellspacing="1" border="0">
+				<tr class="tcat">
+					<td colspan="4">{$word} -> {$replacement}</td>
+				</tr>
+				<tr class="panel">
+					<td align="center">
+						<form action="admin.php?act=updatebw" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+						<input type="hidden" name="id" value="{$id}" />
+						{$L_BADWORD}:&nbsp;<input type="text" class="inputbox" name="word" id="{$L_BADWORD}" value="{$word}" check="true" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$L_REPLACEMENT}:&nbsp;<input class="inputbox" type="text" name="replacement" id="{$L_REPLACEMENT}" value="{$replacement}" check="true" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$L_METHOD}:&nbsp;
+						<select name="method" id="method{$id}">
+							<option value="0">{$L_EXACT}</option>
+							<option value="1">{$L_LOOSE}</option>
+						</select>
+						<script language="javascript" type="text/javascript">setIndex({$method}, 'method{$id}')</script>
+						<br />
+						<a href="admin.php?act=deletebw&amp;bwid={$id}" style="text-decoration: underline;">{$L_DELETEBW}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="submit" class="button" value="{$L_UPDATE}" /><input type="reset" class="button" value="{$L_RESET}" />
+						</form>
+					</td>
+				</tr>
+			</table>
+			<list:separator><br /></list:separator>
+			</list:item>
+			</list:list>
+		</td>
+	</tr>
+</table>
+</isadmin>

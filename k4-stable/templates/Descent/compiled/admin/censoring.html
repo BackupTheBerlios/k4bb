@@ -1,0 +1,71 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_CENSORING"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box"><?php echo $template["L_CENSORINGMESSAGE"]; ?></div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="4"><?php echo $template["L_BWCENSORING"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td align="center">
+			<u><?php echo $template["L_ADDBWFILTER"]; ?></u>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td align="center">
+			<form action="admin.php?act=addbw" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+			<?php echo $template["L_BADWORD"]; ?>: <input class="inputbox" type="text" name="word" id="<?php echo $template["L_BADWORD"]; ?>" value="" check="true" />     <?php echo $template["L_REPLACEMENT"]; ?>: <input type="text" class="inputbox" name="replacement" id="<?php echo $template["L_REPLACEMENT"]; ?>" value="" check="true" />     <?php echo $template["L_METHOD"]; ?>: <select name="method"><option value="0"><?php echo $template["L_EXACT"]; ?></option><option value="1"><?php echo $template["L_LOOSE"]; ?></option></select>
+			<br />
+			<input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" />
+			</form>
+		</td>
+	</tr>
+</table>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_EDITBADWORDS"]; ?></td>
+	</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="outset_box">
+	<tr>
+		<td>
+			<?php if ($template->badwords != NULL): ?>
+			<?php $badwords = new CachingIterator(get_iterator($template->badwords));  foreach($badwords as $obj1):  $template->Push($obj1); ?>
+			<table width="100%" cellpadding="0" cellspacing="1" border="0">
+				<tr class="tcat">
+					<td colspan="4"><?php echo $template["word"]; ?> -> <?php echo $template["replacement"]; ?></td>
+				</tr>
+				<tr class="panel">
+					<td align="center">
+						<form action="admin.php?act=updatebw" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+						<input type="hidden" name="id" value="<?php echo $template["id"]; ?>" />
+						<?php echo $template["L_BADWORD"]; ?>: <input type="text" class="inputbox" name="word" id="<?php echo $template["L_BADWORD"]; ?>" value="<?php echo $template["word"]; ?>" check="true" />     <?php echo $template["L_REPLACEMENT"]; ?>: <input class="inputbox" type="text" name="replacement" id="<?php echo $template["L_REPLACEMENT"]; ?>" value="<?php echo $template["replacement"]; ?>" check="true" />     <?php echo $template["L_METHOD"]; ?>: 
+						<select name="method" id="method<?php echo $template["id"]; ?>">
+							<option value="0"><?php echo $template["L_EXACT"]; ?></option>
+							<option value="1"><?php echo $template["L_LOOSE"]; ?></option>
+						</select>
+						<script language="javascript" type="text/javascript">setIndex(<?php echo $template["method"]; ?>, 'method<?php echo $template["id"]; ?>')</script>
+						<br />
+						<a href="admin.php?act=deletebw&bwid=<?php echo $template["id"]; ?>" style="text-decoration: underline;"><?php echo $template["L_DELETEBW"]; ?></a>     
+						<input type="submit" class="button" value="<?php echo $template["L_UPDATE"]; ?>" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" />
+						</form>
+					</td>
+				</tr>
+			</table>
+			<?php if ($badwords->HasNext()): ?><br /><?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>

@@ -1,0 +1,46 @@
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_USERPROFILE"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><strong><?php echo $template["name"]; ?>'<?php echo $template["L_S"]; ?> <?php echo $template["L_PROFILE"]; ?></strong></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_NAME"]; ?></td>
+		<td><strong><?php echo $template["name"]; ?></strong></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_REGISTERED"]; ?></td>
+		<td><strong><?php echo $template["created"]; ?></strong></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ONLINESTATUS"]; ?></td>
+		<td><strong><?php echo $template["online_status"]; ?></strong></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_LASTSEEN"]; ?></td>
+		<td><strong><?php echo $template["seen"]; ?></strong></td>
+	</tr>
+	<?php if (!isset($template->email_address['hide']) || !$template->email_address['hide']):  $template->Push($template->email_address); ?>
+	<tr class="panel">
+		<td><?php echo $template["L_EMAIL"]; ?></td>
+		<td><a href="mailto:<?php echo $template["email"]; ?>"><strong><?php echo $template["email"]; ?></strong></a></td>
+	</tr>
+	<?php $template->Pop();  endif; ?>
+	<?php if (!isset($template->email_link['hide']) || !$template->email_link['hide']):  $template->Push($template->email_link); ?>
+	<tr class="panel">
+		<td><?php echo $template["L_EMAIL"]; ?></td>
+		<td><a href="member.php?act=email&user=<?php echo $template["id"]; ?>"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Buttons/email.gif" alt="<?php echo $template["L_EMAIL"]; ?>" border="0" /></a></td>
+	</tr>
+	<?php $template->Pop();  endif; ?>
+	<tr class="panel">
+		<td><?php echo $template["L_POSTS"]; ?></td>
+		<td><strong><?php echo $template["posts"]; ?></strong></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_TITLE"]; ?></td>
+		<td><strong><?php echo $template["rank"]; ?></strong></td>
+	</tr>
+</table>
+</div>

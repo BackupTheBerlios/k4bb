@@ -1,0 +1,128 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<script type="text/javascript">
+// 
+function popupUpload(t) {
+	window.open("files.php?act=rank_upload", t, "width=300,height=100");
+	return true;
+}
+// 
+</script>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_RANKS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box"><?php echo $template["L_RANKSMESSAGE"]; ?></div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<form action="admin.php?act=add_rank" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="3"><?php echo $template["L_ADDRANK"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td colspan="3">
+			<?php echo $template["L_RANK"]; ?>: <textarea name="rank" id="<?php echo $template["L_RANK"]; ?>" rows="2" cols="60" check="true">/* <?php echo $template["L_CHANGEME"]; ?> */</textarea>  <input type="button" value="<?php echo $template["L_USEIMAGE"]; ?>" onClick="popupUpload()" />  (<?php echo $template["L_BBCODEALLOWED"]; ?>)
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="3"><?php echo $template["L_APPLYTO"]; ?>:</td>
+	</tr>
+	<tr class="panel">
+		<td valign="top">
+			<fieldset>
+				<legend><input type="radio" name="rank_to" checked="checked" value="1" /> <?php echo $template["L_USERGROUP"]; ?></legend>
+				<?php if ($template->groups != NULL): ?>
+				<select name="group_id">
+					<?php $groups = new CachingIterator(get_iterator($template->groups));  foreach($groups as $obj1):  $template->Push($obj1); ?>
+					<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+					<?php $template->Pop();  endforeach; ?>
+				</select>
+				<?php endif; ?>
+			</fieldset>
+		</td>
+		<td valign="top">
+			<fieldset>
+				<legend><input type="radio" name="rank_to" value="2" /> <?php echo $template["L_MEMBER"]; ?></legend>
+				<?php echo $template["L_NAME"]; ?>: <input type="text" name="name" value="" /> <input type="button" value="<?php echo $template["L_FINDUSER"]; ?>" onClick="" />
+			</fieldset>
+		</td>
+		<td valign="top">
+			<fieldset>
+				<legend><?php echo $template["L_OTHER"]; ?></legend>
+				<input type="radio" name="rank_to" value="3" /> <?php echo $template["L_BANNEDUSERS"]; ?>
+			</fieldset>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="3"><input type="submit" value="<?php echo $template["L_SAVE"]; ?>" /><input type="reset" value="<?php echo $template["L_RESET"]; ?>" onClick="Reset(this)" /></td>
+	</tr>
+</table>
+</form>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="5"><?php echo $template["L_EDITUSERRANKS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">
+				<?php if ($template->ranks != NULL): ?>
+				<?php $ranks = new CachingIterator(get_iterator($template->ranks));  foreach($ranks as $obj2):  $template->Push($obj2); ?>
+				<form action="admin.php?act=update_rank" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+				<table width="100%" cellpadding="0" cellspacing="1" border="0">
+					<tr class="thead">
+						<td><?php echo $template["L_RANKTO"]; ?></td>
+						<td><?php echo $template["L_RANK"]; ?></td>
+						<td><?php echo $template["L_GROUP"]; ?></td>
+						<td><?php echo $template["L_USER"]; ?></td>
+						<td><?php echo $template["L_OTHER"]; ?></td>
+					</tr>
+					<tr class="panel">
+						<td>
+							<select name="rank_to" id="rank_to<?php echo $template["id"]; ?>">
+								<option value="1"><?php echo $template["L_USERGROUP"]; ?></option>
+								<option value="2"><?php echo $template["L_NAME"]; ?></option>
+								<option value="3"><?php echo $template["L_BANNEDUSERS"]; ?></option>
+							</select>
+						</td>
+						<td><textarea name="rank" rows="2" cols="30"><?php echo $template["rank"]; ?></textarea></td>
+						<td>
+							<input type="hidden" name="id" value="<?php echo $template["id"]; ?>" />
+							<select name="group_id" id="group<?php echo $template["id"]; ?>">
+								<option value="0">-</option>
+								<?php if ($template->groups != NULL): ?>
+								<?php $groups = new CachingIterator(get_iterator($template->groups));  foreach($groups as $obj3):  $template->Push($obj3); ?>
+								<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+								<?php $template->Pop();  endforeach; ?>
+								<?php endif; ?>
+							</select>
+						</td>
+						<td><?php echo $template["L_NAME"]; ?>: <input type="text" name="name" value="<?php echo $template["user"]; ?>" /><br /><input type="button" value="<?php echo $template["L_FINDUSER"]; ?>" onClick="" /></td>
+						<td>
+							<a href="javascript:;" onClick="setIndex(3, 'rank_to<?php echo $template["id"]; ?>')"><?php echo $template["L_BANNEDUSERS"]; ?></a>
+							<script language="javascript" type="text/javascript">
+							//
+							setIndex(<?php echo $template["group_id"]; ?>, 'group<?php echo $template["id"]; ?>');
+							setIndex(<?php echo $template["rank_to"]; ?>, 'rank_to<?php echo $template["id"]; ?>');
+							//
+							</script>
+						</td>
+					</tr>
+					<tr class="thead">
+						<td colspan="5" align="center"><input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" /> <input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" /></td>
+					</tr>
+				</table>
+				</form>
+				<?php if ($ranks->HasNext()): ?><br /><?php endif; ?>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</div>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>

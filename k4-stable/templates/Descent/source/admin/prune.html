@@ -1,0 +1,34 @@
+<isadmin>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_PRUNE}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">{$L_PRUNEMESSAGE}</div>
+		</td>
+	</tr>
+</table>
+<br />
+<form action="admin.php?act=do_prune" method="POST" enctype="multipart/form-data">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_PRUNEFORUM}</td>
+	</tr>
+	<tr class="panel">
+		<td align="center">
+			<select name="forum">
+				<option value="-1">{$L_ALLFORUMS}</option>
+				<list:list id="forums">
+				<list:item>
+				<option value="{$id}">{$name}</option>
+				</list:item>
+				</list:list>
+			</select>
+			&nbsp;&nbsp;&nbsp;&nbsp;{$L_PRUNETHREADS}&nbsp;&nbsp;<input type="text" name="days" id="days" size="3" maxlength="5" value="" class="inputbox" />&nbsp;{$L_DAYS}
+			&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" value="{$L_PRUNE}" />
+		</td>
+	</tr>
+</table>
+</form>
+</isadmin>

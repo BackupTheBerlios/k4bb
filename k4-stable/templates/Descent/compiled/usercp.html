@@ -1,0 +1,74 @@
+<?php if ($_SESSION['user'] instanceof Member): ?>
+<div id="form_errors" style=""> </div>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" style="padding:0px;background-color:#FFFFFF;">
+	<tr>
+		<td width="20%" valign="top" style="padding:0px;">
+			<div class="forum_content">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+				<tr class="tcat">
+					<td><?php echo $template["L_CONTROLPANEL"]; ?></td>
+				</tr>
+				<tr class="thead">
+					<td align="center"><span class="smalltext" style="color:#FFFFFF;"><?php echo $template["L_SETTINGSOPTIONS"]; ?></span></td>
+				</tr>
+				<tr class="panel">
+					<td><a href="member.php?act=profile"><?php echo $template["L_PROFILE"]; ?></a></td>
+				</tr>
+				<tr class="panel">
+					<td><a href="member.php?act=settings"><?php echo $template["L_SETTINGS"]; ?></a></td>
+				</tr>
+				<tr class="panel">
+					<td><a href="member.php?act=avatar"><?php echo $template["L_EDITAVATAR"]; ?></a></td>
+				</tr>
+				<tr class="panel">
+					<td><a href="member.php?act=password"><?php echo $template["L_PASSWORDSETTINGS"]; ?></a></td>
+				</tr>
+			</table>
+			</div>
+			<br />
+			<div class="forum_content">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+				<tr class="tcat">
+					<td>
+						<ul id="nav1" class="nav">
+							<li>
+								<span><?php echo $template["L_PRIVATE_MSGS"]; ?></span>
+								<ul style="padding-top:5px; " class="nav">
+									<div class="forum_content">
+									<table cellpadding="0" cellspacing="1" border="0">
+										<tr>
+											<td style="text-decoration:underline;"><?php echo $template["L_FOLDERS"]; ?></td>
+										</tr>
+										<?php if ($template->pmsg_folders != NULL): ?>
+										<?php $pmsg_folders = new CachingIterator(get_iterator($template->pmsg_folders));  foreach($pmsg_folders as $obj1):  $template->Push($obj1); ?>
+										<tr>
+											<td><a href="member.php?act=view_folder&id=<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></a></td>
+										</tr>
+										<?php $template->Pop();  endforeach; ?>
+										<?php endif; ?>
+									</table>
+									</div>
+								</ul>
+							</li>
+						</ul>
+					</td>
+				</tr>
+				<tr class="panel">
+					<td><a href="member.php?act=view_folder&id=1"><?php echo $template["L_LISTMESSAGES"]; ?></a></td>
+				</tr>
+				<tr class="panel">
+					<td><a href="member.php?act=send_message"><?php echo $template["L_SENDMESSAGE"]; ?></a></td>
+				</tr>
+				
+				<tr class="panel">
+					<td><a href="member.php?act=buddy_list"><?php echo $template["L_BUDDYLIST"]; ?></a></td>
+				</tr>
+			</table>
+			</div>
+		</td>
+		<td width="80%" style="padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;" valign="top">
+			<?php if (isset($template->usercp['file']) && $t = new Template($template->usercp['file'])):  $template->Push($template->usercp);  $t->Import($template);  $template->Pop();  endif; ?>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>

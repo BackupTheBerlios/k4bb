@@ -1,0 +1,145 @@
+<?php if ($_SESSION['user'] instanceof Member): ?>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_LISTMESSAGES"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td><?php echo $template["L_PMSINFOLDER"]; ?>: <span style="text-decoration:underline;"><?php echo $template["folder"]; ?></span></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">
+				<fieldset>
+					<legend><?php echo $template["L_FOLDEROPTIONS"]; ?></legend>
+					<span class="smalltext"><?php echo $template["pmsg_stats"]; ?></span><br />
+					<div style="border:1px solid #000000;padding:1px;width:99%;">
+						<div style="width:100%;height:20px;background-color:green;" align="left">
+							<div style="width:<?php echo $template["width"]; ?>%;height:20px;background-color:#FF0000;"> </div>
+						</div>
+					</div>
+					<hr />
+					
+					<form action="member.php" method="get" enctype="multipart/form-data">
+					<input type="hidden" name="act" value="view_folder" />
+					<?php echo $template["L_FOLDERJUMP"]; ?>: 
+					<select name="id">
+						<?php if ($template->pmsg_folders != NULL): ?>
+						<?php $pmsg_folders = new CachingIterator(get_iterator($template->pmsg_folders));  foreach($pmsg_folders as $obj1):  $template->Push($obj1); ?>
+						<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+						<?php $template->Pop();  endforeach; ?>
+						<?php endif; ?>
+					</select>
+					<input type="submit" value="<?php echo $template["L_GO"]; ?>" class="button" />
+					</form>
+				</fieldset>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+<br />
+<?php if ($template->pmessages != NULL): ?>
+<div align="right">
+<table cellpadding="0" cellspacing="1" border="0" class="pagination">
+	<tr>
+		<td class="pagination"><?php echo $template["L_PAGE"]; ?></td>
+		<?php $limit = !isset($_GET['limit']) ? $template['maxthreads'] : intval($_GET['limit']); ?>
+<?php $before = 3; ?>
+<?php $after = 3; ?>
+<?php $id = intval(@$_GET['id']); ?>
+<?php $start = intval(@$_GET['start']); ?>
+<?php $php_self = $_SERVER['PHP_SELF']; ?>
+<?php if ($template->pmessages && $template->obj2 = $template->pmessages && ($template['total_posts'] > $limit)): ?>
+<?php $pages = @ceil($template['total_posts'] / $limit); ?>
+<?php if($pages > 1): ?>
+
+			<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start=0&limit='.$limit.'" class="minitext">'; ?>
+«<?php echo '</a></td>'; ?>
+
+			<?php $prev_start = (($start-$limit) != 0 && ($start-$limit) > 0) ? ($start-$limit) : 0; ?>
+<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start='.$prev_start.'&limit='.$limit.'" class="minitext">'; ?><<?php echo '</a></td>'; ?>
+			<?php $page_start = ((($start/$limit)-$before) < 0) ? 0 : (($start/$limit)-$before); ?>
+<?php $page_end = ((($start/$limit)+($after+1)) > $pages) ? $pages : (($start/$limit)+($after+1)); ?>
+<?php $extra = isset($_GET['display']) ? '&display='.$_GET['display'] : NULL; ?>
+<?php for($i=$page_start;$i<$page_end;$i++): ?>
+<?php if((($limit*($i+1))-$limit) == $start): ?>
+<?php echo '<td class="alt2"><a href="'.$php_self.'?id='.$id.'&start='.($i*$limit).'&limit='.$limit.$extra.'" class="minitext"><strong>'.($i+1).'</strong></a></td>'; if(($i+1) != $page_end): echo ''; endif; ?>
+<?php else: echo '<td class="alt2"><a href="'.$php_self.'?id='.$id.'&start='.($i*$limit).'&limit='.$limit.$extra.'" class="minitext">'.($i+1).'</a></td>'; if(($i+1) != $page_end): echo '';  endif; ?>
+<?php endif; endfor; ?>
+
+			<?php $next_start = (($start+$limit) < (($pages*$limit)-$limit)) ? ($start+$limit) : (($pages*$limit)-$limit); ?>
+<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start='.$next_start.'&limit='.$limit.'" class="minitext">'; ?>
+><?php echo '</a></td>'; ?>
+			<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start='.(($pages*$limit)-$limit).'&limit='.$limit.'" class="minitext">'; ?>
+»<?php echo '</a></td>'; ?>
+		<?php else: echo '<td class="alt2">1</td>'; endif; else: echo '<td class="alt2">1</td>'; endif; ?>
+	</tr>
+</table>
+</div>
+
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="5"><?php echo $template["L_MESSAGES"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td> </td>
+		<td width="60%"><?php echo $template["L_SUBJECT"]; ?></td>
+		<td align="center"> <?php echo $template["L_FROM"]; ?> </td>
+		<td align="center"> <?php echo $template["L_SENTON"]; ?> </td>
+		<td align="center"> <?php echo $template["L_DELETE"]; ?> </td>
+	</tr>
+	<?php $pmessages = new CachingIterator(get_iterator($template->pmessages));  foreach($pmessages as $obj8):  $template->Push($obj8); ?>
+	<tr class="<?php echo $template["classname"]; ?>">
+		
+		<td align="center"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/PostIcons/<?php echo $template["icon"]; ?>" alt="" /></td>
+		<td><a href="member.php?act=view_msg&id=<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></a> (<?php echo $template["num_children"]; ?>)</td>
+		<td align="center"><a href="member.php?id=<?php echo $template["poster_id"]; ?>"><?php echo $template["poster_name"]; ?></a></td>
+		<td align="center" nowrap="nowrap"><span class="minitext"><?php echo $template["created"]; ?></span></td>
+		<td align="center"><?php echo $template["delete"]; ?></td>
+	</tr>
+	<?php $template->Pop();  endforeach; ?>
+</table>
+</div>
+<div align="right">
+<table cellpadding="0" cellspacing="1" border="0" class="pagination">
+	<tr>
+		<td class="pagination"><?php echo $template["L_PAGE"]; ?></td>
+		<?php $limit = !isset($_GET['limit']) ? $template['maxthreads'] : intval($_GET['limit']); ?>
+<?php $before = 3; ?>
+<?php $after = 3; ?>
+<?php $id = intval(@$_GET['id']); ?>
+<?php $start = intval(@$_GET['start']); ?>
+<?php $php_self = $_SERVER['PHP_SELF']; ?>
+<?php if ($template->pmessages && $template->obj9 = $template->pmessages && ($template['total_posts'] > $limit)): ?>
+<?php $pages = @ceil($template['total_posts'] / $limit); ?>
+<?php if($pages > 1): ?>
+
+			<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start=0&limit='.$limit.'" class="minitext">'; ?>
+«<?php echo '</a></td>'; ?>
+
+			<?php $prev_start = (($start-$limit) != 0 && ($start-$limit) > 0) ? ($start-$limit) : 0; ?>
+<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start='.$prev_start.'&limit='.$limit.'" class="minitext">'; ?><<?php echo '</a></td>'; ?>
+			<?php $page_start = ((($start/$limit)-$before) < 0) ? 0 : (($start/$limit)-$before); ?>
+<?php $page_end = ((($start/$limit)+($after+1)) > $pages) ? $pages : (($start/$limit)+($after+1)); ?>
+<?php $extra = isset($_GET['display']) ? '&display='.$_GET['display'] : NULL; ?>
+<?php for($i=$page_start;$i<$page_end;$i++): ?>
+<?php if((($limit*($i+1))-$limit) == $start): ?>
+<?php echo '<td class="alt2"><a href="'.$php_self.'?id='.$id.'&start='.($i*$limit).'&limit='.$limit.$extra.'" class="minitext"><strong>'.($i+1).'</strong></a></td>'; if(($i+1) != $page_end): echo ''; endif; ?>
+<?php else: echo '<td class="alt2"><a href="'.$php_self.'?id='.$id.'&start='.($i*$limit).'&limit='.$limit.$extra.'" class="minitext">'.($i+1).'</a></td>'; if(($i+1) != $page_end): echo '';  endif; ?>
+<?php endif; endfor; ?>
+
+			<?php $next_start = (($start+$limit) < (($pages*$limit)-$limit)) ? ($start+$limit) : (($pages*$limit)-$limit); ?>
+<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start='.$next_start.'&limit='.$limit.'" class="minitext">'; ?>
+><?php echo '</a></td>'; ?>
+			<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start='.(($pages*$limit)-$limit).'&limit='.$limit.'" class="minitext">'; ?>
+»<?php echo '</a></td>'; ?>
+		<?php else: echo '<td class="alt2">1</td>'; endif; else: echo '<td class="alt2">1</td>'; endif; ?>
+	</tr>
+</table>
+</div>
+
+
+<?php endif; ?>
+<?php endif; ?>

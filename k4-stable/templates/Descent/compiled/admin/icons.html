@@ -1,0 +1,150 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<script language="javascript" type="text/javascript">
+// 
+var exts = "gif jpe jpeg jpg png".split(" ");
+function changeSlash(string) {
+	var String = string.split("\\");
+	var new_string = '';
+	for(var i=0;i<String.length;i++) {
+		new_string = (i != String.length-1) ? new_string + String[i] + '/' : new_string + String[i];
+	}
+	return new_string;
+}
+function switchImage(this_id) {
+	if(this_id.value != '') {
+		var src = this_id.value;
+		var ext = src.split(".");
+		if(in_array(ext[ext.length-1], exts)) {
+			window.open('javascript:"<strong><?php echo $template["L_IMAGEPREVIEW"]; ?></strong>:<br /><img src=\'' + changeSlash(src) + '\' />"');
+			this_id.className = "inputbox";
+		} else {
+			this_id.className = "inputfailed";
+			alert("<?php echo $template["L_INVALIDFILE"]; ?>");
+		}
+	}
+}
+function setPreview(this_id) {
+	if(this_id[this_id.selectedIndex].value != '') {
+		var preview = document.getElementById("icon_preview");
+		preview.src = 'Images/<?php echo $template["IMG_DIR"]; ?>/Icons/PostIcons/' + this_id[this_id.selectedIndex].value;
+	}
+}
+function setEmoPreview(this_id) {
+	if(this_id[this_id.selectedIndex].value != '') {
+		var preview = document.getElementById("emo_preview");
+		preview.src = 'Images/<?php echo $template["IMG_DIR"]; ?>/Icons/Emoticons/' + this_id[this_id.selectedIndex].value;
+	}
+}
+// 
+</script>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_ICONS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box"><?php echo $template["L_ICONSMESSAGE"]; ?></div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_MODICONS"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><?php echo $template["L_UPDATEICONS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td colspan="2">
+			<div class="outset_box" style="height:100px; overflow:auto; padding:5px;">
+			<span class="smalltext">
+			<?php if ($template->posticons != NULL): ?>
+			<?php $posticons = new CachingIterator(get_iterator($template->posticons));  foreach($posticons as $obj1):  $template->Push($obj1); ?>
+			<form action="admin.php?act=updatepi" method="POST" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+			<input type="hidden" name="id" value="<?php echo $template["id"]; ?>" />
+			<img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/PostIcons/<?php echo $template["image"]; ?>" alt="<?php echo $template["description"]; ?>" id="posticon<?php echo $template["id"]; ?>" />
+			<?php echo $template["L_DESCRIPTION"]; ?>: <input type="text" size="10" name="description" id="<?php echo $template["L_DESCRIPTION"]; ?>" value="<?php echo $template["description"]; ?>" class="inputbox" check="true" /> 
+			<?php echo $template["L_IMAGE"]; ?>: <input type="text" name="image" id="<?php echo $template["L_IMAGE"]; ?>" value="<?php echo $template["image"]; ?>" class="inputbox" check="true" /> 
+			<?php echo $template["L_UPLOADNEW"]; ?>: <input type="file" name="upload" id="<?php echo $template["L_UPLOADNEW"]; ?>" value="" class="inputbox" onChange="switchImage(this)" /> 
+			<input type="submit" value="<?php echo $template["L_GO"]; ?>" class="minitext" /> <a href="admin.php?act=deletepi&id=<?php echo $template["id"]; ?>" class="minitext" style="text-decoration: underline; "><?php echo $template["L_DELETE"]; ?></a>
+			</form>
+			<?php if ($posticons->HasNext()): ?><hr size="1" noshade="noshade" /><?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+			</span>
+			</div>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><?php echo $template["L_ADDPOSTICON"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+		<form action="admin.php?act=addpi" method="POST" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+		<?php echo $template["L_DESCRIPTION"]; ?>: <input type="text" name="description" id="<?php echo $template["L_DESCRIPTION"]; ?>" value="<?php echo $template["description"]; ?>" class="inputbox" check="true" /><br />
+		<?php echo $template["L_IMAGE"]; ?>: <select name="current_images" onChange="setPreview(this)">
+		<?php if ($template->icon_images != NULL): ?>
+		<?php $icon_images = new CachingIterator(get_iterator($template->icon_images));  foreach($icon_images as $obj3):  $template->Push($obj3); ?><option value="<?php echo $template["file"]; ?>"><?php echo $template["file"]; ?></option><?php $template->Pop();  endforeach; ?>
+		<?php endif; ?>
+		</select>  <?php echo $template["L_UPLOADNEW"]; ?>: <input type="file" name="upload" id="<?php echo $template["L_UPLOADNEW"]; ?>" value="" class="inputbox" onChange="switchImage(this)" />
+		<br /><input type="submit" value="<?php echo $template["L_SAVE"]; ?>" /><input type="reset" value="<?php echo $template["L_RESET"]; ?>" />
+		</form>
+		</td>
+		<td class="outset_box">
+		<div align="center">
+		<strong><?php echo $template["L_IMAGEPREVIEW"]; ?></strong><br />
+		<img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/PostIcons/clear.gif" id="icon_preview" />
+		</div>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><?php echo $template["L_EMOTICONS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td colspan="2">
+			<div class="outset_box" style="height:100px; overflow:auto; padding:5px;">
+			<span class="smalltext">
+			<?php if ($template->emoticons != NULL): ?>
+			<?php $emoticons = new CachingIterator(get_iterator($template->emoticons));  foreach($emoticons as $obj4):  $template->Push($obj4); ?>
+			<form action="admin.php?act=updateemo" method="POST" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+			<input type="hidden" name="id" value="<?php echo $template["id"]; ?>" />
+			<img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/Emoticons/<?php echo $template["image"]; ?>" alt="<?php echo $template["description"]; ?>" id="emoticon<?php echo $template["id"]; ?>" />
+			<?php echo $template["L_DESCRIPTION"]; ?>: <input type="text" size="10" name="description" id="<?php echo $template["L_DESCRIPTION"]; ?>" value="<?php echo $template["description"]; ?>" class="inputbox" check="true" /> 
+			<?php echo $template["L_IMAGE"]; ?>: <input type="text" name="image" id="<?php echo $template["L_IMAGE"]; ?>" value="<?php echo $template["image"]; ?>" class="inputbox" check="true" /> 
+			<?php echo $template["L_UPLOADNEW"]; ?>: <input type="file" name="upload" id="<?php echo $template["L_UPLOADNEW"]; ?>" value="" class="inputbox" onChange="switchImage(this)" /> 
+			<input type="submit" value="<?php echo $template["L_GO"]; ?>" class="minitext" /> <a href="admin.php?act=deleteemo&id=<?php echo $template["id"]; ?>" class="minitext" style="text-decoration: underline; "><?php echo $template["L_DELETE"]; ?></a>
+			</form>
+			<?php if ($emoticons->HasNext()): ?><hr size="1" noshade="noshade" /><?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+			</span>
+			</div>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><?php echo $template["L_ADDEMOICON"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+		<form action="admin.php?act=addemo" method="POST" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+		<?php echo $template["L_TYPED"]; ?>: <input type="text" name="typed" id="<?php echo $template["L_TYPED"]; ?>" class="inputbox" check="true" /><br />
+		<?php echo $template["L_DESCRIPTION"]; ?>: <input type="text" name="description" id="<?php echo $template["L_DESCRIPTION"]; ?>" class="inputbox" check="true" /><br />
+		<?php echo $template["L_IMAGE"]; ?>: <select name="current_images" onChange="setEmoPreview(this)">
+		<?php if ($template->emo_images != NULL): ?>
+		<?php $emo_images = new CachingIterator(get_iterator($template->emo_images));  foreach($emo_images as $obj6):  $template->Push($obj6); ?><option value="<?php echo $template["file"]; ?>"><?php echo $template["file"]; ?></option><?php $template->Pop();  endforeach; ?>
+		<?php endif; ?>
+		</select>  <?php echo $template["L_UPLOADNEW"]; ?>: <input type="file" name="upload" id="<?php echo $template["L_UPLOADNEW"]; ?>" value="" class="inputbox" onChange="switchImage(this)" />
+		<br /><input type="submit" value="<?php echo $template["L_SAVE"]; ?>" /><input type="reset" value="<?php echo $template["L_RESET"]; ?>" />
+		</form>
+		</td>
+		<td class="outset_box">
+		<div align="center">
+		<strong><?php echo $template["L_IMAGEPREVIEW"]; ?></strong><br />
+		<img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/Emoticons/clear.gif" id="emo_preview" />
+		</div>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>

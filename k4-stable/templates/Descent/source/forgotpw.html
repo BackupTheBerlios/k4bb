@@ -1,0 +1,25 @@
+<div id="form_errors" style="">
+	<list:list id="form_errors">
+		<ul>
+			<list:item>
+				<li>{$message}</li>
+			</list:item>
+		</ul>
+	</list:list>
+</div>
+<div class="forum_content">
+<form action="member.php?act=resetpw" enctype="multipart/form-data" method="post" id="forgotpw_form" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2" align="left"><strong>{$L_ENTEREMAIL}</strong></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_EMAIL}:</td>
+		<td><input type="text" name="email" id="{$L_EMAIL}" value="" size="50" check="true" /></td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><input type="submit" class="button" value="{$L_RESETPW}" /><input type="reset" class="button" value="{$L_RESET}" /></td>
+	</tr>
+</table>
+</form>
+</div>

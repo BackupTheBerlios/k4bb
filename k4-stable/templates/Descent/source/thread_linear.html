@@ -1,0 +1,250 @@
+<block:block id="poll">
+<div align="center">
+<table cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="tcat">
+		<td nowrap="nowrap">{$L_POLL}: <strong>{$poll_question}</strong></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div align="center" class="outset_box">
+			<block:block id="poll_vote">
+			<form action="posting.php?act=vote&amp;id={$thread_id}" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="poll_id" value="{$thread_id}" />
+			<table width="70%" cellpadding="0" cellspacing="1" border="0" >
+				<list:list id="poll_options">
+				<list:item>
+				<tr class="panel">
+					<td align="left" nowrap="nowrap">
+						<label for="option{$id}"><input type="radio" name="option" id="option{$id}" value="{$id}" />&nbsp;{$name}</label>
+					</td>
+				</tr>
+				</list:item>
+				</list:list>
+				<tr class="thead">
+					<td align="center">
+						<input type="submit" value="{$L_VOTE}" />
+					</td>
+				</tr>
+			</table>
+			<br />
+			<a href="viewthread.php?id={$thread_id}&amp;results=true" class="smalltext">{$L_VIEWRESULTS}</a>
+			</form>
+			</block:block>
+			<block:block id="poll_results">
+			<table cellpadding="0" cellspacing="1" border="0" >
+				<tr class="tcat">
+					<td align="center" class="minitext" nowrap="nowrap" style="padding: 3px;">{$L_OPTION}</td>
+					<td align="center" class="minitext" nowrap="nowrap" style="padding: 3px;"></td>
+					<td align="center" class="minitext" nowrap="nowrap" style="padding: 3px;">{$L_NUMVOTES}</td>
+					<td align="center" class="minitext" nowrap="nowrap" style="padding: 3px;">{$L_PERCENTAGE}</td>
+				</tr>
+				<list:list id="poll_options">
+				<list:item>
+				<tr class="panel">
+					<td align="left" nowrap="nowrap">{$name}</td>
+					<td align="left" style="width: 100px;"><div style="width:{$percentage}%;height:5px;background-color:{$color};border:2px outset;font-size:3px;">&nbsp;</div></td>
+					<td align="center">{$num_votes}</td>
+					<td align="center">{$percentage}%</td>
+				</tr>
+				</list:item>
+				</list:list>
+				<tr class="thead">
+					<td align="center" colspan="4">
+						{$L_NUMVOTES} ({$total_votes})
+					</td>
+				</tr>
+			</table>
+			</block:block>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+</block:block>
+<div align="right">
+<table cellpadding="0" cellspacing="0" border="0" class="forum_content" style="position:relative;top:1px;">
+	<tr>
+		<td><a href="posting.php?act=post_reply&amp;id={$thread_id}"><img src="Images/{$IMG_DIR}/Buttons/post_reply.gif" alt="{$L_POSTREPLY}" border="0" /></a></td>
+		<block:block id="thread_pagination">
+		<td>
+			<table cellpadding="0" cellspacing="1" border="0" align="right" style="float:right;" class="pagination">
+				<tr>
+					<td class="pagination">{$L_PAGE}</td>
+					<list:navigator use="postlimit" limit="" list_id="thread">
+						<list:first class="alt3">&laquo;</list:first>
+						<list:prev class="alt3">&lt;</list:prev>
+						<list:page class="alt2" separator="" />
+						<list:next class="alt3">&gt;</list:next>
+						<list:last class="alt3">&raquo;</list:last>
+					</list:navigator>
+				</tr>
+			</table>
+		</td>
+		</block:block>
+	</tr>
+</table>
+</div>
+<list:list id="thread">
+<list:item>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0" id="post_{$count}" style="">
+	<tr class="tcat">
+		<td width="80%">&nbsp;</td>
+		<td nowrap="nowrap">
+			<!--{$L_DISPLAYMODES}-->
+			<ul id="nav0" class="nav">
+				<li>
+					<span>{$L_DISPLAYMODES}</span>
+					<ul style="padding-top:5px; " class="nav">
+						<div class="forum_content">
+						<table cellpadding="0" cellspacing="1" border="0">
+							<tr>
+								<td nowrap="nowrap"><img src="Images/{$IMG_DIR}/Icons/post_linear.gif" alt="{$L_THREADED}" />&nbsp;<a href="viewthread.php?id={$id}&amp;display=linear">{$L_LINEAR}</a></td>
+							</tr>
+							<tr>
+								<td nowrap="nowrap"><img src="Images/{$IMG_DIR}/Icons/post_vertical.gif" alt="{$L_THREADED}" />&nbsp;<a href="viewthread.php?id={$id}&amp;display=vertical">{$L_VERTICAL}</a></td>
+							</tr>
+						</table>
+						</div>
+					</ul>
+				</li>
+			</ul>
+		</td>
+		<td nowrap="nowrap">
+			<ul id="nav1" class="nav">
+				<li>
+					<span>{$L_RATETHREAD}</span>
+					<ul style="padding-top:5px; " class="nav">
+						<form action="member.php?act=rate_thread&amp;id={$id}" method="post" enctype="multipart/form-data">
+						<div class="forum_content">
+						<table cellpadding="0" cellspacing="1" border="0">
+							<tr>
+								<td nowrap="nowrap">
+									<input type="radio" name="rating" value="0" /><img src="Images/{$IMG_DIR}/Icons/Rating/0stars.gif" alt="" /><br />
+									<input type="radio" name="rating" value="1" /><img src="Images/{$IMG_DIR}/Icons/Rating/1stars.gif" alt="" /><br />
+									<input type="radio" name="rating" value="2" /><img src="Images/{$IMG_DIR}/Icons/Rating/2stars.gif" alt="" /><br />
+									<input type="radio" name="rating" value="3" /><img src="Images/{$IMG_DIR}/Icons/Rating/3stars.gif" alt="" /><br />
+									<input type="radio" name="rating" value="4" /><img src="Images/{$IMG_DIR}/Icons/Rating/4stars.gif" alt="" /><br />
+									<input type="radio" name="rating" value="5" /><img src="Images/{$IMG_DIR}/Icons/Rating/5stars.gif" alt="" />
+								</td>
+							</tr>
+							<tr>
+								<td align="center"><input type="submit" class="button" value="{$L_RATE}" /></td>
+							</tr>
+						</table>
+						</div>
+						</form>
+					</ul>
+				</li>
+			</ul>
+		</td>
+		<!--<td nowrap="nowrap"><img src="Images/{$IMG_DIR}/Icons/mode_linear.gif" alt="{$L_LINEAR}" /> <a href="viewthread.php?id={$id}&amp;display=linear">{$L_LINEAR}</a></td>
+		<td nowrap="nowrap"><img src="Images/{$IMG_DIR}/Icons/mode_hybrid.gif" alt="{$L_HYBRID}" /> <a href="viewthread.php?id={$id}&amp;display=hybrid">{$L_HYBRID}</a></td>
+		<td nowrap="nowrap"><img src="Images/{$IMG_DIR}/Icons/mode_threaded.gif" alt="{$L_THREADED}" /> <a href="viewthread.php?id={$id}&amp;display=threaded">{$L_THREADED}</a></td>
+		<td nowrap="nowrap"><img src="Images/{$IMG_DIR}/Icons/post_linear.gif" alt="{$L_THREADED}" /> <a href="viewthread.php?id={$id}&amp;display=linear">{$L_LINEAR}</a></td>
+		<td nowrap="nowrap"><img src="Images/{$IMG_DIR}/Icons/post_vertical.gif" alt="{$L_THREADED}" /> <a href="viewthread.php?id={$id}&amp;display=vertical">{$L_VERTICAL}</a></td>-->
+	</tr>
+	<block:import id="threaded_list" />
+	<tr class="thead">
+		<td colspan="6"><a name="{$count}" id="{$count}"></a>{$created}</td>
+	</tr>
+	<tr class="panel">
+		<td colspan="6">
+			<div style="float:left;">{$avatar}</div>
+			<div style="float:right;">{$user_ranks}</div>
+			<strong><a href="member.php?id={$poster_id}">{$poster_name}</a></strong><br />
+			<span class="smalltext">
+			{$L_ONLINESTATUS}: {$online_status}<br />
+			{$L_POSTS}:	{$user_num_posts}<br />
+			{$L_TITLE}: {$user_rank}
+			</span>
+		</td>
+	</tr>
+	<tr class="alt1">
+		<td colspan="6">
+			<strong>{$name}</strong>&nbsp;<img src="Images/{$IMG_DIR}/Icons/PostIcons/{$icon}" /><br />
+			<hr size="1" width="100%" style="color: #003366;" />
+			{$body_text}
+			{$edited}
+			<span class="smalltext">{$signature}</span>
+			<block:block id="attach">
+			<br />
+			<fieldset>
+			<legend>{$L_ATTACHMENTS}</legend>
+			<list:list id="attachments">
+			<list:item>
+			<img src="Images/{$IMG_DIR}/Icons/Attach/{$img}.gif" alt="{$img}" border="0" />&nbsp;<a href="attachments.php?file={$post_id}/{$name}" target="_blank">{$name}</a>	
+			<list:separator><br /></list:separator>
+			</list:item>
+			</list:list>
+			</fieldset>
+			</block:block>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td colspan="6" align="right">{$lock}<a href="posting.php?act=edit&amp;id={$id}"><img src="Images/{$IMG_DIR}/Buttons/edit.gif" alt="{$L_EDIT}" border="0" /></a><a href="posting.php?act=post_reply&amp;id={$id}&amp;quote=true"><img src="Images/{$IMG_DIR}/Buttons/quote.gif" alt="{$L_QUOTE}" border="0" /></a>{$delete}</td>
+	</tr>
+</table>
+</div>
+	<list:sublist parent="thread" function="GetChildren">
+	<list:item>
+	<br />
+	<div class="forum_content">
+	<table width="100%" cellpadding="0" cellspacing="1" border="0" id="post_{$count}" style="">
+		<tr class="thead">
+			<td colspan="5"><span style="position:relative;float:right;display: none;"><a name="{$count}" id="{$count}"></a>#{$count}</span>{$created}</td>
+		</tr>
+		<tr class="panel">
+			<td colspan="5">
+				<div style="float:left;">{$avatar}</div>
+				<div style="float:right;">{$user_ranks}</div>
+				<strong><a href="member.php?id={$poster_id}">{$poster_name}</a></strong><br />
+				<span class="smalltext">
+				{$L_ONLINESTATUS}: {$online_status}<br />
+				{$L_POSTS}:	{$user_num_posts}<br />
+				{$L_TITLE}: {$user_rank}
+				</span>
+			</td>
+		</tr>
+		<tr class="alt1">
+			<td colspan="5">
+			<strong>{$name}</strong><br />
+			<hr size="1" width="100%" style="color: #003366;" />
+			{$body_text}
+			{$edited}
+			<span class="smalltext">{$signature}</span>
+			</td>
+		</tr>
+		<tr class="panel">
+			<td colspan="5" align="right"><a href="posting.php?act=post_reply&amp;id={$id}"><img src="Images/{$IMG_DIR}/Buttons/post_reply.gif" alt="{$L_POSTREPLY}" border="0" /></a><a href="posting.php?act=edit&amp;id={$id}"><img src="Images/{$IMG_DIR}/Buttons/edit.gif" alt="{$L_EDIT}" border="0" /></a><a href="posting.php?act=post_reply&amp;id={$id}&amp;quote=true"><img src="Images/{$IMG_DIR}/Buttons/quote.gif" alt="{$L_QUOTE}" border="0" /></a>{$delete}</td>
+		</tr>
+	</table>
+	</div>
+	</list:item>
+	</list:sublist>
+</list:item>
+</list:list>
+<div align="right">
+<table cellpadding="0" cellspacing="0" border="0" class="forum_content" style="position:relative;top:-1px;">
+	<tr>
+		<td><a href="posting.php?act=post_reply&amp;id={$thread_id}"><img src="Images/{$IMG_DIR}/Buttons/post_reply.gif" alt="{$L_POSTREPLY}" border="0" /></a></td>
+		<block:block id="thread_pagination">
+		<td>
+			<table cellpadding="0" cellspacing="1" border="0" align="right" style="float:right;" class="pagination">
+				<tr>
+					<td class="pagination">{$L_PAGE}</td>
+					<list:navigator use="postlimit" limit="" list_id="thread">
+						<list:first class="alt3">&laquo;</list:first>
+						<list:prev class="alt3">&lt;</list:prev>
+						<list:page class="alt2" separator="" />
+						<list:next class="alt3">&gt;</list:next>
+						<list:last class="alt3">&raquo;</list:last>
+					</list:navigator>
+				</tr>
+			</table>
+		</td>
+		</block:block>
+	</tr>
+</table>
+</div>
+<block:import id="similar_threads" />

@@ -1,0 +1,53 @@
+<isadmin>
+<form action="admin.php?act=update_user" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<div id="form_errors" style=""> </div>
+<input type="hidden" name="id" value="{$id}" />
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2">{$L_USERPROFILE}</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><strong>{$name}'{$L_S} {$L_PROFILE}</strong></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_NAME}</td>
+		<td><input type="text" name="name" id="{$L_NAME}"  value="{$name}" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_REGISTERED}</td>
+		<td><strong>{$created}</strong></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_ONLINESTATUS}</td>
+		<td><strong>{$online_status}</strong></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_LASTSEEN}</td>
+		<td><strong>{$seen}</strong></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_EMAIL}</td>
+		<td><input type="text" name="email" id="{$L_EMAIL}" value="{$email}" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_EMAIL}</td>
+		<td><a href="member.php?act=email&amp;user={$id}"><img src="Images/{$IMG_DIR}/Buttons/email.gif" alt="{$L_EMAIL}" border="0" /></a></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_POSTS}</td>
+		<td><input type="text" name="posts" id="{$L_POSTS}" value="{$posts}" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_TITLE}</td>
+		<td><input type="text" name="rank" id="{$L_RANK}" value="{$rank}" class="inputbox" /></td>
+	</tr>
+	<tr class="thead">
+		<td align="left" colspan="2">
+			<input type="submit" class="button" value="{$L_SAVE}" />&nbsp;<input type="reset" class="button" value="{$L_RESET}" />
+		</td>
+	</tr>
+</table>
+</div>
+</form>
+</isadmin>

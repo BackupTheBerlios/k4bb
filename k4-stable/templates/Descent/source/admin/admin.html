@@ -1,0 +1,68 @@
+<isadmin>
+<script type="text/javascript">
+// <![CDATA[ 
+function SetHelp(string) {
+	document.getElementById('helpline').value = string;
+}
+function ResetHelp() {
+	document.getElementById('helpline').value = '{$L_SELECTADMIN}';
+}
+// ]]>
+</script>
+<!--<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_ADMINPANEL}</td>
+	</tr>
+	<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPCATEGORIES}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=categories">{$L_CATEGORIES}</a></td>
+	<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPFORUMS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=forums">{$L_FORUMS}</a></td>
+	<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPUSERS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=users">{$L_USERS}</a></td>
+	<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPGROUPS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=groups">{$L_GROUPS}</a></td>
+	<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPOPTIONS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=options">{$L_OPTIONS}</a></td>
+	<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPFAQ}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=faq">{$L_FAQ}</a></td>
+	<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPPERMS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=permissions">{$L_PERMISSIONS}</a></td>
+	<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPCENSORING}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=censoring">{$L_CENSORING}</a></td>
+	<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPICONS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=icons">{$L_ICONS}</a></td>
+	<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPCSS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=css">{$L_CSS}</a></td>
+	<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPRANKS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=ranks">{$L_RANKS}</a></td>
+	<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPPRUNE}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=prune">{$L_PRUNE}</a></td>
+	<tr class="alt1">
+		<td colspan="13"><input type="text" id="helpline" value="{$L_SELECTADMIN}" class="alt1" style="border:0px;width:95%;font-size:11px;" readonly="readonly" /></td>
+	</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2">{$L_ADMINPANEL}</td>
+	</tr>
+	<tr>
+		<td width="20%" rowspan="2" valign="top" class="alt1">
+			<table width="100%" cellpadding="0" cellspacing="1" border="0">
+				<tr class="thead"><td>{$L_FORUMS}</td></tr>
+				<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPCATEGORIES}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=categories">{$L_CATEGORIES}</a></td></tr>
+				<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPFORUMS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=forums">{$L_FORUMS}</a></td></tr>
+				<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPPRUNE}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=prune">{$L_PRUNE}</a></td></tr>
+				<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPPERMS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=permissions">{$L_PERMISSIONS}</a></td></tr>
+				<tr class="thead"><td>{$L_USERS}</td></tr>
+				<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPUSERS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=users">{$L_USERS}</a></td></tr>
+				<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPGROUPS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=groups">{$L_GROUPS}</a></td></tr>
+				<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPRANKS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=ranks">{$L_RANKS}</a></td></tr>
+				<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPOPTIONS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=options">{$L_OPTIONS}</a></td></tr>
+				<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPFAQ}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=faq">{$L_FAQ}</a></td></tr>
+				<tr class="thead"><td>{$L_POSTS}</td></tr>
+				<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPCENSORING}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=censoring">{$L_CENSORING}</a></td></tr>
+				<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPICONS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=icons">{$L_ICONS}</a></td></tr>
+				<tr class="panel"><td align="center" onMouseOver="SetHelp('{$L_HELPCSS}')" onMouseOut="ResetHelp()"><a class="smalltext" href="admin.php?act=css">{$L_CSS}</a></td></tr>
+			</table>
+		</td>
+		<td width="80%">
+			<input type="text" id="helpline" value="{$L_SELECTADMIN}" class="alt1" style="border:0px;width:95%;font-size:11px;" readonly="readonly" />
+		</td>
+	</tr>
+</table>-->
+<div align="center">
+<div style="width:85%;text-align:left;">
+<block:import id="admin_panel" />
+</div>
+</div>
+<br />
+<div align="center"><div style="width:400px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext"><a name="bottom" id="bottom"></a>[ Powered By: k4 v.{$VERSION} ] [ Load time: {$load_time} ] [ Num Queries: {$num_queries} ]</div></div>
+</isadmin>

@@ -1,0 +1,61 @@
+<isadmin>
+<![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">]]>
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<title>{$forum_name} - {$title} - Powered by k4</title>
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+	<style type="text/css">
+	<list:list id="css_styles">
+	<list:item>
+	{$name} { {$properties} }
+	<list:separator>
+	</list:separator>
+	</list:item>
+	</list:list>
+	</style>
+	<script language="javascript" type="text/javascript" src="js/form_check.js">/* Easter Egg */</script>
+	<script language="javascript" type="text/javascript" src="js/javascript.js">/* Easter Egg */</script>
+	<script language="javascript" type="text/javascript" src="js/bbcode.js">/* Easter Egg */</script>
+	<script language="javascript" type="text/javascript">
+	// <![CDATA[
+	function log_out()
+	{
+		ht = document.getElementsByTagName("html");
+		ht[0].style.filter = "progid:DXImageTransform.Microsoft.BasicImage(grayscale=1)";
+		if (confirm('{$L_CHECKLOGOUT}'))
+		{
+			return true;
+		}
+		else
+		{
+			ht[0].style.filter = "";
+			return false;
+		}
+	}
+	String.prototype.ucfirst = function() { return this.charAt(0).toUpperCase() + this.substr(1); }
+	function checkForm(form) {
+		var objects = new Array() 
+		var formErrors = "<ul>";	
+		var elements = form.elements;
+		for(i=0; i<elements.length; i++) {
+			if(elements[i].getAttribute('check')) {
+				if(elements[i].value.length == 0) {
+					elements[i].className = 'inputfailed';
+					switchClasses(elements[i].id);
+					formErrors += "<li>{$L_REQUIREDFIELDS}: <strong>" + (elements[i].id).ucfirst() + "</strong></li>";
+				}
+			}
+		}
+		take_errors(formErrors);
+		if(formErrors != "<ul>") { return false; } else { formErrors += "</ul>"; return true; }
+	}
+	// ]]>
+	</script>
+</head>
+<body>
+<block:import id="content" />
+</body>
+</html>
+</isadmin>

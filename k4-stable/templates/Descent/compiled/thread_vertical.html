@@ -1,0 +1,300 @@
+<?php if (!isset($template->poll['hide']) || !$template->poll['hide']):  $template->Push($template->poll); ?>
+<div align="center">
+<table cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="tcat">
+		<td nowrap="nowrap"><?php echo $template["L_POLL"]; ?>: <strong><?php echo $template["poll_question"]; ?></strong></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div align="center" class="outset_box">
+			<?php if (!isset($template->poll_vote['hide']) || !$template->poll_vote['hide']):  $template->Push($template->poll_vote); ?>
+			<form action="posting.php?act=vote&id=<?php echo $template["thread_id"]; ?>" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="poll_id" value="<?php echo $template["thread_id"]; ?>" />
+			<table width="70%" cellpadding="0" cellspacing="1" border="0">
+				<?php if ($template->poll_options != NULL): ?>
+				<?php $poll_options = new CachingIterator(get_iterator($template->poll_options));  foreach($poll_options as $obj0):  $template->Push($obj0); ?>
+				<tr class="panel">
+					<td align="left" nowrap="nowrap">
+						<label for="option<?php echo $template["id"]; ?>"><input type="radio" name="option" id="option<?php echo $template["id"]; ?>" value="<?php echo $template["id"]; ?>" /> <?php echo $template["name"]; ?></label>
+					</td>
+				</tr>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+				<tr class="thead">
+					<td align="center">
+						<input type="submit" value="<?php echo $template["L_VOTE"]; ?>" />
+					</td>
+				</tr>
+			</table>
+			<br />
+			<a href="viewthread.php?id=<?php echo $template["thread_id"]; ?>&results=true" class="smalltext"><?php echo $template["L_VIEWRESULTS"]; ?></a>
+			</form>
+			<?php $template->Pop();  endif; ?>
+			<?php if (!isset($template->poll_results['hide']) || !$template->poll_results['hide']):  $template->Push($template->poll_results); ?>
+			<table cellpadding="0" cellspacing="1" border="0">
+				<tr class="tcat">
+					<td align="center" class="minitext" nowrap="nowrap" style="padding: 3px;"><?php echo $template["L_OPTION"]; ?></td>
+					<td align="center" class="minitext" nowrap="nowrap" style="padding: 3px;" />
+					<td align="center" class="minitext" nowrap="nowrap" style="padding: 3px;"><?php echo $template["L_NUMVOTES"]; ?></td>
+					<td align="center" class="minitext" nowrap="nowrap" style="padding: 3px;"><?php echo $template["L_PERCENTAGE"]; ?></td>
+				</tr>
+				<?php if ($template->poll_options != NULL): ?>
+				<?php $poll_options = new CachingIterator(get_iterator($template->poll_options));  foreach($poll_options as $obj1):  $template->Push($obj1); ?>
+				<tr class="panel">
+					<td align="left" nowrap="nowrap"><?php echo $template["name"]; ?></td>
+					<td align="left" style="width: 100px;"><div style="width:<?php echo $template["percentage"]; ?>%;height:5px;background-color:<?php echo $template["color"]; ?>;border:2px outset;font-size:3px;"> </div></td>
+					<td align="center"><?php echo $template["num_votes"]; ?></td>
+					<td align="center"><?php echo $template["percentage"]; ?>%</td>
+				</tr>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+				<tr class="thead">
+					<td align="center" colspan="4">
+						<?php echo $template["L_NUMVOTES"]; ?> (<?php echo $template["total_votes"]; ?>)
+					</td>
+				</tr>
+			</table>
+			<?php $template->Pop();  endif; ?>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+<?php $template->Pop();  endif; ?>
+<div align="right">
+<table cellpadding="0" cellspacing="0" border="0" class="forum_content" style="position:relative;top:1px;">
+	<tr>
+		<td><a href="posting.php?act=post_reply&id=<?php echo $template["thread_id"]; ?>"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Buttons/post_reply.gif" alt="<?php echo $template["L_POSTREPLY"]; ?>" border="0" /></a></td>
+		<?php if (!isset($template->thread_pagination['hide']) || !$template->thread_pagination['hide']):  $template->Push($template->thread_pagination); ?>
+		<td>
+			<table cellpadding="0" cellspacing="1" border="0" align="right" style="float:right;" class="pagination">
+				<tr>
+					<td class="pagination"><?php echo $template["L_PAGE"]; ?></td>
+					<?php $limit = !isset($_GET['limit']) ? $template['postlimit'] : intval($_GET['limit']); ?>
+<?php $before = 3; ?>
+<?php $after = 3; ?>
+<?php $id = intval(@$_GET['id']); ?>
+<?php $start = intval(@$_GET['start']); ?>
+<?php $php_self = $_SERVER['PHP_SELF']; ?>
+<?php if ($template->thread && $template->obj2 = $template->thread && ($template['total_posts'] > $limit)): ?>
+<?php $pages = @ceil($template['total_posts'] / $limit); ?>
+<?php if($pages > 1): ?>
+
+						<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start=0&limit='.$limit.'" class="minitext">'; ?>
+«<?php echo '</a></td>'; ?>
+
+						<?php $prev_start = (($start-$limit) != 0 && ($start-$limit) > 0) ? ($start-$limit) : 0; ?>
+<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start='.$prev_start.'&limit='.$limit.'" class="minitext">'; ?><<?php echo '</a></td>'; ?>
+						<?php $page_start = ((($start/$limit)-$before) < 0) ? 0 : (($start/$limit)-$before); ?>
+<?php $page_end = ((($start/$limit)+($after+1)) > $pages) ? $pages : (($start/$limit)+($after+1)); ?>
+<?php $extra = isset($_GET['display']) ? '&display='.$_GET['display'] : NULL; ?>
+<?php for($i=$page_start;$i<$page_end;$i++): ?>
+<?php if((($limit*($i+1))-$limit) == $start): ?>
+<?php echo '<td class="alt2"><a href="'.$php_self.'?id='.$id.'&start='.($i*$limit).'&limit='.$limit.$extra.'" class="minitext"><strong>'.($i+1).'</strong></a></td>'; if(($i+1) != $page_end): echo ''; endif; ?>
+<?php else: echo '<td class="alt2"><a href="'.$php_self.'?id='.$id.'&start='.($i*$limit).'&limit='.$limit.$extra.'" class="minitext">'.($i+1).'</a></td>'; if(($i+1) != $page_end): echo '';  endif; ?>
+<?php endif; endfor; ?>
+
+						<?php $next_start = (($start+$limit) < (($pages*$limit)-$limit)) ? ($start+$limit) : (($pages*$limit)-$limit); ?>
+<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start='.$next_start.'&limit='.$limit.'" class="minitext">'; ?>
+><?php echo '</a></td>'; ?>
+						<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start='.(($pages*$limit)-$limit).'&limit='.$limit.'" class="minitext">'; ?>
+»<?php echo '</a></td>'; ?>
+					<?php else: echo '<td class="alt2">1</td>'; endif; else: echo '<td class="alt2">1</td>'; endif; ?>
+				</tr>
+			</table>
+		</td>
+		<?php $template->Pop();  endif; ?>
+	</tr>
+</table>
+</div>
+<?php if ($template->thread != NULL): ?>
+<?php $thread = new CachingIterator(get_iterator($template->thread));  foreach($thread as $obj8):  $template->Push($obj8); ?>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0" id="post_<?php echo $template["count"]; ?>" style="">
+	<tr class="tcat">
+		<td> </td>
+		<td width="80%"> </td>
+		<td nowrap="nowrap">
+			<ul id="nav0" class="nav">
+				<li>
+					<span><?php echo $template["L_DISPLAYMODES"]; ?></span>
+					<ul style="padding-top:5px; ">
+						<div class="forum_content">
+						<table cellpadding="0" cellspacing="1" border="0">
+							<tr>
+								<td nowrap="nowrap"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/post_linear.gif" alt="<?php echo $template["L_THREADED"]; ?>" /> <a href="viewthread.php?id=<?php echo $template["id"]; ?>&display=linear"><?php echo $template["L_LINEAR"]; ?></a></td>
+							</tr>
+							<tr>
+								<td nowrap="nowrap"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/post_vertical.gif" alt="<?php echo $template["L_THREADED"]; ?>" /> <a href="viewthread.php?id=<?php echo $template["id"]; ?>&display=vertical"><?php echo $template["L_VERTICAL"]; ?></a></td>
+							</tr>
+						</table>
+						</div>
+					</ul>
+				</li>
+			</ul>
+		</td>
+		<td nowrap="nowrap">
+			<ul id="nav1" class="nav">
+				<li>
+					<span><?php echo $template["L_RATETHREAD"]; ?></span>
+					<ul style="padding-top:5px; " class="nav">
+						<form action="member.php?act=rate_thread&id=<?php echo $template["id"]; ?>" method="post" enctype="multipart/form-data">
+						<div class="forum_content">
+						<table cellpadding="0" cellspacing="1" border="0">
+							<tr>
+								<td nowrap="nowrap">
+									<input type="radio" name="rating" value="0" /><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/Rating/0stars.gif" alt="" /><br />
+									<input type="radio" name="rating" value="1" /><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/Rating/1stars.gif" alt="" /><br />
+									<input type="radio" name="rating" value="2" /><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/Rating/2stars.gif" alt="" /><br />
+									<input type="radio" name="rating" value="3" /><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/Rating/3stars.gif" alt="" /><br />
+									<input type="radio" name="rating" value="4" /><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/Rating/4stars.gif" alt="" /><br />
+									<input type="radio" name="rating" value="5" /><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/Rating/5stars.gif" alt="" />
+								</td>
+							</tr>
+							<tr>
+								<td align="center"><input type="submit" class="button" value="<?php echo $template["L_RATE"]; ?>" /></td>
+							</tr>
+						</table>
+						</div>
+						</form>
+					</ul>
+				</li>
+			</ul>
+		</td>
+		
+	</tr>
+	<?php if (isset($template->threaded_list['file']) && $t = new Template($template->threaded_list['file'])):  $template->Push($template->threaded_list);  $t->Import($template);  $template->Pop();  endif; ?>
+	<tr class="thead">
+		<td colspan="7"><span style="position:relative;float:right;display: none;"><a name="<?php echo $template["count"]; ?>" id="<?php echo $template["count"]; ?>" />#<?php echo $template["count"]; ?></span><?php echo $template["created"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td nowrap="nowrap" valign="top">
+			<div style="border-bottom:1px dashed #C6C6C6;width:100px;"><strong><a href="member.php?id=<?php echo $template["poster_id"]; ?>"><?php echo $template["poster_name"]; ?></a></strong></div>
+			<div><?php echo $template["avatar"]; ?></div>
+			<?php echo $template["user_ranks"]; ?>
+			<span class="smalltext">
+			<strong><?php echo $template["online_status"]; ?></strong><br />
+			<?php echo $template["L_POSTS"]; ?>:	<?php echo $template["user_num_posts"]; ?><br />
+			<?php echo $template["L_TITLE"]; ?>: <?php echo $template["user_rank"]; ?>
+			</span>
+		</td>
+		<td colspan="7" width="100%" valign="top" class="alt1">
+			<strong><?php echo $template["name"]; ?></strong> <img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/PostIcons/<?php echo $template["icon"]; ?>" /><br />
+			<hr size="1" width="100%" style="color: #003366;" />
+			<?php echo $template["body_text"]; ?>
+			<?php echo $template["edited"]; ?>
+			<span class="smalltext"><?php echo $template["signature"]; ?></span>
+			<?php if (!isset($template->attach['hide']) || !$template->attach['hide']):  $template->Push($template->attach); ?>
+			<br />
+			<fieldset>
+			<legend><?php echo $template["L_ATTACHMENTS"]; ?></legend>
+			<?php if ($template->attachments != NULL): ?>
+			<?php $attachments = new CachingIterator(get_iterator($template->attachments));  foreach($attachments as $obj9):  $template->Push($obj9); ?>
+			<img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/Attach/<?php echo $template["img"]; ?>.gif" alt="<?php echo $template["img"]; ?>" border="0" /> <a href="attachments.php?file=<?php echo $template["post_id"]; ?>/<?php echo $template["name"]; ?>" target="_blank"><?php echo $template["name"]; ?></a>	
+			<?php if ($attachments->HasNext()): ?><br /><?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+			</fieldset>
+			<?php $template->Pop();  endif; ?>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td colspan="7" align="right"><?php echo $template["lock"]; ?><a href="posting.php?act=edit&id=<?php echo $template["id"]; ?>"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Buttons/edit.gif" alt="<?php echo $template["L_EDIT"]; ?>" border="0" /></a><a href="posting.php?act=post_reply&id=<?php echo $template["id"]; ?>&quote=true"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Buttons/quote.gif" alt="<?php echo $template["L_QUOTE"]; ?>" border="0" /></a><?php echo $template["delete"]; ?></td>
+	</tr>
+</table>
+</div>
+	<?php if ($template->thread && method_exists($template->thread, 'GetChildren') && $template->obj11 = $template->thread->GetChildren()): ?>
+	<?php $obj11 = new CachingIterator(get_iterator($template->obj11));  foreach($obj11 as $obj12):  $template->Push($obj12); ?>
+	<br />
+	<div class="forum_content">
+	<table width="100%" cellpadding="0" cellspacing="1" border="0" id="post_<?php echo $template["count"]; ?>" style="">
+		<tr class="thead">
+			<td colspan="6"><span style="position:relative;float:right;display: none;"><a name="<?php echo $template["count"]; ?>" id="<?php echo $template["count"]; ?>" />#<?php echo $template["count"]; ?></span><?php echo $template["created"]; ?></td>
+		</tr>
+		<tr class="panel">
+			<td nowrap="nowrap" valign="top">
+				<div style="border-bottom:1px dashed #C6C6C6;width:100px;"><strong><a href="member.php?id=<?php echo $template["poster_id"]; ?>"><?php echo $template["poster_name"]; ?></a></strong></div>
+				<div><?php echo $template["avatar"]; ?></div>
+				<?php echo $template["user_ranks"]; ?>
+				<span class="smalltext">
+				<strong><?php echo $template["online_status"]; ?></strong><br />
+				<?php echo $template["L_POSTS"]; ?>:	<?php echo $template["user_num_posts"]; ?><br />
+				<?php echo $template["L_TITLE"]; ?>: <?php echo $template["user_rank"]; ?>
+				</span>
+			</td>
+			<td colspan="5" width="100%" valign="top" class="alt1">
+				<strong><?php echo $template["name"]; ?></strong> <img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/PostIcons/<?php echo $template["icon"]; ?>" /><br />
+				<hr size="1" width="100%" style="color: #003366;" />
+				<?php echo $template["body_text"]; ?>
+				<?php echo $template["edited"]; ?>
+				<span class="smalltext"><?php echo $template["signature"]; ?></span>
+				<?php if (!isset($template->attach['hide']) || !$template->attach['hide']):  $template->Push($template->attach); ?>
+				<br />
+				<fieldset>
+				<legend><?php echo $template["L_ATTACHMENTS"]; ?></legend>
+				<?php if ($template->attachments != NULL): ?>
+				<?php $attachments = new CachingIterator(get_iterator($template->attachments));  foreach($attachments as $obj13):  $template->Push($obj13); ?>
+				<img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/Attach/<?php echo $template["img"]; ?>.gif" alt="<?php echo $template["img"]; ?>" border="0" /> <a href="attachments.php?file=<?php echo $template["post_id"]; ?>/<?php echo $template["name"]; ?>" target="_blank"><?php echo $template["name"]; ?></a>	
+				<?php if ($attachments->HasNext()): ?><br /><?php endif; ?>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+				</fieldset>
+				<?php $template->Pop();  endif; ?>
+			</td>
+		</tr>
+		<tr class="panel">
+			<td colspan="6" align="right"><a href="posting.php?act=post_reply&id=<?php echo $template["id"]; ?>"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Buttons/post_reply.gif" alt="<?php echo $template["L_POSTREPLY"]; ?>" border="0" /></a><a href="posting.php?act=edit&id=<?php echo $template["id"]; ?>"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Buttons/edit.gif" alt="<?php echo $template["L_EDIT"]; ?>" border="0" /></a><a href="posting.php?act=post_reply&id=<?php echo $template["id"]; ?>&quote=true"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Buttons/quote.gif" alt="<?php echo $template["L_QUOTE"]; ?>" border="0" /></a><?php echo $template["delete"]; ?></td>
+		</tr>
+	</table>
+	</div>
+	<?php $template->Pop();  endforeach; ?>
+	<?php endif; ?>
+<?php $template->Pop();  endforeach; ?>
+<?php endif; ?>
+<div align="right">
+<table cellpadding="0" cellspacing="0" border="0" class="forum_content" style="position:relative;top:-1px;">
+	<tr>
+		<td><a href="posting.php?act=post_reply&id=<?php echo $template["thread_id"]; ?>"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Buttons/post_reply.gif" alt="<?php echo $template["L_POSTREPLY"]; ?>" border="0" /></a></td>
+		<?php if (!isset($template->thread_pagination['hide']) || !$template->thread_pagination['hide']):  $template->Push($template->thread_pagination); ?>
+		<td>
+			<table cellpadding="0" cellspacing="1" border="0" align="right" style="float:right;" class="pagination">
+				<tr>
+					<td class="pagination"><?php echo $template["L_PAGE"]; ?></td>
+					<?php $limit = !isset($_GET['limit']) ? $template['postlimit'] : intval($_GET['limit']); ?>
+<?php $before = 3; ?>
+<?php $after = 3; ?>
+<?php $id = intval(@$_GET['id']); ?>
+<?php $start = intval(@$_GET['start']); ?>
+<?php $php_self = $_SERVER['PHP_SELF']; ?>
+<?php if ($template->thread && $template->obj15 = $template->thread && ($template['total_posts'] > $limit)): ?>
+<?php $pages = @ceil($template['total_posts'] / $limit); ?>
+<?php if($pages > 1): ?>
+
+						<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start=0&limit='.$limit.'" class="minitext">'; ?>
+«<?php echo '</a></td>'; ?>
+
+						<?php $prev_start = (($start-$limit) != 0 && ($start-$limit) > 0) ? ($start-$limit) : 0; ?>
+<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start='.$prev_start.'&limit='.$limit.'" class="minitext">'; ?><<?php echo '</a></td>'; ?>
+						<?php $page_start = ((($start/$limit)-$before) < 0) ? 0 : (($start/$limit)-$before); ?>
+<?php $page_end = ((($start/$limit)+($after+1)) > $pages) ? $pages : (($start/$limit)+($after+1)); ?>
+<?php $extra = isset($_GET['display']) ? '&display='.$_GET['display'] : NULL; ?>
+<?php for($i=$page_start;$i<$page_end;$i++): ?>
+<?php if((($limit*($i+1))-$limit) == $start): ?>
+<?php echo '<td class="alt2"><a href="'.$php_self.'?id='.$id.'&start='.($i*$limit).'&limit='.$limit.$extra.'" class="minitext"><strong>'.($i+1).'</strong></a></td>'; if(($i+1) != $page_end): echo ''; endif; ?>
+<?php else: echo '<td class="alt2"><a href="'.$php_self.'?id='.$id.'&start='.($i*$limit).'&limit='.$limit.$extra.'" class="minitext">'.($i+1).'</a></td>'; if(($i+1) != $page_end): echo '';  endif; ?>
+<?php endif; endfor; ?>
+
+						<?php $next_start = (($start+$limit) < (($pages*$limit)-$limit)) ? ($start+$limit) : (($pages*$limit)-$limit); ?>
+<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start='.$next_start.'&limit='.$limit.'" class="minitext">'; ?>
+><?php echo '</a></td>'; ?>
+						<?php echo '<td class="alt3"><a href="'.$php_self.'?id='.$id.'&start='.(($pages*$limit)-$limit).'&limit='.$limit.'" class="minitext">'; ?>
+»<?php echo '</a></td>'; ?>
+					<?php else: echo '<td class="alt2">1</td>'; endif; else: echo '<td class="alt2">1</td>'; endif; ?>
+				</tr>
+			</table>
+		</td>
+		<?php $template->Pop();  endif; ?>
+	</tr>
+</table>
+</div>
+<?php if (isset($template->similar_threads['file']) && $t = new Template($template->similar_threads['file'])):  $template->Push($template->similar_threads);  $t->Import($template);  $template->Pop();  endif; ?>

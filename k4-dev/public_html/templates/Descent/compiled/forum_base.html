@@ -1,0 +1,292 @@
+<?php echo $context->getVar("doctype"); ?>
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+<head>
+	<title><?php echo $context->getVar("bbtitle"); ?> - <?php echo $context->getVar("current_location"); ?> - Powered by k4</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<meta name="generator" content="k4 Bulletin Board <?php echo $context->getVar("VERSION"); ?>" />
+	<meta name="robots" content="all" />
+	<meta name="revisit-after" content="1 Days" />
+	<meta http-equiv="Expires" content="1" />
+	<meta name="description" content="<?php echo $context->getVar("bbsearchdescription"); ?>" />
+	<meta name="keywords" content="<?php echo $context->getVar("bbkeywords"); ?>" />
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+	<meta name="author" content="k4 Bulletin Board" />
+	<meta name="distribution" content="GLOBAL" />
+	<meta name="rating" content="general" />
+	<?php echo $context->getVar("meta_redirect"); ?>
+	<style type="text/css">
+		/* Main Style Set */
+		<?php if ($context->listReset("css_styles")): ?>
+		<?php while($context->push($context->listNext("css_styles"))): ?>
+		<?php echo $context->getVar("name"); ?> { <?php echo $context->getVar("properties"); ?> }
+		<?php $context->pop(); endwhile; ?>
+		<?php endif; ?>
+		/* Drop Down menus */
+		.nav_top {
+			padding-right: 15px;
+			background-image:url('Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/menu_open.gif');
+			background-repeat: no-repeat;
+			background-position: right center;
+		}
+		.nav_menu {
+			text-align: left;
+		}
+		/* Required info box */
+		.required_info { border: 1px solid #FF0000;font-size:11px;background-color:#FFEEFF;padding:5px; }
+		.required_info a { font-size:11px; }
+	</style>
+	<script type="text/javascript" src="js/javascript.js"></script>
+	<script type="text/javascript" src="js/dd_menu.js"></script>
+	<script type="text/javascript" src="js/bbcode.js"></script>
+</head>
+<body>
+<div align="center">
+<div align="left" class="forum_base">
+
+<!-- Header -->
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+	<tr class="logo_header">
+		<td><a href="index.php" name="top" id="top" title="<?php echo $context->getVar("bbtitle"); ?>"><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/logo.gif" alt="<?php echo $context->getVar("bbtitle"); ?>" border="0" /></a></td>
+		<td valign="middle" align="center"><h1><?php echo $context->getVar("bbdescription"); ?></h1></td>
+	</tr>
+</table>
+<!-- / Header -->
+
+<!-- Header Breadcrumbs Bit -->
+<div class="forum_header" id="forum_header">
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+	<tr>
+		<td width="90%">
+			<div align="left">
+				<img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/navbits_start.gif" alt="<?php echo $context->getVar("bbtitle"); ?>" />&nbsp;<a href="index.php" title="<?php echo $context->getVar("bbtitle"); ?>"><strong><?php echo $context->getVar("bbtitle"); ?></strong></a> 
+				<?php if ($context->listReset("breadcrumbs")): ?>
+				<?php while($context->push($context->listNext("breadcrumbs"))): ?>
+				&gt; <a href="<?php echo $context->getVar("location"); ?>" title="<?php echo $context->getVar("name"); ?>"><strong><?php echo $context->getVar("name"); ?></strong></a>
+				<?php $context->pop(); endwhile; ?>
+				<?php endif; ?>
+				<br />
+				<img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/navbits_finallink.gif" alt="<?php echo $context->getVar("current_location"); ?>" /> <strong><?php echo $context->getVar("current_location"); ?></strong>
+			</div>
+		</td>
+		<td width="10%" nowrap="nowrap">
+			<span class="minitext">
+			<?php echo $context->getVar("date"); ?>
+			</span>
+		</td>
+	</tr>
+</table>
+</div>
+<!-- / Header Breadcrumbs Bit -->
+
+<!-- Main Navigation -->
+<div class="alt1" align="right">
+<table width="100%" cellpadding="3" cellspacing="0" border="0" class="nav_table">
+	<tr class="alt3">
+		<td>
+			<div align="right">
+				<a href="index.php" title="<?php echo $context->getVar("L_HOME"); ?>"><?php echo $context->getVar("L_HOME"); ?></a> 
+				<?php if($context->getVar('calendarenabled') == '1'): ?>| <a href="calendar.php" title="<?php echo $context->getVar("L_CALENDAR"); ?>"><?php echo $context->getVar("L_CALENDAR"); ?></a><?php endif; ?>
+				<?php if($context->getVar('enablememberlist') == '1'): ?>| <a href="member.php?act=list&amp;start=0&amp;limit=30&amp;sort=*" title="<?php echo $context->getVar("L_MEMBERLIST"); ?>"><?php echo $context->getVar("L_MEMBERLIST"); ?></a><?php endif; ?>
+				<?php if($context->getVar('enablesearches') == '1'): ?>| <a href="search.php" title="<?php echo $context->getVar("L_SEARCH"); ?>"><?php echo $context->getVar("L_SEARCH"); ?></a><?php endif; ?>
+				| <a href="faq.php" title="<?php echo $context->getVar("L_FAQ"); ?>"><?php echo $context->getVar("L_FAQ"); ?></a>
+				| <a href="member.php?act=usergroups" title="<?php echo $context->getVar("L_USERGROUPS"); ?>"><?php echo $context->getVar("L_USERGROUPS"); ?></a>
+				| <a class="nav_top" id="quicklinks_link" title="<?php echo $context->getVar("L_QUICKLINKS"); ?>"><?php echo $context->getVar("L_QUICKLINKS"); ?></a>
+				<?php if (is_a($context->session['user'], 'Member')): ?>| <a href="member.php?act=logout" title="<?php echo $context->getVar("L_LOGOUT"); ?>"><?php echo $context->getVar("L_LOGOUT"); ?> [<strong><?php echo $context->getVar("user.name"); ?></strong>]</a><?php endif; ?>
+				<?php if (!is_a($context->session['user'], 'Member')): ?>| <a href="member.php?act=register" title="<?php echo $context->getVar("L_REGISTER"); ?>"><?php echo $context->getVar("L_REGISTER"); ?></a>
+				| <a href="member.php?act=login" title="<?php echo $context->getVar("L_LOGIN"); ?>"><?php echo $context->getVar("L_LOGIN"); ?></a><?php endif; ?>
+				<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>| <a href="admin_index.php" id="admin_link" target="_blank" title="<?php echo $context->getVar("L_ADMINPANEL"); ?>"><strong><?php echo $context->getVar("L_ADMINPANEL"); ?></strong></a><?php endif; ?>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+<!-- / Main Navigation -->
+
+<div class="forum_main" id="forum_main">
+<br />
+<?php if($context->getVar('bbactive') == '1'): ?>
+<?php if(TRUE && (isset($context->session['user']->info['maps']['can_see_board']) && $context->session['user']->info['maps']['can_see_board']['view'] <= $context->session['user']->info['perms'])): ?>
+<?php if ($file = $template->getFile("content", "")):  $template->setFilename($file);  $template->render(); endif; ?>
+<?php if ($file = $template->getFile("content_extra", "")):  $template->setFilename($file);  $template->render(); endif; ?>
+<?php if ($file = $template->getFile("forum_info", "")):  $template->setFilename($file);  $template->render(); endif; ?>
+<?php if ($template->isVisible('forum_status_icons', FALSE)): ?>
+
+<!-- Forum Status Icons -->
+<br />
+<table cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_on.gif" alt="<?php echo $context->getVar("L_FORUMNEWPOSTS"); ?>" /></td>
+		<td><span class="smalltext"><?php echo $context->getVar("L_FORUMNEWPOSTS"); ?></span></td>
+	</tr>
+	<tr>
+		<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_off.gif" alt="<?php echo $context->getVar("L_FORUMNONEWPOSTS"); ?>" /></td>
+		<td><span class="smalltext"><?php echo $context->getVar("L_FORUMNONEWPOSTS"); ?></span></td>
+	</tr>
+	<tr>
+		<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_off_lock.gif" alt="<?php echo $context->getVar("L_FORUMLOCKED"); ?>" /></td>
+		<td><span class="smalltext"><?php echo $context->getVar("L_FORUMLOCKED"); ?></span></td>
+	</tr>
+</table>
+<!-- / Forum Status Icons -->
+
+<?php endif; ?>
+<?php else: ?>
+
+<!-- You don't have permission to view the forums -->
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td><?php echo $context->getVar("L_INFORMATION"); ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">
+				<?php echo $context->getVar("L_YOUNEEDPERMS"); ?>
+			</div>
+		</td>
+	</tr>
+</table>
+<!-- / You don't have permission to view the forums -->
+
+<?php endif; ?>
+<?php else: ?>
+
+<!-- Board is Closed -->
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td><?php echo $context->getVar("L_INFORMATION"); ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">
+				<?php echo $context->getVar("bbclosedreason"); ?>
+			</div>
+		</td>
+	</tr>
+</table>
+<!-- / Board is Closed -->
+
+<?php endif; ?>
+<br />
+
+<!-- Footer Breadcrumbs Bit -->
+<table cellpadding="0" cellspacing="1" border="0" width="100%">
+	<tr>
+		<td width="100%">
+			<div align="left">
+				<img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/navbits_start.gif" alt="<?php echo $context->getVar("bbtitle"); ?>" />&nbsp;<a href="index.php" title="<?php echo $context->getVar("bbtitle"); ?>"><strong><?php echo $context->getVar("bbtitle"); ?></strong></a>
+				<?php if ($context->listReset("breadcrumbs")): ?>
+				<?php while($context->push($context->listNext("breadcrumbs"))): ?>
+				&gt; <a href="<?php echo $context->getVar("location"); ?>" title="<?php echo $context->getVar("name"); ?>"><strong><?php echo $context->getVar("name"); ?></strong></a>
+				<?php $context->pop(); endwhile; ?>
+				<?php endif; ?>
+				&gt;&nbsp;<strong><?php echo $context->getVar("current_location"); ?></strong>
+			</div>
+		</td>
+	</tr>
+</table>
+<!-- / Footer Breadcrumbs Bit -->
+
+<br />
+</div>
+
+<!-- Footer -->
+<div class="alt1" align="right">
+	<table width="100%" cellpadding="3" cellspacing="0" border="0" class="alt1">
+		<tr class="alt3">
+			<td align="right">
+				<a href="<?php echo $context->getVar("contactuslink"); ?>" alt="<?php echo $context->getVar("L_CONTACTUS"); ?>"><?php echo $context->getVar("L_CONTACTUS"); ?></a> - <a href="#top"><?php echo $context->getVar("L_TOP"); ?></a>
+			</td>
+		</tr>
+	</table>
+</div>
+<!-- / Footer -->
+
+</div>
+</div>
+<br />
+
+<!-- Quick Links Drop Down Menu -->
+<div id="quicklinks_menu" class="nav_menu" style="">
+	<table cellpadding="0" cellspacing="1" border="0" class="forum_content">
+		<tr class="tcat">
+			<td><?php echo $context->getVar("L_QUICKLINKS"); ?></td>
+		</tr>
+		<tr class="panel">
+			<td><a href="search.php?act=new_posts" title="<?php echo $context->getVar("L_NEWPOSTS"); ?>"><?php echo $context->getVar("L_NEWPOSTS"); ?></a></td>
+		</tr>
+		<?php if (is_a($context->session['user'], 'Member')): ?>
+		<tr class="tcat">
+			<td nowrap="nowrap"><?php echo $context->getVar("L_USERCONTROLPANEL"); ?></td>
+		</tr>
+		<tr class="panel">
+			<td><a href="member.php?act=profile" title="<?php echo $context->getVar("L_PROFILE"); ?>"><?php echo $context->getVar("L_PROFILE"); ?></a></td>
+		</tr>
+		<?php endif; ?>
+		<tr class="tcat">
+			<td><?php echo $context->getVar("L_MISCELLANEOUS"); ?></td>
+		</tr>
+		<tr class="panel">
+			<td nowrap="nowrap"><a href="index.php?act=markforums" title="<?php echo $context->getVar("L_MARKFORUMSREAD"); ?>"><?php echo $context->getVar("L_MARKFORUMSREAD"); ?></a></td>
+		</tr>
+	</table>
+</div>
+<script type="text/javascript">
+	new RegisterMenu('quicklinks_link', 'quicklinks_menu', '1', '-1', '1', '-1');
+</script>
+<!-- / Quick Links Drop Down Menu -->
+
+<!-- Benchmarking -->
+<div align="center">
+	<div style="width:400px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">
+		[ <a href="http://www.newmediums.net" alt="k4 Home Page" title="k4 Home Page" target="_blank">Powered By: k4 v.<?php echo $context->getVar("VERSION"); ?></a> ]
+		[ Load time: <?php echo $context->getVar("load_time"); ?> ]
+		[ Num Queries: <?php echo $context->getVar("num_queries"); ?> ]
+		<br />
+		<?php echo $context->getVar("copyrighttext"); ?>
+	</div>
+</div>
+<!-- / Benchmarking -->
+
+<a name="bottom" id="bottom"></a>
+
+<!--
+COPYRIGHT NOTICE
+
+// Please keep this copyright notice in place, this forum took a hell of a long time to make, and I deserve credit.
+
+/**
+* k4 Bulletin Board, index.php
+*
+* Copyright (c) 2004, Peter Goodman
+*
+* Permission is hereby granted, free of charge, to any person obtaining
+* a copy of this software and associated documentation files (the
+* "Software"), to deal in the Software without restriction, including
+* without limitation the rights to use, copy, modify, merge, publish,
+* distribute, sublicense, and/or sell copies of the Software, and to
+* permit persons to whom the Software is furnished to do so, subject to
+* the following conditions:
+*
+* The above copyright notice and this permission notice shall be
+* included in all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+* BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+* ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+* CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*
+* @author Peter Goodman
+* @author Geoffrey Goodman
+* @author James Logsdon
+* @version $Id: forum_base.html,v 1.1 2005/04/05 02:32:36 necrotic Exp $
+* @package k42
+*/
+-->
+
+</body>
+</html>

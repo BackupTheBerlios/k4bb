@@ -1,0 +1,17 @@
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_PRIVATEFORUM}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box" align="center">
+			<form action="member.php?act=forum_login&amp;id={$forum_id}" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="return Reset(this);">
+			<strong>{$L_PRIVATEFORUMLOGIN}</strong><br /><br />
+			{$L_PASSWORD}: <input type="password" name="pass" value="" class="inputbox" /> <input type="submit" value="{$L_LOGIN}" />
+			</form>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>

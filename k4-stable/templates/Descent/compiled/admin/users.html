@@ -1,0 +1,91 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_USERS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box"><?php echo $template["L_USERSMESSAGE"]; ?></div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<form action="admin.php?act=redirect_eu" method="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_EDITUSER"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<?php echo $template["L_USERNAME"]; ?>: <input type="text" name="name" value="" class="inputbox" check="true" />
+			<input type="submit" value="<?php echo $template["L_EDIT"]; ?>" name="edit" class="button" /><input type="submit" value="<?php echo $template["L_DELETE"]; ?>" name="delete" class="button" />
+			<br /><input type="button" class="button" value="<?php echo $template["L_FINDUSER"]; ?>" />
+		</td>
+	</tr>
+</table>
+</form>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_DISALLOWNAME"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<form action="admin.php?act=add_badname" method="POST" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+			<?php echo $template["L_USERNAME"]; ?>: <input type="text" name="name" class="inputbox" id="<?php echo $template["L_USERNAME"]; ?>" value="" check="true" />
+			    <input type="submit" value="<?php echo $template["L_DISALLOW"]; ?>" class="button" />
+			</form>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td><?php echo $template["L_DISALLOWEDNAMES"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box" style="height:100px; overflow:auto; padding:5px;">
+			<?php if ($template->disallowed_nicks != NULL): ?>
+			<?php $disallowed_nicks = new CachingIterator(get_iterator($template->disallowed_nicks));  foreach($disallowed_nicks as $obj1):  $template->Push($obj1); ?>
+			<form action="admin.php?act=update_daun" method="POST" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+			<input type="hidden" name="id" value="<?php echo $template["id"]; ?>" />
+			<?php echo $template["L_USERNAME"]; ?>: <input type="text" name="name" class="inputbox" id="<?php echo $template["L_USERNAME"]; ?>" value="<?php echo $template["name"]; ?>" check="true" />
+			    <input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" />    <a href="admin.php?act=remove_badnick&id=<?php echo $template["id"]; ?>"><?php echo $template["L_DELETE"]; ?></a>
+			</form>
+			<?php if ($disallowed_nicks->HasNext()): ?><hr /><?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+			</div>
+		</td>
+	</tr>
+</table>
+<br />
+<form action="admin.php?act=ban_user" method="POST" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_BANUSER"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<?php echo $template["L_USERNAME"]; ?>: <input type="text" name="name" value="" class="inputbox" />
+			<input type="submit" class="button" value="<?php echo $template["L_BANUSER"]; ?>" />
+			<input type="button" class="button" value="<?php echo $template["L_FINDUSER"]; ?>" />
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td><?php echo $template["L_BANNEDUSERS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box" style="height:100px; overflow:auto; padding:5px;">
+			<?php if ($template->banned_users != NULL): ?>
+			<?php $banned_users = new CachingIterator(get_iterator($template->banned_users));  foreach($banned_users as $obj3):  $template->Push($obj3); ?>
+			<?php echo $template["L_USERNAME"]; ?>: <strong><?php echo $template["name"]; ?></strong>    <a href="admin.php?act=unban_user&name=<?php echo $template["name"]; ?>"><?php echo $template["L_UNBAN"]; ?></a>
+			<?php if ($banned_users->HasNext()): ?><hr /><?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+			</div>
+		</td>
+	</tr>
+</table>
+</form>
+<?php endif; ?>

@@ -1,0 +1,31 @@
+<isadmin>
+<h1>{$L_BROWSE}</h1>
+<table cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="30">{$table_name}</td>
+	</tr>
+	<tr class="thead">
+		<list:list id="cols">
+		<list:item>
+		<td>{$name}</td>
+		</list:item>
+		</list:list>
+	</tr>
+	<tr class="panel">
+	<list:list id="rows">
+	<list:item>
+		<list:sublist parent="rows" function="GetChildren">
+		<list:item>
+		<td nowrap="nowrap">{$col_value}</td>
+		</list:item>
+		</list:sublist>
+	</list:item>
+	</list:list>	
+	<list:list id="row_hack">
+	<list:item>
+	{$row}
+	</list:item>
+	</list:list>
+	</tr>
+</table>
+</isadmin>

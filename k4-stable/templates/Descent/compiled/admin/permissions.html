@@ -1,0 +1,37 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_PERMISSIONS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box"><?php echo $template["L_PERMSMESSAGE"]; ?></div>
+		</td>
+	</tr>
+</table>
+<br />
+<form action="admin.php" method="GET" enctype="multipart/form-data">
+<input type="hidden" name="act" value="mod_perms" />
+<table width="100%" cellpadding="0" cellspacing="1">
+	<tr class="tcat">
+		<td><?php echo $template["L_SELECTFORUM"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td align="center">
+			<?php if ($template->forums != NULL): ?>
+			<select name="forum" id="forum">
+			<?php $forums = new CachingIterator(get_iterator($template->forums));  foreach($forums as $obj1):  $template->Push($obj1); ?>
+				<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+			<?php $template->Pop();  endforeach; ?>
+			</select>
+			<?php endif; ?>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td align="left">
+			<input type="submit" class="button" value="<?php echo $template["L_SELECT"]; ?>" />
+		</td>
+	</tr>
+</table>
+</form>
+<?php endif; ?>

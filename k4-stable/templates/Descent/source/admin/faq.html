@@ -1,0 +1,258 @@
+<isadmin>
+<script type="text/javascript">
+//<![CDATA[
+function checkDelete(message)
+{
+	ht = document.getElementsByTagName("html");
+	ht[0].style.filter = "progid:DXImageTransform.Microsoft.BasicImage(grayscale=1)";
+	var the_confirm = (message == 0) ? "{$L_CHECKDELFAQCAT}" : "{$L_CHECKDELFAQ}";
+	if (confirm(the_confirm)) {
+		return true;
+	} else {
+		ht[0].style.filter = "";
+		return false;
+	}
+}
+
+function drawCategories(selected_id) {
+	document.write('<select name="parent_id">');
+	// ]]>
+	<list:list id="all_faq">
+	<list:item>
+	if({$id} == selected_id) {
+		document.write('<option value="{$id}" selected="selected">{$name}</option>');
+	} else {
+		document.write('<option value="{$id}">{$name}</option>');
+	}
+	</list:item>
+	</list:list>//<![CDATA[
+	document.write('</select>');
+}
+// ]]>
+</script>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_FAQ}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">{$L_FAQMESSAGE}</div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2">{$L_MODFAQ}</td>
+	</tr>
+	<tr class="thead">
+		<td align="center"><u>{$L_ADDCATEGORY}</u></td>
+		<td align="center"><u>{$L_DELCATEGORY}</u></td>
+	</tr>
+	<tr class="panel">
+		<td align="center">
+			<form action="admin.php?act=add_faqcat" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+			{$L_NAME}:&nbsp;<input type="text" name="name" value="" id="{$L_NAME}" />
+			<br />
+			<input type="submit" class="button" value="{$L_SAVE}" /><input type="reset" class="button" value="{$L_RESET}" />
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=del_faqcat" method="post" enctype="multipart/form-data" onSubmit="return checkDelete(0);">
+			{$L_NAME}:&nbsp;
+			<script language="javascript" type="text/javascript">drawCategories(0)</script>
+			<input type="submit" class="button" value="{$L_DELETE}" />
+			</form>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td align="center" colspan="2"><u>{$L_DELFAQ}</u></td>
+	</tr>
+	<tr class="panel">
+		<td colspan="2">
+			<form action="admin.php?act=del_faq" method="post" enctype="multipart/form-data" onSubmit="return checkDelete(1);">
+			{$L_NAME}:&nbsp;
+			<select name="id" id="{$L_NAME}">
+			<list:list id="all_faq">
+			<list:item>
+				<optgroup label="{$name}" />
+				<list:sublist parent="all_faq" function="GetChildren">
+				<list:item>
+				<option value="{$id}">{$question}</option>
+				</list:item>
+				</list:sublist>
+			</list:item>
+			</list:list>
+			</select>
+			<input type="submit" class="button" value="{$L_DELETE}" />
+			</form>
+		</td>
+	</tr>
+</table>
+<br />
+<form action="admin.php?act=add_faq" method="post" name="post" id="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<script type="text/javascript">
+//<![CDATA[
+u_enter_url				= "{$L_ENTERURL}";
+u_enter_pagetitle		= "{$L_ENTERPAGETITLE}";
+s_webpage_title			= "{$L_PAGETITLE}";
+u_error_enter_url		= " {$L_ERRORENTERURL}";
+s_found_errors			= " {$L_ERRORENTERTITLE}";
+s_error					= "{$L_ERROR}";
+u_error_img				= "{$L_ENTERIMG}";
+u_error_enter_img		= " {$L_ERRORENTERIMG}";
+
+b_help = "{$L_BBCODE_B_HELP}"; // Bold
+i_help = "{$L_BBCODE_I_HELP}"; // Italic
+u_help = "{$L_BBCODE_U_HELP}"; // Underline
+q_help = "{$L_BBCODE_Q_HELP}"; // Quote
+c_help = "{$L_BBCODE_C_HELP}"; // Code
+l_help = "{$L_BBCODE_L_HELP}"; // List
+o_help = "{$L_BBCODE_O_HELP}"; // Ordered List
+p_help = "{$L_BBCODE_P_HELP}"; // Image
+w_help = "{$L_BBCODE_W_HELP}"; // URL
+a_help = "{$L_BBCODE_A_HELP}"; // Close all tags
+s_help = "{$L_BBCODE_S_HELP}"; // Color
+f_help = "{$L_BBCODE_F_HELP}"; // Font Size
+n_help = "{$L_BBCODE_N_HELP}"; // Font
+x_help = "{$L_BBCODE_X_HELP}"; // Omit
+// ]]>
+</script>
+<input type="hidden" name="add" value="1" />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_ADDFAQ}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			{$L_CATEGORY}:&nbsp;
+			<script language="javascript" type="text/javascript" check="true">drawCategories({$parent_id})</script>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<label for="{$L_QUESTION}">{$L_QUESTION}</label>&nbsp;<input type="text" class="inputbox" name="question" id="{$L_QUESTION}" value="" size="70" check="true" />
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div style="float:left; width:80%;">
+			<label for="{$L_ANSWER}">{$L_ANSWER}</label>
+			<br />
+			<input type="button" class="button" accesskey="b" name="addbbcode0" value=" B " style="font-weight:bold; width: 30px" onClick="bbstyle(0)" onMouseOver="helpline('b')" />
+			<input type="button" class="button" accesskey="i" name="addbbcode2" value=" i " style="font-style:italic; width: 30px" onClick="bbstyle(2)" onMouseOver="helpline('i')" />
+			<input type="button" class="button" accesskey="u" name="addbbcode4" value=" u " style="text-decoration: underline; width: 30px" onClick="bbstyle(4)" onMouseOver="helpline('u')" />
+			<input type="button" class="button" accesskey="q" name="addbbcode6" value="Quote" style="width: 50px" onClick="bbstyle(6)" onMouseOver="helpline('q')" />
+			<input type="button" class="button" accesskey="c" name="addbbcode8" value="Code" style="width: 40px" onClick="bbstyle(8)" onMouseOver="helpline('c')" />
+			<input type="button" class="button" name="img" value="IMG" style="width: 40px"  onClick="BBCimg()" onMouseOver="helpline('p')" />
+			<input type="button" class="button" name="url" value="URL" style="text-decoration: underline; width: 40px" onClick="BBCurl()" onMouseOver="helpline('w')" />
+			<input type="button" class="button" name="addbbcode12" value="OMIT" style="color: crimson; width: 40px" onClick="bbstyle(12)" onMouseOver="helpline('x')" />
+			<br />
+			<select name="addbbcode18" onchange="bbfontstyle('[color=' + this.form.addbbcode18.options[this.form.addbbcode18.selectedIndex].value + ']', '[/color]');this.selectedIndex=0;" onMouseOver="helpline('s')">
+				<option style="color:black;" value="black" class="genmed">{$L_FONT_COLOR}</option>
+				<option value="skyblue" style="color:skyblue">{$L_SKYBLUE}</option>
+				<option value="royalblue" style="color:royalblue">{$L_ROYALBLUE}</option>
+				<option value="blue" style="color:blue">{$L_BLUE}</option>
+				<option value="darkblue" style="color:darkblue">{$L_DARKBLUE}</option>
+				<option value="orange" style="color:orange">{$L_ORANGE}</option>
+				<option value="orangered" style="color:orangered">{$L_ORANGERED}</option>
+				<option value="crimson" style="color:crimson">{$L_CRIMSON}</option>
+				<option value="red" style="color:red">{$L_RED}</option>
+				<option value="firebrick" style="color:firebrick">{$L_FIREBRICK}</option>
+				<option value="darkred" style="color:darkred">{$L_DARKRED}</option>
+				<option value="green" style="color:green">{$L_GREEN}</option>
+				<option value="limegreen" style="color:limegreen">{$L_LIMEGREEN}</option>
+				<option value="seagreen" style="color:seagreen">{$L_SEAGREEN}</option>
+				<option value="deeppink" style="color:deeppink">{$L_DEEPPINK}</option>
+				<option value="tomato" style="color:tomato">{$L_TOMATO}</option>
+				<option value="coral" style="color:coral">{$L_CORAL}</option>
+				<option value="purple" style="color:purple">{$L_PURPLE}</option>
+				<option value="indigo" style="color:indigo">{$L_INDIGO}</option>
+				<option value="burlywood" style="color:burlywood">{$L_BURLYWOOD}</option>
+				<option value="sandybrown" style="color:sandybrown">{$L_SANDYBROWN}</option>
+				<option value="sienna" style="color:sienna">{$L_SIENNA}</option>
+				<option value="chocolate" style="color:chocolate">{$L_CHOCOLATE}</option>
+				<option value="teal" style="color:teal">{$L_TEAL}</option>
+				<option value="silver" style="color:silver">{$L_SILVER}</option>
+			</select>
+			<select name="addbbcode20" onchange="bbfontstyle('[size=' + this.form.addbbcode20.options[this.form.addbbcode20.selectedIndex].value + ']', '[/size]')" onMouseOver="helpline('f')">
+				<option>{$L_FONT_SIZE}</option>
+				<option value="12" class="genmed">{$L_FONT_NORMAL}</option>
+				<option value="7" class="genmed">{$L_FONT_TINY}</option>
+				<option value="9" class="genmed">{$L_FONT_SMALL}</option>
+				<option value="18" class="genmed">{$L_FONT_LARGE}</option>
+				<option  value="24" class="genmed">{$L_FONT_HUGE}</option>
+			</select>
+			<a href="javascript:bbstyle(-1)" onmouseover="helpline('a')">{$L_BBCODE_CLOSE_TAGS}</a>
+			<br />
+			<input type="text" name="helpbox" id="helpbox" size="45" maxlength="100" style="width:450px; font-size:10px" class="helpline" value="{$L_STYLES_TIP}" readonly="readonly" />
+			<br />
+			<textarea name="message" id="{$L_ANSWER}" class="inputbox" rows="10" cols="100" style="width:100%;" onKeyPress="changeBack(this)" onSelect="storeCaret(this);" onClick="storeCaret(this);" onKeyup="storeCaret(this);" check="true">{$description}</textarea>
+			</div>
+			<fieldset style="float:right;">
+				<legend>{$L_EMOTICONS}</legend>
+				<table cellpadding="3" cellspacing="1" border="0" id="posticons" width="100%">
+					<tr class="panel">
+						<list:list id="emoticons">
+						<list:item>
+						<list:alternate var="row" a=" " b=" " c="" d="&lt;/tr&gt;&lt;tr class=\'panel\'&gt;">
+						<td nowrap="nowrap">
+							<a href="javascript:emoticon('{$typed}')"><img src="Images/{$IMG_DIR}/Icons/Emoticons/{$image}" alt="{$description}" title="{$description}" border="0" /></a>
+						</td>
+						{$row}
+						</list:alternate>
+						</list:item>
+						</list:list>
+					</tr>	
+				</table>
+			</fieldset>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td><input type="submit" class="button" value="{$L_SAVE}" /><input type="reset" class="button" value="{$L_RESET}" /></td>
+	</tr>
+</table>
+</form>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_EDITFAQ}</td>
+	</tr>
+	<tr class="panel">
+		<td class="outset_box">
+			<list:list id="all_faq">
+			<list:item>
+				<fieldset>
+				<legend>{$name}</legend>
+				<list:sublist parent="all_faq" function="GetChildren">
+				<list:item>
+				<form action="admin.php?act=update_faq" method="post" name="post" id="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+				<input type="hidden" name="add" value="0" />
+				<input type="hidden" name="id" value="{$id}" />
+				<table width="100%" cellpadding="0" cellspacing="1" border="0">
+					<tr class="tcat">
+						<td><strong>{$L_CATEGORY}</strong>:&nbsp;<script language="javascript" type="text/javascript">drawCategories({$parent_id})</script></td>
+					</tr>
+					<tr class="panel">
+						<td><strong>{$L_QUESTION}</strong>:&nbsp;<input type="text" name="question" size="70" id="{$L_QUESTION}" value="{$question}" check="true" /></td>
+					</tr>
+					<tr class="panel">
+						<td><strong>{$L_ANSWER}</strong>:<br /><textarea name="message" id="{$L_ANSWER}" style="width:100%;" rows="5" class="smalltext" onKeyPress="changeBack(this)" check="true">{$answer}</textarea></td>
+					</tr>
+					<tr class="thead">
+						<td><input type="submit" class="button" value="{$L_SAVE}" /><input type="reset" class="button" value="{$L_RESET}" /></td>
+					</tr>
+				</table>
+				</form>
+				<list:separator><br /></list:separator>
+				</list:item>
+				</list:sublist>
+				</fieldset>
+				<list:separator><br /></list:separator>
+			</list:item>
+			</list:list>
+		</td>
+	</tr>
+</table>
+</isadmin>

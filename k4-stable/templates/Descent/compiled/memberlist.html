@@ -1,0 +1,114 @@
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<?php if ($template->letters != NULL): ?>
+	<tr class="thead">
+		<?php $letters = new CachingIterator(get_iterator($template->letters));  foreach($letters as $obj0):  $template->Push($obj0); ?>
+		<td align="center"><a href="<?php echo $template["action"]; ?>"><?php echo $template["name"]; ?></a></td>
+		<?php $template->Pop();  endforeach; ?>
+	</tr>
+	<?php endif; ?>
+</table>
+</div>
+<br />
+<div align="right">
+<table cellpadding="0" cellspacing="1" border="0" class="pagination">
+	<tr>
+		<td class="pagination"><?php echo $template["L_PAGE"]; ?></td>
+		<?php $limit = !isset($_GET['limit']) ? $template[''] : intval($_GET['limit']); ?>
+<?php $before = 3; ?>
+<?php $after = 3; ?>
+<?php $id = intval(@$_GET['id']); ?>
+<?php $start = intval(@$_GET['start']); ?>
+<?php $php_self = $_SERVER['PHP_SELF']; ?>
+<?php if ($template->memberlist && $template->obj1 = $template->memberlist && ($template['total_posts'] > $limit)): ?>
+<?php $pages = @ceil($template['total_posts'] / $limit); ?>
+<?php if($pages > 1): ?>
+
+			<?php $extra = NULL; $url = new Url($php_self); $get = explode(";", 'act;sort'); foreach($get as $key) { if(isset($_GET[$key]) && $key != '' && $_GET[$key] != '') { $url[$key] = $_GET[$key]; } } if($_GET['act'] == 'list' && !@$_GET['sort']) { $url['sort'] = '#'; } ?>
+<?php echo '<td class="alt3"><a href="'.$url->__toString().'&start=0&limit='.$limit.$extra.'" class="minitext">'; ?>
+«<?php echo '</a></td>'; ?>
+
+			<?php $prev_start = (($start-$limit) != 0 && ($start-$limit) > 0) ? ($start-$limit) : 0; ?>
+<?php echo '<td class="alt3"><a href="'.$url->__toString().'&start='.$prev_start.'&limit='.$limit.$extra.'" class="minitext">'; ?><<?php echo '</a></td>'; ?>
+			<?php $page_start = ((($start/$limit)-$before) < 0) ? 0 : (($start/$limit)-$before); ?>
+<?php $page_end = ((($start/$limit)+($after+1)) > $pages) ? $pages : (($start/$limit)+($after+1)); ?>
+<?php for($i=$page_start;$i<$page_end;$i++): ?>
+<?php if((($limit*($i+1))-$limit) == $start): ?>
+<?php echo '<td class="alt2"><a href="'.$url->__toString().'&start='.($i*$limit).'&limit='.$limit.$extra.'" class="minitext"><strong>'.($i+1).'</strong></a></td>'; if(($i+1) != $page_end): echo ''; endif; ?>
+<?php else: echo '<td class="alt2"><a href="'.$url->__toString().'&start='.($i*$limit).'&limit='.$limit.$extra.'" class="minitext">'.($i+1).'</a></td>'; if(($i+1) != $page_end): echo '';  endif; ?>
+<?php endif; endfor; ?>
+
+			<?php $next_start = (($start+$limit) < (($pages*$limit)-$limit)) ? ($start+$limit) : (($pages*$limit)-$limit); ?>
+<?php echo '<td class="alt3"><a href="'.$url->__toString().'&start='.$next_start.'&limit='.$limit.$extra.'" class="minitext">'; ?>
+><?php echo '</a></td>'; ?>
+			<?php echo '<td class="alt3"><a href="'.$url->__toString().'&start='.(($pages*$limit)-$limit).'&limit='.$limit.$extra.'" class="minitext">'; ?>
+»<?php echo '</a></td>'; ?>
+		<?php else: echo '<td class="alt2">1</td>'; endif; else: echo '<td class="alt2">1</td>'; endif; ?>
+	</tr>
+</table>
+</div>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="6"><?php echo $template["L_MEMBERLIST"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td><?php echo $template["L_USERNAME"]; ?></td>
+		<td><?php echo $template["L_POSTS"]; ?></td>
+		<td><?php echo $template["L_REGISTERED"]; ?></td>
+		<td><?php echo $template["L_AVATAR"]; ?></td>
+		<td><?php echo $template["L_TITLE"]; ?></td>
+		<td><?php echo $template["L_ONLINESTATUS"]; ?></td>
+	</tr>
+	<?php if ($template->memberlist != NULL): ?>
+	<?php $memberlist = new CachingIterator(get_iterator($template->memberlist));  foreach($memberlist as $obj7):  $template->Push($obj7); ?>
+	<tr class="panel">
+		<td><a href="member.php?id=<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></a></td>
+		<td><?php echo $template["posts"]; ?></td>
+		<td><?php echo $template["created"]; ?></td>
+		<td align="center"><?php echo $template["avatar"]; ?></td>
+		<td><?php echo $template["rank"]; ?></td>
+		<td><?php echo $template["online_status"]; ?></td>
+	</tr>
+	<?php $template->Pop();  endforeach; ?>
+	<?php endif; ?>
+</table>
+</div>
+<div align="right">
+<table cellpadding="0" cellspacing="1" border="0" class="pagination">
+	<tr>
+		<td class="pagination"><?php echo $template["L_PAGE"]; ?></td>
+		<?php $limit = !isset($_GET['limit']) ? $template[''] : intval($_GET['limit']); ?>
+<?php $before = 3; ?>
+<?php $after = 3; ?>
+<?php $id = intval(@$_GET['id']); ?>
+<?php $start = intval(@$_GET['start']); ?>
+<?php $php_self = $_SERVER['PHP_SELF']; ?>
+<?php if ($template->memberlist && $template->obj8 = $template->memberlist && ($template['total_posts'] > $limit)): ?>
+<?php $pages = @ceil($template['total_posts'] / $limit); ?>
+<?php if($pages > 1): ?>
+
+			<?php $extra = NULL; $url = new Url($php_self); $get = explode(";", 'act;sort'); foreach($get as $key) { if(isset($_GET[$key]) && $key != '' && $_GET[$key] != '') { $url[$key] = $_GET[$key]; } } if($_GET['act'] == 'list' && !@$_GET['sort']) { $url['sort'] = '#'; } ?>
+<?php echo '<td class="alt3"><a href="'.$url->__toString().'&start=0&limit='.$limit.$extra.'" class="minitext">'; ?>
+«<?php echo '</a></td>'; ?>
+
+			<?php $prev_start = (($start-$limit) != 0 && ($start-$limit) > 0) ? ($start-$limit) : 0; ?>
+<?php echo '<td class="alt3"><a href="'.$url->__toString().'&start='.$prev_start.'&limit='.$limit.$extra.'" class="minitext">'; ?><<?php echo '</a></td>'; ?>
+			<?php $page_start = ((($start/$limit)-$before) < 0) ? 0 : (($start/$limit)-$before); ?>
+<?php $page_end = ((($start/$limit)+($after+1)) > $pages) ? $pages : (($start/$limit)+($after+1)); ?>
+<?php for($i=$page_start;$i<$page_end;$i++): ?>
+<?php if((($limit*($i+1))-$limit) == $start): ?>
+<?php echo '<td class="alt2"><a href="'.$url->__toString().'&start='.($i*$limit).'&limit='.$limit.$extra.'" class="minitext"><strong>'.($i+1).'</strong></a></td>'; if(($i+1) != $page_end): echo ''; endif; ?>
+<?php else: echo '<td class="alt2"><a href="'.$url->__toString().'&start='.($i*$limit).'&limit='.$limit.$extra.'" class="minitext">'.($i+1).'</a></td>'; if(($i+1) != $page_end): echo '';  endif; ?>
+<?php endif; endfor; ?>
+
+			<?php $next_start = (($start+$limit) < (($pages*$limit)-$limit)) ? ($start+$limit) : (($pages*$limit)-$limit); ?>
+<?php echo '<td class="alt3"><a href="'.$url->__toString().'&start='.$next_start.'&limit='.$limit.$extra.'" class="minitext">'; ?>
+><?php echo '</a></td>'; ?>
+			<?php echo '<td class="alt3"><a href="'.$url->__toString().'&start='.(($pages*$limit)-$limit).'&limit='.$limit.$extra.'" class="minitext">'; ?>
+»<?php echo '</a></td>'; ?>
+		<?php else: echo '<td class="alt2">1</td>'; endif; else: echo '<td class="alt2">1</td>'; endif; ?>
+	</tr>
+</table>
+</div>
+<br />

@@ -1,0 +1,5 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<form action="files.php?act=upload_bgimage" method="post" enctype="multipart/form-data">
+<input type="file" class="inputbox" name="bgimgfileselect" id="bgimgfileselect" size="30" /><input type="submit" value="<?php echo $template["L_UPLOAD"]; ?>" class="button" />
+</form>
+<?php endif; ?>

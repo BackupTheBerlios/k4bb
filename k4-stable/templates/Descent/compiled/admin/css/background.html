@@ -1,0 +1,68 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr>
+		<td>
+			<?php echo $template["L_BACKGROUNDCOLOR"]; ?>: <img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/colorpicker.gif" id="bg_color_preview" style="background-color:#FFFFFF; position:relative;" onClick="ShowColorPicker('background_color_picker', 'bg_color_preview', 'background-color')" border="0" alt="" /><div id="background_color_picker" style="display:none;position:absolute;" onClick="this.style.display='none'"><script type="text/javascript">drawColorPicker();</script></div> <input type="text" style="font-size: 10px;" name="background-color" id="background-color" value="" class="inputbox" size="10" maxlength="7" />
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<script type="text/javascript">
+			// 
+			function popupUpload() {
+				if(confirm('<?php echo $template["L_PREPUPLOADIMG"]; ?>')) {
+					return popup_upload('files.php?act=upload_file');
+				}
+			}
+			// 
+			</script>
+			<a href="javascript:;" onClick="popupUpload()"><?php echo $template["L_UPLOADBGIMAGE"]; ?></a><br />
+			<?php echo $template["L_BACKGROUNDIMAGE"]; ?>:<input type="text" class="inputbox" name="background-image" id="background-image" size="40" value="" />
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<?php echo $template["L_REPEAT"]; ?>: 
+			<select name="background-repeat" id="background-repeat" class="smalltext">
+				<option value="" />
+				<option value="repeat">repeat</option>
+				<option value="no-repeat">no-repeat</option>
+				<option value="repeat-x">repeat-x</option>
+				<option value="repeat-y">repeat-y</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<?php echo $template["L_ATTACHMENT"]; ?>: 
+			<select name="background-attachment" id="background-attachment" class="smalltext">
+				<option value="" />
+				<option value="fixed">fixed</option>
+				<option value="scroll">scroll</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<?php echo $template["L_HORIZPOSITION"]; ?>: 
+			<select id="horizauntal" class="smalltext">
+				<option value="" />
+				<option value="left">left</option>
+				<option value="center">center</option>
+				<option value="right">right</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<?php echo $template["L_VERTPOSITION"]; ?>: 
+			<select id="vertical" class="smalltext">
+				<option value="" />
+				<option value="top">top</option>
+				<option value="center">center</option>
+				<option value="bottom">bottom</option>
+			</select>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>

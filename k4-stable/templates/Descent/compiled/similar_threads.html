@@ -1,0 +1,24 @@
+<br />
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="4"><?php echo $template["L_SIMILARTHREADS"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td><?php echo $template["L_THREADS"]; ?></td>
+		<td align="center"><?php echo $template["L_FORUM"]; ?></td>
+		<td align="center"><?php echo $template["L_REPLIES"]; ?></td>
+		<td align="center"><?php echo $template["L_AUTHOR"]; ?></td>
+	</tr>
+	<?php if ($template->similarthreads != NULL): ?>
+	<?php $similarthreads = new CachingIterator(get_iterator($template->similarthreads));  foreach($similarthreads as $obj0):  $template->Push($obj0); ?>
+	<tr class="panel">
+		<td class="alt1"><a href="viewthread.php?id=<?php echo $template["id"]; ?>"><strong><?php echo $template["name"]; ?></strong></a></td>
+		<td align="center" class="alt2"><a href="viewforum.php?id=<?php echo $template["forum_id"]; ?>"><strong><?php echo $template["forum_name"]; ?></strong></a></td>
+		<td align="center" class="alt1"><?php echo $template["num_replies"]; ?></td>
+		<td align="center" class="alt2"><a href="member.php?id=<?php echo $template["poster_id"]; ?>" style="text-decoration: underline;"><?php echo $template["poster_name"]; ?></a></td>
+	</tr>
+	<?php $template->Pop();  endforeach; ?>
+	<?php endif; ?>
+</table>
+</div>

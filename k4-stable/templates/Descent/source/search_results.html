@@ -1,0 +1,64 @@
+<div align="right">
+<table cellpadding="0" cellspacing="1" border="0" class="pagination">
+	<tr>
+		<td class="pagination">{$L_PAGE}</td>
+		<list:navigator use="postlimit" limit="50" list_id="search_results">
+			<list:urlfirst params="act;" class="alt3">&laquo;</list:urlfirst>
+			<list:urlprev class="alt3">&lt;</list:urlprev>
+			<list:urlpage class="alt2" separator="" />
+			<list:urlnext class="alt3">&gt;</list:urlnext>
+			<list:urllast class="alt3">&raquo;</list:urllast>
+		</list:navigator>
+	</tr>
+</table>
+</div>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="8">
+			<strong>{$L_SEARCHRESULTS}:</strong> {$search_terms}
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2">&nbsp;</td>
+		<td align="center" class="minitext">{$L_THREADS}</td>
+		<td align="center" class="minitext">{$L_REPLIES}</td>
+		<td align="center" class="minitext">{$L_AUTHOR}</td>
+		<td align="center" class="minitext">{$L_VIEWS}</td>
+		<td align="center" class="minitext">{$L_LASTPOST}</td>
+		<td align="center" class="minitext">{$L_FORUM}</td>
+	</tr>
+<list:list id="search_results">
+<list:item>
+	<list:sublist parent="search_results" function="GetChildren">
+	<list:item>
+	<tr class="panel">
+		<td>&nbsp;</td>
+		<td><img src="Images/{$IMG_DIR}/Icons/PostIcons/{$icon}" alt="" /></td>
+		<td width="50%"><span class="smalltext"><a href="viewthread.php?id={$id}">{$name}</a></span></td>
+		<td align="center" class="alt1">{$num_children}</td>
+		<td align="center" class="alt2"><a href="member.php?id={$poster_id}"><strong>{$poster_name}</strong></a></td>
+		<td align="center" class="alt1">{$views}</td>
+		<td align="center" class="alt2" nowrap="nowrap"><span class="minitext">{$last_reply}<br />{$L_BY}&nbsp;<a href="member.php?id={$reply_uid}" style="text-decoration: underline;">{$reply_uname}</a></span></td>
+		<td align="center" class="alt1"><span class="minitext"><a href="viewforum.php?id={$forum_id}"><strong>{$forum_name}</strong></a></span></td>
+	</tr>
+	</list:item>
+	</list:sublist>
+</list:item>
+</list:list>
+</table>
+</div>
+<div align="right">
+<table cellpadding="0" cellspacing="1" border="0" class="pagination">
+	<tr>
+		<td class="pagination">{$L_PAGE}</td>
+		<list:navigator use="postlimit" limit="50" list_id="search_results">
+			<list:urlfirst params="act;" class="alt3">&laquo;</list:urlfirst>
+			<list:urlprev class="alt3">&lt;</list:urlprev>
+			<list:urlpage class="alt2" separator="" />
+			<list:urlnext class="alt3">&gt;</list:urlnext>
+			<list:urllast class="alt3">&raquo;</list:urllast>
+		</list:navigator>
+	</tr>
+</table>
+</div>

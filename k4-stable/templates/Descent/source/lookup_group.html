@@ -1,0 +1,63 @@
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_LOOKUPGROUP} : <strong>{$group_name}</strong></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<strong>{$L_DESCRIPTION}</strong>: {$group_description}
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<strong>{$L_MODERATOR}</strong>: <a href="member.php?id={$mod_id}">{$mod_name}</a>
+		</td>
+	</tr>
+</table>
+</div>
+<br />
+<div align="right">
+<table cellpadding="0" cellspacing="1" border="0" class="pagination">
+	<tr>
+		<td class="pagination">{$L_PAGE}</td>
+		<list:navigator use="userlimit" limit="15" list_id="users_in_group">
+			<list:first class="alt3">&laquo;</list:first>
+			<list:prev class="alt3">&lt;</list:prev>
+			<list:page class="alt2" separator="" />
+			<list:next class="alt3">&gt;</list:next>
+			<list:last class="alt3">&raquo;</list:last>
+		</list:navigator>
+	</tr>
+</table>
+</div>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_MEMBERS} ({$num_group_users})</td>
+	</tr>
+	<list:list id="users_in_usergroup">
+	<list:item>
+	<tr class="panel">
+		<td>
+			<block:block id="delete_user"><a href="member.php?act=dufg&amp;uid={$id}&amp;gid={$group_id}" style="float: right;">{$L_DELETE}</a></block:block>
+			<a href="member.php?id={$id}">{$name}</a>
+		</td>
+	</tr>
+	</list:item>
+	</list:list>
+</table>
+</div>
+<block:block id="add_user">
+<form action="member.php?act=add_user_to_group" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<div id="form_errors" style="">
+	<list:list id="form_errors">
+		<ul>
+			<list:item>
+				<li>{$message}</li>
+			</list:item>
+		</ul>
+	</list:list>
+</div>
+<strong>{$L_ADDUSER}</strong>:&nbsp;<input type="hidden" name="gid" value="{$group_id}" /><input type="text" class="inputbox" name="username" id="{$L_USERNAME}" value="{$L_USERNAME}" onFocus="this.value = ''" check="true" />&nbsp;<input type="submit" class="button" value="{$L_SAVE}" />&nbsp;<input type="reset" class="button" value="{$L_RESET}" />
+</form>
+</block:block>

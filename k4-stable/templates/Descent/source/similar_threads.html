@@ -1,0 +1,24 @@
+<br />
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="4">{$L_SIMILARTHREADS}</td>
+	</tr>
+	<tr class="thead">
+		<td>{$L_THREADS}</td>
+		<td align="center">{$L_FORUM}</td>
+		<td align="center">{$L_REPLIES}</td>
+		<td align="center">{$L_AUTHOR}</td>
+	</tr>
+	<list:list id="similarthreads">
+	<list:item>
+	<tr class="panel">
+		<td class="alt1"><a href="viewthread.php?id={$id}"><strong>{$name}</strong></a></td>
+		<td align="center" class="alt2"><a href="viewforum.php?id={$forum_id}"><strong>{$forum_name}</strong></a></td>
+		<td align="center" class="alt1">{$num_replies}</td>
+		<td align="center" class="alt2"><a href="member.php?id={$poster_id}" style="text-decoration: underline;">{$poster_name}</a></td>
+	</tr>
+	</list:item>
+	</list:list>
+</table>
+</div>

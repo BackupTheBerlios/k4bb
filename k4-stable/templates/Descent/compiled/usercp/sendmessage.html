@@ -1,0 +1,237 @@
+<?php if ($_SESSION['user'] instanceof Member): ?>
+<form action="member.php?act=<?php echo $template["act"]; ?>" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="Reset(this);">
+<div id="form_errors" style=""> </div>
+<input type="hidden" name="msg_id" id="msg_id" value="<?php echo $template["msg_id"]; ?>" />
+<script type="text/javascript">
+//
+
+u_enter_url				= "<?php echo $template["L_ENTERURL"]; ?>";
+u_enter_pagetitle		= "<?php echo $template["L_ENTERPAGETITLE"]; ?>";
+s_webpage_title			= "<?php echo $template["L_PAGETITLE"]; ?>";
+u_error_enter_url		= " <?php echo $template["L_ERRORENTERURL"]; ?>";
+s_found_errors			= " <?php echo $template["L_ERRORENTERTITLE"]; ?>";
+s_error					= "<?php echo $template["L_ERROR"]; ?>";
+u_error_img				= "<?php echo $template["L_ENTERIMG"]; ?>";
+u_error_enter_img		= " <?php echo $template["L_ERRORENTERIMG"]; ?>";
+
+b_help = "<?php echo $template["L_BBCODE_B_HELP"]; ?>"; // Bold
+i_help = "<?php echo $template["L_BBCODE_I_HELP"]; ?>"; // Italic
+u_help = "<?php echo $template["L_BBCODE_U_HELP"]; ?>"; // Underline
+q_help = "<?php echo $template["L_BBCODE_Q_HELP"]; ?>"; // Quote
+c_help = "<?php echo $template["L_BBCODE_C_HELP"]; ?>"; // Code
+l_help = "<?php echo $template["L_BBCODE_L_HELP"]; ?>"; // List
+o_help = "<?php echo $template["L_BBCODE_O_HELP"]; ?>"; // Ordered List
+p_help = "<?php echo $template["L_BBCODE_P_HELP"]; ?>"; // Image
+w_help = "<?php echo $template["L_BBCODE_W_HELP"]; ?>"; // URL
+a_help = "<?php echo $template["L_BBCODE_A_HELP"]; ?>"; // Close all tags
+s_help = "<?php echo $template["L_BBCODE_S_HELP"]; ?>"; // Color
+f_help = "<?php echo $template["L_BBCODE_F_HELP"]; ?>"; // Font Size
+n_help = "<?php echo $template["L_BBCODE_N_HELP"]; ?>"; // Font
+
+function showTable(Id) {
+	var the_tr = document.getElementById(Id);
+	if(the_tr.style.display == 'block')
+		return the_tr.style.display = 'none';
+	else
+		return the_tr.style.display = 'block';
+}
+function swap_posticon(imgid) {
+	var out = document.getElementById("display_posticon");
+	if (imgid) {
+		out.src = imgid.src;
+		out.alt = imgid.alt;
+	} else {
+		out.src = "Images/<?php echo $template["IMG_DIR"]; ?>/Icons/PostIcons/clear.gif";
+		out.alt = "";
+	}
+}
+function show_buddylist(div_id) {
+	var Id = document.getElementById(div_id);
+	if(Id.style.display == 'none') {
+		Id.style.display = 'block';
+	} else {
+		Id.style.display = 'none';
+	}
+}
+function set_user_to(input_id, user_name) {
+	var Id = document.getElementById(input_id);
+	Id.value = user_name;
+}
+//
+</script>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat" colspan="2">
+		<td colspan="2"><?php echo $template["L_SENDMESSAGE"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2">
+			<?php echo $template["L_LOGGEDAS"]; ?>: <strong><?php echo $template["user_name"]; ?></strong>
+		</td>
+	</tr>
+	<?php if (!isset($template->forward_username['hide']) || !$template->forward_username['hide']):  $template->Push($template->forward_username); ?>
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:95%;">
+				<legend><label for="<?php echo $template["L_TO"]; ?>"><?php echo $template["L_TO"]; ?> (<?php echo $template["L_USERNAME"]; ?>)</label></legend>
+				<input type="text" name="member_name" class="inputbox" id="<?php echo $template["L_TO"]; ?>" value="" size="16" maxlength="16" check="true" />
+				<input type="button" class="button" value="<?php echo $template["L_BUDDYLIST"]; ?>" onclick="show_buddylist('buddy_list')" ondblclick="show_buddylist('buddy_list')" />
+				<div id="buddy_list" style="display:none;position:absolute;z-index:1000;" onclick="this.style.display='none'">
+					<div class="forum_content">
+					<table cellpadding="0" cellspacing="1">
+						<tr class="thead">
+							<td><?php echo $template["L_BUDDYLIST"]; ?></td>
+						</tr>
+						<?php if ($template->buddy_list != NULL): ?>
+						<?php $buddy_list = new CachingIterator(get_iterator($template->buddy_list));  foreach($buddy_list as $obj1):  $template->Push($obj1); ?>
+						<tr class="panel">
+							<td><a href="javascript:;" onclick="set_user_to('<?php echo $template["L_TO"]; ?>', '<?php echo $template["user_name"]; ?>');show_buddylist('buddy_list');"><?php echo $template["user_name"]; ?></a></td>
+						</tr>
+						<?php $template->Pop();  endforeach; ?>
+						<?php endif; ?>
+					</table>
+					</div>
+				</div>
+			</fieldset>
+		</td>
+	</tr>
+	<?php $template->Pop();  endif; ?>
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:95%;">
+				<legend><label for="<?php echo $template["L_SUBJECT"]; ?>"><?php echo $template["L_SUBJECT"]; ?></label></legend>
+				<input type="text" name="name" id="<?php echo $template["L_SUBJECT"]; ?>" value="<?php echo $template["subject"]; ?>" size="80" class="inputbox" maxlength="255" onKeyPress="changeBack(this)" check="true" />
+				<img id="display_posticon" src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/PostIcons/clear.gif" alt="" />
+			</fieldset>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:80%;">
+				<legend><label for="<?php echo $template["L_POST"]; ?>"><?php echo $template["L_MESSAGE"]; ?></label></legend>
+					<?php if (!isset($template->bbcode['hide']) || !$template->bbcode['hide']):  $template->Push($template->bbcode); ?>
+					<input type="button" class="button" accesskey="b" name="addbbcode0" value=" B " style="font-weight:bold; width: 30px" onClick="bbstyle(0)" onMouseOver="helpline('b')" />
+					<input type="button" class="button" accesskey="i" name="addbbcode2" value=" i " style="font-style:italic; width: 30px" onClick="bbstyle(2)" onMouseOver="helpline('i')" />
+					<input type="button" class="button" accesskey="u" name="addbbcode4" value=" u " style="text-decoration: underline; width: 30px" onClick="bbstyle(4)" onMouseOver="helpline('u')" />
+					<input type="button" class="button" accesskey="q" name="addbbcode6" value="Quote" style="width: 50px" onClick="bbstyle(6)" onMouseOver="helpline('q')" />
+					<input type="button" class="button" accesskey="c" name="addbbcode8" value="Code" style="width: 40px" onClick="bbstyle(8)" onMouseOver="helpline('c')" />
+					<input type="button" class="button" name="img" value="IMG" style="width: 40px" onClick="BBCimg()" onMouseOver="helpline('p')" />
+					<input type="button" class="button" name="url" value="URL" style="text-decoration: underline; width: 40px" onClick="BBCurl()" onMouseOver="helpline('w')" />
+					<br />
+					<select name="addbbcode18" onchange="bbfontstyle('[color=' + this.form.addbbcode18.options[this.form.addbbcode18.selectedIndex].value + ']', '[/color]');this.selectedIndex=0;" onMouseOver="helpline('s')">
+						<option style="color:black;" value="black" class="genmed"><?php echo $template["L_FONT_COLOR"]; ?></option>
+						<option value="skyblue" style="color:skyblue"><?php echo $template["L_SKYBLUE"]; ?></option>
+						<option value="royalblue" style="color:royalblue"><?php echo $template["L_ROYALBLUE"]; ?></option>
+						<option value="blue" style="color:blue"><?php echo $template["L_BLUE"]; ?></option>
+						<option value="darkblue" style="color:darkblue"><?php echo $template["L_DARKBLUE"]; ?></option>
+						<option value="orange" style="color:orange"><?php echo $template["L_ORANGE"]; ?></option>
+						<option value="orangered" style="color:orangered"><?php echo $template["L_ORANGERED"]; ?></option>
+						<option value="crimson" style="color:crimson"><?php echo $template["L_CRIMSON"]; ?></option>
+						<option value="red" style="color:red"><?php echo $template["L_RED"]; ?></option>
+						<option value="firebrick" style="color:firebrick"><?php echo $template["L_FIREBRICK"]; ?></option>
+						<option value="darkred" style="color:darkred"><?php echo $template["L_DARKRED"]; ?></option>
+						<option value="green" style="color:green"><?php echo $template["L_GREEN"]; ?></option>
+						<option value="limegreen" style="color:limegreen"><?php echo $template["L_LIMEGREEN"]; ?></option>
+						<option value="seagreen" style="color:seagreen"><?php echo $template["L_SEAGREEN"]; ?></option>
+						<option value="deeppink" style="color:deeppink"><?php echo $template["L_DEEPPINK"]; ?></option>
+						<option value="tomato" style="color:tomato"><?php echo $template["L_TOMATO"]; ?></option>
+						<option value="coral" style="color:coral"><?php echo $template["L_CORAL"]; ?></option>
+						<option value="purple" style="color:purple"><?php echo $template["L_PURPLE"]; ?></option>
+						<option value="indigo" style="color:indigo"><?php echo $template["L_INDIGO"]; ?></option>
+						<option value="burlywood" style="color:burlywood"><?php echo $template["L_BURLYWOOD"]; ?></option>
+						<option value="sandybrown" style="color:sandybrown"><?php echo $template["L_SANDYBROWN"]; ?></option>
+						<option value="sienna" style="color:sienna"><?php echo $template["L_SIENNA"]; ?></option>
+						<option value="chocolate" style="color:chocolate"><?php echo $template["L_CHOCOLATE"]; ?></option>
+						<option value="teal" style="color:teal"><?php echo $template["L_TEAL"]; ?></option>
+						<option value="silver" style="color:silver"><?php echo $template["L_SILVER"]; ?></option>
+					</select>
+					<select name="addbbcode20" onchange="bbfontstyle('[size=' + this.form.addbbcode20.options[this.form.addbbcode20.selectedIndex].value + ']', '[/size]')" onMouseOver="helpline('f')">
+						<option><?php echo $template["L_FONT_SIZE"]; ?></option>
+						<option value="12" class="genmed"><?php echo $template["L_FONT_NORMAL"]; ?></option>
+						<option value="7" class="genmed"><?php echo $template["L_FONT_TINY"]; ?></option>
+						<option value="9" class="genmed"><?php echo $template["L_FONT_SMALL"]; ?></option>
+						<option value="18" class="genmed"><?php echo $template["L_FONT_LARGE"]; ?></option>
+						<option value="24" class="genmed"><?php echo $template["L_FONT_HUGE"]; ?></option>
+					</select>
+					<a href="javascript:bbstyle(-1)" onmouseover="helpline('a')"><?php echo $template["L_BBCODE_CLOSE_TAGS"]; ?></a>
+				<br />
+				<input type="text" name="helpbox" size="45" maxlength="100" style="width:450px; font-size:10px" class="helpline" value="<?php echo $template["L_STYLES_TIP"]; ?>" readonly="readonly" />
+				<br />
+				<?php $template->Pop();  endif; ?>
+				<textarea name="message" id="<?php echo $template["L_POST"]; ?>" class="inputbox" rows="10" cols="100" style="width:100%;" onKeyPress="changeBack(this)" onSelect="storeCaret(this);" onClick="storeCaret(this);" onKeyup="storeCaret(this);" check="true"><?php echo $template["message"]; ?></textarea>
+			</fieldset>
+			<?php if (!isset($template->smilies['hide']) || !$template->smilies['hide']):  $template->Push($template->smilies); ?>
+			<fieldset style="float:right;">
+				<legend><?php echo $template["L_EMOTICONS"]; ?></legend>
+				<table cellpadding="3" cellspacing="1" border="0" id="posticons" width="100%">
+					<tr class="panel">
+						<?php if ($template->emoticons != NULL): ?>
+						<?php $emoticons = new CachingIterator(get_iterator($template->emoticons));  foreach($emoticons as $obj2):  $template->Push($obj2); ?>
+						<?php switch($emoticons->key() % 4):  case 0: $template->Push(array('row' => ' ')); break;  case 1: $template->Push(array('row' => ' ')); break;  case 2: $template->Push(array('row' => '')); break;  case 3: $template->Push(array('row' => '</tr><tr class=\'panel\'>')); break;  default: $template->Push(array());  endswitch; ?>
+						<td align="center">
+							<a href="javascript:emoticon('<?php echo $template["typed"]; ?>')"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/Emoticons/<?php echo $template["image"]; ?>" alt="<?php echo $template["description"]; ?>" title="<?php echo $template["description"]; ?>" border="0" /></a>
+						</td>
+						<?php echo $template["row"]; ?>
+						<?php $template->Pop(); ?>
+						<?php $template->Pop();  endforeach; ?>
+						<?php endif; ?>
+					</tr>	
+				</table>
+			</fieldset>
+			<?php $template->Pop();  endif; ?>
+		</td>
+	</tr>
+	<?php if (!isset($template->post_icons['hide']) || !$template->post_icons['hide']):  $template->Push($template->post_icons); ?>
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:95%;">
+			<legend><label><?php echo $template["L_POSTICONS"]; ?></label></legend>
+			<div align="center">
+			<label for="noicon"><input type="radio" name="posticon" id="noicon" value="-1" checked="checked" onclick="swap_posticon(null)" /> <?php echo $template["L_NOICON"]; ?></label>   
+			<table cellpadding="3" cellspacing="1" border="0" id="posticons">
+				<tr class="panel">
+					<?php if ($template->posticons != NULL): ?>
+					<?php $posticons = new CachingIterator(get_iterator($template->posticons));  foreach($posticons as $obj4):  $template->Push($obj4); ?>
+					<?php switch($posticons->key() % 7):  case 0: $template->Push(array('row' => ' ')); break;  case 1: $template->Push(array('row' => ' ')); break;  case 2: $template->Push(array('row' => ' ')); break;  case 3: $template->Push(array('row' => ' ')); break;  case 4: $template->Push(array('row' => ' ')); break;  case 5: $template->Push(array('row' => ' ')); break;  case 6: $template->Push(array('row' => '</tr><tr class=\'panel\'>')); break;  default: $template->Push(array());  endswitch; ?>
+					<td>
+						<label for="pi<?php echo $template["id"]; ?>"><input type="radio" name="posticon" id="pi<?php echo $template["id"]; ?>" value="<?php echo $template["id"]; ?>" onclick="swap_posticon(pi_<?php echo $template["id"]; ?>)" /><img src="Images/<?php echo $template["IMG_DIR"]; ?>/Icons/PostIcons/<?php echo $template["image"]; ?>" alt="<?php echo $template["description"]; ?>" title="<?php echo $template["description"]; ?>" style="margin-right:10px;" id="pi_<?php echo $template["id"]; ?>" /></label>						
+					</td>
+					<?php echo $template["row"]; ?>
+					<?php $template->Pop(); ?>
+					<?php $template->Pop();  endforeach; ?>
+					<?php endif; ?>
+				</tr>	
+			</table>
+			</div>
+			</fieldset>
+		</td>
+	</tr>
+	<?php $template->Pop();  endif; ?>
+	<tr class="thead">
+		<td align="left" colspan="2">
+			<input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" accesskey="s" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" />
+		</td>
+	</tr>
+</table>
+</div>
+<?php if (!isset($template->post_options['hide']) || !$template->post_options['hide']):  $template->Push($template->post_options); ?>
+<br />
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td onClick="showTable('post_options')" style="cursor:hand;cursor:pointer;"><?php echo $template["L_POSTOPTIONS"]; ?></td>
+	</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" id="post_options" style="display:block;">
+	<tr class="panel">
+		<td>
+			<div class="outset_box" style="width:95%;">
+				<input type="checkbox" name="save" value="1" checked="checked" /> <?php echo $template["L_SAVEINSENTITEMS"]; ?>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+<?php $template->Pop();  endif; ?>
+</form>
+<?php endif; ?>

@@ -1,0 +1,46 @@
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2">{$L_USERPROFILE}</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><strong>{$name}'{$L_S} {$L_PROFILE}</strong></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_NAME}</td>
+		<td><strong>{$name}</strong></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_REGISTERED}</td>
+		<td><strong>{$created}</strong></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_ONLINESTATUS}</td>
+		<td><strong>{$online_status}</strong></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_LASTSEEN}</td>
+		<td><strong>{$seen}</strong></td>
+	</tr>
+	<block:block id="email_address">
+	<tr class="panel">
+		<td>{$L_EMAIL}</td>
+		<td><a href="mailto:{$email}"><img src="Images/{$IMG_DIR}/Buttons/email.gif" alt="{$L_EMAIL}" border="0" /></a></td>
+	</tr>
+	</block:block>
+	<block:block id="email_link">
+	<tr class="panel">
+		<td>{$L_EMAIL}</td>
+		<td><a href="member.php?act=email&amp;user={$id}"><img src="Images/{$IMG_DIR}/Buttons/email.gif" alt="{$L_EMAIL}" border="0" /></a></td>
+	</tr>
+	</block:block>
+	<tr class="panel">
+		<td>{$L_POSTS}</td>
+		<td><strong>{$posts}</strong></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_TITLE}</td>
+		<td><strong>{$rank}</strong></td>
+	</tr>
+</table>
+</div>

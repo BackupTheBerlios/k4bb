@@ -1,0 +1,208 @@
+<isadmin>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_OPTIONS}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">{$L_OPTIONSMESSAGE}</div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<form action="admin.php?act=update_options" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<script language="JavaScript" type="text/javascript">
+//<![CDATA[
+var selects = new Array("{$L_CLOSEFORUMS}","{$L_ALLOWBBCODE}","{$L_ALLOWSMILIES}","{$L_ALLOWPOSTICONS}","{$L_ALLOWHTML}","{$L_ALLOWSIGNATURES}","{$L_ALLOWAVATARS}","{$L_ALLOWPOLLS}")
+var values = "{$closeforums} {$allowbbcode} {$allowsmilies} {$allowposticons} {$allowhtml} {$allowsignatures} {$allowavatars} {$canpostpolls}".split(" ");
+function SetSelects() {
+	/* Deal with the style sets */
+	var styleset = {$styleset};
+	var ss_select = document.getElementById("{$L_STYLESET}");
+	for(var i=0;i<ss_select.length;i++) {
+		if(ss_select[i].value == styleset) {
+			ss_select.selectedIndex = i;
+		}
+	}
+	/* Deal with the basic forum options */
+	for(var i=0;i<selects.length;i++) {
+		var temp_select = document.getElementById(selects[i]);
+		for(var x=0;x<temp_select.length;x++) {
+			if(temp_select[x].value == values[i]) {
+				temp_select.selectedIndex = x;
+			}
+		}
+	}
+}
+AttachEvent(window,'load',SetSelects,false);
+//]]>
+</script>
+<table cellpadding="0" cellspacing="1" border="0" width="100%">
+	<tr class="tcat">
+		<td colspan="2">{$L_OPTIONS}</td>
+	</tr>
+	<tr class="thead" align="center">
+		<td colspan="2">{$L_GENERALOPTIONS}</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_BOARDNAME}</td>
+		<td><input type="text" name="name" value="{$name}" id="{$L_BOARDNAME}" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_BOARDDESCRIPTION}</td>
+		<td><input type="text" name="description" value="{$description}" id="{$L_BOARDDESCRIPTION}" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_CLOSEFORUMS}</td>
+		<td>
+			<select name="closeforums" id="{$L_CLOSEFORUMS}">
+				<option value="0">{$L_NO}</option>
+				<option value="1">{$L_YES}</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_CLOSEDMESSAGE}{$L_CMEXTRA}</td>
+		<td><input type="text" name="closedmessage" value="{$closedmessage}" id="{$L_CLOSEDMESSAGE}" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_THREADLIMIT}</td>
+		<td><input type="text" name="threadsperpage" id="{$L_THREADLIMIT}" value="{$threadsperpage}" size="3" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_POSTLIMIT}</td>
+		<td><input type="text" name="postsperpage" value="{$postsperpage}" id="{$L_POSTLIMIT}" size="3" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2" align="center">{$L_TEMPLATESETTINGS}</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_TEMPLATESET}</td>
+		<td>
+			<select name="folder" id="{$L_TEMPLATESET}" check="true">
+				<list:list id="templates">
+				<list:item>
+				<option value="{$name}">{$name}</option>
+				</list:item>
+				</list:list>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_IMGSET}</td>
+		<td>
+			<select name="imgfolder" id="{$L_IMGSET}" check="true">
+				<list:list id="img_folders">
+				<list:item>
+				<option value="{$name}">{$name}</option>
+				</list:item>
+				</list:list>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_STYLESET}</td>
+		<td>
+			<select name="styleset" id="{$L_STYLESET}" check="true">
+				<list:list id="stylesets">
+				<list:item>
+				<option value="{$id}">{$name}</option>
+				</list:item>
+				</list:list>
+			</select>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2" align="center">{$L_ABILITIESSETTINGS}</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_MAXPOLLOPTIONS}</td>
+		<td><input type="text" name="maxpolloptions" id="{$L_MAXPOLLOPTIONS}" value="{$maxpolloptions}" size="2" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_ALLOWBBCODE}</td>
+		<td>
+			<select name="allowbbcode" id="{$L_ALLOWBBCODE}" check="true">
+				<option value="1">{$L_YES}</option>
+				<option value="0">{$L_NO}</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_ALLOWSMILIES}</td>
+		<td>
+			<select name="allowsmilies" id="{$L_ALLOWSMILIES}" check="true">
+				<option value="1">{$L_YES}</option>
+				<option value="0">{$L_NO}</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_ALLOWPOSTICONS}</td>
+		<td>
+			<select name="allowposticons" id="{$L_ALLOWPOSTICONS}" check="true">
+				<option value="1">{$L_YES}</option>
+				<option value="0">{$L_NO}</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_ALLOWHTML}</td>
+		<td>
+			<select name="allowhtml" id="{$L_ALLOWHTML}" check="true">
+				<option value="0">{$L_NO}</option>
+				<option value="1">{$L_YES}</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_ALLOWEDHTMLTAGS}</td>
+		<td><input type="text" name="allowedhtml" id="{$L_ALLOWEDHTMLTAGS}" value="{$allowedhtml}" size="50" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_ALLOWSIGNATURES}</td>
+		<td>
+			<select name="allowsignatures" id="{$L_ALLOWSIGNATURES}" check="true">
+				<option value="1">{$L_YES}</option>
+				<option value="0">{$L_NO}</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_ALLOWAVATARS}</td>
+		<td>
+			<select name="allowavatars" id="{$L_ALLOWAVATARS}" check="true">
+				<option value="1">{$L_YES}</option>
+				<option value="0">{$L_NO}</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_ALLOWPOLLS}</td>
+		<td>
+			<select name="canpostpolls" id="{$L_ALLOWPOLLS}" check="true">
+				<option value="1">{$L_YES}</option>
+				<option value="0">{$L_NO}</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2" align="center">{$L_EMAILSETTINGS}</td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_ADMINEMAIL}</td>
+		<td><input type="text" name="adminemail" id="{$L_ADMINEMAIL}" value="{$adminemail}" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td>{$L_EMAILSIG}</td>
+		<td><textarea name="emailsig" id="{$L_EMAILSIG}" rows="5" cols="50" class="inputbox" >{$emailsign}</textarea></td>
+	</tr>
+	<tr class="thead">
+		<td align="left" colspan="2">
+			<input type="submit" class="button" value="{$L_APPLYTOALL}" />&nbsp;<input type="reset" class="button" value="{$L_RESET}" />
+		</td>
+	</tr>
+</table>
+</form>
+</isadmin>

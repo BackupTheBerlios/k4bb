@@ -1,0 +1,143 @@
+<?php if ($_SESSION['user'] instanceof Member): ?>
+<form action="member.php?act=update_profile" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<input type="hidden" name="id" value="<?php echo $template["id"]; ?>" />
+<div class="forum_content">
+<table width="100%" border="0" cellpadding="0" cellspacing="1">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_PROFILE"]; ?> : <?php echo $template["username"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><?php echo $template["L_PERSONALINFO"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_USERNAME"]; ?></td>
+		<td width="50%"><?php echo $template["username"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_EMAIL"]; ?></td>
+		<td width="50%"><input type="text" name="email" id="<?php echo $template["L_EMAIL"]; ?>" check="true" value="<?php echo $template["email"]; ?>" maxlength="255" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_HOMEPAGE"]; ?></td>
+		<td width="50%"><input type="text" name="homepage" id="<?php echo $template["L_HOMEPAGE"]; ?>" value="<?php echo $template["homepage"]; ?>" maxlength="255" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_SIGNATURE"]; ?> (<?php echo $template["L_BBCODEALLOWED"]; ?>)</td>
+		<td width="50%"><textarea rows="4" cols="50" name="signature" id="<?php echo $template["L_SIGNATURE"]; ?>"><?php echo $template["signature"]; ?></textarea></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_BIRTHDAY"]; ?></td>
+		<td width="50%">
+			<table cellpadding="0" cellspacing="0" border="0">
+				<tr class="panel">
+					<td align="center"><?php echo $template["L_MONTH"]; ?>:</td>
+					<td align="center"><?php echo $template["L_DAY"]; ?>:</td>
+					<td align="center"><?php echo $template["L_YEAR"]; ?>:</td>
+				</tr>
+				<tr class="panel">
+					<td>
+						<select name="month" id="month" class="inputbox">
+							<option value="-1" selected="selected" />
+							<option value="1"><?php echo $template["L_JANUARY"]; ?></option>
+							<option value="2"><?php echo $template["L_FEBRUARY"]; ?></option>
+							<option value="3"><?php echo $template["L_MARCH"]; ?></option>
+							<option value="4"><?php echo $template["L_APRIL"]; ?></option>
+							<option value="5"><?php echo $template["L_MAY"]; ?></option>
+							<option value="6"><?php echo $template["L_JUNE"]; ?></option>
+							<option value="7"><?php echo $template["L_JULY"]; ?></option>
+							<option value="8"><?php echo $template["L_AUGUST"]; ?></option>
+							<option value="9"><?php echo $template["L_SEPTEMBER"]; ?></option>
+							<option value="10"><?php echo $template["L_OCTOBER"]; ?></option>
+							<option value="11"><?php echo $template["L_NOVEMBER"]; ?></option>
+							<option value="12"><?php echo $template["L_DECEMBER"]; ?></option>
+						</select>  
+					</td>
+					<td>
+						<select name="day" id="day" class="inputbox">
+							<option value="-1" selected="selected" />
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="11">11</option>
+							<option value="12">12</option>
+							<option value="13">13</option>
+							<option value="14">14</option>
+							<option value="15">15</option>
+							<option value="16">16</option>
+							<option value="17">17</option>
+							<option value="18">18</option>
+							<option value="19">19</option>
+							<option value="20">20</option>
+							<option value="21">21</option>
+							<option value="22">22</option>
+							<option value="23">23</option>
+							<option value="24">24</option>
+							<option value="25">25</option>
+							<option value="26">26</option>
+							<option value="27">27</option>
+							<option value="28">28</option>
+							<option value="29">29</option>
+							<option value="30">30</option>
+							<option value="31">31</option>
+						</select>  </td>
+					<td><input class="inputbox" name="year" value="<?php echo $template["year"]; ?>" size="4" maxlength="4" type="text" /></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><?php echo $template["L_INSTANTMESSAGING"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_ICQ"]; ?></td>
+		<td width="50%"><input type="text" name="icq" id="<?php echo $template["L_ICQ"]; ?>" value="<?php echo $template["icq"]; ?>" maxlength="25" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_AIM"]; ?></td>
+		<td width="50%"><input type="text" name="aim" id="<?php echo $template["L_AIM"]; ?>" value="<?php echo $template["aim"]; ?>" maxlength="100" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_MSN"]; ?></td>
+		<td width="50%"><input type="text" name="msn" id="<?php echo $template["L_MSN"]; ?>" value="<?php echo $template["msn"]; ?>" maxlength="100" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_YAHOO"]; ?></td>
+		<td width="50%"><input type="text" name="yahoo" id="<?php echo $template["L_YAHOO"]; ?>" value="<?php echo $template["yahoo"]; ?>" maxlength="100" /></td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><?php echo $template["L_ADDITIONALINFO"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_LOCATION"]; ?></td>
+		<td width="50%"><input type="text" name="location" id="<?php echo $template["L_LOCATION"]; ?>" value="<?php echo $template["location"]; ?>" maxlength="100" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_OCCUPATION"]; ?></td>
+		<td width="50%"><input type="text" name="occupation" id="<?php echo $template["L_OCCUPATION"]; ?>" value="<?php echo $template["occupation"]; ?>" maxlength="100" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_INTERESTS"]; ?></td>
+		<td width="50%"><input type="text" name="interests" id="<?php echo $template["L_INTERESTS"]; ?>" value="<?php echo $template["interests"]; ?>" maxlength="100" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_BIOGRAPHY"]; ?></td>
+		<td width="50%"><textarea rows="4" cols="30" name="biography" id="<?php echo $template["L_BIOGRAPHY"]; ?>"><?php echo $template["biography"]; ?></textarea></td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="2"><input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" /> <input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" /></td>
+	</tr>
+</table>
+</div>
+<script language="javascript" type="text/javascript">
+setIndex(<?php echo $template["month"]; ?>, 'month');
+setIndex(<?php echo $template["day"]; ?>, 'day');
+</script>
+</form>
+<?php endif; ?>

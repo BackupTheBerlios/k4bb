@@ -1,0 +1,31 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<h1><?php echo $template["L_BROWSE"]; ?></h1>
+<table cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="30"><?php echo $template["table_name"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<?php if ($template->cols != NULL): ?>
+		<?php $cols = new CachingIterator(get_iterator($template->cols));  foreach($cols as $obj1):  $template->Push($obj1); ?>
+		<td><?php echo $template["name"]; ?></td>
+		<?php $template->Pop();  endforeach; ?>
+		<?php endif; ?>
+	</tr>
+	<tr class="panel">
+	<?php if ($template->rows != NULL): ?>
+	<?php $rows = new CachingIterator(get_iterator($template->rows));  foreach($rows as $obj2):  $template->Push($obj2); ?>
+		<?php if ($template->rows && method_exists($template->rows, 'GetChildren') && $template->obj3 = $template->rows->GetChildren()): ?>
+		<?php $obj3 = new CachingIterator(get_iterator($template->obj3));  foreach($obj3 as $obj4):  $template->Push($obj4); ?>
+		<td nowrap="nowrap"><?php echo $template["col_value"]; ?></td>
+		<?php $template->Pop();  endforeach; ?>
+		<?php endif; ?>
+	<?php $template->Pop();  endforeach; ?>
+	<?php endif; ?>	
+	<?php if ($template->row_hack != NULL): ?>
+	<?php $row_hack = new CachingIterator(get_iterator($template->row_hack));  foreach($row_hack as $obj5):  $template->Push($obj5); ?>
+	<?php echo $template["row"]; ?>
+	<?php $template->Pop();  endforeach; ?>
+	<?php endif; ?>
+	</tr>
+</table>
+<?php endif; ?>

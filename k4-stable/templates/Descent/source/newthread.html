@@ -1,0 +1,329 @@
+<form action="{$a_add_thread}" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="Reset(this);ResetAttach(this);">
+<div id="form_errors" style="display:none;"> </div>
+<script language="JavaScript" type="text/javascript">
+//<![CDATA[
+
+u_enter_url				= "{$L_ENTERURL}";
+u_enter_pagetitle		= "{$L_ENTERPAGETITLE}";
+s_webpage_title			= "{$L_PAGETITLE}";
+u_error_enter_url		= " {$L_ERRORENTERURL}";
+s_found_errors			= " {$L_ERRORENTERTITLE}";
+s_error					= "{$L_ERROR}";
+u_error_img				= "{$L_ENTERIMG}";
+u_error_enter_img		= " {$L_ERRORENTERIMG}";
+
+b_help = "{$L_BBCODE_B_HELP}"; // Bold
+i_help = "{$L_BBCODE_I_HELP}"; // Italic
+u_help = "{$L_BBCODE_U_HELP}"; // Underline
+q_help = "{$L_BBCODE_Q_HELP}"; // Quote
+c_help = "{$L_BBCODE_C_HELP}"; // Code
+l_help = "{$L_BBCODE_L_HELP}"; // List
+o_help = "{$L_BBCODE_O_HELP}"; // Ordered List
+p_help = "{$L_BBCODE_P_HELP}"; // Image
+w_help = "{$L_BBCODE_W_HELP}"; // URL
+a_help = "{$L_BBCODE_A_HELP}"; // Close all tags
+s_help = "{$L_BBCODE_S_HELP}"; // Color
+f_help = "{$L_BBCODE_F_HELP}"; // Font Size
+n_help = "{$L_BBCODE_N_HELP}"; // Font
+
+function showTable(Id) {
+	var the_tr = document.getElementById(Id);
+	if(the_tr.style.display == 'block')
+		return the_tr.style.display = 'none';
+	else
+		return the_tr.style.display = 'block';
+}
+function swap_posticon(imgid) {
+	var out = document.getElementById("display_posticon");
+	if (imgid) {
+		out.src = imgid.src;
+		out.alt = imgid.alt;
+	} else {
+		out.src = "Images/{$IMG_DIR}/Icons/PostIcons/clear.gif";
+		out.alt = "";
+	}
+}
+
+//]]>
+</script>
+<input type="hidden" name="forum_id" value="{$forum_id}" />
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<block:block id="post_thread">
+	<tr class="tcat" colspan="2">
+		<td colspan="2">{$L_POSTTHREAD}</td>
+	</tr>
+	</block:block>
+	<block:block id="edit_post">
+	<tr class="tcat" colspan="2">
+		<td colspan="2">{$L_EDITPOST} : {$posttitle}<input type="hidden" name="post_id" value="{$post_id}" /></td>
+	</tr>
+	</block:block>
+	<tr class="thead">
+		<td colspan="2">
+			{$L_LOGGEDAS}: <strong>{$user_name}</strong>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:95%;">
+				<legend><label for="{$L_POSTTITLE}">{$L_POSTTITLE}</label></legend>
+				<input type="text" name="title" id="{$L_POSTTITLE}" value="{$posttitle}" size="90" class="inputbox" maxlength="255" onKeyPress="changeBack(this)" check="true" />
+				<img id="display_posticon" src="Images/{$IMG_DIR}/Icons/PostIcons/clear.gif" alt="" />
+			</fieldset>
+		</td>
+	</tr>
+	<!--
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:95%;">
+				<legend><label for="{$L_DESCRIPTION}">{$L_DESCRIPTION}</label></legend>
+				<textarea name="description" id="{$L_DESCRIPTION}" class="inputbox" rows="3" style="width:100%;" cols="50" onKeyPress="changeBack(this)" check="true">{$excerpt}</textarea>
+			</fieldset>
+		</td>
+	</tr>
+	-->
+	<block:block id="poll_options">
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:95%;">
+				<legend><label for="{$L_POLLQUESTION}">{$L_POLLQUESTION}</label></legend>
+				<input type="text" name="poll_question" id="{$L_POLLQUESTION}" value="{$poll_question}" size="90" class="inputbox" maxlength="255" onKeyPress="changeBack(this)" check="true" />
+			</fieldset>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:95%;">
+				<legend><label for="{$L_POLLOPTIONS}">{$L_POLLOPTIONS}</label></legend>
+				<span class="smalltext" style="color: red;">{$L_OPTIONSPERLINE}</span>
+				<select name="addoptioncolor" onchange="bboptionstyle('[color=' + this.form.addoptioncolor.options[this.form.addoptioncolor.selectedIndex].value + ']', '[/color]');this.selectedIndex=0;">
+						<option style="color:black;" value="black" class="genmed">{$L_OPTION_COLOR}</option>
+						<option value="skyblue" style="color:skyblue">{$L_SKYBLUE}</option>
+						<option value="royalblue" style="color:royalblue">{$L_ROYALBLUE}</option>
+						<option value="blue" style="color:blue">{$L_BLUE}</option>
+						<option value="darkblue" style="color:darkblue">{$L_DARKBLUE}</option>
+						<option value="orange" style="color:orange">{$L_ORANGE}</option>
+						<option value="orangered" style="color:orangered">{$L_ORANGERED}</option>
+						<option value="crimson" style="color:crimson">{$L_CRIMSON}</option>
+						<option value="red" style="color:red">{$L_RED}</option>
+						<option value="firebrick" style="color:firebrick">{$L_FIREBRICK}</option>
+						<option value="darkred" style="color:darkred">{$L_DARKRED}</option>
+						<option value="green" style="color:green">{$L_GREEN}</option>
+						<option value="limegreen" style="color:limegreen">{$L_LIMEGREEN}</option>
+						<option value="seagreen" style="color:seagreen">{$L_SEAGREEN}</option>
+						<option value="deeppink" style="color:deeppink">{$L_DEEPPINK}</option>
+						<option value="tomato" style="color:tomato">{$L_TOMATO}</option>
+						<option value="coral" style="color:coral">{$L_CORAL}</option>
+						<option value="purple" style="color:purple">{$L_PURPLE}</option>
+						<option value="indigo" style="color:indigo">{$L_INDIGO}</option>
+						<option value="burlywood" style="color:burlywood">{$L_BURLYWOOD}</option>
+						<option value="sandybrown" style="color:sandybrown">{$L_SANDYBROWN}</option>
+						<option value="sienna" style="color:sienna">{$L_SIENNA}</option>
+						<option value="chocolate" style="color:chocolate">{$L_CHOCOLATE}</option>
+						<option value="teal" style="color:teal">{$L_TEAL}</option>
+						<option value="silver" style="color:silver">{$L_SILVER}</option>
+					</select>
+				<br />
+				<textarea name="polloptions" id="{$L_POLLOPTIONS}" class="inputbox" rows="10" style="width:100%;" cols="50" onKeyPress="changeBack(this)" onSelect="storeCaret(this);" onClick="storeCaret(this);" onKeyup="storeCaret(this);" check="true">{$polloptions}</textarea>
+			</fieldset>
+		</td>
+	</tr>
+	</block:block>
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:80%;">
+				<legend><label for="{$L_POST}">{$L_POST}</label></legend>
+					<block:block id="bbcode">
+					<input type="button" class="button" accesskey="b" name="addbbcode0" value=" B " style="font-weight:bold; width: 30px" onClick="bbstyle(0)" onMouseOver="helpline('b')" />
+					<input type="button" class="button" accesskey="i" name="addbbcode2" value=" i " style="font-style:italic; width: 30px" onClick="bbstyle(2)" onMouseOver="helpline('i')" />
+					<input type="button" class="button" accesskey="u" name="addbbcode4" value=" u " style="text-decoration: underline; width: 30px" onClick="bbstyle(4)" onMouseOver="helpline('u')" />
+					<input type="button" class="button" accesskey="q" name="addbbcode6" value="Quote" style="width: 50px" onClick="bbstyle(6)" onMouseOver="helpline('q')" />
+					<input type="button" class="button" accesskey="c" name="addbbcode8" value="Code" style="width: 40px" onClick="bbstyle(8)" onMouseOver="helpline('c')" />
+					<input type="button" class="button" name="img" value="IMG" style="width: 40px"  onClick="BBCimg()" onMouseOver="helpline('p')" />
+					<input type="button" class="button" name="url" value="URL" style="text-decoration: underline; width: 40px" onClick="BBCurl()" onMouseOver="helpline('w')" />
+					<br />
+					<select name="addbbcode18" onchange="bbfontstyle('[color=' + this.form.addbbcode18.options[this.form.addbbcode18.selectedIndex].value + ']', '[/color]');this.selectedIndex=0;" onMouseOver="helpline('s')">
+						<option style="color:black;" value="black" class="genmed">{$L_FONT_COLOR}</option>
+						<option value="skyblue" style="color:skyblue">{$L_SKYBLUE}</option>
+						<option value="royalblue" style="color:royalblue">{$L_ROYALBLUE}</option>
+						<option value="blue" style="color:blue">{$L_BLUE}</option>
+						<option value="darkblue" style="color:darkblue">{$L_DARKBLUE}</option>
+						<option value="orange" style="color:orange">{$L_ORANGE}</option>
+						<option value="orangered" style="color:orangered">{$L_ORANGERED}</option>
+						<option value="crimson" style="color:crimson">{$L_CRIMSON}</option>
+						<option value="red" style="color:red">{$L_RED}</option>
+						<option value="firebrick" style="color:firebrick">{$L_FIREBRICK}</option>
+						<option value="darkred" style="color:darkred">{$L_DARKRED}</option>
+						<option value="green" style="color:green">{$L_GREEN}</option>
+						<option value="limegreen" style="color:limegreen">{$L_LIMEGREEN}</option>
+						<option value="seagreen" style="color:seagreen">{$L_SEAGREEN}</option>
+						<option value="deeppink" style="color:deeppink">{$L_DEEPPINK}</option>
+						<option value="tomato" style="color:tomato">{$L_TOMATO}</option>
+						<option value="coral" style="color:coral">{$L_CORAL}</option>
+						<option value="purple" style="color:purple">{$L_PURPLE}</option>
+						<option value="indigo" style="color:indigo">{$L_INDIGO}</option>
+						<option value="burlywood" style="color:burlywood">{$L_BURLYWOOD}</option>
+						<option value="sandybrown" style="color:sandybrown">{$L_SANDYBROWN}</option>
+						<option value="sienna" style="color:sienna">{$L_SIENNA}</option>
+						<option value="chocolate" style="color:chocolate">{$L_CHOCOLATE}</option>
+						<option value="teal" style="color:teal">{$L_TEAL}</option>
+						<option value="silver" style="color:silver">{$L_SILVER}</option>
+					</select>
+					<select name="addbbcode20" onchange="bbfontstyle('[size=' + this.form.addbbcode20.options[this.form.addbbcode20.selectedIndex].value + ']', '[/size]')" onMouseOver="helpline('f')">
+						<option>{$L_FONT_SIZE}</option>
+						<option value="12" class="genmed">{$L_FONT_NORMAL}</option>
+						<option value="7" class="genmed">{$L_FONT_TINY}</option>
+						<option value="9" class="genmed">{$L_FONT_SMALL}</option>
+						<option value="18" class="genmed">{$L_FONT_LARGE}</option>
+						<option  value="24" class="genmed">{$L_FONT_HUGE}</option>
+					</select>
+					<a href="javascript:bbstyle(-1)" onmouseover="helpline('a')">{$L_BBCODE_CLOSE_TAGS}</a>
+				<br />
+				<input type="text" name="helpbox" size="45" maxlength="100" style="width:450px; font-size:10px" class="helpline" value="{$L_STYLES_TIP}" readonly="readonly" />
+				<br />
+				</block:block>
+				<textarea name="message" id="{$L_POST}" class="inputbox" rows="10" cols="100" style="width:100%;" onKeyPress="changeBack(this)" onSelect="storeCaret(this);" onClick="storeCaret(this);" onKeyup="storeCaret(this);" check="true">{$message}</textarea>
+			</fieldset>
+			<block:block id="smilies">
+			<fieldset style="float:right;">
+				<legend>{$L_EMOTICONS}</legend>
+				<table cellpadding="3" cellspacing="1" border="0" id="posticons" width="100%">
+					<tr class="panel">
+						<list:list id="emoticons">
+						<list:item>
+						<list:alternate var="row" a=" " b=" " c="" d="&lt;/tr&gt;&lt;tr class=\'panel\'&gt;">
+						<td align="center">
+							<a href="javascript:emoticon('{$typed}')"><img src="Images/{$IMG_DIR}/Icons/Emoticons/{$image}" alt="{$description}" title="{$description}" border="0" /></a>
+						</td>
+						{$row}
+						</list:alternate>
+						</list:item>
+						</list:list>
+					</tr>	
+				</table>
+			</fieldset>
+			</block:block>
+		</td>
+	</tr>
+	<block:block id="post_icons">
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:95%;">
+			<legend><label>{$L_POSTICONS}</label></legend>
+			<div align="center">
+			<label for="noicon"><input type="radio" name="posticon" id="noicon" value="-1" checked="checked" onclick="swap_posticon(null)" /> {$L_NOICON}</label>&nbsp;&nbsp;&nbsp;
+			<table cellpadding="3" cellspacing="1" border="0" id="posticons">
+				<tr class="panel">
+					<list:list id="posticons">
+					<list:item>
+					<list:alternate var="row" a=" " b=" " c=" " d=" " e=" " f=" " g="&lt;/tr&gt;&lt;tr class=\'panel\'&gt;">
+					<td>
+						<label for="pi{$id}"><input type="radio" name="posticon" id="pi{$id}" value="{$id}" onclick="swap_posticon(pi_{$id})" /><img src="Images/{$IMG_DIR}/Icons/PostIcons/{$image}" alt="{$description}" title="{$description}" style="margin-right:10px;" id="pi_{$id}" /></label>						
+					</td>
+					{$row}
+					</list:alternate>
+					</list:item>
+					</list:list>
+				</tr>	
+			</table>
+			</div>
+			</fieldset>
+		</td>
+	</tr>
+	</block:block>
+	<tr class="thead">
+		<td align="left" colspan="2">
+			<input type="submit" class="button" value="{$L_SAVE}" accesskey="s" /><input type="reset" class="button" value="{$L_RESET}" />
+		</td>
+	</tr>
+</table>
+</div>
+<block:block id="post_options">
+<br />
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td onClick="showTable('post_options')" style="cursor:hand;cursor:pointer;">{$L_POSTOPTIONS}</td>
+	</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" id="post_options" style="display:none;">
+	<tr class="panel">
+		<td>
+			<div class="outset_box" style="width:95%;">
+				<label for="neither"><input type="radio" name="status" id="neither" value="1" checked="checked" />&nbsp;{$L_NEITHER}</label><br />
+				<block:block id="can_sticky"><label for="sticky_status"><input type="radio" name="status" id="sticky_status" value="2" />&nbsp;{$L_MAKESTICKY}</label><br /></block:block>
+				<block:block id="can_announce"><label for="announce_status"><input type="radio" name="status" id="announce_status" value="3" />&nbsp;{$L_MAKEANNOUNCEMENT}</label></block:block>
+				<!--<hr />
+				<input type="checkbox" name="disable_html" id="disable_html" checked="checked" />&nbsp;<label for="disable_html"><span class="gen">{$L_DISABLE_HTML}</span></label><br />
+				<input type="checkbox" name="disable_bbcode" id="disable_bbcode" />&nbsp;<label for="disable_bbcode"><span class="gen">{$L_DISABLE_BBCODE}</span></label><br />
+				<input type="checkbox" name="disable_smilies" id="disable_smilies" />&nbsp;<label for="disable_smilies"><span class="gen">{$L_DISABLE_SMILIES}</span></label><br />
+				<input type="checkbox" name="attach_sig" id="attach_sig" checked="checked" />&nbsp;<label for="attach_sig"><span class="gen">{$L_ATTACH_SIGNATURE}</span></label><br />
+				<input type="checkbox" name="notify" id="notify" />&nbsp;<label for="notify"><span class="gen">{$L_NOTIFY_ON_REPLY}</span></label><br />
+				<input type="checkbox" name="parse_urls" id="parse_urls" />&nbsp;<label for="parse_urls"><span class="gen">{$L_PARSE_URLS}</span></label>-->
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+</block:block>
+<block:block id="can_attach">
+<br />
+<script language="JavaScript" type="text/javascript">
+//<![CDATA[
+function checkFiles() {
+	var file_types = "bmp doc gif jpe jpeg jpg pdf tiff php phps png psd rtf txt zip".split(" ");
+	var field_img = "attach1_img attach2_img attach3_img attach4_img".split(" ");
+	var fields = "attach1 attach2 attach3 attach4".split(" ");
+	var fields_final = "attach1_final attach2_final attach3_final attach4_final".split(" ");
+	var fields_file = "attach1_file attach2_file attach3_file attach4_file".split(" ");
+	
+	for(var i=0; i < fields.length; i++) {
+		var temp = document.getElementById(fields[i]);
+		if(temp.value != '') {
+			var ext = temp.value.split(".");
+			var name = temp.value.split("\\");
+			if(in_array(ext[ext.length-1], file_types)) {
+				document.getElementById("attach_files").value = 1;
+				temp.className = "inputbox";
+				temp.style.display = "none";
+				document.getElementById(fields_final[i]).style.display = "block";
+				document.getElementById(field_img[i]).src = "Images/{$IMG_DIR}/Icons/Attach/" + ext[ext.length-1] + ".gif";
+				document.getElementById(fields_file[i]).value = name[name.length-1];
+			} else {
+				temp.className = "inputfailed";
+				alert("{$L_INVALIDFILE}");
+			}
+		}
+	}
+}
+//]]>
+</script>
+<input type="hidden" name="attach_files" id="attach_files" value="0" />
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td onClick="showTable('attachments_manager')" style="cursor:hand;cursor:pointer;">{$L_MANAGE_ATTACHMENTS}</td>
+	</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" id="attachments_manager" style="display:none;">
+	<tr class="panel">
+		<td>
+			<div class="outset_box" style="width:95%;">
+			<fieldset>
+			<legend>{$L_SELECTFILES}</legend>
+			<span class="smalltext">{$L_VALIDEXTENSIONS}: bmp doc gif jpe jpeg jpg pdf php phps png psd rtf txt zip</span>
+			<br />
+			<input type="file" class="inputbox" name="attach1" id="attach1" value="" size="40" style="display:block;" /><span id="attach1_final" style="display:none;"><img src="" id="attach1_img" />&nbsp;&nbsp;<input type="text" id="attach1_file" value="" class="inputnone" readonly="readonly" /></span>
+			<input type="file" class="inputbox" name="attach2" id="attach2" value="" size="40" style="display:block;" /><span id="attach2_final" style="display:none;"><img src="" id="attach2_img" />&nbsp;&nbsp;<input type="text" id="attach2_file" value="" class="inputnone" readonly="readonly" /></span>
+			<input type="file" class="inputbox" name="attach3" id="attach3" value="" size="40" style="display:block;" /><span id="attach3_final" style="display:none;"><img src="" id="attach3_img" />&nbsp;&nbsp;<input type="text" id="attach3_file" value="" class="inputnone" readonly="readonly" /></span>
+			<input type="file" class="inputbox" name="attach4" id="attach4" value="" size="40" style="display:block;" /><span id="attach4_final" style="display:none;"><img src="" id="attach4_img" />&nbsp;&nbsp;<input type="text" id="attach4_file" value="" class="inputnone" readonly="readonly" /></span>
+			<input type="button" value="{$L_UPLOAD}" onClick="return checkFiles();" /><input type="button" value="{$L_RESETUPLOAD}" onClick="return ResetAttach(this);" />
+			</fieldset>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+</block:block>
+</form>

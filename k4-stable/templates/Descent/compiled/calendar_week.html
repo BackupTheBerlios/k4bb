@@ -1,0 +1,39 @@
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="3"><?php echo $template["L_CALENDAR"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td align="center"><a href="calendar.php?act=week" style="text-decoration:underline;"><?php echo $template["L_WEEKLY"]; ?></a></td>
+		<td align="center"><a href="calendar.php"><?php echo $template["L_MONTHLY"]; ?></a></td>
+		<td align="center"><a href="calendar.php?act=year"><?php echo $template["L_YEARLY"]; ?></a></td>
+	</tr>
+</table>
+</div>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr>
+		<td width="80%" valign="top">
+			<div class="forum_content">
+			<table width="100%" cellpadding="0" cellspacing="1" border="0">
+			<?php if ($template->week != NULL): ?>
+			<?php $week = new CachingIterator(get_iterator($template->week));  foreach($week as $obj0):  $template->Push($obj0); ?>
+			<tr class="thead">
+				<td colspan="2"><?php echo $template["textual"]; ?></td>
+			</tr>
+			<tr class="panel">
+				<td width="10%" class="alt2" align="center" valign="middle"><strong><?php echo $template["day"]; ?></strong></td>
+				<td width="90%" class="alt1" style="height: 40px;" />
+			</tr>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+			</table>
+			</div>
+		</td>
+		<td width="20%" valign="top">
+			<div class="forum_content"><?php echo $template["prev_month"]; ?></div>
+			<br />
+			<div class="forum_content"><?php echo $template["next_month"]; ?></div>
+		</td>
+	</tr>
+</table>

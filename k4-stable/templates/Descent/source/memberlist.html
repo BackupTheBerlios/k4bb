@@ -1,0 +1,68 @@
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<list:list id="letters">
+	<tr class="thead">
+		<list:item>
+		<td align="center"><a href="{$action}">{$name}</a></td>
+		</list:item>
+	</tr>
+	</list:list>
+</table>
+</div>
+<br />
+<div align="right">
+<table cellpadding="0" cellspacing="1" border="0" class="pagination">
+	<tr>
+		<td class="pagination">{$L_PAGE}</td>
+		<list:navigator limit="50" list_id="memberlist" use="">
+			<list:urlfirst params="act;sort" class="alt3">&laquo;</list:urlfirst>
+			<list:urlprev class="alt3">&lt;</list:urlprev>
+			<list:urlpage class="alt2" separator="" />
+			<list:urlnext class="alt3">&gt;</list:urlnext>
+			<list:urllast class="alt3">&raquo;</list:urllast>
+		</list:navigator>
+	</tr>
+</table>
+</div>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="6">{$L_MEMBERLIST}</td>
+	</tr>
+	<tr class="thead">
+		<td>{$L_USERNAME}</td>
+		<td>{$L_POSTS}</td>
+		<td>{$L_REGISTERED}</td>
+		<td>{$L_AVATAR}</td>
+		<td>{$L_TITLE}</td>
+		<td>{$L_ONLINESTATUS}</td>
+	</tr>
+	<list:list id="memberlist">
+	<list:item>
+	<tr class="panel">
+		<td><a href="member.php?id={$id}">{$name}</a></td>
+		<td>{$posts}</td>
+		<td>{$created}</td>
+		<td align="center">{$avatar}</td>
+		<td>{$rank}</td>
+		<td>{$online_status}</td>
+	</tr>
+	</list:item>
+	</list:list>
+</table>
+</div>
+<div align="right">
+<table cellpadding="0" cellspacing="1" border="0" class="pagination">
+	<tr>
+		<td class="pagination">{$L_PAGE}</td>
+		<list:navigator limit="50" list_id="memberlist" use="">
+			<list:urlfirst params="act;sort" class="alt3">&laquo;</list:urlfirst>
+			<list:urlprev class="alt3">&lt;</list:urlprev>
+			<list:urlpage class="alt2" separator="" />
+			<list:urlnext class="alt3">&gt;</list:urlnext>
+			<list:urllast class="alt3">&raquo;</list:urllast>
+		</list:navigator>
+	</tr>
+</table>
+</div>
+<br />

@@ -1,0 +1,67 @@
+<?php if ($_SESSION['user'] instanceof Member): ?>
+<form action="member.php?act=update_settings" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<input type="hidden" name="id" value="<?php echo $template["id"]; ?>" />
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_SETTINGS"]; ?> : <?php echo $template["username"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><?php echo $template["L_BOARDSETTINGS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_BOARDSTYLESET"]; ?></td>
+		<td width="50%">
+			<select name="styleset" id="<?php echo $template["L_BOARDSTYLESET"]; ?>" check="true">
+				<?php if ($template->stylesets != NULL): ?>
+				<?php $stylesets = new CachingIterator(get_iterator($template->stylesets));  foreach($stylesets as $obj1):  $template->Push($obj1); ?>
+				<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_BOARDIMAGESET"]; ?></td>
+		<td width="50%">
+			<select name="imgset" id="<?php echo $template["L_BOARDIMAGESET"]; ?>" check="true">
+				<?php if ($template->imagesets != NULL): ?>
+				<?php $imagesets = new CachingIterator(get_iterator($template->imagesets));  foreach($imagesets as $obj2):  $template->Push($obj2); ?>
+				<option value="<?php echo $template["name"]; ?>"><?php echo $template["name"]; ?></option>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</select>
+		</td>
+	</tr>
+	
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_INVISIBLEMODE"]; ?></td>
+		<td width="50%">
+			<select name="invisible" id="<?php echo $template["L_INVISIBLEMODE"]; ?>" check="true">
+				<option value="1"><?php echo $template["L_YES"]; ?></option>
+				<option value="0"><?php echo $template["L_NO"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td width="50%"><?php echo $template["L_THREADDISPLAY"]; ?></td>
+		<td width="50%">
+			<select name="thread_display" id="<?php echo $template["L_THREADDISPLAY"]; ?>" check="true">
+				<option value="0"><?php echo $template["L_LINEAR"]; ?></option>
+				<option value="1"><?php echo $template["L_VERTICAL"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="2"><input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" /> <input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" /></td>
+	</tr>
+</table>
+</div>
+</form>
+<script language="javascript" type="text/javascript">
+setIndex('<?php echo $template["styleset"]; ?>', '<?php echo $template["L_BOARDSTYLESET"]; ?>');
+setIndex('<?php echo $template["imgset"]; ?>', '<?php echo $template["L_BOARDIMAGESET"]; ?>');
+setIndex(<?php echo $template["thread_display"]; ?>, '<?php echo $template["L_THREADDISPLAY"]; ?>');
+setIndex(<?php echo $template["invisible"]; ?>, '<?php echo $template["L_INVISIBLEMODE"]; ?>');
+</script>
+<?php endif; ?>

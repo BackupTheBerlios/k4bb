@@ -1,0 +1,17 @@
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_PRIVATEFORUM"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box" align="center">
+			<form action="member.php?act=forum_login&id=<?php echo $template["forum_id"]; ?>" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="return Reset(this);">
+			<strong><?php echo $template["L_PRIVATEFORUMLOGIN"]; ?></strong><br /><br />
+			<?php echo $template["L_PASSWORD"]; ?>: <input type="password" name="pass" value="" class="inputbox" /> <input type="submit" value="<?php echo $template["L_LOGIN"]; ?>" />
+			</form>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>

@@ -1,0 +1,26 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<form action="admin.php?act=edit_css" method="post" enctype="multipart/form-data">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_CSS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_CLASS"]; ?></td>
+		<td>
+			<select name="id" id="style">
+				<?php if ($template->cssstyles != NULL): ?>
+				<?php $cssstyles = new CachingIterator(get_iterator($template->cssstyles));  foreach($cssstyles as $obj1):  $template->Push($obj1); ?>
+				<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+				<?php if ($cssstyles->HasNext()): ?>
+				<?php endif; ?>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</select>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><input type="submit" value="<?php echo $template["L_EDIT"]; ?>" class="button" /></td>
+	</tr>
+</table>
+</form>
+<?php endif; ?>

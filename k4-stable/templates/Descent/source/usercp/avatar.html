@@ -1,0 +1,39 @@
+<valid:logged>
+<script type="text/javascript">
+function popupUpload(t) {
+	window.open("files.php?act=avatar_upload", t, "width=300,height=100");
+	return true;
+}
+</script>
+<form action="member.php?act=update_avatar" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2">{$L_EDITAVATAR} : {$username}</td>
+	</tr>
+	<tr class="panel">
+		<td width="20%" align="center">
+			<em><span class="smalltext">{$L_YOURAVATAR}</span></em><br />
+			<div style="border:1px inset;width:75px;height:75px;text-align:center;" id="user_avatar">{$avatar_img}</div>
+		</td>
+		<td width="80%">
+			{$L_USEAVATAR}&nbsp;&nbsp;&nbsp;
+			<select name="avatar" check="true">
+				<option value="0">{$L_NO}</option>
+				<option value="1">{$L_YES}</option>
+			</select>
+			<br /><br />
+			<input type="button" class="button" style="font-weight:bold;" value="{$L_UPLOADNEWAVATAR}" onClick="popupUpload()" /><br /><br />
+			<div class="outset_box">{$L_AVATARINFO}</div>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="2"><input type="submit" class="button" value="{$L_SAVE}" />&nbsp;<input type="reset" class="button" value="{$L_RESET}" /></td>
+	</tr>
+</table>
+</div>
+</form>
+<script language="javascript" type="text/javascript">
+setIndex({$avatar}, 'avatar');
+</script>
+</valid:logged>

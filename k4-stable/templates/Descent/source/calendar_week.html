@@ -1,0 +1,39 @@
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="3">{$L_CALENDAR}</td>
+	</tr>
+	<tr class="thead">
+		<td align="center"><a href="calendar.php?act=week" style="text-decoration:underline;">{$L_WEEKLY}</a></td>
+		<td align="center"><a href="calendar.php">{$L_MONTHLY}</a></td>
+		<td align="center"><a href="calendar.php?act=year">{$L_YEARLY}</a></td>
+	</tr>
+</table>
+</div>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr>
+		<td width="80%" valign="top">
+			<div class="forum_content">
+			<table width="100%" cellpadding="0" cellspacing="1" border="0">
+			<list:list id="week">
+			<list:item>
+			<tr class="thead">
+				<td colspan="2">{$textual}</td>
+			</tr>
+			<tr class="panel">
+				<td width="10%" class="alt2" align="center" valign="middle"><strong>{$day}</strong></td>
+				<td width="90%" class="alt1" style="height: 40px;"></td>
+			</tr>
+			</list:item>
+			</list:list>
+			</table>
+			</div>
+		</td>
+		<td width="20%" valign="top">
+			<div class="forum_content">{$prev_month}</div>
+			<br />
+			<div class="forum_content">{$next_month}</div>
+		</td>
+	</tr>
+</table>

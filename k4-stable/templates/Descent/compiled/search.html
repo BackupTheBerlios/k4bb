@@ -1,0 +1,93 @@
+<form action="search.php?act=search&start=0&limit=30" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<div id="form_errors" style="display:none;"> </div>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat" colspan="2">
+		<td><?php echo $template["L_SEARCHFORUMS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<table width="100%" cellpadding="0" cellspacing="1" border="0">
+				<tr class="thead">
+					<td><?php echo $template["L_SEARCHPARAMS"]; ?></td>
+				</tr>
+				<tr>
+					<td class="outset_box" valign="top">
+						<fieldset style="width:45%;float:left;">
+							<legend><?php echo $template["L_SEARCHBYKEYWORD"]; ?></legend>
+							<span class="smalltext">
+							<?php echo $template["L_KEYWORDS"]; ?>:<br />
+							<input type="text" name="keywords" size="40" value="" class="inputbox" /><br />
+							<select name="search_where" class="inputbox">
+								<option value="1"><?php echo $template["L_SEARCHENTIREPOSTS"]; ?></option>
+								<option value="2"><?php echo $template["L_SEARCHTITLES"]; ?></option>
+							</select>
+							</span>
+						</fieldset>
+						<fieldset style="width:45%;float:right;">
+							<legend><?php echo $template["L_SEARCHBYUSERNAME"]; ?></legend>
+							<span class="smalltext">
+							<?php echo $template["L_USERNAME"]; ?>:<br />
+							<input type="text" name="username" value="" size="16" maxlength="16" class="inputbox" /><br />
+							<select name="user_where" class="inputbox">
+								<option value="1"><?php echo $template["L_FINDPOSTSBYUSER"]; ?></option>
+								<option value="2"><?php echo $template["L_FINDTHREADSBYUSER"]; ?></option>
+							</select>
+							<input type="checkbox" checked="checked" name="exact" /> <?php echo $template["L_EXACTNAME"]; ?>
+							</span>
+						</fieldset>
+					</td>
+				</tr>
+				<tr class="thead">
+					<td><?php echo $template["L_SEARCHOPTIONS"]; ?></td>
+				</tr>
+				<tr>
+					<td class="outset_box" valign="top">
+						<fieldset style="width:45%;float:right;">
+							<legend><?php echo $template["L_SEARCHINFORUMS"]; ?></legend>
+							<span class="smalltext">
+							<?php if ($template->forums != NULL): ?>
+							<select name="forums[]" size="13" multiple="multiple" class="inputbox" style="width:95%;">
+								<?php $forums = new CachingIterator(get_iterator($template->forums));  foreach($forums as $obj0):  $template->Push($obj0); ?>
+								<option value="<?php echo $template["id"]; ?>" selected="selected"><?php echo $template["indent"];  echo $template["name"]; ?></option>
+								<?php $template->Pop();  endforeach; ?>
+							</select>
+							<?php endif; ?>
+							</span>
+						</fieldset>
+						
+						<fieldset style="width:45%;float:left;">
+							<legend><?php echo $template["L_FINDPOSTSFROM"]; ?></legend>
+							<span class="smalltext">
+							<select name="posts_from" class="intputbox" style="width: 50%;">
+								<option value="0"><?php echo $template["L_ANYDATE"]; ?></option>
+								<option value="<?php echo $template["yesterday"]; ?>"><?php echo $template["L_YESTERDAY"]; ?></option>
+								<option value="<?php echo $template["oneweek"]; ?>"><?php echo $template["L_ONEWEEKAGO"]; ?></option>
+								<option value="<?php echo $template["twoweeks"]; ?>"><?php echo $template["L_TWOWEEKSAGO"]; ?></option>
+								<option value="<?php echo $template["threeweeks"]; ?>"><?php echo $template["L_THREEWEEKSAGO"]; ?></option>
+							</select>
+							<select name="posts_oldnew" class="intputbox">
+								<option value="1"><?php echo $template["L_ANDNEWER"]; ?></option>
+								<option value="2"><?php echo $template["L_ANDOLDER"]; ?></option>
+							</select>
+							</span>
+						</fieldset>
+						<fieldset style="width:45%;float:left;">
+							<legend><?php echo $template["L_SORTRESULTSBY"]; ?></legend>
+							<span class="smalltext">
+							<select name="sort" class="intputbox">
+								<option value="1"><?php echo $template["L_DESCENDING"]; ?></option>
+								<option value="2"><?php echo $template["L_ASCENDING"]; ?></option>
+							</select>
+							</span>
+						</fieldset>
+					</td>
+				</tr>
+			</table>
+			<br />
+			<div align="center"><input type="submit" class="button" value="<?php echo $template["L_SEARCH"]; ?>" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" /></div>
+		</td>
+	</tr>
+</table>
+</div>
+</form>

@@ -1,0 +1,207 @@
+<![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">]]>
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+<head>
+	<title>{$bbtitle} - {$title} - Powered by k4</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<meta name="generator" content="k4 Bulletin Board {$VERSION}" />
+	<meta name="robots" content="all" />
+	<meta name="revisit-after" content="1 Days" />
+	<meta http-equiv="Expires" content="1" />
+	<meta name="description" content="{$bbsearchdescription}" />
+	<meta name="keywords" content="{$bbkeywords}" />
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+	<meta name="author" content="k4 Bulletin Board" />
+	<meta name="distribution" content="GLOBAL" />
+	<meta name ="rating" content="general" />
+	<style type="text/css">
+	<list:list id="css_styles">
+	<list:item>
+	{$name} { {$properties} }
+	<list:separator>
+	</list:separator>
+	</list:item>
+	</list:list>
+			/* Do the dropdown menus */
+			ul.nav  { padding: 0; margin: 0; margin-right: 15px; list-style: none; z-index: 1000; }
+			.nav { z-index: 1000; }
+			.nav span { font: bold 11px tahoma, verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif; background-image:url('Images/{$IMG_DIR}/Icons/menu_open.gif'); background-position:right center; background-repeat:no-repeat; padding-right: 15px; }
+			.nav ul .tcat { text-decoration:underline; }
+			.nav li { text-align:left; position: relative; font-size:10px; font-weight: bold; }
+			.nav li ul { display: none; position: absolute; top: 1em; left: 0; }
+			li>ul { top: auto; left: auto; }
+			li:hover ul, li.over ul { display: block; }
+			li.nodisplay ul { display: none; }
+			tr.tcat td ul { cursor: hand; cursor: pointer; }
+			/* Required info box */
+			.required_info { border: 1px solid #FF0000;font-size:11px;background-color:#FFEEFF;padding:5px; }
+			.required_info a { font-size:11px; }
+	</style>
+	<script language="javascript" type="text/javascript" src="js/form_check.js">/* Easter Egg */</script>
+	<script language="javascript" type="text/javascript" src="js/javascript.js">/* Easter Egg */</script>
+	<script language="javascript" type="text/javascript" src="js/bbcode.js">/* Easter Egg */</script>
+	<script language="javascript" type="text/javascript">
+	// <![CDATA[
+	function log_out()
+	{
+		ht = document.getElementsByTagName("html");
+		ht[0].style.filter = "progid:DXImageTransform.Microsoft.BasicImage(grayscale=1)";
+		if (confirm('{$L_CHECKLOGOUT}'))
+		{
+			return true;
+		}
+		else
+		{
+			ht[0].style.filter = "";
+			return false;
+		}
+	}
+	String.prototype.ucfirst = function() { return this.charAt(0).toUpperCase() + this.substr(1); }
+	function checkForm(form) {
+		var objects = new Array() 
+		var formErrors = "<ul>";	
+		var elements = form.elements;
+		for(i=0; i<elements.length; i++) {
+			if(elements[i].getAttribute('check')) {
+				if(elements[i].value.length == 0) {
+					elements[i].className = 'inputfailed';
+					switchClasses(elements[i].id);
+					formErrors += "<li>{$L_REQUIREDFIELDS}: <strong>" + (elements[i].id).ucfirst() + "</strong></li>";
+				}
+			}
+		}
+		take_errors(formErrors);
+		if(formErrors != "<ul>") { return false; } else { formErrors += "</ul>"; return true; }
+	}
+	// ]]>
+	</script>
+</head>
+<body>
+<div align="center">
+<div align="left" class="forum_base">
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+	<tr class="logo_header">
+		<td><a href="index.php" name="top" id="top"><img src="Images/{$IMG_DIR}/logo.gif" alt="" border="0" /></a></td>
+		<td valign="middle" align="center"><h1>{$bbdescription}</h1></td>
+	</tr>
+</table>
+<div class="forum_header" id="forum_header">
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+	<tr>
+		<td align="left" width="90%">
+			<img src="Images/{$IMG_DIR}/Icons/navbits_start.gif" alt="" />
+			<list:list id="ancestors">
+			<list:item>
+			<a href="viewforum.php?id={$id}"><strong>{$name}</strong></a>
+			<list:separator>&gt;</list:separator>
+			</list:item>
+			</list:list>
+			<br />
+			<img src="Images/{$IMG_DIR}/Icons/navbits_finallink.gif" alt="" /> <strong>{$current_location}</strong>
+		</td>
+		<td width="10%" nowrap="nowrap">
+			<span class="minitext">
+			{$date}
+			</span>
+		</td>
+	</tr>
+	<!--<tr class="alt1">
+		<td colspan="2" align="right">
+			
+		</td>
+	</tr>-->
+</table>
+</div>
+<div class="alt1" align="right">
+<table width="100%" cellpadding="3" cellspacing="0" border="0" class="nav_table">
+	<tr class="alt3">
+		<td nowrap="nowrap" align="right">
+			<a href="index.php">{$L_HOME}</a> 
+			<block:block id="calendar_link">| <a href="calendar.php">{$L_CALENDAR}</a></block:block>
+			<block:block id="memberlist_link">| <a href="member.php?act=list&amp;start=0&amp;limit=30&amp;sort=*">{$L_MEMBERLIST}</a></block:block>
+			| <a href="search.php">{$L_SEARCH}</a>
+			| <a href="faq.php">{$L_FAQ}</a>
+			| <a href="member.php?act=usergroups">{$L_USERGROUPS}</a>
+			<valid:logged>| <a href="member.php?act=profile">{$L_USERCP}</a>
+			| <a href="member.php?act=logout" onClick="return log_out();">{$L_LOGOUT} [<strong>{$user_name}</strong>]</a></valid:logged>
+			<valid:unlogged>| <a href="member.php?act=register">{$L_REGISTER}</a>
+			| <a href="member.php?act=login">{$L_LOGIN}</a></valid:unlogged>
+			<isadmin>| <a href="admin_index.php" id="admin_link" target="_blank"><strong>{$L_ADMINPANEL}</strong></a></isadmin>
+		</td>
+	</tr>
+</table>
+</div>
+<block:block id="new_pms">
+<div class="required_info" align="center">
+<a href="member.php?act=view_folder&amp;id=1">{$L_NEWMESSAGE}</a>
+</div>
+</block:block>
+<div class="forum_main" id="forum_main">
+<br />
+<block:import id="content" />
+{$content_extra}
+</div>
+<div class="forum_footer" id="forum_footer">
+<br />
+<table cellpadding="0" cellspacing="1" border="0" width="100%">
+	<tr>
+		<td align="left" width="100%">
+			<list:list id="ancestors">
+			<list:item>
+			<a href="viewforum.php?id={$id}"><strong>{$name}</strong></a>
+			<list:separator>&gt;</list:separator>
+			</list:item>
+			&gt;&nbsp;<strong>{$current_location}</strong>
+			</list:list>
+		</td>
+		<!--<td width="10%" nowrap="nowrap" align="right"><a href="#top">{$L_TOP}</a></td>-->
+	</tr>
+</table>
+<block:import id="users_online" />
+<block:import id="todays_bdays" />
+</div>
+<div class="alt1" align="right">
+<table width="100%" cellpadding="3" cellspacing="0" border="0" class="alt1">
+	<tr class="alt3">
+		<td align="right">
+			<a href="{$contactuslink}" alt="{$L_CONTACTUS}">{$L_CONTACTUS}</a> - <a href="#top">{$L_TOP}</a>
+		</td>
+	</tr>
+</table>
+</div>
+</div>
+</div>
+<br />
+<![CDATA[<!--
+
+// Please keep this copyright notice in place, this forum took a hell of a long time to make, and I deserve credit.
+
+/**********************************************************************************
+ *     k4 Bulletin Board
+ *     Copyright (c) 2004, Peter Goodman
+
+ *     Permission is hereby granted, free of charge, to any person obtaining 
+ *     a copy of this software and associated documentation files (the 
+ *     "Software"), to deal in the Software without restriction, including 
+ *     without limitation the rights to use, copy, modify, merge, publish, 
+ *     distribute, sublicense, and/or sell copies of the Software, and to 
+ *     permit persons to whom the Software is furnished to do so, subject to 
+ *     the following conditions:
+
+ *     The above copyright notice and this permission notice shall be 
+ *     included in all copies or substantial portions of the Software.
+
+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+ *     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS 
+ *     BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN 
+ *     ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+ *     CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ *     SOFTWARE.
+ *********************************************************************************/
+-->]]>
+<div align="center"><div style="width:400px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">[ <a href="http://www.newmediums.net" alt="k4 Home Page" title="k4 Home Page" target="_blank">Powered By: k4 v.{$VERSION}</a> ] [ Load time: {$load_time} ] [ Num Queries: {$num_queries} ]<br />{$copyrighttext}</div></div>
+<a name="bottom" id="bottom"></a>
+</body>
+</html>

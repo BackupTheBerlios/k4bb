@@ -1,0 +1,92 @@
+<!-- Forums List -->
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<core:block id="welcome_msg" hidden="yes">
+	<tr class="thead">
+		<td colspan="5">{$welcome_title}</td>
+	</tr>
+	<tr class="panel">
+		<td colspan="5">{$L_WELCOMEMESSAGE}</td>
+	</tr>
+	</core:block>
+	<tr class="tcat">
+		<td>&nbsp;</td>
+		<td align="center">{$L_NAME}</td>
+		<td align="center">&nbsp;{$L_POSTS}&nbsp;</td>
+		<td align="center">&nbsp;{$L_TOPICS}&nbsp;</td>
+		<td align="center">{$L_LASTPOST}</td>
+	</tr>
+	<list:list id="categories">
+	<list:item list="categories">
+	<maps:if list="categories" category="id" method="view">
+		<tr class="thead">
+			<td colspan="5">
+				<a href="viewforum.php?id={$id}" title="{$c.description}">{$name}</a>
+				<span class="minitext" style="font-weight: normal;"><br />{$c.description}</span>
+			</td>
+		</tr>
+		<list:sublist list="categories" id="forums" column="forums">
+		<list:item list="forums">
+		<maps:if list="forums" forum="id" method="view">
+		<if:if var="is_forum" eq="1">
+		<tr class="panel">
+			<td width="5%" align="center"><img src="Images/{$IMG_DIR}/Icons/forum_{$forum_icon}.gif" alt="{$forum_alt}" height="28" width="28" border="0" /></td>
+			<td width="60%">
+				<a href="viewforum.php?id={$id}" title="{$description}"><strong>{$name}</strong></a>
+				<!--<if:if var="num_viewing" greater="0"><span class="smalltext">({$num_viewing} {$L_VIEWING})</span></if:if>-->
+				<br />
+				<span class="minitext">
+				{$description}
+				<if:if var="subforums" greater="0">
+				<br /><br />
+				<strong>{$L_SUBFORUMS}:</strong>
+				<list:sublist list="forums" id="subforums" column="subforums">
+					<list:item list="subforums">
+					<img src="Images/{$IMG_DIR}/Icons/forum_{$forum_icon}_small.gif" alt="{$forum_alt}" height="11" width="11" border="0" />
+					<a href="viewforum.php?id={$id}" title="{$description}">{$name}</a>
+					<list:separator list="subforums">,</list:separator>
+					</list:item>
+				</list:sublist>
+				</if:if>
+				</span>
+			</td>
+			<td align="center" class="alt1">{$posts}</td>
+			<td align="center" class="alt1">{$topics}</td>
+			<td class="minitext" nowrap="nowrap" align="center" width="30%">
+				<if:if var="post_id" greater="0">
+				<a href="viewtopic.php?id={$post_id}" title="{$post_name}"><strong>{$post_name}</strong></a>
+				<br />
+				{$L_BY} <a href="member.php?id={$post_uid}" title="{$post_uname}"><strong>{$post_uname}</strong></a>&nbsp;{$L_ON}&nbsp;{$post_created}
+				<if:else />
+				--
+				</if:if>
+			</td>
+		</tr>
+		</if:if>
+		<if:if var="is_link" eq="1">
+		<tr class="panel">
+			<td width="5%" align="center"><img src="Images/{$IMG_DIR}/Icons/forum_link.gif" alt="{$forum_alt}" title="{$forum_alt}" height="28" width="28" border="0" /></td>
+			<if:if var="link_show_redirects" eq="1">
+			<td width="60%"><a href="redirect.php?id={$id}" title="{$name}"><strong>{$name}</strong></a><br /><span class="minitext">{$description}<br />{$sub_forums}</span></td>
+			<td align="center" class="alt1" colspan="3"><span class="smalltext">{$L_REDIRECTS}: {$link_redirects}</span></td>
+			</if:if>
+			<if:if var="link_show_redirects" eq="0">
+			<td width="95%" colspan="4"><a href="{$link_href}" target="_blank"><strong>{$name}</strong></a><br /><span class="minitext">{$description}<br />{$sub_forums}</span></td>
+			</if:if>
+		</tr>
+		</if:if>
+		</maps:if>
+		</list:item>
+		</list:sublist>
+	</maps:if>
+	</list:item>
+	</list:list>
+	<tr class="tcat">
+		<td colspan="5">
+			<div align="center">
+				<a href="index.php?act=markforums" title="{$L_MARKFORUMSREAD}" class="minitext">{$L_MARKFORUMSREAD}</a>
+				<core:block id="mark_these_forums" hidden="yes">| <a href="viewforum.php?act=markforums&amp;id={$id}" title="{$L_MARKTHESEFORUMREAD}" class="minitext">{$L_MARKTHESEFORUMREAD}</a></core:block>
+			</div>
+		</td>
+	</tr>
+</table>
+<!-- / Forums List -->

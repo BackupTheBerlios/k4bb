@@ -1,0 +1,32 @@
+<form action="member.php?act=email_user&amp;user={$id}" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="Reset(this);ResetAttach(this);">
+<div id="form_errors" style="display:none;"> </div>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_EMAILUSER}</td>
+	</tr>
+	<tr class="thead">
+		<td>{$L_USER}: {$username}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<fieldset>
+				<legend>{$L_SUBJECT}</legend>
+				<input type="text" name="subject" id="{$L_SUBJECT}" value="" size="80" check="true" />
+			</fieldset>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<fieldset>
+				<legend>{$L_MESSAGE}</legend>
+				<textarea name="message" id="{$L_MESSAGE}" rows="10" style="width:95%;" check="true">{$null}</textarea>
+			</fieldset>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td align="left"><input type="submit" class="button" value="{$L_SAVE}" /><input type="reset" class="button" value="{$L_RESET}" /></td>
+	</tr>
+</table>
+</div>
+</form>

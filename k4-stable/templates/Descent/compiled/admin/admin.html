@@ -1,0 +1,20 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<script type="text/javascript">
+//  
+function SetHelp(string) {
+	document.getElementById('helpline').value = string;
+}
+function ResetHelp() {
+	document.getElementById('helpline').value = '<?php echo $template["L_SELECTADMIN"]; ?>';
+}
+// 
+</script>
+
+<div align="center">
+<div style="width:85%;text-align:left;">
+<?php if (isset($template->admin_panel['file']) && $t = new Template($template->admin_panel['file'])):  $template->Push($template->admin_panel);  $t->Import($template);  $template->Pop();  endif; ?>
+</div>
+</div>
+<br />
+<div align="center"><div style="width:400px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext"><a name="bottom" id="bottom" />[ Powered By: k4 v.<?php echo $template["VERSION"]; ?> ] [ Load time: <?php echo $template["load_time"]; ?> ] [ Num Queries: <?php echo $template["num_queries"]; ?> ]</div></div>
+<?php endif; ?>

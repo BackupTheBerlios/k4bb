@@ -1,0 +1,34 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_PRUNE"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box"><?php echo $template["L_PRUNEMESSAGE"]; ?></div>
+		</td>
+	</tr>
+</table>
+<br />
+<form action="admin.php?act=do_prune" method="POST" enctype="multipart/form-data">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_PRUNEFORUM"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td align="center">
+			<select name="forum">
+				<option value="-1"><?php echo $template["L_ALLFORUMS"]; ?></option>
+				<?php if ($template->forums != NULL): ?>
+				<?php $forums = new CachingIterator(get_iterator($template->forums));  foreach($forums as $obj1):  $template->Push($obj1); ?>
+				<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</select>
+			    <?php echo $template["L_PRUNETHREADS"]; ?>  <input type="text" name="days" id="days" size="3" maxlength="5" value="" class="inputbox" /> <?php echo $template["L_DAYS"]; ?>
+			    <input type="submit" class="button" value="<?php echo $template["L_PRUNE"]; ?>" />
+		</td>
+	</tr>
+</table>
+</form>
+<?php endif; ?>

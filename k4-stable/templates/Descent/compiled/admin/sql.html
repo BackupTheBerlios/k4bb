@@ -1,0 +1,23 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="3"><?php echo $template["L_SQL"]; ?></td>
+	</tr>
+	<tr>
+		<td class="alt1" style="width:150px;" valign="top">
+			<a href="javascript:;" onClick="ShowHide('<?php echo $template["dba_name"]; ?>')"><strong><?php echo $template["dba_name"]; ?></strong></a><br />
+			<div id="<?php echo $template["dba_name"]; ?>" style="display:none;">
+			<?php if ($template->tables != NULL): ?>
+			<?php $tables = new CachingIterator(get_iterator($template->tables));  foreach($tables as $obj1):  $template->Push($obj1); ?>
+			    <a href="sql.admin.php?table=<?php echo $template["name"]; ?>" target="sql_admin" class="smalltext"><?php echo $template["name"]; ?></a>
+			<?php if ($tables->HasNext()): ?><br /><?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+			</div>
+		</td>
+		<td class="alt2">
+			<iframe src="sql.admin.php" id="sql_admin" name="sql_admin" width="100%" height="500" frameborder="0"> </iframe>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>

@@ -1,0 +1,143 @@
+<valid:logged>
+<form action="member.php?act=update_profile" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<input type="hidden" name="id" value="{$id}" />
+<div class="forum_content">
+<table width="100%" border="0" cellpadding="0" cellspacing="1">
+	<tr class="tcat">
+		<td colspan="2">{$L_PROFILE} : {$username}</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2">{$L_PERSONALINFO}</td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_USERNAME}</td>
+		<td width="50%">{$username}</td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_EMAIL}</td>
+		<td width="50%"><input type="text" name="email" id="{$L_EMAIL}" check="true" value="{$email}" maxlength="255" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_HOMEPAGE}</td>
+		<td width="50%"><input type="text" name="homepage" id="{$L_HOMEPAGE}" value="{$homepage}" maxlength="255" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_SIGNATURE}&nbsp;({$L_BBCODEALLOWED})</td>
+		<td width="50%"><textarea rows="4" cols="50" name="signature" id="{$L_SIGNATURE}">{$signature}</textarea></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_BIRTHDAY}</td>
+		<td width="50%">
+			<table cellpadding="0" cellspacing="0" border="0">
+				<tr class="panel">
+					<td align="center">{$L_MONTH}:</td>
+					<td align="center">{$L_DAY}:</td>
+					<td align="center">{$L_YEAR}:</td>
+				</tr>
+				<tr class="panel">
+					<td>
+						<select name="month" id="month" class="inputbox">
+							<option value="-1" selected="selected"></option>
+							<option value="1">{$L_JANUARY}</option>
+							<option value="2">{$L_FEBRUARY}</option>
+							<option value="3">{$L_MARCH}</option>
+							<option value="4">{$L_APRIL}</option>
+							<option value="5">{$L_MAY}</option>
+							<option value="6">{$L_JUNE}</option>
+							<option value="7">{$L_JULY}</option>
+							<option value="8">{$L_AUGUST}</option>
+							<option value="9">{$L_SEPTEMBER}</option>
+							<option value="10">{$L_OCTOBER}</option>
+							<option value="11">{$L_NOVEMBER}</option>
+							<option value="12">{$L_DECEMBER}</option>
+						</select> &nbsp;
+					</td>
+					<td>
+						<select name="day" id="day" class="inputbox">
+							<option value="-1" selected="selected"></option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="11">11</option>
+							<option value="12">12</option>
+							<option value="13">13</option>
+							<option value="14">14</option>
+							<option value="15">15</option>
+							<option value="16">16</option>
+							<option value="17">17</option>
+							<option value="18">18</option>
+							<option value="19">19</option>
+							<option value="20">20</option>
+							<option value="21">21</option>
+							<option value="22">22</option>
+							<option value="23">23</option>
+							<option value="24">24</option>
+							<option value="25">25</option>
+							<option value="26">26</option>
+							<option value="27">27</option>
+							<option value="28">28</option>
+							<option value="29">29</option>
+							<option value="30">30</option>
+							<option value="31">31</option>
+						</select> &nbsp;</td>
+					<td><input class="inputbox" name="year" value="{$year}" size="4" maxlength="4" type="text" /></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2">{$L_INSTANTMESSAGING}</td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_ICQ}</td>
+		<td width="50%"><input type="text" name="icq" id="{$L_ICQ}" value="{$icq}" maxlength="25" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_AIM}</td>
+		<td width="50%"><input type="text" name="aim" id="{$L_AIM}" value="{$aim}" maxlength="100" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_MSN}</td>
+		<td width="50%"><input type="text" name="msn" id="{$L_MSN}" value="{$msn}" maxlength="100" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_YAHOO}</td>
+		<td width="50%"><input type="text" name="yahoo" id="{$L_YAHOO}" value="{$yahoo}" maxlength="100" /></td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2">{$L_ADDITIONALINFO}</td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_LOCATION}</td>
+		<td width="50%"><input type="text" name="location" id="{$L_LOCATION}" value="{$location}" maxlength="100" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_OCCUPATION}</td>
+		<td width="50%"><input type="text" name="occupation" id="{$L_OCCUPATION}" value="{$occupation}" maxlength="100" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_INTERESTS}</td>
+		<td width="50%"><input type="text" name="interests" id="{$L_INTERESTS}" value="{$interests}" maxlength="100" /></td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_BIOGRAPHY}</td>
+		<td width="50%"><textarea rows="4" cols="30" name="biography" id="{$L_BIOGRAPHY}">{$biography}</textarea></td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="2"><input type="submit" class="button" value="{$L_SAVE}" />&nbsp;<input type="reset" class="button" value="{$L_RESET}" /></td>
+	</tr>
+</table>
+</div>
+<script language="javascript" type="text/javascript">
+setIndex({$month}, 'month');
+setIndex({$day}, 'day');
+</script>
+</form>
+</valid:logged>

@@ -1,0 +1,102 @@
+<valid:logged>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_LISTMESSAGES}</td>
+	</tr>
+	<tr class="thead">
+		<td>{$L_PMSINFOLDER}: <span style="text-decoration:underline;">{$folder}</span></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">
+				<fieldset>
+					<legend>{$L_FOLDEROPTIONS}</legend>
+					<span class="smalltext">{$pmsg_stats}</span><br />
+					<div style="border:1px solid #000000;padding:1px;width:99%;">
+						<div style="width:100%;height:20px;background-color:green;" align="left">
+							<div style="width:{$width}%;height:20px;background-color:#FF0000;"> </div>
+						</div>
+					</div>
+					<hr />
+					
+					<form action="member.php" method="get" enctype="multipart/form-data">
+					<input type="hidden" name="act" value="view_folder" />
+					{$L_FOLDERJUMP}:&nbsp;
+					<select name="id">
+						<list:list id="pmsg_folders">
+						<list:item>
+						<option value="{$id}">{$name}</option>
+						</list:item>
+						</list:list>
+					</select>
+					<input type="submit" value="{$L_GO}" class="button" />
+					</form>
+				</fieldset>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+<br />
+<list:list id="pmessages">
+<div align="right">
+<table cellpadding="0" cellspacing="1" border="0" class="pagination">
+	<tr>
+		<td class="pagination">{$L_PAGE}</td>
+		<list:navigator use="maxthreads" limit="" list_id="pmessages">
+			<list:first class="alt3">&laquo;</list:first>
+			<list:prev class="alt3">&lt;</list:prev>
+			<list:page class="alt2" separator="" />
+			<list:next class="alt3">&gt;</list:next>
+			<list:last class="alt3">&raquo;</list:last>
+		</list:navigator>
+	</tr>
+</table>
+</div>
+<!--<form action="" method="post" enctype="multipart/form-data">-->
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="5">{$L_MESSAGES}</td>
+	</tr>
+	<tr class="thead">
+		<td>&nbsp;</td>
+		<td width="60%">{$L_SUBJECT}</td>
+		<td align="center">&nbsp;{$L_FROM}&nbsp;</td>
+		<td align="center">&nbsp;{$L_SENTON}&nbsp;</td>
+		<td align="center">&nbsp;{$L_DELETE}&nbsp;</td>
+	</tr>
+	<list:item>
+	<tr class="{$classname}">
+		<!--<td align="center"><input type="checkbox" name="msg[]" value="{$id}" /></td>-->
+		<td align="center"><img src="Images/{$IMG_DIR}/Icons/PostIcons/{$icon}" alt="" /></td>
+		<td><a href="member.php?act=view_msg&amp;id={$id}">{$name}</a> ({$num_children})</td>
+		<td align="center"><a href="member.php?id={$poster_id}">{$poster_name}</a></td>
+		<td align="center" nowrap="nowrap"><span class="minitext">{$created}</span></td>
+		<td align="center">{$delete}</td>
+	</tr>
+	</list:item>
+</table>
+</div>
+<div align="right">
+<table cellpadding="0" cellspacing="1" border="0" class="pagination">
+	<tr>
+		<td class="pagination">{$L_PAGE}</td>
+		<list:navigator use="maxthreads" limit="" list_id="pmessages">
+			<list:first class="alt3">&laquo;</list:first>
+			<list:prev class="alt3">&lt;</list:prev>
+			<list:page class="alt2" separator="" />
+			<list:next class="alt3">&gt;</list:next>
+			<list:last class="alt3">&raquo;</list:last>
+		</list:navigator>
+	</tr>
+</table>
+</div>
+<!--
+<input type="submit" value="{$L_DELETE}" />
+<input type="button" value="{$L_EMPTYFOLDER}" onclick="document.loaction='';" />
+-->
+<!--</form>-->
+</list:list>
+</valid:logged>

@@ -1,0 +1,126 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<script language="javascript" type="text/javascript">
+function delete_category()
+{
+	ht = document.getElementsByTagName("html");
+	ht[0].style.filter = "progid:DXImageTransform.Microsoft.BasicImage(grayscale=1)";
+	if (confirm('<?php echo $template["L_CHECKDELCAT"]; ?>')) {
+		return true;
+	} else {
+		ht[0].style.filter = "";
+		return false;
+	}
+}
+</script>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_CATEGORIES"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box"><?php echo $template["L_CATEGORIESMESSAGE"]; ?></div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="5"><?php echo $template["L_MODCATEGORIES"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td align="center"><u><?php echo $template["L_DELETECATEGORY"]; ?></u></td>
+		<td align="center"><u><?php echo $template["L_ADDCATEGORY"]; ?></u></td>
+		<td align="center"><u><?php echo $template["L_SUSPENDCAT"]; ?></u></td>
+		<td align="center"><u><?php echo $template["L_UNSUSPENDCAT"]; ?></u></td>
+		<td align="center"><u><?php echo $template["L_QUICKJUMP"]; ?></u></td>
+	</tr>
+	<tr class="panel">
+		<td align="center">
+			<form action="admin.php?act=delete_single&type=2" method="post" name="post" enctype="multipart/form-data">
+			<?php if ($template->categories != NULL): ?>
+			<select name="id" id="<?php echo $template["L_FORUM"]; ?>" check="true" class="inputbox">
+			<?php $categories = new CachingIterator(get_iterator($template->categories));  foreach($categories as $obj1):  $template->Push($obj1); ?>
+			<option value="<?php echo $template["id"]; ?>"><?php echo $template["indent_level"];  echo $template["name"]; ?></option>
+			<?php $template->Pop();  endforeach; ?>
+			</select>
+			<br />
+			<input type="submit" class="button" value="<?php echo $template["L_DELETE"]; ?>" />
+			<?php endif; ?>
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=add_cat" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+			<?php echo $template["L_CATNAME"]; ?><br />
+			<input type="text" name="name" class="inputbox" id="<?php echo $template["L_CATNAME"]; ?>" check="true" value="" />
+			<br />
+			<input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" />
+			</form>	
+		</td>
+		<td align="center">
+			<form action="admin.php?act=suspend" method="post" name="post" enctype="multipart/form-data" onSubmit="return delete_category();">
+			<?php if ($template->suspend_categories != NULL): ?>
+			<select name="categories" id="<?php echo $template["L_CATEGORY"]; ?>" check="true" class="inputbox">
+			<?php $suspend_categories = new CachingIterator(get_iterator($template->suspend_categories));  foreach($suspend_categories as $obj2):  $template->Push($obj2); ?>
+			<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+			<?php $template->Pop();  endforeach; ?>
+			</select>
+			<input type="submit" class="button" value="<?php echo $template["L_SUSPEND"]; ?>" />
+			<?php endif; ?>
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=unsuspend" method="post" name="post" enctype="multipart/form-data">
+			<?php if ($template->unsuspend_categories != NULL): ?>
+			<select name="categories" id="<?php echo $template["L_CATEGORY"]; ?>" class="inputbox">
+			<?php $unsuspend_categories = new CachingIterator(get_iterator($template->unsuspend_categories));  foreach($unsuspend_categories as $obj3):  $template->Push($obj3); ?>
+			<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+			<?php $template->Pop();  endforeach; ?>
+			</select>
+			<input type="submit" class="button" value="<?php echo $template["L_UNSUSPEND"]; ?>" />
+			<?php endif; ?>
+			</form>
+		</td>
+		<td align="center">
+			<?php if ($template->quick_jump != NULL): ?>
+			<select name="categories" id="quick_jump" class="inputbox" onChange="return QuickJump(this);">
+			<option value="-1"><?php echo $template["L_SELCATEGORY"]; ?></option>
+			<?php $quick_jump = new CachingIterator(get_iterator($template->quick_jump));  foreach($quick_jump as $obj4):  $template->Push($obj4); ?>
+			<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+			<?php $template->Pop();  endforeach; ?>
+			</select>
+			<?php endif; ?>
+		</td>
+	</tr>
+</table>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_EDITCATEGORIES"]; ?></td>
+	</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="outset_box">
+	<tr>
+		<td>
+			<?php if ($template->categories != NULL): ?>
+			<?php $categories = new CachingIterator(get_iterator($template->categories));  foreach($categories as $obj5):  $template->Push($obj5); ?>
+			<a name="<?php echo $template["id"]; ?>" id="<?php echo $template["id"]; ?>" />
+			<table width="100%" cellpadding="0" cellspacing="1" border="0">
+				<tr class="tcat">
+					<td><?php echo $template["name"]; ?></td>
+				</tr>
+				<tr class="panel">
+					<td>
+						<form action="admin.php?act=update" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+						<input type="hidden" name="id" value="<?php echo $template["id"]; ?>" /><?php echo $template["L_POSITION"]; ?>: <input type="text" class="inputbox" name="position" value="<?php echo $template["f_order"]; ?>" size="3" check="true" id="<?php echo $template["L_POSITION"]; ?>" />     <?php echo $template["L_NAME"]; ?>: <input type="text" class="inputbox" name="name" value="<?php echo $template["name"]; ?>" size="40" check="true" id="<?php echo $template["L_NAME"]; ?>" />  <input type="submit" class="button" value="<?php echo $template["L_UPDATE"]; ?>" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" />
+						</form>
+					</td>
+				</tr>
+			</table>
+			<?php if ($categories->HasNext()): ?><br /><?php endif; ?>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>

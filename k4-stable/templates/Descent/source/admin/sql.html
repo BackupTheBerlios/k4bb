@@ -1,0 +1,23 @@
+<isadmin>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="3">{$L_SQL}</td>
+	</tr>
+	<tr>
+		<td class="alt1" style="width:150px;" valign="top">
+			<a href="javascript:;" onClick="ShowHide('{$dba_name}')"><strong>{$dba_name}</strong></a><br />
+			<div id="{$dba_name}" style="display:none;">
+			<list:list id="tables">
+			<list:item>
+			&nbsp;&nbsp;&nbsp;&nbsp;<a href="sql.admin.php?table={$name}" target="sql_admin" class="smalltext">{$name}</a>
+			<list:separator><br /></list:separator>
+			</list:item>
+			</list:list>
+			</div>
+		</td>
+		<td class="alt2">
+			<iframe src="sql.admin.php" id="sql_admin" name="sql_admin" width="100%" height="500" frameborder="0"> </iframe>
+		</td>
+	</tr>
+</table>
+</isadmin>

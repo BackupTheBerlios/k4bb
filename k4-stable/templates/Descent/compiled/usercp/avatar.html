@@ -1,0 +1,39 @@
+<?php if ($_SESSION['user'] instanceof Member): ?>
+<script type="text/javascript">
+function popupUpload(t) {
+	window.open("files.php?act=avatar_upload", t, "width=300,height=100");
+	return true;
+}
+</script>
+<form action="member.php?act=update_avatar" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_EDITAVATAR"]; ?> : <?php echo $template["username"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td width="20%" align="center">
+			<em><span class="smalltext"><?php echo $template["L_YOURAVATAR"]; ?></span></em><br />
+			<div style="border:1px inset;width:75px;height:75px;text-align:center;" id="user_avatar"><?php echo $template["avatar_img"]; ?></div>
+		</td>
+		<td width="80%">
+			<?php echo $template["L_USEAVATAR"]; ?>   
+			<select name="avatar" check="true">
+				<option value="0"><?php echo $template["L_NO"]; ?></option>
+				<option value="1"><?php echo $template["L_YES"]; ?></option>
+			</select>
+			<br /><br />
+			<input type="button" class="button" style="font-weight:bold;" value="<?php echo $template["L_UPLOADNEWAVATAR"]; ?>" onClick="popupUpload()" /><br /><br />
+			<div class="outset_box"><?php echo $template["L_AVATARINFO"]; ?></div>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="2"><input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" /> <input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" /></td>
+	</tr>
+</table>
+</div>
+</form>
+<script language="javascript" type="text/javascript">
+setIndex(<?php echo $template["avatar"]; ?>, 'avatar');
+</script>
+<?php endif; ?>

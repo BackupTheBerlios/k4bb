@@ -1,0 +1,78 @@
+<valid:logged>
+<form action="member.php?act=update_settings" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<input type="hidden" name="id" value="{$id}" />
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2">{$L_SETTINGS} : {$username}</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2">{$L_BOARDSETTINGS}</td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_BOARDSTYLESET}</td>
+		<td width="50%">
+			<select name="styleset" id="{$L_BOARDSTYLESET}" check="true">
+				<list:list id="stylesets">
+				<list:item>
+				<option value="{$id}">{$name}</option>
+				</list:item>
+				</list:list>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_BOARDIMAGESET}</td>
+		<td width="50%">
+			<select name="imgset" id="{$L_BOARDIMAGESET}" check="true">
+				<list:list id="imagesets">
+				<list:item>
+				<option value="{$name}">{$name}</option>
+				</list:item>
+				</list:list>
+			</select>
+		</td>
+	</tr>
+	<!--<tr class="panel">
+		<td width="50%">{$L_BOARDLANGUAGE}</td>
+		<td width="50%">
+			<select name="language" id="{$L_BOARDLANGUAGE}" check="true">
+				<list:list id="languages">
+				<list:item>
+				<option value="{$name}">{$name}</option>
+				</list:item>
+				</list:list>
+			</select>
+		</td>
+	</tr>-->
+	<tr class="panel">
+		<td width="50%">{$L_INVISIBLEMODE}</td>
+		<td width="50%">
+			<select name="invisible" id="{$L_INVISIBLEMODE}" check="true">
+				<option value="1">{$L_YES}</option>
+				<option value="0">{$L_NO}</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td width="50%">{$L_THREADDISPLAY}</td>
+		<td width="50%">
+			<select name="thread_display" id="{$L_THREADDISPLAY}" check="true">
+				<option value="0">{$L_LINEAR}</option>
+				<option value="1">{$L_VERTICAL}</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="2"><input type="submit" class="button" value="{$L_SAVE}" />&nbsp;<input type="reset" class="button" value="{$L_RESET}" /></td>
+	</tr>
+</table>
+</div>
+</form>
+<script language="javascript" type="text/javascript">
+setIndex('{$styleset}', '{$L_BOARDSTYLESET}');
+setIndex('{$imgset}', '{$L_BOARDIMAGESET}');
+setIndex({$thread_display}, '{$L_THREADDISPLAY}');
+setIndex({$invisible}, '{$L_INVISIBLEMODE}');
+</script>
+</valid:logged>

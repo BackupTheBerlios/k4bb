@@ -1,0 +1,128 @@
+<isadmin>
+<script type="text/javascript">
+// <![CDATA[
+function popupUpload(t) {
+	window.open("files.php?act=rank_upload", t, "width=300,height=100");
+	return true;
+}
+// ]]>
+</script>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td>{$L_RANKS}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">{$L_RANKSMESSAGE}</div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<form action="admin.php?act=add_rank" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="3">{$L_ADDRANK}</td>
+	</tr>
+	<tr class="panel">
+		<td colspan="3">
+			{$L_RANK}:&nbsp;<textarea name="rank" id="{$L_RANK}" rows="2" cols="60" check="true">/* {$L_CHANGEME} */</textarea>&nbsp;&nbsp;<input type="button" value="{$L_USEIMAGE}" onClick="popupUpload()" />&nbsp;&nbsp;({$L_BBCODEALLOWED})
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="3">{$L_APPLYTO}:</td>
+	</tr>
+	<tr class="panel">
+		<td valign="top">
+			<fieldset>
+				<legend><input type="radio" name="rank_to" checked="checked" value="1" />&nbsp;{$L_USERGROUP}</legend>
+				<list:list id="groups">
+				<select name="group_id">
+					<list:item>
+					<option value="{$id}">{$name}</option>
+					</list:item>
+				</select>
+				</list:list>
+			</fieldset>
+		</td>
+		<td valign="top">
+			<fieldset>
+				<legend><input type="radio" name="rank_to" value="2" />&nbsp;{$L_MEMBER}</legend>
+				{$L_NAME}:&nbsp;<input type="text" name="name" value="" />&nbsp;<input type="button" value="{$L_FINDUSER}" onClick="" />
+			</fieldset>
+		</td>
+		<td valign="top">
+			<fieldset>
+				<legend>{$L_OTHER}</legend>
+				<input type="radio" name="rank_to" value="3" />&nbsp;{$L_BANNEDUSERS}
+			</fieldset>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="3"><input type="submit" value="{$L_SAVE}" /><input type="reset" value="{$L_RESET}" onClick="Reset(this)" /></td>
+	</tr>
+</table>
+</form>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="5">{$L_EDITUSERRANKS}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">
+				<list:list id="ranks">
+				<list:item>
+				<form action="admin.php?act=update_rank" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+				<table width="100%" cellpadding="0" cellspacing="1" border="0">
+					<tr class="thead">
+						<td>{$L_RANKTO}</td>
+						<td>{$L_RANK}</td>
+						<td>{$L_GROUP}</td>
+						<td>{$L_USER}</td>
+						<td>{$L_OTHER}</td>
+					</tr>
+					<tr class="panel">
+						<td>
+							<select name="rank_to" id="rank_to{$id}">
+								<option value="1">{$L_USERGROUP}</option>
+								<option value="2">{$L_NAME}</option>
+								<option value="3">{$L_BANNEDUSERS}</option>
+							</select>
+						</td>
+						<td><textarea name="rank" rows="2" cols="30">{$rank}</textarea></td>
+						<td>
+							<input type="hidden" name="id" value="{$id}" />
+							<select name="group_id" id="group{$id}">
+								<option value="0">-</option>
+								<list:list id="groups">
+								<list:item>
+								<option value="{$id}">{$name}</option>
+								</list:item>
+								</list:list>
+							</select>
+						</td>
+						<td>{$L_NAME}:&nbsp;<input type="text" name="name" value="{$user}" /><br /><input type="button" value="{$L_FINDUSER}" onClick="" /></td>
+						<td>
+							<a href="javascript:;" onClick="setIndex(3, 'rank_to{$id}')">{$L_BANNEDUSERS}</a>
+							<script language="javascript" type="text/javascript">
+							//<![CDATA[
+							setIndex({$group_id}, 'group{$id}');
+							setIndex({$rank_to}, 'rank_to{$id}');
+							//]]>
+							</script>
+						</td>
+					</tr>
+					<tr class="thead">
+						<td colspan="5" align="center"><input type="submit" class="button" value="{$L_SAVE}" />&nbsp;<input type="reset" class="button" value="{$L_RESET}" /></td>
+					</tr>
+				</table>
+				</form>
+				<list:separator><br /></list:separator>
+				</list:item>
+				</list:list>
+			</div>
+		</td>
+	</tr>
+</table>
+</isadmin>

@@ -1,0 +1,150 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<form action="admin.php?act=update_perms" method="POST" enctype="multipart/form-data">
+<input type="hidden" name="forum_id" value="<?php echo $template["forum_id"]; ?>" />
+<table width="100%" cellpadding="0" cellspacing="1">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_MODPERMS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_VIEW"]; ?></td>
+		<td>
+			<select name="can_view" id="can_view">
+				<option value="1"><?php echo $template["L_ALL"]; ?></option>
+				<option value="2"><?php echo $template["L_REG"]; ?></option>
+				<option value="4"><?php echo $template["L_PRIVATE"]; ?></option>
+				<option value="8"><?php echo $template["L_MODS"]; ?></option>
+				<option value="16"><?php echo $template["L_ADMINS"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_READ"]; ?></td>
+		<td>
+			<select name="can_read" id="can_read">
+				<option value="1"><?php echo $template["L_ALL"]; ?></option>
+				<option value="2"><?php echo $template["L_REG"]; ?></option>
+				<option value="4"><?php echo $template["L_PRIVATE"]; ?></option>
+				<option value="8"><?php echo $template["L_MODS"]; ?></option>
+				<option value="16"><?php echo $template["L_ADMINS"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_POST"]; ?></td>
+		<td>
+			<select name="can_post" id="can_post">
+				<option value="1"><?php echo $template["L_ALL"]; ?></option>
+				<option value="2"><?php echo $template["L_REG"]; ?></option>
+				<option value="4"><?php echo $template["L_PRIVATE"]; ?></option>
+				<option value="8"><?php echo $template["L_MODS"]; ?></option>
+				<option value="16"><?php echo $template["L_ADMINS"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_REPLY"]; ?></td>
+		<td>
+			<select name="can_reply" id="can_reply">
+				<option value="1"><?php echo $template["L_ALL"]; ?></option>
+				<option value="2"><?php echo $template["L_REG"]; ?></option>
+				<option value="4"><?php echo $template["L_PRIVATE"]; ?></option>
+				<option value="8"><?php echo $template["L_MODS"]; ?></option>
+				<option value="16"><?php echo $template["L_ADMINS"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_EDIT"]; ?></td>
+		<td>
+			<select name="can_edit" id="can_edit">
+				<option value="1"><?php echo $template["L_ALL"]; ?></option>
+				<option value="2"><?php echo $template["L_REG"]; ?></option>
+				<option value="4"><?php echo $template["L_PRIVATE"]; ?></option>
+				<option value="8"><?php echo $template["L_MODS"]; ?></option>
+				<option value="16"><?php echo $template["L_ADMINS"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	
+	<tr class="panel">
+		<td><?php echo $template["L_STICKY"]; ?></td>
+		<td>
+			<select name="can_sticky" id="can_sticky">
+				<option value="1"><?php echo $template["L_ALL"]; ?></option>
+				<option value="2"><?php echo $template["L_REG"]; ?></option>
+				<option value="4"><?php echo $template["L_PRIVATE"]; ?></option>
+				<option value="8"><?php echo $template["L_MODS"]; ?></option>
+				<option value="16"><?php echo $template["L_ADMINS"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ANNOUNCE"]; ?></td>
+		<td>
+			<select name="can_announce" id="can_announce">
+				<option value="1"><?php echo $template["L_ALL"]; ?></option>
+				<option value="2"><?php echo $template["L_REG"]; ?></option>
+				<option value="4"><?php echo $template["L_PRIVATE"]; ?></option>
+				<option value="8"><?php echo $template["L_MODS"]; ?></option>
+				<option value="16"><?php echo $template["L_ADMINS"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ATTACH"]; ?></td>
+		<td>
+			<select name="can_attach" id="can_attach">
+				<option value="1"><?php echo $template["L_ALL"]; ?></option>
+				<option value="2"><?php echo $template["L_REG"]; ?></option>
+				<option value="4"><?php echo $template["L_PRIVATE"]; ?></option>
+				<option value="8"><?php echo $template["L_MODS"]; ?></option>
+				<option value="16"><?php echo $template["L_ADMINS"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_VOTE"]; ?></td>
+		<td>
+			<select name="can_vote" id="can_vote">
+				<option value="1"><?php echo $template["L_ALL"]; ?></option>
+				<option value="2"><?php echo $template["L_REG"]; ?></option>
+				<option value="4"><?php echo $template["L_PRIVATE"]; ?></option>
+				<option value="8"><?php echo $template["L_MODS"]; ?></option>
+				<option value="16"><?php echo $template["L_ADMINS"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_POLLCREATE"]; ?></td>
+		<td>
+			<select name="can_pollcreate" id="can_pollcreate">
+				<option value="1"><?php echo $template["L_ALL"]; ?></option>
+				<option value="2"><?php echo $template["L_REG"]; ?></option>
+				<option value="4"><?php echo $template["L_PRIVATE"]; ?></option>
+				<option value="8"><?php echo $template["L_MODS"]; ?></option>
+				<option value="16"><?php echo $template["L_ADMINS"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td align="left" colspan="2">
+			<input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" />
+		</td>
+	</tr>
+</table>
+</form>
+<script language="javascript" type="text/javascript">
+//
+setIndex(<?php echo $template["can_view"]; ?>, 'can_view');
+setIndex(<?php echo $template["can_read"]; ?>, 'can_read');
+setIndex(<?php echo $template["can_post"]; ?>, 'can_post');
+setIndex(<?php echo $template["can_reply"]; ?>, 'can_reply');
+setIndex(<?php echo $template["can_edit"]; ?>, 'can_edit');
+setIndex(<?php echo $template["can_sticky"]; ?>, 'can_sticky');
+setIndex(<?php echo $template["can_announce"]; ?>, 'can_announce');
+setIndex(<?php echo $template["can_vote"]; ?>, 'can_vote');
+setIndex(<?php echo $template["can_pollcreate"]; ?>, 'can_pollcreate');
+setIndex(<?php echo $template["can_attach"]; ?>, 'can_attach');
+//
+</script>
+<?php endif; ?>

@@ -1,0 +1,208 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_OPTIONS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box"><?php echo $template["L_OPTIONSMESSAGE"]; ?></div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<form action="admin.php?act=update_options" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<script language="JavaScript" type="text/javascript">
+//
+var selects = new Array("<?php echo $template["L_CLOSEFORUMS"]; ?>","<?php echo $template["L_ALLOWBBCODE"]; ?>","<?php echo $template["L_ALLOWSMILIES"]; ?>","<?php echo $template["L_ALLOWPOSTICONS"]; ?>","<?php echo $template["L_ALLOWHTML"]; ?>","<?php echo $template["L_ALLOWSIGNATURES"]; ?>","<?php echo $template["L_ALLOWAVATARS"]; ?>","<?php echo $template["L_ALLOWPOLLS"]; ?>")
+var values = "<?php echo $template["closeforums"]; ?> <?php echo $template["allowbbcode"]; ?> <?php echo $template["allowsmilies"]; ?> <?php echo $template["allowposticons"]; ?> <?php echo $template["allowhtml"]; ?> <?php echo $template["allowsignatures"]; ?> <?php echo $template["allowavatars"]; ?> <?php echo $template["canpostpolls"]; ?>".split(" ");
+function SetSelects() {
+	/* Deal with the style sets */
+	var styleset = <?php echo $template["styleset"]; ?>;
+	var ss_select = document.getElementById("<?php echo $template["L_STYLESET"]; ?>");
+	for(var i=0;i<ss_select.length;i++) {
+		if(ss_select[i].value == styleset) {
+			ss_select.selectedIndex = i;
+		}
+	}
+	/* Deal with the basic forum options */
+	for(var i=0;i<selects.length;i++) {
+		var temp_select = document.getElementById(selects[i]);
+		for(var x=0;x<temp_select.length;x++) {
+			if(temp_select[x].value == values[i]) {
+				temp_select.selectedIndex = x;
+			}
+		}
+	}
+}
+AttachEvent(window,'load',SetSelects,false);
+//
+</script>
+<table cellpadding="0" cellspacing="1" border="0" width="100%">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_OPTIONS"]; ?></td>
+	</tr>
+	<tr class="thead" align="center">
+		<td colspan="2"><?php echo $template["L_GENERALOPTIONS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_BOARDNAME"]; ?></td>
+		<td><input type="text" name="name" value="<?php echo $template["name"]; ?>" id="<?php echo $template["L_BOARDNAME"]; ?>" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_BOARDDESCRIPTION"]; ?></td>
+		<td><input type="text" name="description" value="<?php echo $template["description"]; ?>" id="<?php echo $template["L_BOARDDESCRIPTION"]; ?>" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_CLOSEFORUMS"]; ?></td>
+		<td>
+			<select name="closeforums" id="<?php echo $template["L_CLOSEFORUMS"]; ?>">
+				<option value="0"><?php echo $template["L_NO"]; ?></option>
+				<option value="1"><?php echo $template["L_YES"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_CLOSEDMESSAGE"];  echo $template["L_CMEXTRA"]; ?></td>
+		<td><input type="text" name="closedmessage" value="<?php echo $template["closedmessage"]; ?>" id="<?php echo $template["L_CLOSEDMESSAGE"]; ?>" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_THREADLIMIT"]; ?></td>
+		<td><input type="text" name="threadsperpage" id="<?php echo $template["L_THREADLIMIT"]; ?>" value="<?php echo $template["threadsperpage"]; ?>" size="3" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_POSTLIMIT"]; ?></td>
+		<td><input type="text" name="postsperpage" value="<?php echo $template["postsperpage"]; ?>" id="<?php echo $template["L_POSTLIMIT"]; ?>" size="3" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2" align="center"><?php echo $template["L_TEMPLATESETTINGS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_TEMPLATESET"]; ?></td>
+		<td>
+			<select name="folder" id="<?php echo $template["L_TEMPLATESET"]; ?>" check="true">
+				<?php if ($template->templates != NULL): ?>
+				<?php $templates = new CachingIterator(get_iterator($template->templates));  foreach($templates as $obj1):  $template->Push($obj1); ?>
+				<option value="<?php echo $template["name"]; ?>"><?php echo $template["name"]; ?></option>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_IMGSET"]; ?></td>
+		<td>
+			<select name="imgfolder" id="<?php echo $template["L_IMGSET"]; ?>" check="true">
+				<?php if ($template->img_folders != NULL): ?>
+				<?php $img_folders = new CachingIterator(get_iterator($template->img_folders));  foreach($img_folders as $obj2):  $template->Push($obj2); ?>
+				<option value="<?php echo $template["name"]; ?>"><?php echo $template["name"]; ?></option>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_STYLESET"]; ?></td>
+		<td>
+			<select name="styleset" id="<?php echo $template["L_STYLESET"]; ?>" check="true">
+				<?php if ($template->stylesets != NULL): ?>
+				<?php $stylesets = new CachingIterator(get_iterator($template->stylesets));  foreach($stylesets as $obj3):  $template->Push($obj3); ?>
+				<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</select>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2" align="center"><?php echo $template["L_ABILITIESSETTINGS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_MAXPOLLOPTIONS"]; ?></td>
+		<td><input type="text" name="maxpolloptions" id="<?php echo $template["L_MAXPOLLOPTIONS"]; ?>" value="<?php echo $template["maxpolloptions"]; ?>" size="2" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ALLOWBBCODE"]; ?></td>
+		<td>
+			<select name="allowbbcode" id="<?php echo $template["L_ALLOWBBCODE"]; ?>" check="true">
+				<option value="1"><?php echo $template["L_YES"]; ?></option>
+				<option value="0"><?php echo $template["L_NO"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ALLOWSMILIES"]; ?></td>
+		<td>
+			<select name="allowsmilies" id="<?php echo $template["L_ALLOWSMILIES"]; ?>" check="true">
+				<option value="1"><?php echo $template["L_YES"]; ?></option>
+				<option value="0"><?php echo $template["L_NO"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ALLOWPOSTICONS"]; ?></td>
+		<td>
+			<select name="allowposticons" id="<?php echo $template["L_ALLOWPOSTICONS"]; ?>" check="true">
+				<option value="1"><?php echo $template["L_YES"]; ?></option>
+				<option value="0"><?php echo $template["L_NO"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ALLOWHTML"]; ?></td>
+		<td>
+			<select name="allowhtml" id="<?php echo $template["L_ALLOWHTML"]; ?>" check="true">
+				<option value="0"><?php echo $template["L_NO"]; ?></option>
+				<option value="1"><?php echo $template["L_YES"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ALLOWEDHTMLTAGS"]; ?></td>
+		<td><input type="text" name="allowedhtml" id="<?php echo $template["L_ALLOWEDHTMLTAGS"]; ?>" value="<?php echo $template["allowedhtml"]; ?>" size="50" check="true" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ALLOWSIGNATURES"]; ?></td>
+		<td>
+			<select name="allowsignatures" id="<?php echo $template["L_ALLOWSIGNATURES"]; ?>" check="true">
+				<option value="1"><?php echo $template["L_YES"]; ?></option>
+				<option value="0"><?php echo $template["L_NO"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ALLOWAVATARS"]; ?></td>
+		<td>
+			<select name="allowavatars" id="<?php echo $template["L_ALLOWAVATARS"]; ?>" check="true">
+				<option value="1"><?php echo $template["L_YES"]; ?></option>
+				<option value="0"><?php echo $template["L_NO"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ALLOWPOLLS"]; ?></td>
+		<td>
+			<select name="canpostpolls" id="<?php echo $template["L_ALLOWPOLLS"]; ?>" check="true">
+				<option value="1"><?php echo $template["L_YES"]; ?></option>
+				<option value="0"><?php echo $template["L_NO"]; ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2" align="center"><?php echo $template["L_EMAILSETTINGS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ADMINEMAIL"]; ?></td>
+		<td><input type="text" name="adminemail" id="<?php echo $template["L_ADMINEMAIL"]; ?>" value="<?php echo $template["adminemail"]; ?>" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_EMAILSIG"]; ?></td>
+		<td><textarea name="emailsig" id="<?php echo $template["L_EMAILSIG"]; ?>" rows="5" cols="50" class="inputbox"><?php echo $template["emailsign"]; ?></textarea></td>
+	</tr>
+	<tr class="thead">
+		<td align="left" colspan="2">
+			<input type="submit" class="button" value="<?php echo $template["L_APPLYTOALL"]; ?>" /> <input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" />
+		</td>
+	</tr>
+</table>
+</form>
+<?php endif; ?>

@@ -1,0 +1,28 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<a href="admin.php" target="main"><img src="Images/<?php echo $template["IMG_DIR"]; ?>/logo.gif" alt="" border="0" /></a><br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0" id="nav_table">
+	<thead class="thead"><td><?php echo $template["L_OPTIONS"]; ?></td></thead>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=options"><?php echo $template["L_OPTIONS"]; ?></a></td></tr>
+	<thead class="thead"><td><?php echo $template["L_STYLES"]; ?></td></thead>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=css"><?php echo $template["L_CSS"]; ?></a></td></tr>
+	<thead class="thead"><td><?php echo $template["L_FORUMS"]; ?></td></thead>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=categories"><?php echo $template["L_CATEGORIES"]; ?></a></td></tr>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=forums"><?php echo $template["L_FORUMS"]; ?></a></td></tr>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=prune"><?php echo $template["L_PRUNE"]; ?></a></td></tr>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=permissions"><?php echo $template["L_PERMISSIONS"]; ?></a></td></tr>
+	<thead class="thead"><td><?php echo $template["L_USERS"]; ?></td></thead>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=users"><?php echo $template["L_USERS"]; ?></a></td></tr>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=groups"><?php echo $template["L_GROUPS"]; ?></a></td></tr>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=ranks"><?php echo $template["L_RANKS"]; ?></a></td></tr>
+	<thead class="thead"><td><?php echo $template["L_POSTS"]; ?></td></thead>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=censoring"><?php echo $template["L_CENSORING"]; ?></a></td></tr>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=icons"><?php echo $template["L_ICONS"]; ?></a></td></tr>
+	<thead class="thead"><td><?php echo $template["L_PRIVATE_MSGS"]; ?></td></thead>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=globalpm"><?php echo $template["L_GLOBALPM"]; ?></a></td></tr>
+	<thead class="thead"><td><?php echo $template["L_FAQ"]; ?></td></thead>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=faq"><?php echo $template["L_FAQ"]; ?></a></td></tr>
+	<thead class="thead"><td><?php echo $template["L_CMSOPTIONS"]; ?></td></thead>
+	<tr class="panel" onmouseover="this.className = 'alt1'" onmouseout="this.className = 'panel'"><td><a class="smalltext" target="main" href="admin.php?act=filemanager"><?php echo $template["L_FILEMANAGER"]; ?></a></td></tr>
+	
+</table>
+<?php endif; ?>

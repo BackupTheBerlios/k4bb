@@ -1,0 +1,209 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<script language="javascript" type="text/javascript">
+	function suspend_forum()
+	{
+		ht = document.getElementsByTagName("html");
+		ht[0].style.filter = "progid:DXImageTransform.Microsoft.BasicImage(grayscale=1)";
+		if (confirm('<?php echo $template["L_CHECKDELFORUM"]; ?>'))
+		{
+			return true;
+		}
+		else
+		{
+			ht[0].style.filter = "";
+			return false;
+		}
+	}
+</script>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td><?php echo $template["L_FORUMS"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box"><?php echo $template["L_FORUMSMESSAGE"]; ?></div>
+		</td>
+	</tr>
+</table>
+<br />
+<div id="form_errors" style=""> </div>
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="5"><?php echo $template["L_MODFORUMS"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td align="center"><u><?php echo $template["L_DELETEFORUM"]; ?></u></td>
+		<td align="center"><u><?php echo $template["L_SUSPENDFORUM"]; ?></u></td>
+		<td align="center"><u><?php echo $template["L_UNSUSPENDFORUM"]; ?></u></td>
+		<td align="center"><u><?php echo $template["L_LOCKFORUM"]; ?></u></td>
+		<td align="center"><u><?php echo $template["L_UNLOCKFORUM"]; ?></u></td>
+	</tr>
+	<tr class="panel">
+		<td align="center">
+			<form action="admin.php?act=delete_single&type=2" method="post" name="post" enctype="multipart/form-data">
+			<?php if ($template->forums_list != NULL): ?>
+			<select name="id" id="<?php echo $template["L_FORUM"]; ?>" check="true" class="inputbox">
+			<?php $forums_list = new CachingIterator(get_iterator($template->forums_list));  foreach($forums_list as $obj1):  $template->Push($obj1); ?>
+			<option value="<?php echo $template["id"]; ?>"><?php echo $template["indent_level"];  echo $template["name"]; ?></option>
+			<?php $template->Pop();  endforeach; ?>
+			</select>
+			<br />
+			<input type="submit" class="button" value="<?php echo $template["L_DELETE"]; ?>" />
+			<?php endif; ?>
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=suspend" method="post" name="post" enctype="multipart/form-data" onSubmit="return suspend_forum();">
+			<?php if ($template->suspend_forums != NULL): ?>
+			<select name="forums" id="<?php echo $template["L_FORUM"]; ?>" check="true" class="inputbox">
+			<?php $suspend_forums = new CachingIterator(get_iterator($template->suspend_forums));  foreach($suspend_forums as $obj2):  $template->Push($obj2); ?>
+			<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+			<?php $template->Pop();  endforeach; ?>
+			</select>
+			<input type="submit" class="button" value="<?php echo $template["L_SUSPEND"]; ?>" />
+			<?php endif; ?>
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=unsuspend" method="post" name="post" enctype="multipart/form-data">
+			<?php if ($template->unsuspend_forums != NULL): ?>
+			<select name="forums" id="<?php echo $template["L_FORUM"]; ?>" class="inputbox">
+			<?php $unsuspend_forums = new CachingIterator(get_iterator($template->unsuspend_forums));  foreach($unsuspend_forums as $obj3):  $template->Push($obj3); ?>
+			<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+			<?php $template->Pop();  endforeach; ?>
+			</select>
+			<input type="submit" class="button" value="<?php echo $template["L_UNSUSPEND"]; ?>" />
+			<?php endif; ?>
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=lock" method="post" name="post" enctype="multipart/form-data">
+			<?php if ($template->lock_forums != NULL): ?>
+			<select name="forums" id="<?php echo $template["L_FORUM"]; ?>" class="inputbox">
+			<?php $lock_forums = new CachingIterator(get_iterator($template->lock_forums));  foreach($lock_forums as $obj4):  $template->Push($obj4); ?>
+			<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+			<?php $template->Pop();  endforeach; ?>
+			</select>
+			<input type="submit" class="button" value="<?php echo $template["L_LOCK"]; ?>" />
+			<?php endif; ?>
+			</form>
+		</td>
+		<td align="center">
+			<form action="admin.php?act=unlock" method="post" name="post" enctype="multipart/form-data">
+			<?php if ($template->unlock_forums != NULL): ?>
+			<select name="forums" id="<?php echo $template["L_FORUM"]; ?>" class="inputbox">
+			<?php $unlock_forums = new CachingIterator(get_iterator($template->unlock_forums));  foreach($unlock_forums as $obj5):  $template->Push($obj5); ?>
+			<option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+			<?php $template->Pop();  endforeach; ?>
+			</select>
+			<input type="submit" class="button" value="<?php echo $template["L_UNLOCK"]; ?>" />
+			<?php endif; ?>
+			</form>
+		</td>
+	</tr>
+</table>
+<br />
+<form action="admin.php?act=addforum" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_ADDFORUM"]; ?></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_CHILDOF"]; ?>:</td>
+		<td>
+			<?php if ($template->forums_list != NULL): ?>
+			<select name="parent_id" id="<?php echo $template["L_FORUM"]; ?>" class="inputbox">
+			<?php $forums_list = new CachingIterator(get_iterator($template->forums_list));  foreach($forums_list as $obj6):  $template->Push($obj6); ?>
+			<option value="<?php echo $template["id"]; ?>"><?php echo $template["indent_level"];  echo $template["name"]; ?></option>
+			<?php $template->Pop();  endforeach; ?>
+			</select>
+			<?php endif; ?>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_NAME"]; ?>:</td>
+		<td><input type="text" name="name" id="<?php echo $template["L_NAME"]; ?>" value="" class="inputbox" check="true" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_DESCRIPTION"]; ?>:</td>
+		<td><input type="text" name="description" id="<?php echo $template["L_DESCRIPTION"]; ?>" value="" class="inputbox" check="true" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_LINKURL"]; ?>:</td>
+		<td><input type="text" name="link_href" value="http://" class="inputbox" /></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_FORUMPASSWORD"]; ?></td>
+		<td><input type="text" name="pass" class="inputbox" /></td>
+	</tr>
+	
+	<tr class="panel">
+		<td><?php echo $template["L_LOCKED"]; ?>:</td>
+		<td><label for="radio1"><input type="radio" name="lock" id="radio1" value="1" /> <?php echo $template["L_YES"]; ?></label>     <label for="radio2"><input type="radio" name="lock" id="radio2" checked="checked" value="0" /> <?php echo $template["L_NO"]; ?></label></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_SUSPENDED"]; ?>:</td>
+		<td><label for="radio3"><input type="radio" name="suspend" id="radio3" value="1" /> <?php echo $template["L_YES"]; ?></label>     <label for="radio4"><input type="radio" name="suspend" id="radio4" checked="checked" value="0" /> <?php echo $template["L_NO"]; ?></label></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ISLINK"]; ?>:</td>
+		<td><label for="radio5"><input type="radio" name="is_link" id="radio5" value="1" /> <?php echo $template["L_YES"]; ?></label>     <label for="radio6"><input type="radio" name="is_link" id="radio6" checked="checked" value="0" /> <?php echo $template["L_NO"]; ?></label></td>
+	</tr>
+	<tr class="panel">
+		<td><?php echo $template["L_ISPRIVATE"]; ?>:</td>
+		<td><label for="radio7"><input type="radio" name="private" id="radio7" value="1" /> <?php echo $template["L_YES"]; ?></label>     <label for="radio8"><input type="radio" name="private" id="radio8" checked="checked" value="0" /> <?php echo $template["L_NO"]; ?></label></td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2"><input type="submit" class="button" value="<?php echo $template["L_SAVE"]; ?>" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" /></td>
+	</tr>
+</table>
+</form>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="2"><?php echo $template["L_EDITFORUMS"]; ?></td>
+	</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="outset_box">
+	<tr>
+		<td>
+			<?php if ($template->categories != NULL): ?>
+			<?php $categories = new CachingIterator(get_iterator($template->categories));  foreach($categories as $obj7):  $template->Push($obj7); ?>
+			<fieldset>
+			<legend><strong><?php echo $template["name"]; ?></strong> </legend>
+			<?php if ($categories->HasNext()): ?><br /><?php endif; ?>
+				<?php if ($template->categories && method_exists($template->categories, 'GetChildren') && $template->obj9 = $template->categories->GetChildren()): ?>
+				<?php $obj9 = new CachingIterator(get_iterator($template->obj9));  foreach($obj9 as $obj10):  $template->Push($obj10); ?>
+				<table width="100%" cellpadding="0" cellspacing="1" border="0">
+					<tr class="tcat">
+						<td><?php echo $template["name"]; ?></td>
+					</tr>
+					<tr class="panel">
+						<td align="center">
+							<form action="admin.php?act=update" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="return Reset(this);">
+							<div align="left">
+								<input type="hidden" name="id" value="<?php echo $template["id"]; ?>" /><?php echo $template["L_POSITION"]; ?>: <input type="text" class="inputbox" name="position" value="<?php echo $template["f_order"]; ?>" size="3" check="true" id="<?php echo $template["L_POSITION"]; ?>" />
+								<br /><?php echo $template["L_NAME"]; ?>: <input type="text" class="inputbox" name="name" value="<?php echo $template["name"]; ?>" size="30" check="true" id="<?php echo $template["L_NAME"]; ?>" />
+								<br /><?php echo $template["L_DESCRIPTION"]; ?>: <input type="text" class="inputbox" name="description" value="<?php echo $template["description"]; ?>" size="30" check="true" id="<?php echo $template["L_DESCRIPTION"]; ?>" />
+								<br /><?php echo $template["L_LINKURL"]; ?>: <input type="text" name="link_href" value="<?php echo $template["link_href"]; ?>" class="inputbox" />
+								<br /><?php echo $template["L_ISLINK"]; ?>: <select name="is_link" id="is_link_<?php echo $template["id"]; ?>"><option value="0"><?php echo $template["L_NO"]; ?></option><option value="1"><?php echo $template["L_YES"]; ?></option></select>
+								<br /><?php echo $template["L_FORUMPASSWORD"]; ?>: <input type="text" name="pass" value="<?php echo $template["pass"]; ?>" class="inputbox" />
+								<br /><?php echo $template["L_ISPRIVATE"]; ?>: <select name="private" id="private<?php echo $template["id"]; ?>"><option value="0"><?php echo $template["L_NO"]; ?></option><option value="1"><?php echo $template["L_YES"]; ?></option></select>
+								<br />
+							</div>
+							<input type="submit" class="button" value="<?php echo $template["L_UPDATE"]; ?>" /><input type="reset" class="button" value="<?php echo $template["L_RESET"]; ?>" />
+							<script type="text/javascript">setIndex(<?php echo $template["is_link"]; ?>, 'is_link_<?php echo $template["id"]; ?>');setIndex(<?php echo $template["private"]; ?>, 'private<?php echo $template["id"]; ?>');</script>
+							</form>
+						</td>
+					</tr>
+				</table>
+				<?php if ($obj9->HasNext()): ?><br /><?php endif; ?>
+				<?php $template->Pop();  endforeach; ?>
+				<?php endif; ?>
+			</fieldset>
+			<?php $template->Pop();  endforeach; ?>
+			<?php endif; ?>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>

@@ -1,0 +1,237 @@
+<valid:logged>
+<form action="member.php?act={$act}" method="post" name="post" enctype="multipart/form-data" onSubmit="return checkForm(this);" onReset="Reset(this);">
+<div id="form_errors" style=""> </div>
+<input type="hidden" name="msg_id" id="msg_id" value="{$msg_id}" />
+<script type="text/javascript">
+//<![CDATA[
+
+u_enter_url				= "{$L_ENTERURL}";
+u_enter_pagetitle		= "{$L_ENTERPAGETITLE}";
+s_webpage_title			= "{$L_PAGETITLE}";
+u_error_enter_url		= " {$L_ERRORENTERURL}";
+s_found_errors			= " {$L_ERRORENTERTITLE}";
+s_error					= "{$L_ERROR}";
+u_error_img				= "{$L_ENTERIMG}";
+u_error_enter_img		= " {$L_ERRORENTERIMG}";
+
+b_help = "{$L_BBCODE_B_HELP}"; // Bold
+i_help = "{$L_BBCODE_I_HELP}"; // Italic
+u_help = "{$L_BBCODE_U_HELP}"; // Underline
+q_help = "{$L_BBCODE_Q_HELP}"; // Quote
+c_help = "{$L_BBCODE_C_HELP}"; // Code
+l_help = "{$L_BBCODE_L_HELP}"; // List
+o_help = "{$L_BBCODE_O_HELP}"; // Ordered List
+p_help = "{$L_BBCODE_P_HELP}"; // Image
+w_help = "{$L_BBCODE_W_HELP}"; // URL
+a_help = "{$L_BBCODE_A_HELP}"; // Close all tags
+s_help = "{$L_BBCODE_S_HELP}"; // Color
+f_help = "{$L_BBCODE_F_HELP}"; // Font Size
+n_help = "{$L_BBCODE_N_HELP}"; // Font
+
+function showTable(Id) {
+	var the_tr = document.getElementById(Id);
+	if(the_tr.style.display == 'block')
+		return the_tr.style.display = 'none';
+	else
+		return the_tr.style.display = 'block';
+}
+function swap_posticon(imgid) {
+	var out = document.getElementById("display_posticon");
+	if (imgid) {
+		out.src = imgid.src;
+		out.alt = imgid.alt;
+	} else {
+		out.src = "Images/{$IMG_DIR}/Icons/PostIcons/clear.gif";
+		out.alt = "";
+	}
+}
+function show_buddylist(div_id) {
+	var Id = document.getElementById(div_id);
+	if(Id.style.display == 'none') {
+		Id.style.display = 'block';
+	} else {
+		Id.style.display = 'none';
+	}
+}
+function set_user_to(input_id, user_name) {
+	var Id = document.getElementById(input_id);
+	Id.value = user_name;
+}
+//]]>
+</script>
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat" colspan="2">
+		<td colspan="2">{$L_SENDMESSAGE}</td>
+	</tr>
+	<tr class="thead">
+		<td colspan="2">
+			{$L_LOGGEDAS}: <strong>{$user_name}</strong>
+		</td>
+	</tr>
+	<block:block id="forward_username">
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:95%;">
+				<legend><label for="{$L_TO}">{$L_TO} ({$L_USERNAME})</label></legend>
+				<input type="text" name="member_name" class="inputbox" id="{$L_TO}" value="" size="16" maxlength="16" check="true" />
+				<input type="button" class="button" value="{$L_BUDDYLIST}" onclick="show_buddylist('buddy_list')" ondblclick="show_buddylist('buddy_list')" />
+				<div id="buddy_list" style="display:none;position:absolute;z-index:1000;" onclick="this.style.display='none'" >
+					<div class="forum_content">
+					<table cellpadding="0" cellspacing="1">
+						<tr class="thead">
+							<td>{$L_BUDDYLIST}</td>
+						</tr>
+						<list:list id="buddy_list">
+						<list:item>
+						<tr class="panel">
+							<td><a href="javascript:;" onclick="set_user_to('{$L_TO}', '{$user_name}');show_buddylist('buddy_list');">{$user_name}</a></td>
+						</tr>
+						</list:item>
+						</list:list>
+					</table>
+					</div>
+				</div>
+			</fieldset>
+		</td>
+	</tr>
+	</block:block>
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:95%;">
+				<legend><label for="{$L_SUBJECT}">{$L_SUBJECT}</label></legend>
+				<input type="text" name="name" id="{$L_SUBJECT}" value="{$subject}" size="80" class="inputbox" maxlength="255" onKeyPress="changeBack(this)" check="true" />
+				<img id="display_posticon" src="Images/{$IMG_DIR}/Icons/PostIcons/clear.gif" alt="" />
+			</fieldset>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:80%;">
+				<legend><label for="{$L_POST}">{$L_MESSAGE}</label></legend>
+					<block:block id="bbcode">
+					<input type="button" class="button" accesskey="b" name="addbbcode0" value=" B " style="font-weight:bold; width: 30px" onClick="bbstyle(0)" onMouseOver="helpline('b')" />
+					<input type="button" class="button" accesskey="i" name="addbbcode2" value=" i " style="font-style:italic; width: 30px" onClick="bbstyle(2)" onMouseOver="helpline('i')" />
+					<input type="button" class="button" accesskey="u" name="addbbcode4" value=" u " style="text-decoration: underline; width: 30px" onClick="bbstyle(4)" onMouseOver="helpline('u')" />
+					<input type="button" class="button" accesskey="q" name="addbbcode6" value="Quote" style="width: 50px" onClick="bbstyle(6)" onMouseOver="helpline('q')" />
+					<input type="button" class="button" accesskey="c" name="addbbcode8" value="Code" style="width: 40px" onClick="bbstyle(8)" onMouseOver="helpline('c')" />
+					<input type="button" class="button" name="img" value="IMG" style="width: 40px"  onClick="BBCimg()" onMouseOver="helpline('p')" />
+					<input type="button" class="button" name="url" value="URL" style="text-decoration: underline; width: 40px" onClick="BBCurl()" onMouseOver="helpline('w')" />
+					<br />
+					<select name="addbbcode18" onchange="bbfontstyle('[color=' + this.form.addbbcode18.options[this.form.addbbcode18.selectedIndex].value + ']', '[/color]');this.selectedIndex=0;" onMouseOver="helpline('s')">
+						<option style="color:black;" value="black" class="genmed">{$L_FONT_COLOR}</option>
+						<option value="skyblue" style="color:skyblue">{$L_SKYBLUE}</option>
+						<option value="royalblue" style="color:royalblue">{$L_ROYALBLUE}</option>
+						<option value="blue" style="color:blue">{$L_BLUE}</option>
+						<option value="darkblue" style="color:darkblue">{$L_DARKBLUE}</option>
+						<option value="orange" style="color:orange">{$L_ORANGE}</option>
+						<option value="orangered" style="color:orangered">{$L_ORANGERED}</option>
+						<option value="crimson" style="color:crimson">{$L_CRIMSON}</option>
+						<option value="red" style="color:red">{$L_RED}</option>
+						<option value="firebrick" style="color:firebrick">{$L_FIREBRICK}</option>
+						<option value="darkred" style="color:darkred">{$L_DARKRED}</option>
+						<option value="green" style="color:green">{$L_GREEN}</option>
+						<option value="limegreen" style="color:limegreen">{$L_LIMEGREEN}</option>
+						<option value="seagreen" style="color:seagreen">{$L_SEAGREEN}</option>
+						<option value="deeppink" style="color:deeppink">{$L_DEEPPINK}</option>
+						<option value="tomato" style="color:tomato">{$L_TOMATO}</option>
+						<option value="coral" style="color:coral">{$L_CORAL}</option>
+						<option value="purple" style="color:purple">{$L_PURPLE}</option>
+						<option value="indigo" style="color:indigo">{$L_INDIGO}</option>
+						<option value="burlywood" style="color:burlywood">{$L_BURLYWOOD}</option>
+						<option value="sandybrown" style="color:sandybrown">{$L_SANDYBROWN}</option>
+						<option value="sienna" style="color:sienna">{$L_SIENNA}</option>
+						<option value="chocolate" style="color:chocolate">{$L_CHOCOLATE}</option>
+						<option value="teal" style="color:teal">{$L_TEAL}</option>
+						<option value="silver" style="color:silver">{$L_SILVER}</option>
+					</select>
+					<select name="addbbcode20" onchange="bbfontstyle('[size=' + this.form.addbbcode20.options[this.form.addbbcode20.selectedIndex].value + ']', '[/size]')" onMouseOver="helpline('f')">
+						<option>{$L_FONT_SIZE}</option>
+						<option value="12" class="genmed">{$L_FONT_NORMAL}</option>
+						<option value="7" class="genmed">{$L_FONT_TINY}</option>
+						<option value="9" class="genmed">{$L_FONT_SMALL}</option>
+						<option value="18" class="genmed">{$L_FONT_LARGE}</option>
+						<option  value="24" class="genmed">{$L_FONT_HUGE}</option>
+					</select>
+					<a href="javascript:bbstyle(-1)" onmouseover="helpline('a')">{$L_BBCODE_CLOSE_TAGS}</a>
+				<br />
+				<input type="text" name="helpbox" size="45" maxlength="100" style="width:450px; font-size:10px" class="helpline" value="{$L_STYLES_TIP}" readonly="readonly" />
+				<br />
+				</block:block>
+				<textarea name="message" id="{$L_POST}" class="inputbox" rows="10" cols="100" style="width:100%;" onKeyPress="changeBack(this)" onSelect="storeCaret(this);" onClick="storeCaret(this);" onKeyup="storeCaret(this);" check="true">{$message}</textarea>
+			</fieldset>
+			<block:block id="smilies">
+			<fieldset style="float:right;">
+				<legend>{$L_EMOTICONS}</legend>
+				<table cellpadding="3" cellspacing="1" border="0" id="posticons" width="100%">
+					<tr class="panel">
+						<list:list id="emoticons">
+						<list:item>
+						<list:alternate var="row" a=" " b=" " c="" d="&lt;/tr&gt;&lt;tr class=\'panel\'&gt;">
+						<td align="center">
+							<a href="javascript:emoticon('{$typed}')"><img src="Images/{$IMG_DIR}/Icons/Emoticons/{$image}" alt="{$description}" title="{$description}" border="0" /></a>
+						</td>
+						{$row}
+						</list:alternate>
+						</list:item>
+						</list:list>
+					</tr>	
+				</table>
+			</fieldset>
+			</block:block>
+		</td>
+	</tr>
+	<block:block id="post_icons">
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:95%;">
+			<legend><label>{$L_POSTICONS}</label></legend>
+			<div align="center">
+			<label for="noicon"><input type="radio" name="posticon" id="noicon" value="-1" checked="checked" onclick="swap_posticon(null)" /> {$L_NOICON}</label>&nbsp;&nbsp;&nbsp;
+			<table cellpadding="3" cellspacing="1" border="0" id="posticons">
+				<tr class="panel">
+					<list:list id="posticons">
+					<list:item>
+					<list:alternate var="row" a=" " b=" " c=" " d=" " e=" " f=" " g="&lt;/tr&gt;&lt;tr class=\'panel\'&gt;">
+					<td>
+						<label for="pi{$id}"><input type="radio" name="posticon" id="pi{$id}" value="{$id}" onclick="swap_posticon(pi_{$id})" /><img src="Images/{$IMG_DIR}/Icons/PostIcons/{$image}" alt="{$description}" title="{$description}" style="margin-right:10px;" id="pi_{$id}" /></label>						
+					</td>
+					{$row}
+					</list:alternate>
+					</list:item>
+					</list:list>
+				</tr>	
+			</table>
+			</div>
+			</fieldset>
+		</td>
+	</tr>
+	</block:block>
+	<tr class="thead">
+		<td align="left" colspan="2">
+			<input type="submit" class="button" value="{$L_SAVE}" accesskey="s" /><input type="reset" class="button" value="{$L_RESET}" />
+		</td>
+	</tr>
+</table>
+</div>
+<block:block id="post_options">
+<br />
+<div class="forum_content">
+<table width="100%" cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td onClick="showTable('post_options')" style="cursor:hand;cursor:pointer;">{$L_POSTOPTIONS}</td>
+	</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" id="post_options" style="display:block;">
+	<tr class="panel">
+		<td>
+			<div class="outset_box" style="width:95%;">
+				<input type="checkbox" name="save" value="1" checked="checked" />&nbsp;{$L_SAVEINSENTITEMS}
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+</block:block>
+</form>
+</valid:logged>

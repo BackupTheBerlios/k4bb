@@ -1,0 +1,50 @@
+<isadmin>
+<h1>{$L_STRUCTURE}</h1>
+<table cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="13">{$table_name}</td>
+	</tr>
+	<tr class="thead">
+		<td>&nbsp;</td>
+		<td>{$L_FIELD}</td>
+		<td>{$L_TYPE}</td>
+		<td>{$L_ATTRIBUTES}</td>
+		<td>{$L_NULL}</td>
+		<td>{$L_DEFAULT}</td>
+		<td>{$L_EXTRA}</td>
+	</tr>
+	<list:list id="elements">
+	<list:item>
+	<tr class="panel">
+		<td><input type="checkbox" name="col[]" id="col_" /></td>
+		<td align="left">{$name}</td>
+		<td>{$type}</td>
+		<td>{$attribs}</td>
+		<td>{$null}</td>
+		<td>{$default}</td>
+		<td>{$extra}</td>
+	</tr>
+	</list:item>
+	</list:list>
+</table>
+<br />
+<table cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="4">{$L_KEYS}</td>
+	</tr>
+	<tr class="thead">
+		<td>{$L_KEYNAME}</td>
+		<td>{$L_TYPE}</td>
+		<td>{$L_FIELD}</td>
+	</tr>
+	<list:list id="keys">
+	<list:item>
+	<tr class="panel">
+		<td>{$keyname}</td>
+		<td>{$type}</td>
+		<td>{$field}</td>
+	</tr>
+	</list:item>
+	</list:list>
+</table>
+</isadmin>

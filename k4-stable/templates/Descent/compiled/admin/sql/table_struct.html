@@ -1,0 +1,50 @@
+<?php if (($_SESSION['user'] instanceof Member) && ($_SESSION['user']['perms'] & ADMIN)): ?>
+<h1><?php echo $template["L_STRUCTURE"]; ?></h1>
+<table cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="13"><?php echo $template["table_name"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td> </td>
+		<td><?php echo $template["L_FIELD"]; ?></td>
+		<td><?php echo $template["L_TYPE"]; ?></td>
+		<td><?php echo $template["L_ATTRIBUTES"]; ?></td>
+		<td><?php echo $template["L_NULL"]; ?></td>
+		<td><?php echo $template["L_DEFAULT"]; ?></td>
+		<td><?php echo $template["L_EXTRA"]; ?></td>
+	</tr>
+	<?php if ($template->elements != NULL): ?>
+	<?php $elements = new CachingIterator(get_iterator($template->elements));  foreach($elements as $obj1):  $template->Push($obj1); ?>
+	<tr class="panel">
+		<td><input type="checkbox" name="col[]" id="col_" /></td>
+		<td align="left"><?php echo $template["name"]; ?></td>
+		<td><?php echo $template["type"]; ?></td>
+		<td><?php echo $template["attribs"]; ?></td>
+		<td><?php echo $template["null"]; ?></td>
+		<td><?php echo $template["default"]; ?></td>
+		<td><?php echo $template["extra"]; ?></td>
+	</tr>
+	<?php $template->Pop();  endforeach; ?>
+	<?php endif; ?>
+</table>
+<br />
+<table cellpadding="0" cellspacing="1" border="0">
+	<tr class="tcat">
+		<td colspan="4"><?php echo $template["L_KEYS"]; ?></td>
+	</tr>
+	<tr class="thead">
+		<td><?php echo $template["L_KEYNAME"]; ?></td>
+		<td><?php echo $template["L_TYPE"]; ?></td>
+		<td><?php echo $template["L_FIELD"]; ?></td>
+	</tr>
+	<?php if ($template->keys != NULL): ?>
+	<?php $keys = new CachingIterator(get_iterator($template->keys));  foreach($keys as $obj2):  $template->Push($obj2); ?>
+	<tr class="panel">
+		<td><?php echo $template["keyname"]; ?></td>
+		<td><?php echo $template["type"]; ?></td>
+		<td><?php echo $template["field"]; ?></td>
+	</tr>
+	<?php $template->Pop();  endforeach; ?>
+	<?php endif; ?>
+</table>
+<?php endif; ?>
