@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: newtopic.php,v 1.2 2005/04/06 00:48:48 k4st Exp $
+* @version $Id: newtopic.php,v 1.3 2005/04/06 00:59:00 k4st Exp $
 * @package k42
 */
 
@@ -36,7 +36,7 @@ require 'forum.inc.php';
 class DefaultEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
-		global $_URL, $_QUERYPARAMS;
+		global $_QUERYPARAMS;
 		
 		/* Check the request ID */
 		if(!isset($request['id']) || !$request['id'] || intval($request['id']) == 0) {
@@ -99,6 +99,8 @@ class DefaultEvent extends Event {
 
 
 $app = new Forum_Controller('forum_base.html');
+
+$app->AddEvent('posttopic', new PostTopic);
 
 $app->ExecutePage();
 
