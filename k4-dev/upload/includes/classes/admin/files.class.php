@@ -25,11 +25,36 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: files.class.php,v 1.1 2005/04/05 03:19:35 k4st Exp $
+* @version $Id: files.class.php,v 1.2 2005/04/05 21:26:04 k4st Exp $
 * @package k42
 */
 
 class AdminFileBrowser extends Event {
+	function resize_image($image) {
+
+		$max_width = 48;
+		$max_height = 48;
+		
+		$size = @getimagesize($image);
+		
+		$cur_width = $size[0];
+		$cur_height = $size[1];
+
+		@$x_ratio = $max_width / $cur_width;
+		@$y_ratio = $max_height / $cur_height;
+
+		if(($cur_width <= $max_width) && ($cur_height <= $max_height)) {
+			$width = $cur_width;
+			$height = $cur_height;
+		} elseif(($x_ratio * $cur_height) <= $max_height) {
+			$height = ceil($x_ratio * $cur_height);
+			$width = $max_width;
+		} else {
+			$width = ceil($y_ratio * $cur_height);
+			$height = $max_height;
+		}
+		return array($width, $height);
+	}
 	function Execute(&$template, $request, &$dba, &$session, &$user) {		
 		
 		if(is_a($session['user'], 'Member') && ($user['perms'] >= ADMIN)) {
@@ -69,14 +94,20 @@ class AdminFileBrowser extends Event {
 						$temp['filename']		= $request['dir'] . '/' . $file;
 						$temp['file']			= $exts[0];
 
-						if(in_array($temp['fileext'], $filetypes['html']))
+						} if(in_array($temp['fileext'], $filetypes['html'])) {
 							$temp['filetype']	= 'html';
-						else if(in_array($temp['fileext'], $filetypes['php']))
+						} else if(in_array($temp['fileext'], $filetypes['php'])) {
 							$temp['filetype']	= 'php';
-						else if(in_array($temp['fileext'], $filetypes['img']))
+						} else if(in_array($temp['fileext'], $filetypes['img'])) {
 							$temp['filetype']	= 'img';
-						else
+							$dimensions			= $this->resize_image($temp['filename']);
+							
+							$temp['width']		= $dimensions[0];
+							$temp['height']		= $dimensions[1];
+
+						} else {
 							$temp['filetype']	= '';
+						}
 
 						if(!$filetype)
 							$files[]			= $temp;
