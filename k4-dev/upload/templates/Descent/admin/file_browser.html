@@ -13,7 +13,7 @@
 			<list:item list="files_list">
 				<div align="center" style="border: 1px solid #CCCCCC; padding: 3px; width: 30%; height: 75px; float: left;margin-right: 5px;margin-bottom: 5px;" onclick="set_file('{$shortname}', 'file')" onmouseover="this.style.border='1px solid #999999';try{ this.style.cursor='pointer'; } catch(e) { this.style.cursor='hand'; }" onmouseout="this.style.border='1px solid #CCCCCC;';try{ this.style.cursor='pointer'; } catch(e) { this.style.cursor='hand'; }">
 				<if:if var="filetype" eq="img">
-				<img src="{$filename}" alt="" border="" />
+				<img src="{$filename}" width="{$width}" height="{$height}" alt="" border="" />
 				<if:else />
 				<img src="Images/{$IMG_DIR}/Icons/filetype_{$filetype}.png" alt="" border="" width="48" height="48" />
 				</if:if>
