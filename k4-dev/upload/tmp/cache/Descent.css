@@ -1,0 +1,55 @@
+/* k4 Bulletin Board v2.0 CSS Style Set :: Descent */
+
+* { font-family: verdana, geneva, lucida, arial, helvetica, sans-serif;font-size: 12px; }
+.alt1 { background-color: #f7f7f7;color: #000000; }
+.alt2 { background-color: #dedfdf;color: #000000; }
+.alt3 { background-color: #E4E7F5;color: #000000; }
+.answer { border: 1px solid #999999;list-style-type: none;background-color: #FFFFFF;padding: 5px;top:-2px;position: relative;width: 90%;text-align: left; }
+.button { font-size: 11px;font-family: verdana, geneva, lucida, arial, helvetica, sans-serif; }
+.cat_name { cursor: pointer;cursor: hand; }
+.color_picker { position: absolute;top: 1em;left: 0; }
+.colorpicker { border: 1px solid black; }
+.colorpicker td { width: 10px;height: 10px;max-width: 10px;max-height: 10px;cursor: hand;cursor: pointer; }
+.forum_base { width: 770px; }
+.forum_content { background-color: #045975; }
+.forum_footer { padding-left: 10px;padding-right: 10px;padding-bottom: 10px;background-color: #FFFFFF; }
+.forum_header { padding-left: 10px;padding-right: 10px;background-color: #FFFFFF; }
+.forum_main { padding-left: 10px;padding-right: 10px;background-color: #FFFFFF; }
+.hidden { display: none; }
+.inputbox {  border : 1px solid #999999;font-size:11px; }
+.inputbox:focus { border : 1px solid #666666;font-size:11px; }
+.inputfailed { border: 1px solid #FF0000;font-size:11px;background-color:#FFEEFF; }
+.inputnone { background-color: #E4E7F5;font-size:11px;text-decoration: underline;border: 0px;color: #003366; }
+.logo_header td { background-color: #E1E1E2;margin:0px 0px 0px 0px;padding: 0px 0px 0px 0px; }
+.minitext, .minitext * { font-size:10px; padding:0px;text-decoration: none; }
+.outset_box { border: 2px outset;background-color: #f7f7f7;padding: 10px; }
+.pagination { font-size:10px;background-color: #5C7099;border: 1px solid #363636; }
+.pagination td { padding: 3px;border:0px;font-size:10px;color: #FFFFFF; }
+.panel { background-color: #E4E7F5;color: #000000;padding: 10px;border: outset 2px; }
+.panelsurround { background-color: #D5D8E5;color: #000000; }
+.question { list-style-type: none;margin: 0px;background-color: #fcfcfc;padding: 5px;border: 1px solid #999999;color: #000000;font-size: 11px;width: 90%;margin-bottom: 1px;cursor: pointer;cursor: hand; }
+.quote { border: 1px solid #999999; }
+.quote * { font-size: 11px;color: #666666; }
+.quote legend { font-weight: bold;color: #333333; }
+.smalltext, .smalltext * { font-size:11px; padding:0px;color: #000000; text-decoration: none; }
+.special_panel { background-color: #FFDDDD;color: #000000;padding: 10px;border: outset 2px; }
+.tcat * { color: #FFFFFF;font-size: 11px;font-weight: bold;font-family: arial, helvetica, sans-serif; }
+.tcat a:hover { color: #FFFF66;text-decoration: underline; }
+.tcat a:link, .tcat a:visited, .tcat a:active { color: #FFFFFF;text-decoration: none; }
+.tcat input { color: #000000;font-size: 11px;font-weight: bold;font-family: arial, helvetica, sans-serif; }
+.tcat, .tcat td { padding: 4px;cursor: default; background-color: #333333; }
+.thead { background-color: #045975;color: #FFFFFF;font-size: 11px;font-weight: bold;font-family: tahoma, verdana, geneva, lucida, arial, helvetica, sans-serif; }
+.thead a, .thead div { font-size: 12px;color: #FFFFFF; }
+.threaded_off td { background-color: #FEFEFE;padding: 0px;margin:0px;color: #000000; }
+.threaded_on, .threaded_on td { background-color: #CCCCCC;padding: 0px;margin:0px;height: 20px; }
+.visible { display: block;border: 1px solid #BDD786;padding: 3px;width: 95%; }
+a { color: #000000;text-decoration: none; }
+a:hover { text-decoration: underline; }
+body { background-color: #E1E1E2;padding: 0px 0px 0px 0px;margin: 0px 0px 0px 0px; }
+fieldset { border: 1px solid #003366;padding: 5px;margin: 0px; }
+form { margin:0px 0px 0px 0px;padding: 0px 0px 0px 0px; }
+h1 { margin: 0px;padding: 0px;font-size: 20px; }
+legend { color: #22229C;font: 11px tahoma, verdana, geneva, lucida, arial, helvetica, sans-serif; }
+td { padding: 3px; }
+td, th, p, li { font-size: 10pt;font-family: verdana, geneva, lucida, arial, helvetica, sans-serif; }
+td.thead, div.thead { padding: 4px; }
