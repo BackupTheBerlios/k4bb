@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.2 2005/04/05 20:38:21 k4st Exp $
+* @version $Id: session.php,v 1.3 2005/04/05 20:41:05 k4st Exp $
 * @package k42
 */
 
@@ -124,9 +124,8 @@ class FADBSession {
 		}
 
 		/* Secondary Garbage collecting measures */
-		//$this->gc_stmt->setInt(1, time());
-		//$this->gc_stmt->setInt(2, ini_get('session.gc_maxlifetime'));
-		//$this->gc_stmt->executeUpdate();
+		$this->gc_stmt->setInt(1, (time() - ini_get('session.gc_maxlifetime')));
+		$this->gc_stmt->executeUpdate();
 		
 		if(isset($data['bbcache']))
 			$_SESSION['bbcache'] = $data['bbcache'];
