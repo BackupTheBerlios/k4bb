@@ -262,6 +262,7 @@ CREATE TABLE k4_maps (
 	row_level		INT NOT NULL DEFAULT 1,
 	name			VARCHAR(255) NOT NULL DEFAULT '',
 	varname			CHAR(30) NOT NULL DEFAULT '',
+	value			VARCHAR(255) NOT NULL DEFAULT '',
 	
 	is_global		INT NOT NULL DEFAULT 0,
 	category_id		INT NOT NULL DEFAULT 0,
