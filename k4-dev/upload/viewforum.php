@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.1 2005/04/05 03:10:22 k4st Exp $
+* @version $Id: viewforum.php,v 1.2 2005/04/07 23:35:00 k4st Exp $
 * @package k42
 */
 
@@ -88,7 +88,7 @@ class DefaultEvent extends Event {
 
 				if($forum_can_view > $user['perms']) {
 					/* set the breadcrumbs bit */
-					$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+					$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
 					$template->setInfo('content', $template->getVar('L_PERMCANTVIEW'), FALSE);
 
 				} else {
@@ -103,6 +103,8 @@ class DefaultEvent extends Event {
 					if($forum['row_type'] & CATEGORY) {
 						
 						if($user['maps']['categories'][$forum['id']]['can_view'] > $user['perms']) {
+							/* set the breadcrumbs bit */
+							$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
 							$template->setInfo('content', $template->getVar('L_PERMCANTVIEW'));
 						}
 
@@ -150,15 +152,20 @@ class DefaultEvent extends Event {
 						}
 
 						if($user['maps']['forums'][$forum['id']]['topics']['can_view'] > $user['perms']) {
+							/* set the breadcrumbs bit */
+							$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
 							return $template->setInfo('content_extra', $template->getVar('L_CANTVIEWFORUMTOPICS'), FALSE);
-						}		
+						}
+						
+						/* Get the topics for this forum */
+
 						/* Set the topics template to the content variable */
 						$template->setFile('content_extra', 'topics.html');
 
 					} else {
 						/* set the breadcrumbs bit */
 						$template	= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
-						$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+						return $template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
 					}
 				}
 			}

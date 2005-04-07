@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: common.php,v 1.2 2005/04/06 00:04:48 k4st Exp $
+* @version $Id: common.php,v 1.3 2005/04/07 23:34:14 k4st Exp $
 * @package k42
 */
 
@@ -93,7 +93,8 @@ $query_params['user']		= "u.id AS id, u.name AS name, u.email AS email, u.pass A
 $query_params['userinfo']	= ", ui.user_id AS user_id, ui.fullname AS fullname, ui.num_posts AS num_posts, ui.timezone AS timezone, ui.address AS address, ui.occupation AS occupation, ui.interests AS interests, ui.biography AS biography, ui.icq AS icq, ui.aim AS aim, ui.msn AS msn, ui.yahoo AS yahoo, ui.jabber AS jabber, ui.avatar AS avatar, ui.signature AS signature, ui.birthday AS birthday, ui.homepage AS homepage, ui.language AS language, ui.styleset AS styleset, ui.imgset AS imgset, ui.tplset AS tplset, ui.banned AS banned, ui.topic_display AS topic_display, ui.lastpage AS lastpage, ui.notify_pm AS notify_pm, ui.popup_pm AS popup_pm, ui.viewflash AS viewflash, ui.viewsmilies AS viewsmilies, ui.viewsigs AS viewsigs, ui.viewavatars AS viewavatars, ui.viewcensors AS viewcensors, ui.attachsig AS attachsig";
 $query_params['session']	= ", s.id AS sid, s.seen AS seen, s.name AS name, s.user_id AS user_id, s.data AS data, s.location_file AS location_file, s.location_act AS location_act, s.location_id AS location_id";
 $query_params['maps']		= "m.id AS id, m.row_left AS row_left, m.row_right AS row_right, m.row_level AS row_level, m.name AS name, m.varname AS varname, m.is_global AS is_global, m.category_id AS category_id, m.forum_id AS forum_id, m.user_id AS user_id, m.group_id AS group_id, m.can_view AS can_view, m.can_add AS can_add, m.can_edit AS can_edit, m.can_del AS can_del, m.inherit AS inherit";
-
+$query_params['topic']		= ", t.topic_id AS topic_id, t.forum_id AS forum_id, t.category_id AS category_id, t.edited_time AS edited_time, t.edited_username AS edited_username, t.edited_userid AS edited_userid, t.ratings_sum AS ratings_sum, t.ratings_num AS ratings_num, t.disable_html AS disable_html, t.disable_bbcode AS disable_bbcode, t.disable_smilies AS disable_smilies, t.disable_sig AS disable_sig, t.disable_areply AS disable_areply, t.disable_aurls AS disable_aurls, t.topic_locked AS topic_locked, t.description AS description, t.body_text AS body_text, t.poster_name AS poster_name, t.poster_id AS poster_id, t.reply_time AS reply_time, t.reply_uname AS reply_uname, t.reply_id AS reply_id, t.reply_uid AS reply_uid, t.poll AS poll, t.poll_question AS poll_question, t.poll_id AS poll_id, t.poll_votes AS poll_votes, t.views AS views";
+$query_params['reply']		= ", r.reply_id AS reply_id, r.topic_id AS topic_id, r.forum_id AS forum_id, r.category_id AS category_id, r.body_text AS body_text, r.poster_name AS poster_name, r.poster_id AS poster_id, r.edited_time AS edited_time, r.edited_username AS edited_username, r.edited_userid AS edited_userid";
 
 /**
  * Get all of the settings into one big array
