@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: mysql.php,v 1.1 2005/04/05 03:21:30 k4st Exp $
+* @version $Id: mysql.php,v 1.2 2005/04/11 02:20:31 k4st Exp $
 * @package k42
 */
 
@@ -67,6 +67,10 @@ class MysqlResultIterator extends FADBResult {
 		}
 	}
 	
+	function freeResult() {
+		return mysql_free_result($this->id);
+	}
+
 	function numRows() {
 		return $this->size;
 	}
