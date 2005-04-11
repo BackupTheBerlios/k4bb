@@ -120,7 +120,7 @@ CREATE INDEX row_right ON k4_information (row_right);
 
 CREATE TABLE k4_categories (
 	category_id		INTEGER UNSIGNED NOT NULL DEFAULT 0,
-	description		VARCHAR(255) NOT NULL DEFAULT '',
+	description		TEXT,
 	suspended		INTEGER UNSIGNED NOT NULL DEFAULT 0,
 	archive			INTEGER UNSIGNED NOT NULL DEFAULT 0,
 	moderating_groups	TEXT,
@@ -131,7 +131,7 @@ CREATE INDEX category_id ON k4_categories (category_id);
 CREATE TABLE k4_forums (
 	forum_id		INTEGER UNSIGNED NOT NULL DEFAULT 0,
 	category_id		INTEGER UNSIGNED NOT NULL DEFAULT 0,
-	description		VARCHAR(255) NOT NULL DEFAULT '',
+	description		TEXT,
 	suspended		INTEGER UNSIGNED NOT NULL DEFAULT 0,
 	archive			INTEGER UNSIGNED NOT NULL DEFAULT 0,
 	subforums		INTEGER UNSIGNED NOT NULL DEFAULT 0,
@@ -166,11 +166,12 @@ CREATE TABLE k4_forums (
 
 	topicsperpage		INTEGER UNSIGNED NOT NULL DEFAULT 50,
 	postsperpage		INTEGER UNSIGNED NOT NULL DEFAULT 9,
-	maxpolloptions		INTEGER UNSIGNED NOT NULL DEFAULT 13,
+	maxpolloptions		INTEGER UNSIGNED NOT NULL DEFAULT 10,
+	defaultlang		VARCHAR(100) NOT NULL DEFAULT 'English',
 
 	num_viewing		INTEGER UNSIGNED NOT NULL DEFAULT 0,
 	
-	allowedhtml		VARCHAR(255) NOT NULL DEFAULT 'br, a, pre, ul, li, ol, p',
+	allowedhtml		VARCHAR(255) NOT NULL DEFAULT 'br,a,pre,ul,li,ol,p',
 
 	forum_rules		TEXT,
 	special_message		TEXT
