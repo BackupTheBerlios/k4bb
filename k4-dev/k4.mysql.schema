@@ -9,7 +9,7 @@ CREATE TABLE k4_users (
 	seen			INT NOT NULL DEFAULT 0,
 	last_seen		INT NOT NULL DEFAULT 0,
 	perms			INT NOT NULL DEFAULT 2,
-	invisible		INTEGER	UNSIGNED NOT NULL DEFAULT 0,
+	invisible		INT NOT NULL DEFAULT 0,
 
 	PRIMARY KEY(id)
 );
@@ -37,17 +37,17 @@ CREATE TABLE k4_userinfo (
 	styleset		VARCHAR(100) NOT NULL DEFAULT 'Descent',
 	imgset			VARCHAR(100) NOT NULL DEFAULT 'Descent',
 	tplset			VARCHAR(100) NOT NULL DEFAULT 'Descent',
-	banned			INTEGER	UNSIGNED NOT NULL DEFAULT 0,
-	topic_display		INTEGER	UNSIGNED NOT NULL DEFAULT 0,
+	banned			INT NOT NULL DEFAULT 0,
+	topic_display		INT NOT NULL DEFAULT 0,
 	lastpage		VARCHAR(100) NOT NULL DEFAULT '',
-	notify_pm		INTEGER DEFAULT 1 NOT NULL,
-	popup_pm		INTEGER DEFAULT 0 NOT NULL,
-	viewflash		INTEGER DEFAULT 1 NOT NULL,
-	viewsmilies		INTEGER DEFAULT 1 NOT NULL,
-	viewsigs		INTEGER DEFAULT 1 NOT NULL,
-	viewavatars		INTEGER DEFAULT 1 NOT NULL,
-	viewcensors		INTEGER DEFAULT 1 NOT NULL,
-	attachsig		INTEGER DEFAULT 1 NOT NULL
+	notify_pm		INT DEFAULT 1 NOT NULL,
+	popup_pm		INT DEFAULT 0 NOT NULL,
+	viewflash		INT DEFAULT 1 NOT NULL,
+	viewsmilies		INT DEFAULT 1 NOT NULL,
+	viewsigs		INT DEFAULT 1 NOT NULL,
+	viewavatars		INT DEFAULT 1 NOT NULL,
+	viewcensors		INT DEFAULT 1 NOT NULL,
+	attachsig		INT DEFAULT 1 NOT NULL
 );
 CREATE INDEX user_id ON k4_userinfo (user_id);
 
@@ -120,7 +120,7 @@ CREATE INDEX row_right ON k4_information (row_right);
 
 CREATE TABLE k4_categories (
 	category_id		INT NOT NULL DEFAULT 0,
-	description		VARCHAR(255) NOT NULL DEFAULT '',
+	description		TEXT,
 	suspended		INT NOT NULL DEFAULT 0,
 	archive			INT NOT NULL DEFAULT 0,
 	moderating_groups	TEXT,
@@ -131,7 +131,7 @@ CREATE INDEX category_id ON k4_categories (category_id);
 CREATE TABLE k4_forums (
 	forum_id		INT NOT NULL DEFAULT 0,
 	category_id		INT NOT NULL DEFAULT 0,
-	description		VARCHAR(255) NOT NULL DEFAULT '',
+	description		TEXT,
 	suspended		INT NOT NULL DEFAULT 0,
 	archive			INT NOT NULL DEFAULT 0,
 	subforums		INT NOT NULL DEFAULT 0,
@@ -166,11 +166,12 @@ CREATE TABLE k4_forums (
 
 	topicsperpage		INT NOT NULL DEFAULT 50,
 	postsperpage		INT NOT NULL DEFAULT 9,
-	maxpolloptions		INT NOT NULL DEFAULT 13,
+	maxpolloptions		INT NOT NULL DEFAULT 10,
+	defaultlang		VARCHAR(100) NOT NULL DEFAULT 'English',
 
 	num_viewing		INT NOT NULL DEFAULT 0,
 	
-	allowedhtml		VARCHAR(255) NOT NULL DEFAULT 'br, a, pre, ul, li, ol, p',
+	allowedhtml		VARCHAR(255) NOT NULL DEFAULT 'br,a,pre,ul,li,ol,p',
 
 	forum_rules		TEXT,
 	special_message		TEXT
@@ -186,8 +187,8 @@ CREATE TABLE k4_topics (
 	edited_username		VARCHAR(16) NOT NULL DEFAULT '',
 	edited_userid		INT NOT NULL DEFAULT 0,
 
-	ratings_sum		INTEGER	UNSIGNED NOT NULL DEFAULT 0,
-	ratings_num		INTEGER	UNSIGNED NOT NULL DEFAULT 0,
+	ratings_sum		INT NOT NULL DEFAULT 0,
+	ratings_num		INT NOT NULL DEFAULT 0,
 
 	disable_html		INT NOT NULL DEFAULT 1,
 	disable_bbcode		INT NOT NULL DEFAULT 0,
@@ -251,7 +252,7 @@ CREATE TABLE k4_pollvotes (
 	PRIMARY KEY(id)	
 );
 CREATE TABLE k4_ratings (
-	user_id			INT,
+	user_id			INT NOT NULL DEFAULT 0,
 	topic_id		INT NOT NULL DEFAULT 0,
 	rating			INT NOT NULL DEFAULT 0
 );
@@ -288,20 +289,21 @@ CREATE TABLE k4_datastore (
 
 	PRIMARY KEY(varname)
 );
+
 CREATE TABLE k4_posticons (
-	id		INT NOT NULL AUTO_INCREMENT,
-	description	VARCHAR(100) NOT NULL DEFAULT '',
-	image		VARCHAR(100) NOT NULL DEFAULT '',
+	id			INT NOT NULL AUTO_INCREMENT,
+	description		VARCHAR(100) NOT NULL DEFAULT '',
+	image			VARCHAR(100) NOT NULL DEFAULT '',
 
 	PRIMARY KEY(id)
 );
 
 CREATE TABLE k4_emoticons (
-	id 		INT NOT NULL AUTO_INCREMENT,
-	typed 		VARCHAR(32) NOT NULL DEFAULT '',
-	description	VARCHAR(50) NOT NULL DEFAULT '',
-	image 		VARCHAR(128) NOT NULL DEFAULT '',
-	clickable 	INT NOT NULL DEFAULT 0,
+	id 			INT NOT NULL AUTO_INCREMENT,
+	typed 			VARCHAR(32) NOT NULL DEFAULT '',
+	description		VARCHAR(50) NOT NULL DEFAULT '',
+	image 			VARCHAR(128) NOT NULL DEFAULT '',
+	clickable 		INT NOT NULL DEFAULT 0,
 	
 	PRIMARY KEY(id)
 );
