@@ -1,0 +1,59 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<script type="text/javascript">
+	//<![CDATA[ <!--
+	window.onload = function() {
+		var row_links = document.getElementsByTagName("tr");
+		
+		for(var i = 0; i < row_links.length; i++) {
+			row_links[i].onmouseover = function() {
+				if(this.className == 'panel') {
+					this.className = 'alt1';
+				}
+			}
+			row_links[i].onmouseout = function() {
+				if(this.className == 'alt1') {
+					this.className = 'panel';
+				}
+			}
+		}
+	}
+	//]]> -->
+</script>
+<a href="admin.php" target="main"><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/admin_logo.gif" alt="" border="0" /></a><br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0" id="nav_table">
+	
+	<thead class="thead"><td><?php echo $context->getVar("L_OPTIONS"); ?></td></thead>
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=options"><?php echo $context->getVar("L_OPTIONS"); ?></a></td></tr>
+	
+	<thead class="thead"><td><?php echo $context->getVar("L_PERMISSIONS"); ?></td></thead>
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=permissions_gui"><?php echo $context->getVar("L_PERMISSIONS"); ?></a></td></tr>
+	
+	<!--
+	<thead class="thead"><td><?php echo $context->getVar("L_STYLES"); ?></td></thead>
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=css"><?php echo $context->getVar("L_CSS"); ?></a></td></tr>
+	-->
+	<thead class="thead"><td><?php echo $context->getVar("L_FORUMS"); ?></td></thead>
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=categories"><?php echo $context->getVar("L_CATEGORIES"); ?></a></td></tr>
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=forums"><?php echo $context->getVar("L_FORUMS"); ?></a></td></tr>
+	<!--
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=prune"><?php echo $context->getVar("L_PRUNE"); ?></a></td></tr>
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=permissions"><?php echo $context->getVar("L_PERMISSIONS"); ?></a></td></tr>
+	
+	<thead class="thead"><td><?php echo $context->getVar("L_USERS"); ?></td></thead>
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=users"><?php echo $context->getVar("L_USERS"); ?></a></td></tr>
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=groups"><?php echo $context->getVar("L_GROUPS"); ?></a></td></tr>
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=ranks"><?php echo $context->getVar("L_RANKS"); ?></a></td></tr>
+	-->
+	<thead class="thead"><td><?php echo $context->getVar("L_POSTS"); ?></td></thead>
+	<!--<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=censoring"><?php echo $context->getVar("L_CENSORING"); ?></a></td></tr>-->
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=posticons"><?php echo $context->getVar("L_POSTICONS"); ?></a></td></tr>
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=emoticons"><?php echo $context->getVar("L_EMOTICONS"); ?></a></td></tr>
+	<!--
+	<thead class="thead"><td><?php echo $context->getVar("L_PRIVATE_MSGS"); ?></td></thead>
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=globalpm"><?php echo $context->getVar("L_GLOBALPM"); ?></a></td></tr>
+	
+	<thead class="thead"><td><?php echo $context->getVar("L_FAQ"); ?></td></thead>
+	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=faq"><?php echo $context->getVar("L_FAQ"); ?></a></td></tr>
+	-->
+</table>
+<?php endif; ?>

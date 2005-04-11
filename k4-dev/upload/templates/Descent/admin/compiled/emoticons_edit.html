@@ -1,0 +1,53 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<form id="edit_emoticon" name="edit_emoticon" action="admin.php?act=emoticons_update" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="resetErrors();"><script type="text/javascript">resetErrors();</script>
+<input type="hidden" name="id" value="<?php echo $context->getVar("icon_id"); ?>" />
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="2"><?php echo $context->getVar("L_ADDEMOTICON"); ?></td>
+	</tr>
+	<tr class="alt1">
+		<td width="30%"><strong><?php echo $context->getVar("L_DESCRIPTION"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('emoticon_description');</script>
+			<input type="text" name="description" id="description" value="<?php echo $context->getVar("icon_description"); ?>" maxlength="255" class="inputbox" />
+			<script type="text/javascript">addVerification('description', '.+', 'description_error', 'inputfailed');</script><div id="description_error" style="display: none;"><?php echo $context->getVar("L_INSERTICONDESC"); ?></div>
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="30%"><strong><?php echo $context->getVar("L_TYPED"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('emoticon_typed');</script>
+			<input type="text" name="typed" id="typed" value="<?php echo $context->getVar("icon_typed"); ?>" maxlength="255" class="inputbox" />
+			<script type="text/javascript">addVerification('typed', '.+', 'typed_error', 'inputfailed');</script><div id="typed_error" style="display: none;"><?php echo $context->getVar("L_INSERTICONTYPED"); ?></div>
+		</td>
+	</tr>
+	<tr class="alt1">
+		<td width="30%"><strong><?php echo $context->getVar("L_IMAGE"); ?>:</strong></td>
+		<td>
+			<?php echo $context->getVar("L_BROWSEFORIMGFILE"); ?>:<br />
+			<input type="text" class="inputbox" name="image_browse" id="image_browse" value="<?php echo $context->getVar("icon_image"); ?>" /><input type="button" class="minitext" value="<?php echo $context->getVar("L_BROWSE"); ?>" onclick="popupImageBrowser('tmp/upload/emoticons', 'image_browse', '<?php echo $context->getVar("icon_image"); ?>')" />
+			<br />
+			<?php echo $context->getVar("L_ORUPLOADNEW"); ?>:<br />
+			<input type="file" name="image_upload" id="image_upload" value="" />
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="30%"><strong><?php echo $context->getVar("L_DISPLAYINNEWPOST"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('emoticon_clickable');</script>
+			<select name="clickable">
+				<option value="1"><?php echo $context->getVar("L_YES"); ?></option>
+				<option value="0"><?php echo $context->getVar("L_NO"); ?></option>
+			</select>
+			<script type="text/javascript">setIndex(<?php echo $context->getVar("icon_clickable"); ?>, 'clickable');</script>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="2">
+			<input type="submit" value="<?php echo $context->getVar("L_SAVE"); ?>" />
+			<input type="reset" value="<?php echo $context->getVar("L_RESET"); ?>" />
+		</td>
+	</tr>
+</table>
+</form>
+<?php endif; ?>

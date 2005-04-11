@@ -1,0 +1,105 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="5">
+			<script type="text/javascript">doHelpButton('category_permissions');</script>
+			<?php echo $context->getVar("L_CATEGORYPERMISSIONS"); ?>: <span style="font-weight: normal;"><?php echo $context->getVar("category_name"); ?></span>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td colspan="6">
+			<div class="outset_box">
+				<fieldset>
+					<legend><?php echo $context->getVar("L_LEGEND"); ?></legend>
+					<span style="color: green;"><?php echo $context->getVar("L_INHERITSPERMS"); ?></span>
+					<br />
+					<span style="color: firebrick;"><?php echo $context->getVar("L_DOESNTINHERITPERMS"); ?></span>
+				</fieldset>
+			</div>
+		</td>
+	</tr>
+	<form name="update_category_perms" id="update_category_perms" action="admin.php?act=categories_updateperms" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="id" value="<?php echo $context->getVar("category_id"); ?>" />
+	<?php if ($context->listReset("category_maps")): ?>
+	<tr class="tcat">
+		<td><?php echo $context->getVar("L_NAME"); ?></td>
+		<td align="center"><?php echo $context->getVar("L_VIEW"); ?></td>
+		<td align="center"><?php echo $context->getVar("L_ADD"); ?></td>
+		<td align="center"><?php echo $context->getVar("L_EDIT"); ?></td>
+		<td align="center"><?php echo $context->getVar("L_DELETE"); ?></td>
+	</tr>
+	<?php if (is_object($list = &$context->getList("category_maps")) && !$list->hasNext()): ?>
+	<tr class="panel">
+		<td>
+			<div class="outset_box" align="center">
+				<br />
+				<?php echo $context->getVar("L_NOCATEGORYMAPS"); ?>
+				<br /><br />
+			</div>
+		</td>
+	</tr>
+	<?php endif; ?>
+	<?php while($context->push($context->listNext("category_maps"))): ?>
+	<?php switch($context->listKey("category_maps") % 2):  case 0: $context->push(array('row_class' => 'alt1')); break;  case 1: $context->push(array('row_class' => 'alt2')); break;  default: $context->push(array()); endswitch; ?>
+	<tr class="<?php echo $context->getVar("row_class"); ?>">
+	<?php $context->pop(); ?>
+		<td nowrap="nowrap"><?php echo $context->getVar("level"); ?><strong><?php echo $context->getVar("name"); ?></strong></td>
+		<td align="center">
+			<select name="<?php echo $context->getVar("varname"); ?>_can_view" id="view_<?php echo $context->getVar("id"); ?>" class="minitext">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+			<script type="text/javascript">setIndex(<?php echo $context->getVar("can_view"); ?>, 'view_<?php echo $context->getVar("id"); ?>');</script>
+		</td>
+		<td align="center">
+			<select name="<?php echo $context->getVar("varname"); ?>_can_add" id="add_<?php echo $context->getVar("id"); ?>" class="minitext">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+			<script type="text/javascript">setIndex(<?php echo $context->getVar("can_add"); ?>, 'add_<?php echo $context->getVar("id"); ?>');</script>
+		</td>
+		<td align="center">
+			<select name="<?php echo $context->getVar("varname"); ?>_can_edit" id="edit_<?php echo $context->getVar("id"); ?>" class="minitext">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+			<script type="text/javascript">setIndex(<?php echo $context->getVar("can_edit"); ?>, 'edit_<?php echo $context->getVar("id"); ?>');</script>
+		</td>
+		<td align="center">
+			<select name="<?php echo $context->getVar("varname"); ?>_can_del" id="del_<?php echo $context->getVar("id"); ?>" class="minitext">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+			<script type="text/javascript">setIndex(<?php echo $context->getVar("can_del"); ?>, 'del_<?php echo $context->getVar("id"); ?>');</script>
+		</td>
+	</tr>
+	<?php $context->pop(); endwhile; ?>
+	<tr class="tcat">
+		<td align="left" colspan="5">
+			<input type="submit" class="button" value="<?php echo $context->getVar("L_SAVE"); ?>" accesskey="s" /><input type="reset" class="button" value="<?php echo $context->getVar("L_RESET"); ?>" />
+		</td>
+	</tr>
+	<?php endif; ?>
+	</form>
+</table>
+<?php endif; ?>

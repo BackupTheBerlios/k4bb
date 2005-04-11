@@ -1,0 +1,13 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+	<tr class="thead">
+		<td align="left">
+			<span class="smalltext" style="color:#FFFFFF;font-weight:normal;">k4 Version: <?php echo $context->getVar("VERSION"); ?></span>
+		</td>
+		<td align="right">
+			<a href="index.php" target="main"><?php echo $context->getVar("L_VIEWFORUM"); ?></a> | 
+			<a href="member.php?act=logout" target="_top"><?php echo $context->getVar("L_LOGOUT"); ?></a>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>

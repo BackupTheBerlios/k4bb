@@ -1,0 +1,41 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content" style="height: 450px;">
+	<tr class="thead">
+		<td>
+			<script type="text/javascript">doHelpButton('file_browser');</script>
+			<?php echo $context->getVar("L_FILEBROWSER"); ?>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box" style="height: 300px;overflow: auto;">
+			<?php if ($context->listReset("files_list")): ?>
+			<?php while($context->push($context->listNext("files_list"))): ?>
+				<div align="center" style="border: 1px solid #CCCCCC; padding: 3px; width: 30%; height: 75px; float: left;margin-right: 5px;margin-bottom: 5px;" onclick="set_file('<?php echo $context->getVar("shortname"); ?>', 'file')" onmouseover="this.style.border='1px solid #999999';try{ this.style.cursor='pointer'; } catch(e) { this.style.cursor='hand'; }" onmouseout="this.style.border='1px solid #CCCCCC;';try{ this.style.cursor='pointer'; } catch(e) { this.style.cursor='hand'; }">
+				<?php if($context->getVar('filetype') == 'img'): ?>
+				<img src="<?php echo $context->getVar("filename"); ?>" width="<?php echo $context->getVar("width"); ?>" height="<?php echo $context->getVar("height"); ?>" alt="" border="" />
+				<?php else: ?>
+				<img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/filetype_<?php echo $context->getVar("filetype"); ?>.png" alt="" border="" width="48" height="48" />
+				<?php endif; ?>
+				<br />
+				<strong><?php echo $context->getVar("shortname"); ?></strong>
+				<br />
+				<?php echo $context->getVar("fileext"); ?>
+				</div>
+				<?php if (is_object($list = &$context->getList("files_list")) && $list->hasNext()): ?>
+				<?php if ($context->listKey("files_list") % 3 == 2): ?>
+					<br /><br /><br /><br /><br /><br />
+				<?php endif; ?>
+			<?php endif; ?>
+			<?php $context->pop(); endwhile; ?>
+			<?php endif; ?>
+			</div>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<input type="text" name="file" id="file" class="inputbox" value="<?php echo $context->getVar("selected"); ?>" style="width: 390px;" /><input type="button" class="minitext" value="<?php echo $context->getVar("L_SELECT"); ?>" onclick="select_file('file', '<?php echo $context->getVar("opener_input"); ?>')" />&nbsp;<input type="button" class="minitext" value="<?php echo $context->getVar("L_CANCEL"); ?>" onclick="window.close()" />
+		</td>
+	</tr>
+</table>
+<?php endif; ?>

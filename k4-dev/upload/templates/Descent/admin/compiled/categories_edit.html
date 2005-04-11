@@ -1,0 +1,41 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<form id="update_category" name="update_category" action="admin.php?act=categories_update" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="resetErrors();"><script type="text/javascript">resetErrors();</script>
+<input type="hidden" name="id" value="<?php echo $context->getVar("category_id"); ?>" />
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="2"><?php echo $context->getVar("L_EDITCATEGORY"); ?></td>
+	</tr>
+	<tr class="alt1">
+		<td width="30%"><strong><?php echo $context->getVar("L_NAME"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('category_name');</script>
+			<input type="text" name="name" id="name" value="<?php echo $context->getVar("category_name"); ?>" maxlength="255" class="inputbox" tabindex="1" />
+			<script type="text/javascript">addVerification('name', '.+', 'name_error', 'inputfailed');</script><div id="name_error" style="display: none;"><?php echo $context->getVar("L_INSERTCATNAME"); ?></div>
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="30%"><strong><?php echo $context->getVar("L_DESCRIPTION"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('category_description');</script>
+			<textarea name="description" id="description" rows="2" style="width: 80%;" class="inputbox" tabindex="2"><?php echo $context->getVar("category_description"); ?></textarea>
+			<script type="text/javascript">addVerification('description', '(\\\n|.)+', 'description_error', 'inputfailed');</script><div id="description_error" style="display: none;"><?php echo $context->getVar("L_INSERTCATDESC"); ?></div>
+		</td>
+	</tr>
+	<tr class="alt1">
+		<td width="30%"><strong><?php echo $context->getVar("L_ORDER"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('category_order');</script>
+			<input type="text" name="row_order" id="row_order" value="<?php echo $context->getVar("category_row_order"); ?>" maxlength="5" size="3" class="inputbox" tabindex="3" />
+			<script type="text/javascript">addVerification('row_order', '.+', 'row_order_error', 'inputfailed');</script><div id="row_order_error" style="display: none;"><?php echo $context->getVar("L_INSERTCATORDER"); ?></div>
+			<script type="text/javascript">addVerification('row_order', '([0-9])+', 'row_order_num_error', 'inputfailed');</script><div id="row_order_num_error" style="display: none;"><?php echo $context->getVar("L_INSERTCATORDERNUM"); ?></div>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="2">
+			<input type="submit" value="<?php echo $context->getVar("L_SAVE"); ?>" />
+			<input type="reset" value="<?php echo $context->getVar("L_RESET"); ?>" />
+		</td>
+	</tr>
+</table>
+</form>
+<?php endif; ?>

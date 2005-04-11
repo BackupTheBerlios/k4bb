@@ -1,0 +1,40 @@
+
+<?php echo $context->getVar("doctype"); ?>
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<?php echo $context->getVar("meta_redirect"); ?>
+	<title><?php echo $context->getVar("forum_name"); ?> - <?php echo $context->getVar("current_location"); ?> - Powered by k4</title>
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="tmp/cache/<?php echo $context->getVar("css_styles"); ?>.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="js/javascript.js"></script>
+	<script type="text/javascript" src="js/form_check.js"></script>
+	<script type="text/javascript" src="js/dd_menu.js"></script>
+	<script type="text/javascript" src="js/bbcode.js"></script>
+	<?php if ($file = $template->getFile("admin_js", "admin/admin.js")):  $template->setFilename($file);  $template->render(); endif; ?>
+</head>
+<body>
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<?php if ($file = $template->getFile("content", "")):  $template->setFilename($file);  $template->render(); endif; ?>
+<?php if ($template->isVisible('copyright', TRUE)): ?>
+	<br />
+	<div align="center"><div style="width:400px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">[ <a href="http://www.newmediums.net" alt="k4 Home Page" title="k4 Home Page" target="_blank">Powered By: k4 v.<?php echo $context->getVar("VERSION"); ?></a> ] [ Load time: <?php echo $context->getVar("load_time"); ?> ] [ Num Queries: <?php echo $context->getVar("num_queries"); ?> ]<br /><?php echo $context->getVar("copyrighttext"); ?></div></div>
+	<a name="bottom" id="bottom"> </a>
+<?php endif; ?>
+<?php else: ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="tcat">
+		<td><?php echo $context->getVar("L_INFORMATION"); ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">
+				<?php echo $context->getVar("L_YOUNEEDPERMS"); ?>
+			</div>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>
+</body>
+</html>

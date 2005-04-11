@@ -1,0 +1,53 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="5">
+			<script type="text/javascript">doHelpButton('emoticons');</script>
+			<?php echo $context->getVar("L_EMOTICONS"); ?>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="5"><?php echo $context->getVar("L_MANAGEEMOTICONS"); ?></td>
+	</tr>
+	<tr class="alt3">
+		<td colspan="5">
+			<div align="center">
+				<script type="text/javascript">doHelpButton('add_emoticon');</script>
+				<input type="button" class="minitext" style="font-weight: bold;" value="<?php echo $context->getVar("L_ADDEMOTICON"); ?>" onclick="document.location='admin.php?act=emoticons_add'" />
+			</div>
+		</td>
+	</tr>
+	<tr class="alt1">
+	<?php if ($context->listReset("emoticons")): ?>
+	<?php while($context->push($context->listNext("emoticons"))): ?>
+		<td width="20%">
+			<div align="center">
+				<img src="tmp/upload/emoticons/<?php echo $context->getVar("image"); ?>" alt="<?php echo $context->getVar("description"); ?>" border="0" />
+				<br />
+				<span class="minitext"><?php echo $context->getVar("typed"); ?></span>
+				<br />
+				<span class="minitext"><?php echo $context->getVar("description"); ?></span>
+				<br /><br />
+				<input type="button" class="minitext" value="<?php echo $context->getVar("L_EDIT"); ?>" onclick="document.location='admin.php?act=emoticons_edit&id=<?php echo $context->getVar("id"); ?>'" />
+				<br />
+				<input type="button" class="minitext" value="<?php echo $context->getVar("L_DELETE"); ?>" onclick="document.location='admin.php?act=emoticons_remove&id=<?php echo $context->getVar("id"); ?>'" />
+				<br />
+				<?php if($context->getVar('clickable') == '1'): ?>
+				<input type="button" value="<?php echo $context->getVar("L_DNDISPLAYINNEWPOST"); ?>" class="minitext" onclick="document.location='admin.php?act=emoticons_clickable&id=<?php echo $context->getVar("id"); ?>'" />
+				<?php else: ?>
+				<input type="button" value="<?php echo $context->getVar("L_DISPLAYINNEWPOST"); ?>" class="minitext" onclick="document.location='admin.php?act=emoticons_clickable&id=<?php echo $context->getVar("id"); ?>'" />
+				<?php endif; ?>
+			</div>
+		</td>
+	<?php if (is_object($list = &$context->getList("emoticons")) && $list->hasNext()): ?>
+		<?php if ($context->listKey("emoticons") % 3 == 2): ?>
+			<?php switch($context->listKey("emoticons") % 2):  case 0: $context->push(array('row_class' => 'alt2')); break;  case 1: $context->push(array('row_class' => 'alt1')); break;  default: $context->push(array()); endswitch; ?>
+			</tr><tr class="<?php echo $context->getVar("row_class"); ?>">
+			<?php $context->pop(); ?>
+		<?php endif; ?>
+	<?php endif; ?>
+	<?php $context->pop(); endwhile; ?>
+	<?php endif; ?>
+	</tr>
+</table>
+<?php endif; ?>

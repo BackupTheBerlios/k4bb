@@ -1,0 +1,45 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="5">
+			<script type="text/javascript">doHelpButton('posticons');</script>
+			<?php echo $context->getVar("L_POSTICONS"); ?>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="5"><?php echo $context->getVar("L_MANAGEPOSTICONS"); ?></td>
+	</tr>
+	<tr class="alt3">
+		<td colspan="5">
+			<div align="center">
+				<script type="text/javascript">doHelpButton('add_posticon');</script>
+				<input type="button" class="minitext" style="font-weight: bold;" value="<?php echo $context->getVar("L_ADDPOSTICON"); ?>" onclick="document.location='admin.php?act=posticons_add'" />
+			</div>
+		</td>
+	</tr>
+	<tr class="alt1">
+	<?php if ($context->listReset("posticons")): ?>
+	<?php while($context->push($context->listNext("posticons"))): ?>
+		<td width="20%">
+			<div align="center">
+				<img src="tmp/upload/posticons/<?php echo $context->getVar("image"); ?>" alt="<?php echo $context->getVar("description"); ?>" border="0" />
+				<br />
+				<span class="minitext"><?php echo $context->getVar("description"); ?></span>
+				<br /><br />
+				<input type="button" class="minitext" value="<?php echo $context->getVar("L_EDIT"); ?>" onclick="document.location='admin.php?act=posticons_edit&id=<?php echo $context->getVar("id"); ?>'" />
+				<br />
+				<input type="button" class="minitext" value="<?php echo $context->getVar("L_DELETE"); ?>" onclick="document.location='admin.php?act=posticons_remove&id=<?php echo $context->getVar("id"); ?>'" />
+			</div>
+		</td>
+	<?php if (is_object($list = &$context->getList("posticons")) && $list->hasNext()): ?>
+		<?php if ($context->listKey("posticons") % 5 == 4): ?>
+			<?php switch($context->listKey("posticons") % 2):  case 0: $context->push(array('row_class' => 'alt2')); break;  case 1: $context->push(array('row_class' => 'alt1')); break;  default: $context->push(array()); endswitch; ?>
+			</tr><tr class="<?php echo $context->getVar("row_class"); ?>">
+			<?php $context->pop(); ?>
+		<?php endif; ?>
+	<?php endif; ?>
+	<?php $context->pop(); endwhile; ?>
+	<?php endif; ?>
+	</tr>
+</table>
+<?php endif; ?>

@@ -1,0 +1,7 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<div align="center">
+	<div style="width:85%;text-align:left;">
+		<?php if ($file = $template->getFile("admin_panel", "")):  $template->setFilename($file);  $template->render(); endif; ?>
+	</div>
+</div>
+<?php endif; ?>

@@ -1,0 +1,109 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<form id="maps_add" name="maps_add" action="admin.php?act=maps_insert" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="resetErrors();"><script type="text/javascript">resetErrors();</script>
+<input type="hidden" name="parent_id" value="<?php echo $context->getVar("maps_id"); ?>" />
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="3"><?php echo $context->getVar("L_ADDMAPSITEM"); ?></td>
+	</tr>
+	<tr class="panel">
+		<td width="15%"><?php echo $context->getVar("L_VARNAME"); ?></td>
+		<td width="10%"><input type="text" name="varname" id="varname" value="" /></td>
+		<td width="75%">
+			<script type="text/javascript">addVerification('varname', '.+', 'varname_empty', 'inputfailed');</script><div id="varname_empty" style="display: none;">
+			<?php echo $context->getVar("L_MAPSNEEDVARNAME"); ?>
+			</div>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td width="15%"><?php echo $context->getVar("L_NAME"); ?></td>
+		<td width="10%"><input type="text" name="name" id="name" value="" /></td>
+		<td width="75%">
+			<script type="text/javascript">addVerification('name', '.+', 'name_empty', 'inputfailed');</script><div id="name_empty" style="display: none;">
+			<?php echo $context->getVar("L_MAPSNEEDNAME"); ?>
+			</div>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td width="15%"><?php echo $context->getVar("L_VIEW"); ?></td>
+		<td width="10%">
+			<select name="can_view">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+		</td>
+		<td width="75%">
+		</td>
+	</tr>
+	<tr class="panel">
+		<td width="15%"><?php echo $context->getVar("L_ADD"); ?></td>
+		<td width="10%">
+			<select name="can_add">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+		</td>
+		<td width="75%">
+		</td>
+	</tr>
+	<tr class="panel">
+		<td width="15%"><?php echo $context->getVar("L_EDIT"); ?></td>
+		<td width="10%">
+			<select name="can_edit">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+		</td>
+		<td width="75%">
+		</td>
+	</tr>
+	<tr class="panel">
+		<td width="15%"><?php echo $context->getVar("L_DELETE"); ?></td>
+		<td width="10%">
+			<select name="can_del">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+		</td>
+		<td width="75%">
+		</td>
+	</tr>
+	<tr class="panel">
+		<td width="15%"><?php echo $context->getVar("L_INHERIT"); ?></td>
+		<td width="10%">
+			<select name="inherit">
+				<option value="0"><?php echo $context->getVar("L_NO"); ?></option>
+				<option value="1"><?php echo $context->getVar("L_YES"); ?></option>
+			</select>
+		</td>
+		<td width="75%">
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="3">
+			<input type="submit" value="<?php echo $context->getVar("L_SAVE"); ?>" />
+			<input type="reset" value="<?php echo $context->getVar("L_RESET"); ?>" />
+		</td>
+	</tr>
+</table>
+</form>
+<?php endif; ?>

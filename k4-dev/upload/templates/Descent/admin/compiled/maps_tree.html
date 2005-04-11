@@ -1,0 +1,211 @@
+<script type="text/javascript">
+	function set_maps_cookie(id, val) {
+		try {
+			set_cookie('mapsgui_' + id, val, 3600);
+		} catch(e) {
+			alert(e.message);
+		}
+		return document.location = 'admin.php?act=permissions_gui';
+	}
+</script>
+<!-- MAPS GUI -->
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="6"><?php echo $context->getVar("L_PERMISSIONS"); ?></td>
+	</tr>
+	<tr class="panel">
+		<td colspan="6">
+			<div class="outset_box">
+				<fieldset>
+					<legend><?php echo $context->getVar("L_LEGEND"); ?></legend>
+					<span style="color: green;"><?php echo $context->getVar("L_INHERITSPERMS"); ?></span>
+					<br />
+					<span style="color: firebrick;"><?php echo $context->getVar("L_DOESNTINHERITPERMS"); ?></span>
+				</fieldset>
+			</div>
+			<br />
+			<a href="admin.php?act=maps_add&amp;id=0"><?php echo $context->getVar("L_ADDMAPSITEM"); ?></a>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td><?php echo $context->getVar("L_NAME"); ?></td>
+		<td align="center"><?php echo $context->getVar("L_VIEW"); ?></td>
+		<td align="center"><?php echo $context->getVar("L_ADD"); ?></td>
+		<td align="center"><?php echo $context->getVar("L_EDIT"); ?></td>
+		<td align="center"><?php echo $context->getVar("L_DELETE"); ?></td>
+		<td></td>
+	</tr>
+	<?php if ($context->listReset("maps_list")): ?>
+	<?php while($context->push($context->listNext("maps_list"))): ?>
+	<form name="maps_form<?php echo $context->getVar("id"); ?>" action="admin.php?act=maps_update&amp;id=<?php echo $context->getVar("id"); ?>" method="post" enctype="multipart/form-data">
+	<tr class="alt1">
+		<td nowrap="nowrap"><div id="maps_link<?php echo $context->getVar("id"); ?>" class="minitext"><?php echo $context->getVar("level");  echo $context->getVar("name"); ?></div></td>
+		<td align="center">
+			<select name="can_view" id="view_<?php echo $context->getVar("id"); ?>" class="minitext">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+			<script type="text/javascript">setIndex(<?php echo $context->getVar("can_view"); ?>, 'view_<?php echo $context->getVar("id"); ?>');</script>
+		</td>
+		<td align="center">
+			<select name="can_add" id="add_<?php echo $context->getVar("id"); ?>" class="minitext">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+			<script type="text/javascript">setIndex(<?php echo $context->getVar("can_add"); ?>, 'add_<?php echo $context->getVar("id"); ?>');</script>
+		</td>
+		<td align="center">
+			<select name="can_edit" id="edit_<?php echo $context->getVar("id"); ?>" class="minitext">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+			<script type="text/javascript">setIndex(<?php echo $context->getVar("can_edit"); ?>, 'edit_<?php echo $context->getVar("id"); ?>');</script>
+		</td>
+		<td align="center">
+			<select name="can_del" id="del_<?php echo $context->getVar("id"); ?>" class="minitext">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+			<script type="text/javascript">setIndex(<?php echo $context->getVar("can_del"); ?>, 'del_<?php echo $context->getVar("id"); ?>');</script>
+		</td>
+		<td>
+			<?php if($context->getVar('row_level') == '1'): ?>
+			<?php if($context->getVar('expanded') == '0'): ?>
+				<input type="button" value="&lt;&gt;" style="font-weight:bold;" class="minitext" onclick="set_maps_cookie(<?php echo $context->getVar("id"); ?>, 'yes')" />
+			<?php else: ?>
+				<input type="button" value="&gt;&lt;" style="font-weight:bold;" class="minitext" onclick="set_maps_cookie(<?php echo $context->getVar("id"); ?>, 'no')" />
+			<?php endif; ?>
+			<?php endif; ?>
+			<div id="maps_menu<?php echo $context->getVar("id"); ?>" class="nav_menu" style="">
+				<table cellpadding="0" cellspacing="1" border="0" class="forum_content">
+					<tr class="tcat">
+						<td nowrap="nowrap"><?php echo $context->getVar("L_VARNAME"); ?>: <?php echo $context->getVar("varname"); ?></td>
+					</tr>
+					<tr class="alt1">
+						<td nowrap="nowrap"><a href="javascript:;" onclick="document.maps_form<?php echo $context->getVar("id"); ?>.submit()" /><?php echo $context->getVar("L_UPDATEMAPS"); ?></a></td>
+					</tr>
+					<tr class="alt1">
+						<td nowrap="nowrap"><a href="amdin.php?act=maps_add&amp;id=<?php echo $context->getVar("id"); ?>"><?php echo $context->getVar("L_ADDCHILDMAPS"); ?></a></td>
+					</tr>
+					<tr class="alt1">
+						<td nowrap="nowrap"><a href="admin.php?act=maps_remove&amp;id=<?php echo $context->getVar("id"); ?>"><?php echo $context->getVar("L_REMOVEMAPS"); ?></a></td>
+					</tr>
+				</table>
+			</div>
+			<script type="text/javascript">
+				menu_init('maps_link<?php echo $context->getVar("id"); ?>', 'maps_menu<?php echo $context->getVar("id"); ?>');
+			</script>
+		</td>
+	</tr>
+	</form>
+	<?php if ($context->addList("maps_children", $context->getVar("maps_children"))): ?>
+	<?php while($context->push($context->listNext("maps_children"))): ?>
+	<form name="maps_form<?php echo $context->getVar("id"); ?>" action="admin.php?act=maps_update&amp;id=<?php echo $context->getVar("id"); ?>" method="post" enctype="multipart/form-data">
+	<tr class="alt2">
+		<td nowrap="nowrap"><div id="maps_link<?php echo $context->getVar("id"); ?>" class="minitext"><?php echo $context->getVar("level");  echo $context->getVar("name"); ?></div></td>
+		<td align="center">
+			<select name="can_view" id="view_<?php echo $context->getVar("id"); ?>" class="minitext">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+			<script type="text/javascript">setIndex(<?php echo $context->getVar("can_view"); ?>, 'view_<?php echo $context->getVar("id"); ?>');</script>
+		</td>
+		<td align="center">
+			<select name="can_add" id="add_<?php echo $context->getVar("id"); ?>" class="minitext">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+			<script type="text/javascript">setIndex(<?php echo $context->getVar("can_add"); ?>, 'add_<?php echo $context->getVar("id"); ?>');</script>
+		</td>
+		<td align="center">
+			<select name="can_edit" id="edit_<?php echo $context->getVar("id"); ?>" class="minitext">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+			<script type="text/javascript">setIndex(<?php echo $context->getVar("can_edit"); ?>, 'edit_<?php echo $context->getVar("id"); ?>');</script>
+		</td>
+		<td align="center">
+			<select name="can_del" id="del_<?php echo $context->getVar("id"); ?>" class="minitext">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+			<script type="text/javascript">setIndex(<?php echo $context->getVar("can_del"); ?>, 'del_<?php echo $context->getVar("id"); ?>');</script>
+		</td>
+		<td>
+			<div id="maps_menu<?php echo $context->getVar("id"); ?>" class="nav_menu" style="">
+				<table cellpadding="0" cellspacing="1" border="0" class="forum_content">
+					<tr class="tcat">
+						<td nowrap="nowrap"><?php echo $context->getVar("L_VARNAME"); ?>: <?php echo $context->getVar("varname"); ?></td>
+					</tr>
+					<tr class="alt1">
+						<td nowrap="nowrap"><a href="javascript:;" onclick="document.maps_form<?php echo $context->getVar("id"); ?>.submit()" /><?php echo $context->getVar("L_UPDATEMAPS"); ?></a></td>
+					</tr>
+					<?php if($context->getVar('inherit') == '1'): ?>
+					<tr class="alt1">
+						<td nowrap="nowrap"><a href="admin.php?act=maps_inherit&amp;id=<?php echo $context->getVar("id"); ?>&amp;inherit=false"><?php echo $context->getVar("L_MAKEUNINHERIT"); ?></a></td>
+					</tr>
+					<?php else: ?>
+					<tr class="alt1">
+						<td nowrap="nowrap"><a href="admin.php?act=maps_inherit&amp;id=<?php echo $context->getVar("id"); ?>&amp;inherit=true"><?php echo $context->getVar("L_MAKEINHERIT"); ?></a></td>
+					</tr>
+					<?php endif; ?>
+					<tr class="alt1">
+						<td nowrap="nowrap"><a href="admin.php?act=maps_add&amp;id=<?php echo $context->getVar("id"); ?>"><?php echo $context->getVar("L_ADDCHILDMAPS"); ?></a></td>
+					</tr>
+					<tr class="alt1">
+						<td nowrap="nowrap"><a href="admin.php?act=maps_remove&amp;id=<?php echo $context->getVar("id"); ?>"><?php echo $context->getVar("L_REMOVEMAPS"); ?></a></td>
+					</tr>
+				</table>
+			</div>
+			<script type="text/javascript">
+				menu_init('maps_link<?php echo $context->getVar("id"); ?>', 'maps_menu<?php echo $context->getVar("id"); ?>');
+			</script>
+		</td>
+	</tr>
+	</form>
+	<?php $context->pop(); endwhile; ?>
+	<?php endif; ?>
+	<?php $context->pop(); endwhile; ?>
+	<?php endif; ?>
+</table>
+<!-- / MAPS GUI -->
