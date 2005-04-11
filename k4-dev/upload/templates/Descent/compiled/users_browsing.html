@@ -1,0 +1,25 @@
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td><?php echo $context->getVar("users_browsing"); ?></td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="minitext" align="left">
+				<?php echo $context->getVar("online_stats"); ?>&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<span class="admin_user"><?php echo $context->getVar("L_ADMINISTRATOR"); ?></span>&nbsp;]&nbsp;&nbsp;[&nbsp;<span class="mod_user"><?php echo $context->getVar("L_MODERATOR"); ?></span>&nbsp;]
+				<br />
+				<?php if($context->getVar('num_online_members') > '0'): ?>
+				<?php if ($context->listReset("users_browsing")): ?>
+					<?php echo $context->getVar("L_REGISTEREDUSERS"); ?>:
+					<?php while($context->push($context->listNext("users_browsing"))): ?>
+					<?php if($context->getVar('invisible') == '0'): ?>
+						<a href="member.php?id=<?php echo $context->getVar("id"); ?>" style="text-decoration: underline;" class="minitext"><?php echo $context->getVar("name"); ?></a>
+						<?php if (is_object($list = &$context->getList("online_users")) && $list->hasNext()): ?>,&nbsp;<?php endif; ?>
+					<?php endif; ?>
+					<?php $context->pop(); endwhile; ?>
+				<?php endif; ?>
+				<?php endif; ?>
+			</div>
+		</td>
+	</tr>
+</table>

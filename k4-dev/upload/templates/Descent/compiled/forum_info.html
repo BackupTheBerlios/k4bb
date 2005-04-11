@@ -1,0 +1,39 @@
+<?php if(TRUE && (isset($context->session['user']->info['maps']['can_see_WO']) && $context->session['user']->info['maps']['can_see_WO']['can_view'] <= $context->session['user']->info['perms'])): ?>
+<!-- General Forum Information -->
+<br />
+<table width="100%" border="0" cellpadding="0" cellspacing="1" class="forum_content">
+	<tr class="thead">
+		<td colspan="2"><?php echo $context->getVar("L_WHATSGOINGON"); ?></td>
+	</tr>
+	<tr class="panel">
+		<td rowspan="2" width="5%" align="center" valign="middle">
+			<img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_stats.gif" alt="<?php echo $context->getVar("L_WHATSGOINGON"); ?>" />
+		</td>
+		<td>
+			<div class="minitext" align="left">
+			<?php echo $context->getVar("newest_member"); ?>
+			<br />
+			<?php echo $context->getVar("total_posts"); ?>
+			<br />
+			<?php echo $context->getVar("total_users"); ?>
+			<br />
+			<?php echo $context->getVar("most_users_ever"); ?>
+			<br />
+			<?php echo $context->getVar("online_stats"); ?>&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<span class="admin_user"><?php echo $context->getVar("L_ADMINISTRATOR"); ?></span>&nbsp;]&nbsp;&nbsp;[&nbsp;<span class="mod_user"><?php echo $context->getVar("L_MODERATOR"); ?></span>&nbsp;]
+			<br />
+			<?php if($context->getVar('num_online_members') > '0'): ?>
+			<?php if ($context->listReset("online_users")): ?>
+				<?php echo $context->getVar("L_REGISTEREDUSERS"); ?>:
+				<?php while($context->push($context->listNext("online_users"))): ?>
+				<?php if($context->getVar('invisible') == '0'): ?>
+					<a href="member.php?id=<?php echo $context->getVar("id"); ?>" style="text-decoration: underline;" class="minitext"><?php echo $context->getVar("name"); ?></a><?php if (is_object($list = &$context->getList("online_users")) && $list->hasNext()): ?>,<?php endif; ?>
+				<?php endif; ?>
+				<?php $context->pop(); endwhile; ?>
+			<?php endif; ?>
+			<?php endif; ?>
+			</div>
+		</td>
+	</tr>
+</table>
+<!-- / General Forum Information -->
+<?php endif; ?>

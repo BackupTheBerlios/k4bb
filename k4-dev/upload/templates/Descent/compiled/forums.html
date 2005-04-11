@@ -1,0 +1,103 @@
+<!-- Forums List -->
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<?php if ($template->isVisible('welcome_msg', FALSE)): ?>
+	<tr class="thead">
+		<td colspan="5"><?php echo $context->getVar("welcome_title"); ?></td>
+	</tr>
+	<tr class="panel">
+		<td colspan="5"><?php echo $context->getVar("L_WELCOMEMESSAGE"); ?></td>
+	</tr>
+	<?php endif; ?>
+	<tr class="tcat">
+		<td>&nbsp;</td>
+		<td align="center"><?php echo $context->getVar("L_NAME"); ?></td>
+		<td align="center">&nbsp;<?php echo $context->getVar("L_POSTS"); ?>&nbsp;</td>
+		<td align="center">&nbsp;<?php echo $context->getVar("L_TOPICS"); ?>&nbsp;</td>
+		<td align="center"><?php echo $context->getVar("L_LASTPOST"); ?></td>
+	</tr>
+	<?php if ($context->listReset("categories")): ?>
+	<?php if (is_object($list = &$context->getList("categories")) && !$list->hasNext()): ?>
+	<tr class="panel">
+		<td colspan="5">
+			<div class="outset_box" align="center">
+				<br />
+				<?php echo $context->getVar("L_NOFORUMSEXIST"); ?>
+				<br /><br />
+			</div>
+		</td>
+	</tr>
+	<?php endif; ?>
+	<?php while($context->push($context->listNext("categories"))): ?>
+	<?php if(TRUE && (isset($context->session['user']->info['maps']['categories'][$context->getVar('id')]['can_view']) && $context->session['user']->info['maps']['categories'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
+		<tr class="thead">
+			<td colspan="5">
+				<a href="viewforum.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("c.description"); ?>"><?php echo $context->getVar("name"); ?></a>
+				<span class="minitext" style="font-weight: normal;"><br /><?php echo $context->getVar("description"); ?></span>
+			</td>
+		</tr>
+		<?php if ($context->addList("forums", $context->getVar("forums"))): ?>
+		<?php while($context->push($context->listNext("forums"))): ?>
+		<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('id')]['can_view']) && $context->session['user']->info['maps']['forums'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
+		<?php if($context->getVar('is_forum') == '1'): ?>
+		<tr class="panel">
+			<td width="5%" align="center"><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_<?php echo $context->getVar("forum_icon"); ?>.gif" alt="<?php echo $context->getVar("forum_alt"); ?>" height="28" width="28" border="0" /></td>
+			<td width="60%">
+				<a href="viewforum.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("description"); ?>"><strong><?php echo $context->getVar("name"); ?></strong></a>
+				<!--<?php if($context->getVar('num_viewing') > '0'): ?><span class="smalltext">(<?php echo $context->getVar("num_viewing"); ?> <?php echo $context->getVar("L_VIEWING"); ?>)</span><?php endif; ?>-->
+				<br />
+				<span class="minitext">
+				<?php echo $context->getVar("description"); ?>
+				<?php if($context->getVar('subforums') > '0'): ?>
+				<br /><br />
+				<strong><?php echo $context->getVar("L_SUBFORUMS"); ?>:</strong>
+				<?php if ($context->addList("subforums", $context->getVar("subforums"))): ?>
+					<?php while($context->push($context->listNext("subforums"))): ?>
+					<img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_<?php echo $context->getVar("forum_icon"); ?>_small.gif" alt="<?php echo $context->getVar("forum_alt"); ?>" height="11" width="11" border="0" />
+					<a href="viewforum.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("description"); ?>"><?php echo $context->getVar("name"); ?></a>
+					<?php if (is_object($list = &$context->getList("subforums")) && $list->hasNext()): ?>,<?php endif; ?>
+					<?php $context->pop(); endwhile; ?>
+				<?php endif; ?>
+				<?php endif; ?>
+				</span>
+			</td>
+			<td align="center" class="alt1"><?php echo $context->getVar("posts"); ?></td>
+			<td align="center" class="alt1"><?php echo $context->getVar("topics"); ?></td>
+			<td class="minitext" nowrap="nowrap" align="center" width="30%">
+				<?php if($context->getVar('post_id') > '0'): ?>
+				<a href="viewtopic.php?id=<?php echo $context->getVar("post_id"); ?>" title="<?php echo $context->getVar("post_name"); ?>"><strong><?php echo $context->getVar("post_name"); ?></strong></a>
+				<br />
+				<?php echo $context->getVar("L_BY"); ?> <a href="member.php?id=<?php echo $context->getVar("post_uid"); ?>" title="<?php echo $context->getVar("post_uname"); ?>"><strong><?php echo $context->getVar("post_uname"); ?></strong></a>&nbsp;<?php echo $context->getVar("L_ON"); ?>&nbsp;<?php echo $context->getVar("post_created"); ?>
+				<?php else: ?>
+				--
+				<?php endif; ?>
+			</td>
+		</tr>
+		<?php endif; ?>
+		<?php if($context->getVar('is_link') == '1'): ?>
+		<tr class="panel">
+			<td width="5%" align="center"><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_link.gif" alt="<?php echo $context->getVar("forum_alt"); ?>" title="<?php echo $context->getVar("forum_alt"); ?>" height="28" width="28" border="0" /></td>
+			<?php if($context->getVar('link_show_redirects') == '1'): ?>
+			<td width="60%"><a href="redirect.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("name"); ?>"><strong><?php echo $context->getVar("name"); ?></strong></a><br /><span class="minitext"><?php echo $context->getVar("description"); ?><br /><?php echo $context->getVar("sub_forums"); ?></span></td>
+			<td align="center" class="alt1" colspan="3"><span class="smalltext"><?php echo $context->getVar("L_REDIRECTS"); ?>: <?php echo $context->getVar("link_redirects"); ?></span></td>
+			<?php endif; ?>
+			<?php if($context->getVar('link_show_redirects') == '0'): ?>
+			<td width="95%" colspan="4"><a href="<?php echo $context->getVar("link_href"); ?>" target="_blank"><strong><?php echo $context->getVar("name"); ?></strong></a><br /><span class="minitext"><?php echo $context->getVar("description"); ?><br /><?php echo $context->getVar("sub_forums"); ?></span></td>
+			<?php endif; ?>
+		</tr>
+		<?php endif; ?>
+		<?php endif; ?>
+		<?php $context->pop(); endwhile; ?>
+		<?php endif; ?>
+	<?php endif; ?>
+	<?php $context->pop(); endwhile; ?>
+	<?php endif; ?>
+	<tr class="tcat">
+		<td colspan="5">
+			<div align="center">
+				<a href="index.php?act=markforums" title="<?php echo $context->getVar("L_MARKFORUMSREAD"); ?>" class="minitext"><?php echo $context->getVar("L_MARKFORUMSREAD"); ?></a>
+				<?php if ($template->isVisible('mark_these_forums', FALSE)): ?>| <a href="viewforum.php?act=markforums&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_MARKTHESEFORUMREAD"); ?>" class="minitext"><?php echo $context->getVar("L_MARKTHESEFORUMREAD"); ?></a><?php endif; ?>
+			</div>
+		</td>
+	</tr>
+</table>
+<!-- / Forums List -->

@@ -1,0 +1,192 @@
+<form name="posttopic_form" id="pottopic_form" action="newtopic.php?act=posttopic" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="resetErrors();"><script type="text/javascript">resetErrors();</script>
+<input type="hidden" name="forum_id" value="<?php echo $context->getVar("forum_id"); ?>" />
+<script type="text/javascript">
+// <!--
+
+function showTable(Id) {
+	var the_tr = document.getElementById(Id);
+	if(the_tr.style.display == 'block')
+		return the_tr.style.display = 'none';
+	else
+		return the_tr.style.display = 'block';
+}
+function swap_posticon(imgid) {
+	var out = document.getElementById("display_posticon");
+	var img	= document.getElementById(imgid);
+	if (img) {
+		out.src = img.src;
+		out.alt = img.alt;
+	} else {
+		out.src = "tmp/upload/posticons/clear.gif";
+		out.alt = "";
+	}
+}
+function emoticon(typed) {
+	var editor	= document.getElementById('messagecodex');
+	editor.value += ' ' + typed;
+}
+
+/****************************
+ * BBCode Control front-end *
+ * By Peter Goodman         *
+ ****************************/
+
+<?php if ($file = $template->getFile("bbcode", "bbcode.js")):  $template->setFilename($file);  $template->render(); endif; ?>
+
+// -->
+</script>
+<input type="hidden" name="forum_id" value="<?php echo $context->getVar("forum_id"); ?>" />
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<?php if ($template->isVisible('post_topic', TRUE)): ?>
+	<tr class="thead" colspan="2">
+		<td colspan="2">
+			<div style="float:right;" class="smalltext">
+				<strong><?php echo $context->getVar("L_FORUM"); ?>:</strong>
+				<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>" class="smalltext" style="font-weight: normal;" title="<?php echo $context->getVar("forum_name"); ?>"><?php echo $context->getVar("forum_name"); ?></a>
+				</div>
+			<?php echo $context->getVar("L_POSTTOPIC"); ?>
+		</td>
+	</tr>
+	<?php endif; ?>
+	<?php if ($template->isVisible('edit_post', FALSE)): ?>
+	<tr class="thead" colspan="2">
+		<td colspan="2"><?php echo $context->getVar("L_EDITPOST"); ?> : <span style="font-weight: normal;"><?php echo $context->getVar("posttitle"); ?></span><input type="hidden" name="post_id" value="<?php echo $context->getVar("post_id"); ?>" /></td>
+	</tr>
+	<?php endif; ?>
+	<tr class="panel">
+		<td colspan="2" align="center">
+			
+			<!-- Main Posting Inputs -->
+			<div class="outset_box" align="left">
+				<div class="smalltext" style="float: right;">
+					<?php echo $context->getVar("L_LOGGEDAS"); ?> <a href="member.php?id=<?php echo $context->getVar("user_id"); ?>" style="text-decoration: underline;"><?php echo $context->getVar("user_name"); ?></a>
+				</div>
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td>
+							<!-- Post Title -->
+							<label for="<?php echo $context->getVar("L_POSTTITLE"); ?>" class="smalltext"><?php echo $context->getVar("L_POSTTITLE"); ?></label><br />
+							<input type="text" name="title" id="<?php echo $context->getVar("L_POSTTITLE"); ?>" value="<?php echo $context->getVar("posttitle"); ?>" style="width: 500px;" class="inputbox" maxlength="255" />
+							<!-- / Post Title -->
+						</td>
+						<td valign="bottom">
+							<img id="display_posticon" src="tmp/upload/posticons/clear.gif" alt="" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<br />
+							<!-- Post Message -->
+							<label for="messagecodex" class="smalltext"><?php echo $context->getVar("L_POST"); ?></label><br />
+							<?php if($context->getVar('allowbbcode') == '0'): ?>
+							<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100"><?php echo $context->getVar("message"); ?></textarea>
+							<?php else: ?>
+							<div id="message" style="display: none;"><?php echo $context->getVar("message"); ?></div>
+							<script type="text/javascript">
+								bbcodex_init('message', 'message', 10, 100, 'inputbox', 'width: 500px;', 'bbcode_button');
+							</script>
+							<?php endif; ?>
+							<!-- / Post Message -->
+
+						</td>
+						<td valign="bottom">
+							<?php if ($context->listReset("emoticons")): ?>
+							<!-- Emoticons -->
+							<table border="0" cellpadding="0" cellspacing="0">
+								<tr>
+									<td>
+										<fieldset>
+											<legend><?php echo $context->getVar("L_EMOTICONS"); ?></legend>
+											<table cellpadding="3" cellspacing="1" border="0" id="posticons">
+												<tr>
+													<?php while($context->push($context->listNext("emoticons"))): ?>
+													<td align="center">
+														<a href="javascript:emoticon('<?php echo $context->getVar("typed"); ?>')" title="<?php echo $context->getVar("description"); ?>"><img src="tmp/upload/emoticons/<?php echo $context->getVar("image"); ?>" alt="<?php echo $context->getVar("description"); ?>" border="0" /></a>
+													</td>
+													<?php if (is_object($list = &$context->getList("emoticons")) && $list->hasNext()): ?>
+														<?php if ($context->listKey("emoticons") % $context->getVar("emoticons_per_row") == $context->getVar("emoticons_per_row_remainder")): ?>
+															</tr><tr>
+														<?php endif; ?>
+													<?php endif; ?>
+													<?php $context->pop(); endwhile; ?>
+												</tr>	
+											</table>
+										</fieldset>
+									</td>
+								</tr>
+							</table>
+							<!-- / Emoticons -->
+							<?php endif; ?>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<?php if ($context->listReset("posticons")): ?>
+							<!-- Post Icons -->
+							<table border="0" cellpadding="0" cellspacing="0" width="100%">
+								<tr>
+									<td>
+										<fieldset>
+											<legend><?php echo $context->getVar("L_POSTICONS"); ?></legend>
+											<span class="smalltext"><?php echo $context->getVar("L_POSTICONSPOSTCHOOSE"); ?></span>
+											<label for="noicon" style="float: left;margin-top: 10px;"><input type="radio" name="posticon" id="noicon" value="-1" checked="checked" onclick="swap_posticon(null)" />&nbsp;<?php echo $context->getVar("L_NOICON"); ?></label>
+											<table cellpadding="3" cellspacing="1" border="0" id="posticons">
+												<tr>
+													<?php while($context->push($context->listNext("posticons"))): ?>
+													<td align="center">
+														<label for="pi<?php echo $context->getVar("id"); ?>">
+															<input type="radio" name="posticon" id="pi<?php echo $context->getVar("id"); ?>" value="<?php echo $context->getVar("id"); ?>" style="float: left;padding-right: 5px;" onclick="swap_posticon('pi_<?php echo $context->getVar("id"); ?>')" />&nbsp;&nbsp;<img src="tmp/upload/posticons/<?php echo $context->getVar("image"); ?>" alt="<?php echo $context->getVar("description"); ?>" id="pi_<?php echo $context->getVar("id"); ?>" style="margin-right:15px;" />
+														</label>
+													</td>
+													<?php if (is_object($list = &$context->getList("posticons")) && $list->hasNext()): ?>
+														<?php if ($context->listKey("posticons") % 7 == 6): ?>
+															</tr><tr>
+														<?php endif; ?>
+													<?php endif; ?>
+													<?php $context->pop(); endwhile; ?>
+												</tr>	
+											</table>
+										</fieldset>
+									</td>
+								</tr>
+							</table>
+							<!-- / Post Icons -->
+							<?php endif; ?>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<!-- / Main Posting Inputs -->
+
+		</td>
+	</tr>
+	<?php if ($template->isVisible('post_icons', FALSE)): ?>
+	<tr class="panel">
+		<td colspan="2">
+			<fieldset style="float:left; width:95%;">
+			<legend><label><?php echo $context->getVar("L_POSTICONS"); ?></label></legend>
+			<div align="center">
+			<label for="noicon"><input type="radio" name="posticon" id="noicon" value="-1" checked="checked" onclick="swap_posticon(null)" /> <?php echo $context->getVar("L_NOICON"); ?></label>&nbsp;&nbsp;&nbsp;
+			<table cellpadding="3" cellspacing="1" border="0" id="posticons">
+				<tr class="panel">
+					<?php if ($context->listReset("posticons")): ?>
+					<?php while($context->push($context->listNext("posticons"))): ?>
+					<td>
+						<label for="pi<?php echo $context->getVar("id"); ?>"><input type="radio" name="posticon" id="pi<?php echo $context->getVar("id"); ?>" value="<?php echo $context->getVar("id"); ?>" onclick="swap_posticon(pi_<?php echo $context->getVar("id"); ?>)" /><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/PostIcons/<?php echo $context->getVar("image"); ?>" alt="<?php echo $context->getVar("description"); ?>" title="<?php echo $context->getVar("description"); ?>" style="margin-right:10px;" id="pi_<?php echo $context->getVar("id"); ?>" /></label>						
+					</td>
+					<?php $context->pop(); endwhile; ?>
+					<?php endif; ?>
+				</tr>	
+			</table>
+			</div>
+			</fieldset>
+		</td>
+	</tr>
+	<?php endif; ?>
+	<tr class="tcat">
+		<td align="left" colspan="2">
+			<input type="submit" class="button" value="<?php echo $context->getVar("L_SAVE"); ?>" accesskey="s" /><input type="reset" class="button" value="<?php echo $context->getVar("L_RESET"); ?>" />
+		</td>
+	</tr>
+</table>
+</form>
