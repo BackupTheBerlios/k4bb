@@ -19,15 +19,14 @@
 			<br />
 			{$most_users_ever}
 			<br />
-			{$online_stats}&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<span style="color:#FFA34F">{$L_ADMINISTRATOR}</span>&nbsp;]&nbsp;&nbsp;[&nbsp;<span style="color:#006600">{$L_MODERATOR}</span>&nbsp;]
+			{$online_stats}&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<span class="admin_user">{$L_ADMINISTRATOR}</span>&nbsp;]&nbsp;&nbsp;[&nbsp;<span class="mod_user">{$L_MODERATOR}</span>&nbsp;]
 			<br />
 			<if:if var="num_online_members" greater="0">
 			<list:list id="online_users">
 				{$L_REGISTEREDUSERS}:
 				<list:item list="online_users">
 				<if:if var="invisible" eq="0">
-					<a href="member.php?id={$id}" style="text-decoration: underline;" class="minitext">{$name}</a>
-					<list:separator list="online_users">,&nbsp;</list:separator>
+					<a href="member.php?id={$id}" style="text-decoration: underline;" class="minitext">{$name}</a><list:separator list="online_users">,</list:separator>
 				</if:if>
 				</list:item>
 			</list:list>

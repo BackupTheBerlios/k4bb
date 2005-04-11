@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: init.php,v 1.2 2005/04/07 23:34:14 k4st Exp $
+* @version $Id: init.php,v 1.3 2005/04/11 02:16:36 k4st Exp $
 * @package k42
 */
 
@@ -35,6 +35,7 @@ require FORUM_BASE_DIR. '/includes/framework/pagecraft.php';
 require FORUM_BASE_DIR. '/includes/cache.php';
 require FORUM_BASE_DIR. '/includes/common.php';
 require FORUM_BASE_DIR. '/includes/maps.php';
+require FORUM_BASE_DIR. '/includes/heirarchy.php';
 require FORUM_BASE_DIR. '/includes/bbcode.php';
 
 /* Sessions */
@@ -55,5 +56,6 @@ require FORUM_BASE_DIR. '/includes/classes/admin/maps.class.php';
 require FORUM_BASE_DIR. '/includes/classes/admin/posticons.class.php';
 require FORUM_BASE_DIR. '/includes/classes/admin/emoticons.class.php';
 require FORUM_BASE_DIR. '/includes/classes/admin/files.class.php';
+require FORUM_BASE_DIR. '/includes/classes/admin/categories.class.php';
 
 ?>

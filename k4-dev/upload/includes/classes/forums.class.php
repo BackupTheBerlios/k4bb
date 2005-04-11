@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.2 2005/04/05 23:29:04 k4st Exp $
+* @version $Id: forums.class.php,v 1.3 2005/04/11 02:16:54 k4st Exp $
 * @package k42
 */
 
@@ -37,7 +37,7 @@ function forum_icon($instance, $temp) {
 	/* Set the forum Icon */
 	if(isset($_COOKIE['forums'])) {
 		
-		$forums			= $_COOKIE['forums'] != null && $_COOKIE['forums'] != '' ? @unserialize($_COOKIE['forums']) : array();
+		$forums				= $_COOKIE['forums'] != null && $_COOKIE['forums'] != '' ? @unserialize($_COOKIE['forums']) : array();
 		
 		if(isset($forums[$temp['id']])) {
 
@@ -52,7 +52,7 @@ function forum_icon($instance, $temp) {
 			}
 		} else {
 			
-			$forums[$temp['id']]	= $temp;
+			$forums[$temp['id']]	= array();
 			$forums					= serialize($forums);
 
 			/** Set a cookie to be cached in the session to be executed on the next refresh,
@@ -69,12 +69,13 @@ function forum_icon($instance, $temp) {
 			$icon		= 'off';
 		}
 		
-		$curr_forum		= serialize($temp);
+		$forums		= array($temp['id'] => $temp);
+		$forums		= serialize($forums);
 
 		/** Set a cookie to be cached in the session to be executed on the next refresh,
 		 * The cookie will expire when the session is meant to expire 
 		 */
-		bb_setcookie_cache('forums', $curr_forum, time() + ini_get('session.gc_maxlifetime'));
+		bb_setcookie_cache('forums', $forums, time() + ini_get('session.gc_maxlifetime'));
 	}
 
 	/* Check if this user's perms are less than is needed to post in this forum */
@@ -92,15 +93,22 @@ class MarkForumsRead extends Event {
 		/* Set the Breadcrumbs bit */
 		$template		= BreadCrumbs($template, $template->getVar('L_MARKFORUMSREAD'));
 		
-		if(isset($request['forums']) && is_array($request['forums'])) {
-			foreach($request['forums'] as $key => $val) {
+		$forums		= array();
 
-				/* Cache some info to set a cookie on the next refresh */
-				bb_setcookie_cache('forums['. $key .']', 'a:0:{}', ini_get('session.gc_maxlifetime'));
+		if(isset($request['forums']) && is_array($request['forums'])) {
+			foreach($request['forums'] as $forum) {
+				$forums[$forum['id']] = array();
 			}
 		}
+		
+		/* Serialize the array */
+		$forums			= serialize($forums);
+
+		/* Cache some info to set a cookie on the next refresh */
+		bb_setcookie_cache('forums', $forums, time() + ini_get('session.gc_maxlifetime'));
+
 		$template->setInfo('content', $template->getVar('L_MARKEDFORUMSREAD'), TRUE);
-		$template->setRedirect($_SERVER['HTTP_REFERER'], 3);
+		$template->setRedirect('index.php', 3);
 
 		return TRUE;
 	}
@@ -112,6 +120,7 @@ class ForumsIterator extends FAProxyIterator {
 	var $settings;
 	var $do_recures;
 	var $user;
+	var $result;
  
 	function ForumsIterator($query = NULL, $do_recurse = TRUE) {
 		
@@ -124,13 +133,15 @@ class ForumsIterator extends FAProxyIterator {
 		$this->settings		= $_SETTINGS;
 		$this->query_params	= $_QUERYPARAMS;
 		$this->do_recurse	= $do_recurse;
+		$this->result		= &$this->dba->executeQuery($query);
 
-		parent::FAProxyIterator($this->dba->executeQuery($query));
+		parent::FAProxyIterator($this->result);
 	}
 
 	function &current() {
 		$temp	= parent::current();
-
+		
+		/* Cache this forum in the session */
 		cache_forum($temp);
 
 		/* Set the forum's icon */
@@ -142,9 +153,10 @@ class ForumsIterator extends FAProxyIterator {
 			Globals::setGlobal('num_replies', Globals::getGlobal('num_replies') + $temp['replies']);
 		}
 		
-		// %D would work as well
+		/* %D would work as well */
 		$temp['post_created'] = strftime("%m.%d.%y", bbtime($temp['post_created']));
 		
+		/* Should we query down to the next level of forums? */
 		if($this->do_recurse) {
 			$query_params = $this->query_params['info'] . $this->query_params['forum'];
 			
@@ -152,6 +164,12 @@ class ForumsIterator extends FAProxyIterator {
 				$temp['subforums'] = &new ForumsIterator("SELECT $query_params FROM ". INFO ." i LEFT JOIN ". FORUMS ." f ON f.forum_id = i.id WHERE i.row_left > ". $temp['row_left'] ." AND i.row_right < ". $temp['row_right'] ." AND i.row_type = ". FORUM ." AND i.parent_id = ". $temp['id'] ." ORDER BY i.row_order ASC", FALSE);
 			}
 		}
+
+		/* Should we free the result? */
+		if($this->row == $this->size-1)
+			$this->result->freeResult();
+		
+		/* Return the formatted forum info */
 		return $temp;
 	}
 }

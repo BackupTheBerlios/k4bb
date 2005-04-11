@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.2 2005/04/06 00:48:48 k4st Exp $
+* @version $Id: index.php,v 1.3 2005/04/11 02:11:41 k4st Exp $
 * @package k42
 */
 
@@ -33,13 +33,14 @@ error_reporting(E_ALL);
 
 require 'forum.inc.php';
 
+/*
+global $_DBA;
+$query = "";
 
-//global $_DBA;
-//$query = "";
-
-//foreach(explode(";", $query) as $q)
-//	$_DBA->executeUpdate($q);
-/*$result = $_DBA->executeQuery("select * from ". MAPS ." ORDER BY row_left ASC");
+foreach(explode(";", $query) as $q)
+	if($q != '')
+		$_DBA->executeUpdate($q);
+*//*$result = $_DBA->executeQuery("select * from ". MAPS ." ORDER BY row_left ASC");
 while($result->next()) {
 	$temp = $result->current();
 	$query = "INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value)";
@@ -56,7 +57,8 @@ class DefaultEvent extends Event {
 		/* Set the breadcrumbs bit */
 		$template		= BreadCrumbs($template, $template->getVar('L_HOME'));
 		
-		//$dba->executeQuery("");
+		//$dba->executeQuery("delete from k4_information");
+		//$dba->executeQuery("delete from k4_categories");
 		
 		/* Set the globals for num_topics and num_replies here */
 		Globals::setGlobal('num_topics', 0);
@@ -75,7 +77,7 @@ class DefaultEvent extends Event {
 		$online_users						= &new OnlineUsersIterator(NULL);
 		$template->setList('online_users', $online_users);
 
-		$newest_user	= $dba->getRow("SELECT name, id FROM ". USERS ." ORDER BY id DESC LIMIT 1");
+		$newest_user						= $dba->getRow("SELECT name, id FROM ". USERS ." ORDER BY id DESC LIMIT 1");
 
 		$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members'),
 						'num_invisible'		=> Globals::getGlobal('num_online_invisible'),

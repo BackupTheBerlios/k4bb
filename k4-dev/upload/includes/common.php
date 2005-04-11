@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: common.php,v 1.3 2005/04/07 23:34:14 k4st Exp $
+* @version $Id: common.php,v 1.4 2005/04/11 02:16:36 k4st Exp $
 * @package k42
 */
 
@@ -97,6 +97,29 @@ $query_params['topic']		= ", t.topic_id AS topic_id, t.forum_id AS forum_id, t.c
 $query_params['reply']		= ", r.reply_id AS reply_id, r.topic_id AS topic_id, r.forum_id AS forum_id, r.category_id AS category_id, r.body_text AS body_text, r.poster_name AS poster_name, r.poster_id AS poster_id, r.edited_time AS edited_time, r.edited_username AS edited_username, r.edited_userid AS edited_userid";
 
 /**
+ * Define all basic MAP items for categories, forums, etc.
+ */
+$map_items['category'][]	= array('can_view' => GUEST, 'can_add' => ADMIN, 'can_edit' => ADMIN, 'can_del' => ADMIN);
+
+$map_items['forum'][]		= array('can_view' => GUEST,			'can_add' => ADMIN, 'can_edit' => ADMIN, 'can_del' => ADMIN);
+$map_items['forum'][]		= array('varname' => 'topics',			'can_view' => GUEST, 'can_add' => MEMBER, 'can_edit' => MEMBER, 'can_del' => MODERATOR);
+$map_items['forum'][]		= array('varname' => 'polls',			'can_view' => GUEST, 'can_add' => MEMBER, 'can_edit' => MEMBER, 'can_del' => MODERATOR);
+$map_items['forum'][]		= array('varname' => 'replies',			'can_view' => GUEST, 'can_add' => MEMBER, 'can_edit' => MEMBER, 'can_del' => MODERATOR);
+$map_items['forum'][]		= array('varname' => 'attachments',		'can_view' => GUEST, 'can_add' => MEMBER, 'can_edit' => MEMBER, 'can_del' => MODERATOR);
+$map_items['forum'][]		= array('varname' => 'vote_on_poll',	'can_view' => 0, 'can_add' => MEMBER, 'can_edit' => 0, 'can_del' => 0);
+$map_items['forum'][]		= array('varname' => 'rate_topic',		'can_view' => 0, 'can_add' => MEMBER, 'can_edit' => 0, 'can_del' => MODERATOR);
+$map_items['forum'][]		= array('varname' => 'sticky',			'can_view' => GUEST, 'can_add' => MODERATOR, 'can_edit' => MODERATOR, 'can_del' => MODERATOR);
+$map_items['forum'][]		= array('varname' => 'announce',		'can_view' => GUEST, 'can_add' => ADMIN, 'can_edit' => ADMIN, 'can_del' => ADMIN);
+$map_items['forum'][]		= array('varname' => 'closed',			'can_view' => GUEST, 'can_add' => ADMIN, 'can_edit' => ADMIN, 'can_del' => ADMIN);
+$map_items['forum'][]		= array('varname' => 'avatars',			'can_view' => GUEST, 'can_add' => 0, 'can_edit' => 0, 'can_del' => 0);
+$map_items['forum'][]		= array('varname' => 'signatures',		'can_view' => GUEST, 'can_add' => 0, 'can_edit' => 0, 'can_del' => 0);
+$map_items['forum'][]		= array('varname' => 'html',			'can_view' => 0, 'can_add' => ADMIN, 'can_edit' => 0, 'can_del' => 0, 'value' => 'br,a,pre,ul,li,ol,p');
+$map_items['forum'][]		= array('varname' => 'bbcode',			'can_view' => 0, 'can_add' => MEMBER, 'can_edit' => 0, 'can_del' => 0);
+$map_items['forum'][]		= array('varname' => 'bbimgcode',		'can_view' => 0, 'can_add' => MEMBER, 'can_edit' => 0, 'can_del' => 0);
+$map_items['forum'][]		= array('varname' => 'emoticons',		'can_view' => 0, 'can_add' => MEMBER, 'can_edit' => 0, 'can_del' => 0);
+$map_items['forum'][]		= array('varname' => 'posticons',		'can_view' => 0, 'can_add' => MEMBER, 'can_edit' => 0, 'can_del' => 0);
+
+/**
  * Get all of the settings into one big array
  */
 
@@ -109,12 +132,22 @@ $datastore					= array();
 /* Get the database Object */
 $_DBA						= &Database::open($_CONFIG['dba']);
 
+/*
+$query = "";
+
+foreach(explode("\r\n", $query) as $q)
+	if($q != '')
+		$_DBA->executeUpdate($q);
+exit;
+*/
+
 /* Get the datastore */
 $result		= &$_DBA->executeQuery("SELECT * FROM ". DATASTORE);
 while ($result->next()) {
 	$temp = $result->current();
 	$datastore[$temp['varname']] = unserialize($temp['data']);
 }
+$result->freeResult();
 
 /**
  * Get the Url instance of this file.. it will be globlized 
@@ -128,5 +161,6 @@ $GLOBALS['_URL']			= &$url;
 $GLOBALS['_SETTINGS']		= get_cached_settings();
 $GLOBALS['_DATASTORE']		= &$datastore;
 $GLOBALS['_QUERYPARAMS']	= &$query_params;
+$GLOBALS['_MAPITEMS']		= &$map_items;
 
 ?>

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: categories.class.php,v 1.1 2005/04/05 03:19:18 k4st Exp $
+* @version $Id: categories.class.php,v 1.2 2005/04/11 02:16:54 k4st Exp $
 * @package k42
 */
 
@@ -49,22 +49,29 @@ class MarkCategoryForumsRead extends Event {
 				if($forum['row_type'] & CATEGORY) {
 					
 					/* Set the Breadcrumbs bit */
-					$template		= BreadCrumbs($template, $template->getVar('L_MARKFORUMSREAD'), $forum['row_left'], $forum['row_right']);
+					$template					= BreadCrumbs($template, $template->getVar('L_MARKFORUMSREAD'), $forum['row_left'], $forum['row_right']);
 					
 					/* Get the forums of this Category */
-					$result			= $dba->executeQuery("SELECT * FROM ". INFO ." WHERE row_left > ". $forum['row_left'] ." AND row_right < ". $forum['row_right'] ." AND row_type = ". FORUM);
+					$result						= $dba->executeQuery("SELECT * FROM ". INFO ." WHERE row_left > ". $forum['row_left'] ." AND row_right < ". $forum['row_right'] ." AND row_type = ". FORUM);
 					
+					$forums						= isset($request['forums']) && $request['forums'] != null && $request['forums'] != '' ? @unserialize($request['forums']) : array();
+
 					/* Loop through the forums */
 					while($result->next()) {
 						
 						$temp = $result->current();
-
-						/* Cache some info to set a cookie on the next refresh */
-						bb_setcookie_cache('forums[forum'. $temp['id'] .']', 'a:0:{}', ini_get('session.gc_maxlifetime'));
+						
+						$forums[$temp['id']]	= array();
+						
 					}
 					
+					$forums						= serialize($forums);
+
+					/* Cache some info to set a cookie on the next refresh */
+					bb_setcookie_cache('forums', $forums, time() + ini_get('session.gc_maxlifetime'));
+
 					$template->setInfo('content', sprintf($template->getVar('L_MARKEDFORUMSREADCAT'), $forum['name']), TRUE);
-					$template->setRedirect($_SERVER['HTTP_REFERER'], 3);
+					$template->setRedirect('viewforum.php?id='. $forum['id'], 3);
 
 				} else {
 					/* set the breadcrumbs bit */
@@ -80,6 +87,7 @@ class MarkCategoryForumsRead extends Event {
 
 class CategoriesIterator extends FAProxyIterator {
 	var $dba;
+	var $result;
 
 	function CategoriesIterator($query = NULL) {
 		global $_CONFIG, $_DBA, $_QUERYPARAMS;
@@ -89,13 +97,15 @@ class CategoriesIterator extends FAProxyIterator {
 		$query_params		= $this->query_params['info'] . $this->query_params['category'];
 
 		$query				= $query == NULL ? "SELECT $query_params FROM ". INFO ." i LEFT JOIN ". CATEGORIES ." c ON c.category_id = i.id AND i.row_type = ". CATEGORY ." ORDER BY i.row_order ASC" : $query;
+		
+		$this->result		= &$_DBA->executeQuery($query);
 
-		parent::FAProxyIterator($_DBA->executeQuery($query));
+		parent::FAProxyIterator($this->result);
 	}
 
 	function &current() {
 		$temp = parent::current();
-
+		
 		cache_forum($temp);
 		
 		if(($temp['row_right'] - $temp['row_left'] - 1) > 0) {
@@ -104,6 +114,10 @@ class CategoriesIterator extends FAProxyIterator {
 
 			$temp['forums'] = &new ForumsIterator("SELECT $query_params FROM ". INFO ." i LEFT JOIN ". FORUMS ." f ON f.forum_id = i.id WHERE i.row_left > ". $temp['row_left'] ." AND i.row_right < ". $temp['row_right'] ." AND i.row_type = ". FORUM ." AND i.parent_id = f.category_id ORDER BY i.row_order ASC");
 		}
+
+		/* Should we free the result? */
+		if($this->row == $this->size-1)
+			$this->result->freeResult();
 
 		return $temp;
 	}

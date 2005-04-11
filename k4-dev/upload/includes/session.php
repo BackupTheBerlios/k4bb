@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.5 2005/04/05 23:28:48 k4st Exp $
+* @version $Id: session.php,v 1.6 2005/04/11 02:16:36 k4st Exp $
 * @package k42
 */
 
@@ -101,7 +101,7 @@ class FADBSession {
 
 	function read($sessid) {
 		
-		$rs				= &$this->dba->getRow("SELECT * FROM ". SESSIONS ." WHERE id = '". md5($sessid) ."'");
+		$rs				= $this->dba->getRow("SELECT * FROM ". SESSIONS ." WHERE id = '". md5($sessid) ."'");
 		
 		$data			= is_array($rs) && !empty($rs) && $rs['data'] != '' ? @unserialize($rs['data']) : array();
 		
@@ -111,6 +111,8 @@ class FADBSession {
 		 * logged in cookie is set from a previous login
 		 */
 		if (!is_array($rs) || empty($rs)) {
+			
+			/* Do the 'write' query here */
 			$this->write_stmt->setString(1, md5($sessid));
 			$this->write_stmt->setInt(2,	time());
 			$this->write_stmt->setString(3, $data['user']->info['name']);
@@ -121,6 +123,17 @@ class FADBSession {
 			$this->write_stmt->setInt(8,	$this->location_id );
 			
 			$this->write_stmt->executeUpdate();
+		} else {
+			
+			/* Do the 'update' query here, this is also used for writing */
+			$this->update_stmt->setString(1,	serialize($data));
+			$this->update_stmt->setInt(2,		time());
+			$this->update_stmt->setString(3,	$this->url->file);
+			$this->update_stmt->setString(4,	$this->location_act);
+			$this->update_stmt->setInt(5,		$this->location_id);
+			$this->update_stmt->setString(6,	md5($sessid));
+			
+			$this->update_stmt->executeUpdate();
 		}
 
 		/* Secondary Garbage collecting measures */
@@ -144,7 +157,7 @@ class FADBSession {
 		$session			= &Globals::getGlobal('session');
 		$session['bbcache'] = $bbcache;
 		
-		$this->update_stmt->setString(1, serialize($session)); // Globals::getGlobal('session')
+		$this->update_stmt->setString(1, serialize($session));
 		$this->update_stmt->setInt(2, time());
 		$this->update_stmt->setString(3, $this->url->file);
 		$this->update_stmt->setString(4, $this->location_act);

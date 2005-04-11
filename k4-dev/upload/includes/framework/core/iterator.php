@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: iterator.php,v 1.1 2005/04/05 03:21:02 k4st Exp $
+* @version $Id: iterator.php,v 1.2 2005/04/11 02:18:54 k4st Exp $
 * @package k42
 */
 
@@ -73,12 +73,16 @@ class FAArrayIterator extends FAIterator {
 
 class FAProxyIterator extends FAIterator {
 	var $it;
+	var $size;
+	var $row;
 
 	function FAProxyIterator(&$it) {
-		$this->it = &$it;
+		$this->it	= &$it;
+		$this->size	= &$this->it->size;
 	}
 
 	function &current() {
+		$this->row	= &$this->it->row;
 		return $this->it->current();
 	}
 

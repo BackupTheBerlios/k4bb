@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: controller.class.php,v 1.1 2005/04/05 03:21:02 k4st Exp $
+* @version $Id: controller.class.php,v 1.2 2005/04/11 02:18:54 k4st Exp $
 * @package k42
 */
 
@@ -138,13 +138,32 @@ class Controller {
 		 */
 
 		/* Figure out which styleset, imageset and templateset to use */
-		$styleset			= is_a($session['user'], 'Member') && $user['styleset'] != '' ? $user['styleset'] : $template->getVar('styleset');
+		$styleset			= (is_a($session['user'], 'Member') && $user['styleset'] != '') || (is_a($session['user'], 'Guest') && $user['styleset'] != '') ? $user['styleset'] : $template->getVar('styleset');
 		$imageset			= is_a($session['user'], 'Member') && $user['imgset'] != '' ? $user['imgset'] : $template->getVar('imageset');
 		$templateset		= is_a($session['user'], 'Member') && $user['tplset'] != '' ? $user['tplset'] : $template->getVar('templateset');
 		
 		/* Set the style, template and image sets */
 		$this->template->setVar('css_styles', get_cached_styleset($styleset, $template->getVar('styleset')));
-		$this->template->setDirname(FORUM_BASE_DIR . DIRECTORY_SEPARATOR . 'templates'. DIRECTORY_SEPARATOR . $templateset);
+		
+		$template_dir		= FORUM_BASE_DIR . DIRECTORY_SEPARATOR . 'templates'. DIRECTORY_SEPARATOR;
+		$imgs_dir			= FORUM_BASE_DIR . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
+
+		/* Should we get the template set that goes with this styleset? */
+		$templateset		= is_dir($template_dir . $styleset) ? $template_dir . $styleset : $template_dir . $templateset;
+		
+		/* Should we get the image set that goes with this styleset? */
+		$imageset			= is_dir($imgs_dir . $styleset) ? $styleset : $imageset;
+		
+		/* Check to see if our templates directory exists */
+		if(!is_dir($templateset))
+			exit('Invalid template set for: '. $templateset);
+		
+		/* Check to see if our images directory exists */
+		if(!is_dir($imgs_dir . $imageset))
+			exit('Invalid image set for: '. $imageset);
+
+		/* Set the template an image sets */
+		$this->template->setDirname($templateset);
 		$this->template->setVar('IMG_DIR', $imageset);
 
 		/* Determine which language to get, and then include the appropriate file */

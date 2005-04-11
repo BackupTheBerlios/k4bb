@@ -78,15 +78,14 @@ function emoticon(typed) {
 							<br />
 							<!-- Post Message -->
 							<label for="messagecodex" class="smalltext">{$L_POST}</label><br />
-							<core:block id="normal_mode" hidden="yes">
+							<if:if var="allowbbcode" eq="0">
 							<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100">{$message}</textarea>
-							</core:block>
-							<core:block id="adv_mode">
+							<if:else />
 							<div id="message" style="display: none;">{$message}</div>
 							<script type="text/javascript">
 								bbcodex_init('message', 'message', 10, 100, 'inputbox', 'width: 500px;', 'bbcode_button');
 							</script>
-							</core:block>
+							</if:if>
 							<!-- / Post Message -->
 
 						</td>

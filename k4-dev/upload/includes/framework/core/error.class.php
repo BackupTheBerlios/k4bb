@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: error.class.php,v 1.1 2005/04/05 03:21:02 k4st Exp $
+* @version $Id: error.class.php,v 1.2 2005/04/11 02:18:54 k4st Exp $
 * @package k42
 */
 
@@ -81,7 +81,7 @@ class Error {
 
 		for ($i = sizeof($stack->errors) - 1; $i >= 0; $i--) {
 			if (is_a($stack->errors[$i], $type))
-				return TRUE;
+				return $stack->errors[$i];
 		}
 	}
 

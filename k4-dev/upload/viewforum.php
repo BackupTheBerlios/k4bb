@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.2 2005/04/07 23:35:00 k4st Exp $
+* @version $Id: viewforum.php,v 1.3 2005/04/11 02:11:41 k4st Exp $
 * @package k42
 */
 
@@ -61,7 +61,7 @@ class DefaultEvent extends Event {
 				/* Get the number of people browsing this forum */
 				$num_online_total	= $dba->getValue("SELECT COUNT(s.id) FROM ". SESSIONS ." s WHERE s.id != '' $extra");
 
-				$forum_can_view	= $forum['row_type'] & CATEGORY ? $user['maps']['categories'][$forum['id']]['can_view'] : $user['maps']['forums'][$forum['id']]['can_view'];
+				$forum_can_view		= $forum['row_type'] & CATEGORY ? $user['maps']['categories'][$forum['id']]['can_view'] : $user['maps']['forums'][$forum['id']]['can_view'];
 
 				/* If there are more than 0 people browsing the forum, display the stats */
 				if($num_online_total > 0 && $forum_can_view <= $user['perms'] && ($forum['row_type'] & CATEGORY || $forum['row_type'] & FORUM)) {

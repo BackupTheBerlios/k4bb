@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topics.class.php,v 1.3 2005/04/07 23:33:50 k4st Exp $
+* @version $Id: topics.class.php,v 1.4 2005/04/11 02:16:54 k4st Exp $
 * @package k42
 */
 
@@ -115,9 +115,9 @@ class PostTopic extends Event {
 		
 		$insert_a->executeUpdate();
 
-		$topic_id			= $dba->insertId();
+		$topic_id			= $dba->getInsertId();
 
-		topic_id,forum_id,category_id,poster_name,poster_id,body_text
+		//topic_id,forum_id,category_id,poster_name,poster_id,body_text
 		$insert_b->setInt(1, $topic_id);
 		$insert_b->setInt(2, $forum['id']);
 		$insert_b->setInt(3, $dba->getValue("SELECT category_id FROM ". FORUMS ." WHERE forum_id = ". $forum['id']));

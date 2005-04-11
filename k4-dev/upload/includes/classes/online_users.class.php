@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: online_users.class.php,v 1.1 2005/04/05 03:19:18 k4st Exp $
+* @version $Id: online_users.class.php,v 1.2 2005/04/11 02:16:54 k4st Exp $
 * @package k42
 */
 
@@ -55,9 +55,9 @@ class OnlineUsersIterator extends FAProxyIterator {
 			Globals::setGlobal('num_online_invisible', Globals::getGlobal('num_online_invisible')+1);
 
 		if($temp['perms'] >= ADMIN)
-			$temp['name'] = '<span style="color:#FFA34F; font-weight: bold;">'. $temp['name'] .'</span>';
+			$temp['name'] = '<span class="admin_user">'. $temp['name'] .'</span>';
 		if($temp['perms'] >= MODERATOR)
-			$temp['name'] = '<span style="color:#006600; font-weight: bold;">'. $temp['name'] .'</span>';
+			$temp['name'] = '<span class="mod_user">'. $temp['name'] .'</span>';
 
 		return $temp;
 	}

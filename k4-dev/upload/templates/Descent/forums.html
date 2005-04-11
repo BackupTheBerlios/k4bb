@@ -16,6 +16,17 @@
 		<td align="center">{$L_LASTPOST}</td>
 	</tr>
 	<list:list id="categories">
+	<list:default list="categories">
+	<tr class="panel">
+		<td colspan="5">
+			<div class="outset_box" align="center">
+				<br />
+				{$L_NOFORUMSEXIST}
+				<br /><br />
+			</div>
+		</td>
+	</tr>
+	</list:default>
 	<list:item list="categories">
 	<maps:if list="categories" category="id" method="can_view">
 		<tr class="thead">

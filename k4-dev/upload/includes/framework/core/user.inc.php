@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: user.inc.php,v 1.1 2005/04/05 03:21:02 k4st Exp $
+* @version $Id: user.inc.php,v 1.2 2005/04/11 02:18:54 k4st Exp $
 * @package k42
 */
 
@@ -215,7 +215,7 @@ class Guest extends User {
 	function Guest() {
 		parent::User();
 
-		$this->info	= array('name' => '', 'email' => '', 'id' => 0, 'perms' => 1);
+		$this->info	= array('name' => '', 'email' => '', 'id' => 0, 'perms' => 1, 'styleset' => '');
 	}
 	/*
 	function __sleep() {

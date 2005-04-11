@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: cache.php,v 1.1 2005/04/05 03:18:59 k4st Exp $
+* @version $Id: cache.php,v 1.2 2005/04/11 02:16:36 k4st Exp $
 * @package k42
 */
 
@@ -119,7 +119,7 @@ function get_cached_settings() {
 			$temp						= $result->current();
 			$settings[$temp['varname']] = $temp['value'];
 		}
-		//echo 'hiii'; exit;
+		$result->freeResult();
 
 		$_SESSION['bbcache']['settings'] = $settings;
 	}
@@ -163,6 +163,8 @@ function get_cached_styleset($styleset, $default_styleset) {
 			$css .= $temp['name'] ." { ". $temp['properties'] ." }\r\n";
 		}
 		
+		$result->freeResult();
+
 		/* Create a cached file for the CSS info */
 		$handle = @fopen(FORUM_BASE_DIR .'/tmp/cache/'. $styleset .'.css', "w");
 		@chmod(FORUM_BASE_DIR .'/tmp/cache/'. $styleset .'.css', 0777);

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: admin.php,v 1.1 2005/04/05 03:10:22 k4st Exp $
+* @version $Id: admin.php,v 1.2 2005/04/11 02:11:41 k4st Exp $
 * @package k42
 */
 
@@ -108,6 +108,18 @@ $app->AddEvent('emoticons_insert', new AdminInsertEmoticon);
 $app->AddEvent('emoticons_remove', new AdminRemoveEmoticon);
 $app->AddEvent('emoticons_update', new AdminUpdateEmoticon);
 $app->AddEvent('emoticons_clickable', new AdminUpdateEmoticonClick);
+
+/* Categories */
+$app->AddEvent('categories', new AdminCategories);
+$app->AddEvent('categories_add', new AdminAddCategory);
+$app->AddEvent('categories_insert', new AdminInsertCategory);
+$app->AddEvent('categories_insertmaps', new AdminInsertCategoryMaps);
+$app->AddEvent('categories_simpleupdate', new AdminSimpleCategoryUpdate);
+$app->AddEvent('categories_edit', new AdminEditCategory);
+$app->AddEvent('categories_update', new AdminUpdateCategory);
+$app->AddEvent('categories_remove', new AdminRemoveCategory);
+$app->AddEvent('categories_permissions', new AdminCategoryPermissions);
+$app->AddEvent('categories_updateperms', new AdminUpdateCategoryPermissions);
 
 $app->ExecutePage();
 

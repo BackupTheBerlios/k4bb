@@ -19,6 +19,19 @@
 		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id={$forum_id}&amp;sort=last_reply&amp;order={$order}" title="{$L_LASTPOST}">{$L_LASTPOST}{$last_reply_sort}</a>&nbsp;</td>
 	</tr>
 	<list:list id="topics">
+	<list:default list="topics">
+	<tr class="alt1">
+		<td colspan="7">
+			<br />
+			<div align="center">
+				<strong>{$main_message}</strong>
+				<br />
+				{$forum_controls}
+			</div>
+			<br />
+		</td>
+	</tr>
+	</list:default>
 	<list:item list="topics">
 	<tr class="panel">
 		<td><img src="{$topic_icon}" alt="" border="0" /></td>

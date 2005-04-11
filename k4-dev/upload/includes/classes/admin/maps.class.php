@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: maps.class.php,v 1.1 2005/04/05 03:19:35 k4st Exp $
+* @version $Id: maps.class.php,v 1.2 2005/04/11 02:18:24 k4st Exp $
 * @package k42
 */
 
@@ -152,6 +152,122 @@ class AdminMapsAddNode extends Event {
 	}
 }
 
+class AdminInsertMap {
+	var $dba;
+	function AdminInsertMap() {
+		global $_DBA;
+		$this->dba		= $_DBA;
+	}
+	function getNumOnLevel($row_left, $row_right, $level) {
+		return $this->dba->GetValue("SELECT COUNT(*) FROM ". MAPS ." WHERE row_left > $row_left AND row_right < $row_right AND row_level = $level");
+	}
+	function insertNode($request, $category_id = FALSE, $forum_id = FALSE, $group_id = FALSE, $user_id = FALSE) {
+		
+		/**
+		 * Error checking on request fields 
+		 */
+		if(!isset($request['parent_id']))
+			return Error::pitch(new FAError('L_INVALIDMAPID', __FILE__, __LINE__));
+		
+		if(!isset($request['varname']))
+			return Error::pitch(new FAError('L_MAPSNEEDVARNAME', __FILE__, __LINE__));
+
+		if(!isset($request['name']))
+			return Error::pitch(new FAError('L_MAPSNEEDNAME', __FILE__, __LINE__));
+		
+		/**
+		 * Start building info for the queries
+		 */
+
+		/* Get the last node to the furthest right in the tree */
+		$last_node = $this->dba->GetRow("SELECT * FROM ". MAPS ." WHERE row_level = 1 ORDER BY row_right DESC LIMIT 1");
+
+		$level = 1;
+		
+		/* Is this a top level node? */
+		if(intval($request['parent_id']) == 0) {
+			
+			$left			= $last_node['row_right']+1;
+			$level			= 1;
+			$parent			= array('category_id' => intval($category_id), 'forum_id' => intval($forum_id), 'group_id' => intval($group_id), 'user_id' => intval($user_id));
+		
+		/* If we are actually dealing with a parent node */
+		} else if(intval($request['parent_id']) > 0) {
+			
+			/* Get the parent node */
+			$parent			= $this->dba->GetRow("SELECT * FROM ". MAPS ." WHERE id = ". intval($request['parent_id']));
+			
+			/* Check if the parent node exists */
+			if(!is_array($parent) || empty($parent))
+				return Error::pitch(new FAError('L_INVALIDMAPID', __FILE__, __LINE__));
+			
+			/* Find out how many nodes are on the current level */
+			$num_on_level	= $this->getNumOnLevel($parent['row_left'], $parent['row_right'], $parent['row_level']+1);
+			
+			/* If there are more than 1 nodes on the current level */
+			if($num_on_level > 0) {
+				$left			= $parent['row_right'];
+			} else {
+				$left			= $parent['row_left'] + 1;
+			}
+			
+			/* Should we need to reset some of the $parent values? */
+			$parent['category_id']	= !$category_id ? $parent['category_id'] : intval($category_id);
+			$parent['forum_id']		= !$forum_id ? $parent['forum_id'] : intval($forum_id);
+			$parent['group_id']		= !$group_id ? $parent['group_id'] : intval($group_id);
+			$parent['user_id']		= !$user_id ? $parent['user_id'] : intval($user_id);
+
+			/* Set this nodes level */
+			$level			= $parent['row_level']+1;
+		} else {
+			return Error::pitch(new FAError('L_INVALIDMAPID', __FILE__, __LINE__));
+		}
+
+		$right = $left+1;
+		
+		/**
+		 * Build the queries
+		 */
+
+		/* Prepare the queries */
+		$update_a			= &$this->dba->prepareStatement("UPDATE ". MAPS ." SET row_right = row_right+2 WHERE row_left < ? AND row_right >= ?");
+		$update_b			= &$this->dba->prepareStatement("UPDATE ". MAPS ." SET row_left = row_left+2, row_right=row_right+2 WHERE row_left >= ?");
+		$insert				= &$this->dba->prepareStatement("INSERT INTO ". MAPS ." (row_left,row_right,row_level,name,varname,category_id,forum_id,user_id,group_id,can_view,can_add,can_edit,can_del,inherit) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		
+		/* Set the insert variables needed */
+		$update_a->setInt(1, $left);
+		$update_a->setInt(2, $left);
+		$update_b->setInt(1, $left);
+
+		/* Set the inserts for adding the actual node */
+		$insert->setInt(1, $left);
+		$insert->setInt(2, $right);
+		$insert->setInt(3, $level);
+		$insert->setString(4, $request['name']);
+		$insert->setString(5, $request['varname']);
+		$insert->setInt(6, $parent['category_id']);
+		$insert->setInt(7, $parent['forum_id']);
+		$insert->setInt(8, $parent['user_id']);
+		$insert->setInt(9, $parent['group_id']);
+		$insert->setInt(10, @$request['can_view']);
+		$insert->setInt(11, @$request['can_add']);
+		$insert->setInt(12, @$request['can_edit']);
+		$insert->setInt(13, @$request['can_del']);
+		$insert->setInt(14, @$request['inherit']);
+		
+
+		/**
+		 * Execute the queries
+		 */
+
+		/* Execute the queries */
+		$update_a->executeUpdate();
+		$update_b->executeUpdate();
+		$insert->executeUpdate();
+		
+	}
+}
+
 class AdminMapsInsertNode extends Event {
 	var $dba;
 	function getNumOnLevel($row_left, $row_right, $level) {
@@ -163,103 +279,16 @@ class AdminMapsInsertNode extends Event {
 
 		if(is_a($session['user'], 'Member') && ($user['perms'] >= ADMIN)) {
 			
-			/**
-			 * Error checking on request fields 
-			 */
+			$map			= &new AdminInsertMap();
 			
-			if(!isset($request['parent_id']))
-				return $template->setError('content', $template->getVar('L_INVALIDMAPID'));
-			
-			if(!isset($request['varname']))
-				return $template->setError('content', $template->getVar('L_MAPSNEEDVARNAME'));
+			Error::reset();
+			$map->insertNode($request);
 
-			if(!isset($request['name']))
-				return $template->setError('content', $template->getVar('L_MAPSNEEDNAME'));
-			
-			/**
-			 * Start building info for the queries
-			 */
-
-			/* Get the last node to the furthest right in the tree */
-			$last_node = $dba->GetRow("SELECT * FROM ". MAPS ." WHERE row_level = 1 ORDER BY row_right DESC LIMIT 1");
-
-			$level = 1;
-			
-			/* Is this a top level node? */
-			if(intval($request['parent_id']) == 0) {
-				
-				$left			= $last_node['row_right']+1;
-				$level			= 1;
-				$parent			= array('category_id' => 0, 'forum_id' => 0, 'group_id' => 0, 'user_id' => 0);
-			
-			/* If we are actually dealing with a parent node */
-			} else if(intval($request['parent_id']) > 0) {
-				
-				/* Get the parent node */
-				$parent			= $dba->GetRow("SELECT * FROM ". MAPS ." WHERE id = ". intval($request['parent_id']));
-				
-				/* Check if the parent node exists */
-				if(!is_array($parent) || empty($parent))
-					return $template->setError('content', $template->getVar('L_INVALIDMAPID'));
-				
-				/* Find out how many nodes are on the current level */
-				$num_on_level	= $this->getNumOnLevel($parent['row_left'], $parent['row_right'], $parent['row_level']+1);
-				
-				/* If there are more than 1 nodes on the current level */
-				if($num_on_level > 0) {
-					$left			= $parent['row_right'];
-				} else {
-					$left			= $parent['row_left'] + 1;
-				}
-				
-				/* Set this nodes level */
-				$level			= $parent['row_level']+1;
-			} else {
-				return $template->setError('content', $template->getVar('L_INVALIDMAPID'));
+			if(Error::grab()) {
+				$error		= &Error::grab();
+				return $template->setError('content', $template->getVar($error->message));
 			}
 
-			$right = $left+1;
-			
-			/**
-			 * Build the queries
-			 */
-
-			/* Prepare the queries */
-			$update_a			= &$dba->prepareStatement("UPDATE ". MAPS ." SET row_right = row_right+2 WHERE row_left < ? AND row_right >= ?");
-			$update_b			= &$dba->prepareStatement("UPDATE ". MAPS ." SET row_left = row_left+2, row_right=row_right+2 WHERE row_left >= ?");
-			$insert				= &$dba->prepareStatement("INSERT INTO ". MAPS ." (row_left,row_right,row_level,name,varname,category_id,forum_id,user_id,group_id,can_view,can_add,can_edit,can_del,inherit) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-			
-			/* Set the insert variables needed */
-			$update_a->setInt(1, $left);
-			$update_a->setInt(2, $left);
-			$update_b->setInt(1, $left);
-
-			/* Set the inserts for adding the actual node */
-			$insert->setInt(1, $left);
-			$insert->setInt(2, $right);
-			$insert->setInt(3, $level);
-			$insert->setString(4, $request['name']);
-			$insert->setString(5, $request['varname']);
-			$insert->setInt(6, $parent['category_id']);
-			$insert->setInt(7, $parent['forum_id']);
-			$insert->setInt(8, $parent['user_id']);
-			$insert->setInt(9, $parent['group_id']);
-			$insert->setInt(10, @$request['can_view']);
-			$insert->setInt(11, @$request['can_add']);
-			$insert->setInt(12, @$request['can_edit']);
-			$insert->setInt(13, @$request['can_del']);
-			$insert->setInt(14, @$request['inherit']);
-			
-
-			/**
-			 * Execute the queries
-			 */
-
-			/* Execute the queries */
-			$update_a->executeUpdate();
-			$update_b->executeUpdate();
-			$insert->executeUpdate();
-			
 			/* Redirect the user */
 			$template->setInfo('content', $template->getVar('L_ADDEDMAPSITEM'), FALSE);
 			$template->setRedirect('admin.php?act=permissions_gui', 3);
@@ -287,36 +316,8 @@ class AdminMapsRemoveNode extends Event {
 			if(!is_array($map) || empty($map))
 				return $template->setError('content', $template->getVar('L_INVALIDMAPID'));
 			
-			$val = (($map['row_right'] - $map['row_left'] - 1) / 2) + 2;
-			$val = $val % 2 == 0 ? $val : $val+1; // Make it an even number
-			
-			/**
-			 * Create the Queries
-			 */
-			$delete		= &$dba->prepareStatement("DELETE FROM ". MAPS ." WHERE row_left >= ? AND row_right <= ?");
-			$update_a	= &$dba->prepareStatement("UPDATE ". MAPS ." SET row_right = row_right-? WHERE row_left < ? AND row_right > ?");
-			$update_b	= &$dba->prepareStatement("UPDATE ". MAPS ." SET row_left = row_left-?, row_right=row_right-? WHERE row_left > ?");
-			
-			/**
-			 * Populate the queries
-			 */
-			$delete->setInt(1, $map['row_left']);
-			$delete->setInt(2, $map['row_right']);
-
-			$update_a->setInt(1, $val);
-			$update_a->setInt(2, $map['row_left']);
-			$update_a->setInt(3, $map['row_left']);
-
-			$update_b->setInt(1, $val);
-			$update_b->setInt(2, $val);
-			$update_b->setInt(3, $map['row_left']);
-			
-			/**
-			 * Execute the queries
-			 */
-			$delete->executeUpdate();
-			$update_a->executeUpdate();
-			$update_b->executeUpdate();
+			$heirarchy		= &new Heirarchy();
+			$heirarchy->removeNode($map, MAPS);
 
 			/* Redirect the user */
 			$template->setInfo('content', $template->getVar('L_REMOVEDMAPSITEM'), FALSE);
@@ -332,10 +333,12 @@ class AdminMapsRemoveNode extends Event {
 
 class MAPSIterator extends FAProxyIterator {
 	var $dba;
-	function MAPSIterator($data = NULL) {
+	var $start_level;
+	function MAPSIterator($data = NULL, $start_level = 1) {
 		global $_DBA;
 
-		$this->dba		= &$_DBA;
+		$this->dba			= &$_DBA;
+		$this->start_level	= $start_level;
 		
 		parent::FAProxyIterator($data);
 	}
@@ -344,7 +347,7 @@ class MAPSIterator extends FAProxyIterator {
 		$temp			= parent::current();
 		
 		$num_children	= @(($temp['row_right'] - $temp['row_left'] - 1) / 2);
-		$temp['level']	= str_repeat('&nbsp;&nbsp;&nbsp;', $temp['row_level']-1);
+		$temp['level']	= str_repeat('&nbsp;&nbsp;&nbsp;', $temp['row_level']-$this->start_level);
 
 		$temp['name']	= $temp['inherit'] == 1 ? '<span style="color: green;">'. $temp['name'] .'</span>' : '<span style="color: firebrick;">'. $temp['name'] .'</span>';
 		

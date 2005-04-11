@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: breadcrumbs.class.php,v 1.1 2005/04/05 03:19:18 k4st Exp $
+* @version $Id: breadcrumbs.class.php,v 1.2 2005/04/11 02:16:54 k4st Exp $
 * @package k42
 */
 
@@ -46,7 +46,7 @@ function BreadCrumbs(&$template, $location = NULL, $row_left = FALSE, $row_right
 		
 		$breadcrumbs	= array();
 
-		$result			= $query->executeQuery();
+		$result			= &$query->executeQuery();
 
 		while($result->next()) {
 			$current	= $result->current();
@@ -77,6 +77,9 @@ function BreadCrumbs(&$template, $location = NULL, $row_left = FALSE, $row_right
 
 			$breadcrumbs[] = $current;
 		}
+		
+		/* Free up some memory */
+		$result->freeResult();
 		
 		/* Check if we have a preset location or not */
 		if($location == NULL) {

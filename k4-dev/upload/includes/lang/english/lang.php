@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: lang.php,v 1.1 2005/04/05 03:22:26 k4st Exp $
+* @version $Id: lang.php,v 1.2 2005/04/11 02:20:54 k4st Exp $
 * @package k42
 */
 
@@ -131,7 +131,7 @@ function return_language() {
 	'L_USERS'				=> 'Users',
 	'L_GROUPS'				=> 'User Groups',
 	'L_OPTIONS'				=> 'Options',
-	'L_PERMISSIONS'			=> 'Forum Permissions',
+	'L_PERMISSIONS'			=> 'Permissions',
 	'L_CENSORING'			=> 'Word Censoring',
 	'L_PRUNE'				=> 'Prune Posts',
 	'L_ICONS'				=> 'Icons',
@@ -152,10 +152,31 @@ function return_language() {
 	'L_ACPFEATURES'			=> '<ul><li>Do all sorts of stuff.</li></ul>',
 	'L_MODGROUPS'			=> 'Edit/Modify User Groups',
 	'L_ADDGROUP'			=> 'Add Group',
-	'L_MODCATEGORIES'		=> 'Add/Suspend/Edit/Delete Categories',
-	'L_ADDCATEGORY'			=> 'Add Category',
-	'L_SUSPENDCAT'			=> 'Suspend Category',
-	'L_UNSUSPENDCAT'		=> 'Unsuspend Category',
+	
+	'L_ORDER'				=> 'Order',
+	'L_MANAGECATEGORIES'	=> 'Manage Categories',
+	'L_ADDCATEGORY'			=> 'Add New Category',
+	'L_INSERTCATDESC'		=> 'You must insert a Category Description.',
+	'L_INSERTCATNAME'		=> 'You must insert a Category Name.',
+	'L_INSERTCATORDER'		=> 'You must insert a Category Order.',
+	'L_INSERTCATORDERNUM'	=> 'The Category Order must be a number.',
+	'L_CATNAME'				=> 'Category Name',
+	'L_EDITCATEGORIES'		=> 'Edit Categories',
+	'L_ADDEDCATEGORY'		=> 'Successfully added the category <strong>%s</strong> to the database.<br /><br /><strong>Please wait while this category\'s default permissions are added to the database.</strong>',
+	'L_INVALIDCATEGORY'		=> 'You have specified an invalid Category ID.',
+	'L_ADDEDCATEGORYPERMS'	=> 'Successfuly added the category permissions for <strong>%s</strong>.',
+	'L_UPDATEDCATEGORY'		=> 'Successfully updated the category <strong>%s</strong>.',
+	'L_CATEGORYPERMISSIONS'	=> 'Category Permissions',
+	'L_EDITCATEGORY'		=> 'Edit Category',
+	'L_NOCATEGORYPERMS'		=> 'This category does not have any permissions assigned to it',
+	'L_REMOVEDCATEGORY'		=> 'Successfully removed the category <strong>%s</strong>.',
+	'L_CHECKDELCAT'			=> 'Removing this category will result in the deletion of all of its forums, topics and replies. Would you like to continue?',
+	'L_CATEGORYPERMISSIONS'	=> 'Category Permissions',
+	'L_EDITPERMISSIONS'		=> 'Edit Permissions',
+	'L_NOCATEGORIES'		=> 'There are currently no active Categories.',
+	'L_NOCATEGORYMAPS'		=> 'This category appears to have no set permissions.',
+	'L_UPDATEDCATEGORYPERMS'=> 'Successfully update the permissions for the category <strong>%s</strong>.',
+
 	'L_MODFORUMS'			=> 'Add/Suspend/Lock/Edit/Delete Forums',
 	'L_ADDFORUM'			=> 'Add Forum',
 	'L_SUSPENDFORUM'		=> 'Suspend Forum',
@@ -164,15 +185,18 @@ function return_language() {
 	'L_LOCKFORUM'			=> 'Lock Forum',
 	'L_UNSUSPENDFORUM'		=> 'Unsuspend Forum',
 	'L_UNLOCKFORUM'			=> 'Unlock Forum',
-	'L_CATNAME'				=> 'Category Name',
+	'L_EDITFORUMS'			=> 'Edit Forums',
+	'L_FORUMPERMISSIONS'	=> 'Forum Permissions',
+	'L_CHECKDELFORUM'		=> 'Removing this forum will result in the deletion of all of its topics and replies. Would you like to continue?',
+	
+	
 	'L_SUSPEND'				=> 'Suspend',
 	'L_UNSUSPEND'			=> 'Unsuspend',
 	'L_LOCK'				=> 'Lock',
 	'L_UNLOCK'				=> 'Unlock',
-	'L_EDITCATEGORIES'		=> 'Edit Categories',
-	'L_EDITFORUMS'			=> 'Edit Forums',
-	'L_CHECKDELCAT'			=> 'Suspending this category will result in noone being able to post within its Forums. It also means the you can apply these forums to the k4 CMS system. Would you like to continue?',
-	'L_CHECKDELFORUM'		=> 'Suspending this forum means that noone will be able to see or use it. It also means that you can apply it to the forums CMS system. Would you like to continue?',
+	
+	
+	
 	'L_SELCATEGORY'			=> 'Select a Category',
 	'L_POSITION'			=> 'Position',
 	'L_UPDATE'				=> 'Update',
@@ -224,6 +248,8 @@ function return_language() {
 	'L_UPDATEDEMOTICON'		=> 'Successfully updated the selected Emoticon.',
 	'L_UPDATEDEMOCLICK'		=> 'Successfully changed whether or not the Emotcion can be seen on the new post form.',
 	'L_POSTICONSPOSTCHOOSE'	=> 'You may choose an icon for your message from the following list:',
+	'L_NOPOSTICONS'			=> 'There are currently no Post Icons to display.',
+	'L_NOEMOTICONS'			=> 'There are currently no Emoticons to display.',
 	
 	'L_TYPED'				=> 'Typed',
 	'L_MODFAQ'				=> 'Add/Edit/Delete FAQ',
@@ -1102,6 +1128,10 @@ function return_language() {
 	'L_CANTVIEWFORUMTOPICS'	=> 'You do not have permission to view the topics in this forum.',
 	'L_CANTPOSTTOCATEGORY'	=> 'You must choose a forum to post your topic to.',
 	'L_DIRECTORYDOESNTEXIST'=> 'The directory <strong>%s</strong> does not exist.',
+	'L_NOPOSTSINFORUM'		=> 'There are no posts in this forum.',
+	'L_NOFORUMPOSTS30DAYS'	=> 'There have been no posts in the last %s days in this forum.',
+	'L_TRYFORUMCONTROLS'	=> 'Try using the controls below to search for any older posts that may exist.',
+	'L_NOFORUMSEXIST'		=> 'There are currently no active Forums.',
 
 	);
 	return $lang;
