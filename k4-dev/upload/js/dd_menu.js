@@ -1,6 +1,5 @@
 /**
 * k4 Bulletin Board, dd_menu.js
-* Drop Down Menu Generator
 *
 * Copyright (c) 2005, Peter Goodman
 *
@@ -25,76 +24,34 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: dd_menu.js,v 1.1 2005/04/05 03:22:59 k4st Exp $
+* @version $Id: dd_menu.js,v 1.2 2005/04/11 02:15:13 k4st Exp $
 * @package k42
 */
 
-/* A function to find the size of an array, instead of theArray.length */
-Array.prototype.sizeOf = function() {
-	
-	/* Loop through the array */
-	for (var i = 0; i < this.length; i++) {
-		
-		/* If the currently iterated key of this array is undefined, return it as the length */
-		if ((this[i] == "undefined") || (this[i] == "") || (this[i] == null))
-			
-			/* Return the size of the array */
-			return i;
-	}
+var active_menus			= new Array()
+var open_menu				= false;
+var do_slide				= true;
+var slidetimer				= false;
+var slide_steps				= 10;
 
-	/* Otherwise, just return the length of the array */
-	return this.length;
-}
+var tempX					= 0;
+var tempY					= 0;
 
-/* A function to push a value onto the an array */
-Array.prototype.push = function(Val) {
-	
-	/* Push the value onto the array */
-	this[ this.sizeOf() ] = Val;
-}
-
-/* Get the right box from the stack that we are using */
-Array.prototype.getMenuObject = function(Val) {
-	
-	/* Loop through the array */
-	for(var i = 0; i < this.sizeOf(); i++) {
-		
-		/* If the array key value matches the Val (menuId), return the menu Object */
-		if(this[i][0] == Val) {
-			
-			/* Return the box object */
-			return this[i][1];
+/* Track where the mouse is in all browsers */
+document.onmousemove = function(event) {
+	try {
+		if(navigator.appName != "Netscape") {
+			tempX = window.event.clientX + window.document.body.scrollLeft;
+			tempY = window.event.clientY + window.document.body.scrollTop;
+		} else {
+			tempX = event.pageX;
+			tempY = event.pageY;
 		}
-	}
-}
 
-/* Get the only open menu object */
-Array.prototype.getOpenMenuObject = function() {
-	
-	/* Loop through the array */
-	for(var i = 0; i < this.sizeOf(); i++) {
-		
-		/* If the menu's display is set to block, return this object */
-		if(this[i][1].menu.style.display == 'block') {
-			
-			/* Return the box object */
-			return this[i][1];
-		}
-	}
-}
-
-/* Hide all open menus except for the one that we're on */
-Array.prototype.hideMenus = function(Val) {
-	
-	/* Loop through the array */
-	for(var i = 0; i < this.sizeOf(); i++) {
-		
-		/* If the array key value doesn't match the 'Val' (menu ID), then hide the menu */
-		if(this[i][0] != Val && this[i][0] && this[i][0] != null) {
-			
-			/* Hide the other boxes */
-			this[i][1].menu.style.display = 'none';
-		}
+		if (tempX <= 0) { tempX = 0 }
+		if (tempY <= 0) { tempY = 0 }
+	} catch(e) {
+		//alert(e.message);
 	}
 }
 
@@ -113,6 +70,11 @@ String.prototype.floatVal = function() {
 
 	/* Just a placeholder if nothing happened */
 	return this;
+}
+
+/* Array push method */
+function array_push(array, value) {
+	array[array.length] = value;
 }
 
 /* Get the left position of an object */
@@ -137,229 +99,270 @@ function fetch_object_postop(obj) {
 	return top;
 }
 
-var loadedMenus = new Array()
+/* Initialize a menu object to the active menu's array */
+function menu_init(link_id, menu_id) {
+	
+	/* Get the link and the menu */
+	var link				= document.getElementById(link_id);
+	var menu				= document.getElementById(menu_id);
+	
+	/* Get where the menu should end up being */
+	var left				= fetch_object_posleft(link);
+	var top					= fetch_object_postop(link) + link.offsetHeight;
 
-var tempX = null;
-var tempY = null;
+	/* Set the link id to the menu */
+	menu.link_id			= link.id;
 
-/* Track where the mouse is in all browsers */
-document.onmousemove = function(event) {
-	if(navigator.appName != "Netscape") {
-		tempX = window.event.clientX + window.document.body.scrollLeft;
-		tempY = window.event.clientY + window.document.body.scrollTop;
+	/* Move the menu */
+	menu.style.position		= 'absolute';
+	menu.style.top			= top + 'px';
+
+	/* Set some object menu positions */
+	menu.posLeft			= left;
+	menu.posRight			= left + menu.offsetWidth;
+	menu.posTop				= top;
+	menu.posBottom			= top + menu.offsetHeight;
+
+	/* Hide the menu */
+	menu.style.display		= 'none';
+	
+	/* Make the link item have the link cursor */
+	try {
+		link.style.cursor = 'pointer';
+	} catch(e) {
+		link.style.cursor = 'hand';
+	}
+
+	/* Do we force this menu to slide right-to-left? */
+	menu.force_slide_right	= menu.posRight >= document.body.clientWidth ? true : false;
+	
+	/* Get the left position of the menu, and compensate for 10px in mozilla */
+	if(menu.force_slide_right) {
+		left_style			= (navigator.appName == "Netscape") ? ((left - (menu.posRight - menu.posLeft)) + link.offsetWidth) + 10 : ((left - (menu.posRight - menu.posLeft)) + link.offsetWidth);
 	} else {
-		tempX = event.pageX;
-		tempY = event.pageY;
+		left_style			= (navigator.appName == "Netscape") ? left + 10 : left;
 	}
 
-	if (tempX <= 0) { tempX = 0 }
-	if (tempY <= 0) { tempY = 0 }
-
-}
-
-/* Function to create a drop down menu */
-function RegisterMenu(linkId, menuId, leftOpen, leftClose, topOpen, topClose) {
-	
-	/* Set the Object variable, we laod this into the loadedMenus array */
-	var Object = new Array(linkId, this)
-	
-	/* Push this object onto the loadedMenus array */
-	loadedMenus.push(Object);
-	
-	/* Set up the main objects */
-	this.link						= document.getElementById(linkId);
-	this.menu						= document.getElementById(menuId);
-	
-	/* Find all of the offsets of the object */
-	this.menu_table					= this.menu.getElementsByTagName("table");
-	this.menu_width					= this.menu_table[0].offsetWidth;
-
-	/* Set a variable with the temporary intial html of the menu */
-	this.menu.initialHTML			= this.menu.innerHTML;
-	
-	/* get the menu's initial height and width */
-	this.menu.initialHeight			= this.menu.offsetHeight;
-	this.menu.initialWidth			= this.menu_width;
-
-	/* Set some basic varibales for the drop down menu */
-	this.menu.style.display			= 'none';
-	this.menu.style.position		= 'absolute';
-	this.menu.style.width			= this.menu_width;
-	this.menu.style.left			= fetch_object_posleft(this.link) - (this.menu_width - this.link.offsetWidth);
-	this.menu.style.top				= fetch_object_postop(this.link) + this.link.offsetHeight;
-
-
+	/* Give the menu a nice shadow if this is IE */
 	if(navigator.appName != "Netscape") {
-		this.menu.style.filter		= "progid:DXImageTransform.Microsoft.shadow(direction=135,color=#8E8E8E,strength=3)";
-	}
-	
-	/* On mouse over of the menu */
-	this.link.onmouseover = function() {
-		
-		/* Set what the cursor should be */
 		try {
-			this.style.cursor = 'pointer';
-		} catch(e) {
-			this.style.cursor = 'hand';
-		}
-
-		/* Get the current menu Object */
-		menuObj						= loadedMenus.getMenuObject(linkId);
-		
-		/* Open the menu, but only if it is not already open */
-		if(menuObj.menu.style.display == 'none') {
-			menuObj.menu.openMenu();
-		}
-	}
-	
-	/* On mouse out of the function */
-	this.link.onmouseout = function() {
-		
-		/* Get the current menu Object */
-		menuObj						= loadedMenus.getMenuObject(linkId);
-
-		/* Close the menu, but only if it's open */
-		if(menuObj.menu.style.display == 'block') {
-			
-			menuObj.menu.close		= true;
-			menuObj.menu.closeMenu();
-		}
-	}
-	
-	this.menu.onmouseover = function() {
-		
-		/* Get the current menu Object */
-		menuObj						= loadedMenus.getMenuObject(linkId);
-
-		menuObj.menu.close			= false;
-	}
-
-	/* On moust out function for the menu itself */
-	this.menu.onmouseout = function() {
-		
-		/* Get the current menu Object */
-		menuObj						= loadedMenus.getMenuObject(linkId);
-		
-		menuObj.menu.close			= true;
-			
-		/* Close the menu, but only if it's open */
-		if(menuObj.menu.style.display == 'block') {
-			menuObj.menu.closeMenu();
-		}
-	}
-	
-	/* Close the menu if someone clicks somewhere in the page where the menu isn't open */
-	document.onclick = function() {
-		
-		try {
-			/* Get the current menu Object */
-			menuObj						= loadedMenus.getOpenMenuObject();
-
-			/* Close the menu, but only if it's open */
-			menuObj.menu.closeMenu();
+			menu.style.filter += "progid:DXImageTransform.Microsoft.shadow(direction=135,color=#8E8E8E,strength=3)";
 		} catch(e) { }
 	}
 	
-	/* Function to open a box */
-	this.menu.openMenu = function() {
+	/* Set the left position of the menu */
+	menu.style.left			= left_style + 'px';
 
-		/* Get the current menu object */
-		menuObj						= loadedMenus.getMenuObject(linkId);
-		
-		/* Show this menu */
-		menuObj.menu.style.display	= 'block';
+	var menu_method			= {
+							"menu_id"	: menu.id,
+							"menu"		: menu,
+							"L"			: menu.posLeft,
+							"R"			: menu.posRight,
+							"B"			: menu.posBottom,
+							"T"			: menu.posTop
+							}
 
-		/* Change the height and width of the menu */
-		menuObj.menu.style.height	= 0;
-		menuObj.menu.style.width	= 0;
+	/* Put this menu into the active menu's array */
+	//array_push(active_menus, menu_method);
+	
+	/* Onclick function for the current link */
+	link.onclick = function() {
 		
-		/* Reset the Inner HTML of the menu */
-		menuObj.menu.innerHTML		= '';
-
-		/* Set the resizing */
-		menuObj.resizeTop			= topOpen.floatVal();
-		menuObj.resizeLeft			= leftOpen.floatVal();
-		
-		/* Constantly making sure our menu is in the right spot ;) */
-		menuObj.menu.style.left			= fetch_object_posleft(menuObj.link) - (menuObj.menu_width - menuObj.link.offsetWidth) + "px";
-		menuObj.menu.style.top			= fetch_object_postop(menuObj.link) + menuObj.link.offsetHeight + "px";
-		
-		/* Create the timer for the menu */
-		menuObj.resizeMenu();
-		//menuObj.menu.timer			= setTimeout("menuObj.resizeMenu(" + menuObj.menu.timer + ");", 0);
+		/* Open or close the menu */
+		if(menu.style.display == 'none') {
+			openmenu(menu);
+		} else {
+			closemenu(menu);
+		}
 	}
 
-	/* Function to close the menu */
-	this.menu.closeMenu = function() {
-		
-		/* Get the current menu object */
-		menuObj							= loadedMenus.getMenuObject(linkId);
-		
-		/* Set the resizing */
-		menuObj.resizeTop				= -1;
-		menuObj.resizeLeft				= -1;
-
-		/* Check if we are hovering over the menu */
-		if( (tempY >= fetch_object_postop(menuObj.link) && tempY <= parseInt(fetch_object_postop(menuObj.menu) + menuObj.menu.initialHeight) ) &&
-			(tempX >= fetch_object_posleft(menuObj.menu) && tempX <= parseInt(fetch_object_posleft(menuObj.menu) + menuObj.menu.initialWidth) ) ) {
-
-			//alert('tempX: ' + tempX + '\r\ntempY: ' + tempY + '\r\nmenu Top: ' + fetch_object_postop(menuObj.menu) + '\r\nmenu Bottom: ' + parseInt(fetch_object_postop(menuObj.menu) + menuObj.menu.offsetHeight) + '\r\nmenu Left: ' + fetch_object_posleft(menuObj.menu) + '\r\nmenu Right: ' + parseInt(fetch_object_posleft(menuObj.menu) + menuObj.menu.offsetWidth) );
-
-			menuObj.menu.style.display	= 'block';				
-			
-		} else {
-			
-			/* Advanced error checking */ 
-			/*
-			error		= "Mouse X: " + tempX + "\r\n";
-			error		+="Mouse Y: " + tempY + "\r\n\r\n";
-			error		+="(" + fetch_object_posleft(menuObj.menu) + ", " + fetch_object_postop(menuObj.link) + ") --- (" + parseInt(fetch_object_posleft(menuObj.menu) + menuObj.menu.initialWidth) + ", " + fetch_object_postop(menuObj.link) + ")\r\n\r\n";
-			error		+="|                                   |\r\n";
-			error		+="(" + fetch_object_posleft(menuObj.menu) + ", " + parseInt(fetch_object_postop(menuObj.menu) + menuObj.menu.initialHeight) + ") --- (" + parseInt(fetch_object_posleft(menuObj.menu) + menuObj.menu.initialWidth) + ", " + parseInt(fetch_object_postop(menuObj.menu) + menuObj.menu.initialHeight) + ")";
-			
-			alert(error);
-			*/
-
-			/* This gets set in both link.onmouseout and menu.onmouseover - check if we should close or not */
-			if(menuObj.menu.close == true) {
+	/* Onmouseover for a link object */
+	link.onmouseover = function() {
+		if(open_menu) {
+			if(open_menu.link_id != this.id) {
 				
-				menuObj.menu.style.display = 'none';
+				/* Close the current open menu */
+				closemenu(open_menu);
 
-				/* Create the timer to Hide the Menu */
-				//menuObj.menu.timer			= setTimeout("", 500);
-				
-
-				/* reset the menu.close */
-				menuObj.menu.close = null;
-
+				/* Open this new menu */
+				openmenu(menu);
 			}
 		}
 	}
 
-	/* Function to open/close a menu */
-	this.resizeMenu = function() {
-		
-		/* Get the current menu Object */
-		menuObj							= loadedMenus.getMenuObject(linkId);
+	/* Whenever you click in the document, close the menu */
+	document.onclick = function() {
+		if(open_menu) {
+			
+			open_menulink	= document.getElementById(open_menu.link_id);
 
-		/* Hide all other open menus */
-		loadedMenus.hideMenus(linkId);
-		
-		/* Just to be sure, reset the height and width of the menu */
-		menuObj.menu.style.height	= menuObj.menu.initialHeight;
-		menuObj.menu.style.width	= menuObj.menu.initialWidth;
-		
-		/* Set the inner HTML of the menu */
-		menuObj.menu.innerHTML		= menuObj.menu.initialHTML;
-		
-		/* Show the menu */
-		menuObj.menu.style.display	= 'block';
+			if( (tempY >= fetch_object_postop(open_menulink) && tempY <= (fetch_object_postop(open_menu) + open_menu.offsetHeight) ) &&
+			(tempX >= fetch_object_posleft(open_menu) && tempX <= (fetch_object_posleft(open_menu) + open_menu.offsetWidth) ) ) {
+
+			} else {
+				closemenu(open_menu);
+			}
+		}
 	}
 
-	/* Function to clear the timeout */
-	this.clearTimer = function(timerObj) {
+	/* Look for tr's with the class 'alt1' */
+	var link_rows		= menu.getElementsByTagName("tr");
+	
+	for(var i = 0; i < link_rows.length; i++) {
+		if(link_rows[i]) {
+			
+			if(link_rows[i].className == 'alt1') {
+				
+				try {
+					link_rows[i].style.cursor = 'pointer';
+				} catch(e) {
+					link_rows[i].style.cursor = 'hand';
+				}
+
+				link_rows_link		= link_rows[i].getElementsByTagName("a");
+				
+				/* Deal with onclick of the tr's */
+				if(link_rows_link && link_rows_link[0]) {
+					link_rows[i].onclick = function() {
+						document.location = link_rows_link[0].href;
+					}
+				}
+				
+				/* Deal with onmouseover and onmouseout of the tr's */
+				link_rows[i].onmouseover = function() {
+					this.className	= 'alt2';
+				}
+				link_rows[i].onmouseout = function() {
+					this.className	= 'alt1';
+				}
+			}
+		}
+	}
+}
+
+/* Find out if object 'm' (menu) overlaps object 'obj' (generally a <select>) */
+function is_in_grid(m, obj) {
+	var s = {
+			"L"		: fetch_object_posleft(obj),
+			"R"		: fetch_object_posleft(obj) + obj.offsetWidth,
+			"T"		: fetch_object_postop(obj),
+			"B"		: fetch_object_postop(obj) + obj.offsetHeight
+			}
+	
+	if (s['L'] >= m['L'] && s['L'] <= m['R'] && ((s['T'] >= m['T'] && s['T'] <= m['B']) || (s['B'] >= m['T'] && s['B'] <= m['B']))) { return true; }
+	else if (s['R'] >= m['L'] && s['R'] <= m['R'] && ((s['T'] >= m['T'] && s['T'] <= m['B']) || (s['B'] >= m['T'] && s['B'] <= m['B']))) { return true; }
+	else if (s['B'] >= m['T'] && s['T'] <= m['B'] && ((s['L'] >= m['L'] && s['L'] <= m['R']) || (s['R'] >= m['R'] && s['R'] <= m['R']))) { return true; }
+	else if (m['B'] >= s['T'] && m['T'] <= s['B'] && ((m['L'] >= s['L'] && m['L'] <= s['R']) || (m['R'] >= s['R'] && m['R'] <= s['R']))) { return true; }
+	else { return false; }
+
+}
+
+function openmenu(menu) {
+
+	/* If the menu is currently closed */
+	if(menu.style.display == 'none') {
 		
+		menu.style.display = 'block';
+
+		/* Loop through all of the <select>'s on a page */
+		selects = document.getElementsByTagName("select");
+		for (var s = 0; s < selects.length; s++) {
+			
+			/* If the menu overlaps the select menu, hide the select */
+			if (is_in_grid(menu, selects[s])) {
+				selects[i].style.display = 'none';
+			}
+		}
+
+		/* Found how much we need to increment each menu clip by */
+		var intervalX = Math.ceil(menu.offsetWidth / slide_steps);
+		var intervalY = Math.ceil(menu.offsetHeight / slide_steps);
+		
+		/*  clip: rect(top, right, bottom, left) */
+		
+		/* If the menu will slide open left-to-right */
+		if(menu.force_slide_right == false) {
+			
+			menu.style.clip		= 'rect(auto, auto, 0px, 0px)';
+			open_menu_left(menu.id, 0, 0, intervalX, intervalY);
+			
+		/* If the menu will slide open right-to-left */
+		} else {
+
+			menu.style.clip		= 'rect(auto, auto, 0px, ' + menu.offsetWidth + 'px)';
+			open_menu_right(menu.id, 0, 0, intervalX, intervalY);
+		}
+
+	/* Assume that the menu is open */
+	} else {
+		close_menu(menu);
+	}
+
+	return true;
+}
+
+function closemenu(menu) {
+	menu.style.display	= 'none';
+	open_menu			= null;
+}
+
+function open_menu_left(menu_id, clipX, clipY, intervalX, intervalY) {
+	
+	var menu	= document.getElementById(menu_id);
+
+	menu.style.display = 'block';
+
+	/* Get the new clipX and clipY */
+	clipX	= clipX < menu.offsetWidth ? clipX + intervalX : menu.offsetWidth;
+	clipY	= clipY < menu.offsetHeight ? clipY + intervalY : menu.offsetHeight;
+
+	/* Check to see if we should continue to resize or not */
+	if( ((clipX >= menu.offsetWidth) && (clipY < menu.offsetHeight))
+		|| 
+		((clipX < menu.offsetWidth) && (clipY >= menu.offsetHeight)) 
+		|| 
+		((clipX < menu.offsetWidth) && (clipY < menu.offsetHeight)) ) {
+		
+		menu.style.clip		= 'rect(auto, ' + clipX + 'px, ' + clipY + 'px, auto)';
+
+		slidetimer = setTimeout("open_menu_left('" + menu_id + "', " + clipX + ", " + clipY + ", " + intervalX + ", " + intervalY + ");", 0);
+		
+	} else {
+		
+		menu.style.clip		= 'rect(auto, ' + menu.offsetWidth + 'px, ' +  menu.offsetHeight + 'px, auto)';
+
 		/* Stop our timer */
-		clearTimeout(timerObj);
+		clearTimeout(slidetimer);
+		slidetimer	= false;
+		open_menu	= menu;
+	}
+}
+
+function open_menu_right(menu_id, clipX, clipY, intervalX, intervalY) {
+	
+	var menu	= document.getElementById(menu_id);
+
+	/* Get the new clipX and clipY */
+	clipX	= clipX < menu.offsetWidth ? clipX + intervalX : menu.offsetWidth;
+	clipY	= clipY < menu.offsetHeight ? clipY + intervalY : menu.offsetHeight;
+	
+	/* Check to see if we should continue to resize or not */
+	if( ((clipX >= menu.offsetWidth) && (clipY < menu.offsetHeight))
+		|| 
+		((clipX < menu.offsetWidth) && (clipY >= menu.offsetHeight)) 
+		|| 
+		((clipX < menu.offsetWidth) && (clipY < menu.offsetHeight)) ) {
+		
+		menu.style.clip		= 'rect(auto, ' + clipX + 'px, ' + clipY + 'px, auto)';
+		
+		slidetimer = setTimeout("open_menu_right('" + menu_id + "', " + clipX + ", " + clipY + ", " + intervalX + ", " + intervalY + ");", 0);
+	} else {
+		
+		menu.style.clip		= 'rect(auto, ' + menu.offsetWidth + 'px, ' + menu.offsetHeight + 'px, auto)';
+
+		/* Stop our timer */
+		clearTimeout(slidetimer);
+		slidetimer	= false;
+		open_menu	= menu;
 	}
 }

@@ -24,7 +24,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.js,v 1.4 2005/04/06 00:35:39 k4st Exp $
+* @version $Id: bbcode.js,v 1.5 2005/04/11 02:15:13 k4st Exp $
 * @package k42
 */
 
@@ -127,6 +127,7 @@ function replace_selection(editor, open, close, selection) {
 		/* Mozilla */
 		if(editor.selectionEnd && (editor.selectionEnd - editor.selectionStart > 0)) {
 			
+			/* Mozilla wrap: From http://www.massless.org/mozedit/ */
 			var selection_length					= editor.textLength;
 			var selection_start						= editor.selectionStart;
 			var selection_end						= editor.selectionEnd;
