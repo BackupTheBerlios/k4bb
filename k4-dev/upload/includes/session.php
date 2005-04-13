@@ -26,9 +26,15 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.6 2005/04/11 02:16:36 k4st Exp $
+* @version $Id: session.php,v 1.7 2005/04/13 02:52:05 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 function session_user_status(&$session, $sessid, $logout = FALSE) {
 	
@@ -85,6 +91,7 @@ class FADBSession {
 		$this->location_id	= isset($this->url->args['id']) && intval($this->url->args['id']) != 0 ? intval($this->url->args['id']) : 0;
 
 		//$this->read_stmt	= $this->dba->prepareStatement("SELECT * FROM ". SESSIONS ." WHERE id=?");
+		//$this->check_stmt	= $this->dba->prepareStatement("SELECT * FROM ". SESSIONS ." WHERE name=?");
 		$this->write_stmt	= $this->dba->prepareStatement("INSERT INTO ". SESSIONS ." (id, seen, name, user_id, data, location_file, location_act, location_id) VALUES(?,?,?,?,?,?,?,?)");
 		$this->update_stmt	= $this->dba->prepareStatement("UPDATE ". SESSIONS ." SET data=?,seen=?,location_file=?,location_act=?,location_id=? WHERE id=?");
 		$this->destroy_stmt = $this->dba->prepareStatement("DELETE FROM ". SESSIONS ." WHERE sess_id=?");

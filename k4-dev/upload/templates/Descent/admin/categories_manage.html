@@ -3,7 +3,7 @@
 	<tr class="thead">
 		<td colspan="5">
 			<script type="text/javascript">doHelpButton('categories');</script>
-			{$L_CATEGORY}
+			{$L_CATEGORIES}
 		</td>
 	</tr>
 	<tr class="tcat">
@@ -16,6 +16,10 @@
 				<input type="button" class="minitext" style="font-weight: bold;" value="{$L_ADDCATEGORY}" onclick="document.location='admin.php?act=categories_add'" />
 			</div>
 		</td>
+	</tr>
+	<tr class="tcat">
+		<td>{$L_ORDER}</td>
+		<td colspan="2">{$L_MANAGEMENT}</td>
 	</tr>
 	<list:list id="categories">
 	<list:default list="categories">

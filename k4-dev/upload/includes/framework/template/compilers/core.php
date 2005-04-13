@@ -25,9 +25,15 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: core.php,v 1.1 2005/04/05 03:21:59 k4st Exp $
+* @version $Id: core.php,v 1.2 2005/04/13 02:54:29 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 class Core_Set_Compiler extends TPL_Tag_Compiler {
 	function getOpen(&$element) {

@@ -25,9 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topics.class.php,v 1.4 2005/04/11 02:16:54 k4st Exp $
+* @version $Id: topics.class.php,v 1.5 2005/04/13 02:52:19 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 class PostTopic extends Event {
 	function getNumOnLevel($row_left, $row_right, $level) {
@@ -130,6 +136,29 @@ class PostTopic extends Event {
 		
 
 		return TRUE;
+	}
+}
+
+class TopicsIterator extends FAProxyIterator {
+	var $result;
+
+	function TopicsIterator($result) {
+		
+		$this->result			= &$result;
+
+		parent::FAProxyIterator($this->result);
+	}
+
+	function &current() {
+		$temp = parent::current();
+		
+
+		
+		/* Should we free the result? */
+		if($this->row == $this->size-1)
+			$this->result->freeResult();
+
+		return $temp;
 	}
 }
 

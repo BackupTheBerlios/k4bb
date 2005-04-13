@@ -25,9 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: init.php,v 1.3 2005/04/11 02:16:36 k4st Exp $
+* @version $Id: init.php,v 1.4 2005/04/13 02:52:05 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 require FORUM_BASE_DIR. '/includes/framework/pagecraft.php';
 
@@ -57,5 +63,6 @@ require FORUM_BASE_DIR. '/includes/classes/admin/posticons.class.php';
 require FORUM_BASE_DIR. '/includes/classes/admin/emoticons.class.php';
 require FORUM_BASE_DIR. '/includes/classes/admin/files.class.php';
 require FORUM_BASE_DIR. '/includes/classes/admin/categories.class.php';
+require FORUM_BASE_DIR. '/includes/classes/admin/forums.class.php';
 
 ?>

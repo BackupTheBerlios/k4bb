@@ -1,0 +1,80 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="5">
+			<script type="text/javascript">doHelpButton('categories');</script>
+			<?php echo $context->getVar("L_FORUMS"); ?>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="5"><?php echo $context->getVar("L_MANAGEFORUMS"); ?></td>
+	</tr>
+	<?php if ($context->listReset("categories")): ?>
+	<?php if (is_object($list = &$context->getList("categories")) && !$list->hasNext()): ?>
+	<tr class="panel">
+		<td>
+			<div class="outset_box" align="center">
+				<br />
+				<?php echo $context->getVar("L_NOFORUMS"); ?>
+				<br /><br />
+			</div>
+		</td>
+	</tr>
+	<?php endif; ?>
+	<?php while($context->push($context->listNext("categories"))): ?>
+	<tr class="thead">
+		<td colspan="2">
+			<?php echo $context->getVar("name"); ?>
+			<span class="minitext" style="font-weight: normal;"><br /><?php echo $context->getVar("description"); ?></span>
+		</td>
+		<td width="10%">
+			<div align="right">
+				<script type="text/javascript">doHelpButton('add_forum');</script>
+				<input type="button" class="minitext" style="font-weight: bold;" value="<?php echo $context->getVar("L_ADDFORUM"); ?>" onclick="document.location='admin.php?act=forums_add&category_id=<?php echo $context->getVar("category_id"); ?>'" />
+			</div>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td><?php echo $context->getVar("L_ORDER"); ?></td>
+		<td colspan="2"><?php echo $context->getVar("L_MANAGEMENT"); ?></td>
+	</tr>
+	<tbody>
+		<?php if ($context->addList("forums", $context->getVar("forums"))): ?>
+		<?php while($context->push($context->listNext("forums"))): ?>
+		<?php switch($context->listKey("forums") % 2):  case 0: $context->push(array('row_class' => 'alt1')); break;  case 1: $context->push(array('row_class' => 'alt2')); break;  default: $context->push(array()); endswitch; ?>
+		<tr class="<?php echo $context->getVar("row_class"); ?>">
+		<?php $context->pop(); ?>
+			<form name="update_forum" id="update_forum" action="admin.php?act=forums_simpleupdate" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="resetErrors();"><script type="text/javascript">resetErrors();</script>
+			<td width="10%" align="center">
+				<input type="hidden" name="id" value="<?php echo $context->getVar("id"); ?>" />
+				<input type="text" size="3" name="row_order" id="row_order" value="<?php echo $context->getVar("row_order"); ?>" />
+				<script type="text/javascript">addVerification('row_order', '.+', 'row_order_error', 'inputfailed');</script><div id="row_order_error" style="display: none;"><span class="minitext"><?php echo $context->getVar("L_INSERTCATORDER"); ?></span></div>
+				<script type="text/javascript">addVerification('row_order', '([0-9])+', 'row_order_num_error', 'inputfailed');</script><div id="row_order_num_error" style="display: none;"><span class="minitext"><?php echo $context->getVar("L_INSERTCATORDERNUM"); ?></span></div>
+			</td>
+			<td width="80%">
+				<div align="left" style="overflow: auto;">
+					<script type="text/javascript">doHelpButton('add_forum');</script>
+					<?php echo $context->getVar("level");  echo $context->getVar("level");  if($context->getVar('parent_id') != $context->getVar("category_id")): ?><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/navbits_finallink.gif" alt="" />&nbsp;<?php endif; ?>
+					<strong><?php echo $context->getVar("name"); ?></strong>
+					<br />
+					<?php echo $context->getVar("level");  echo $context->getVar("level"); ?><span class="minitext"><?php echo $context->getVar("description"); ?></span>
+					<div align="right">
+						<input type="button" class="minitext" value="<?php echo $context->getVar("L_EDITPERMISSIONS"); ?>" onclick="document.location='admin.php?act=forums_permissions&id=<?php echo $context->getVar("id"); ?>'" />
+						<input type="button" class="minitext" style="font-weight: bold;" value="<?php echo $context->getVar("L_ADDSUBFORUM"); ?>" onclick="document.location='admin.php?act=forums_add&category_id=<?php echo $context->getVar("category_id"); ?>&forum_id=<?php echo $context->getVar("id"); ?>'" />
+					</div>
+				</div>
+			</td>
+			<td width="10%" align="center">
+				<input type="submit" class="minitext" value="<?php echo $context->getVar("L_SAVE"); ?>" /><input type="button" class="minitext" value="<?php echo $context->getVar("L_EDIT"); ?>" onclick="document.location='admin.php?act=forums_edit&id=<?php echo $context->getVar("id"); ?>'" />
+				<br />
+				<input type="button" class="minitext" style="color: #FF0000;" value="<?php echo $context->getVar("L_DELETE"); ?>" onclick="if(confirm('<?php echo $context->getVar("L_CHECKDELFORUM"); ?>')) { document.location='admin.php?act=forums_remove&id=<?php echo $context->getVar("id"); ?>'; } else { return false; }" />
+			</td>
+			</form>
+		</tr>
+		<?php $context->pop(); endwhile; ?>
+		<?php endif; ?>
+	</tbody>
+	<?php $context->pop(); endwhile; ?>
+	<?php endif; ?>
+</table>
+<?php endif; ?>

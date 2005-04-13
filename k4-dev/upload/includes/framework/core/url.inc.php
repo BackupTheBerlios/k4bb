@@ -25,12 +25,15 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: url.inc.php,v 1.1 2005/04/05 03:21:02 k4st Exp $
+* @version $Id: url.inc.php,v 1.2 2005/04/13 02:53:33 k4st Exp $
 * @package k42
 */
 
 error_reporting(E_ALL);
 
+if(!defined('IN_K4')) {
+	exit;
+}
 
 /**
  * @author			Geoffrey Goodman

@@ -3,7 +3,7 @@
 	<tr class="thead">
 		<td colspan="5">
 			<script type="text/javascript">doHelpButton('categories');</script>
-			<?php echo $context->getVar("L_CATEGORY"); ?>
+			<?php echo $context->getVar("L_CATEGORIES"); ?>
 		</td>
 	</tr>
 	<tr class="tcat">
@@ -16,6 +16,10 @@
 				<input type="button" class="minitext" style="font-weight: bold;" value="<?php echo $context->getVar("L_ADDCATEGORY"); ?>" onclick="document.location='admin.php?act=categories_add'" />
 			</div>
 		</td>
+	</tr>
+	<tr class="tcat">
+		<td><?php echo $context->getVar("L_ORDER"); ?></td>
+		<td colspan="2"><?php echo $context->getVar("L_MANAGEMENT"); ?></td>
 	</tr>
 	<?php if ($context->listReset("categories")): ?>
 	<?php if (is_object($list = &$context->getList("categories")) && !$list->hasNext()): ?>

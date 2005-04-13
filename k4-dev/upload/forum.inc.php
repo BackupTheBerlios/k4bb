@@ -25,16 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forum.inc.php,v 1.1 2005/04/05 03:10:22 k4st Exp $
+* @version $Id: forum.inc.php,v 1.2 2005/04/13 02:55:20 k4st Exp $
 * @package k42
 */
 
 error_reporting(E_ALL);
 
-
 /* General Constants */
 define('VERSION',			'2.0');
-define('K4_CVS',			'$Id: forum.inc.php,v 1.1 2005/04/05 03:10:22 k4st Exp $');
+define('IN_K4',				TRUE);
 define('FORUM_BASE_DIR',	dirname(__FILE__));
 
 /* Require some files */
@@ -46,6 +45,8 @@ require FORUM_BASE_DIR. '/includes/init.php';
 ini_set('arg_separator.output', '&amp;');
 ini_set('url_rewriter.tags', 'a=href,area=href,frame=src,input=src,fieldset=');
 
+/* Turn off those nasty quotes.. mwahaha */
+set_magic_quotes_runtime(0);
 
 /**
  * Controller to add events to, this is the 

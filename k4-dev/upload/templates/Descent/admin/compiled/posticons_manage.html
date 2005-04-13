@@ -19,6 +19,17 @@
 	</tr>
 	<tr class="alt1">
 	<?php if ($context->listReset("posticons")): ?>
+	<?php if (is_object($list = &$context->getList("posticons")) && !$list->hasNext()): ?>
+	<tr class="panel">
+		<td>
+			<div class="outset_box" align="center">
+				<br />
+				<?php echo $context->getVar("L_NOPOSTICONS"); ?>
+				<br /><br />
+			</div>
+		</td>
+	</tr>
+	<?php endif; ?>
 	<?php while($context->push($context->listNext("posticons"))): ?>
 		<td width="20%">
 			<div align="center">

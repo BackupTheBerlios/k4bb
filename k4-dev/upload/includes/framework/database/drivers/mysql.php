@@ -26,9 +26,15 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: mysql.php,v 1.2 2005/04/11 02:20:31 k4st Exp $
+* @version $Id: mysql.php,v 1.3 2005/04/13 02:54:00 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 define('DBA_ASSOC', MYSQL_ASSOC);
 define('DBA_NUM', MYSQL_NUM);

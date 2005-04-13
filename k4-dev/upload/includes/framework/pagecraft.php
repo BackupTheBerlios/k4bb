@@ -25,11 +25,15 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: pagecraft.php,v 1.1 2005/04/05 03:20:51 k4st Exp $
+* @version $Id: pagecraft.php,v 1.2 2005/04/13 02:53:17 k4st Exp $
 * @package k42
 */
 
 error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 define('PC_ROOT',		dirname(__FILE__));
 define('PC_APP_DIR',	dirname($_SERVER['SCRIPT_FILENAME']));

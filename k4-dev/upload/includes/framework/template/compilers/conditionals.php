@@ -25,9 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: conditionals.php,v 1.1 2005/04/05 03:21:59 k4st Exp $
+* @version $Id: conditionals.php,v 1.2 2005/04/13 02:54:29 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 class If_If_Compiler extends TPL_Tag_Compiler {
 	function getOpen(&$element) {
@@ -44,7 +50,10 @@ class If_If_Compiler extends TPL_Tag_Compiler {
 		$this->keys = array_keys($element->attribs);
 
 		if(isset($element->attribs['var']) && array_key_exists($this->keys[1], $this->attribs) ) {
-			return "<?php if(\$context->getVar('". $element->attribs['var'] ."') ". $this->attribs[$this->keys[1]] ." '". $element->attribs[$this->keys[1]] ."'): ?>";			
+			
+			preg_match('/{\@([a-zA-Z_\.]+?)}/', $element->attribs[$this->keys[1]], $matches);
+			
+			return "<?php if(\$context->getVar('". $element->attribs['var'] ."') ". $this->attribs[$this->keys[1]] ." ". iif(count($matches) > 0, $element->attribs[$this->keys[1]], "'" . $element->attribs[$this->keys[1]] ."'") ."): ?>";			
 
 			return "<h1>Missing EQ or NOTEQ, MODULO, GREATER, GEQ, LESS OR LESSEQ for conditional IF statement.</h1>";
 		}
@@ -71,7 +80,10 @@ class Else_If_Compiler extends TPL_Tag_Compiler {
 		$this->keys = array_keys($element->attribs);
 
 		if(isset($element->attribs['var']) && array_key_exists($this->keys[1], $this->attribs) ) {
-			return "<?php else if(\$context->getVar('". $element->attribs['var'] ."') ". $this->attribs[$this->keys[1]] ." '". $element->attribs[$this->keys[1]] ."'): ?>";			
+			
+			preg_match('/{\@([a-zA-Z_\.]+?)}/', $element->attribs[$this->keys[1]], $matches);
+			
+			return "<?php else if(\$context->getVar('". $element->attribs['var'] ."') ". $this->attribs[$this->keys[1]] ." ". iif(count($matches) > 0, $element->attribs[$this->keys[1]], "'" . $element->attribs[$this->keys[1]] ."'") ."): ?>";			
 
 			return "<h1>Missing EQ or NOTEQ, MODULO, GREATER, GEQ, LESS OR LESSEQ for conditional ELSEIF statement.</h1>";
 		}
@@ -107,15 +119,19 @@ class Maps_If_Compiler extends TPL_Tag_Compiler {
 						$var		= "";
 						if(isset($element->attribs['var']))
 							$var	= "['". $element->attribs['var'] ."']";
+						
+						//preg_match('/{\@([a-zA-Z_\.]+?)}/', $element->attribs[$val], $matches);
+
+						//$method		= is_array($matches) && count($matches) > 0 ? "" : "\$context->getVar('". $element->attribs[$val] ."')";
 
 						/* Make the *query* to check the permissions */
-						$query .= " && (isset(\$context->session['user']->info['maps']['". $key ."'][\$context->getVar('". $element->attribs[$val] ."')]". $var ."['". $element->attribs['method'] ."'])";
-						$query .= " && \$context->session['user']->info['maps']['". $key ."'][\$context->getVar('". $element->attribs[$val] ."')]". $var ."['". $element->attribs['method'] ."'] <= \$context->session['user']->info['perms'])";
+						$query		.= " && (isset(\$context->session['user']->info['maps']['". $key ."'][\$context->getVar('". $element->attribs[$val] ."')]". $var ."['". $element->attribs['method'] ."'])";
+						$query		.= " && \$context->session['user']->info['maps']['". $key ."'][\$context->getVar('". $element->attribs[$val] ."')]". $var ."['". $element->attribs['method'] ."'] <= \$context->session['user']->info['perms'])";
 					}
 				}
-			} else if(isset($element->attribs['var']))
+			} else if(isset($element->attribs['var'])) {
 				$query .= " && (isset(\$context->session['user']->info['maps']['". $element->attribs['var'] ."']) && \$context->session['user']->info['maps']['". $element->attribs['var'] ."']['". $element->attribs['method'] ."'] <= \$context->session['user']->info['perms'])";
-
+			}
 			return "<?php if($query): ?>";
 		}
 		return "<h1>Missing (VAR, CATEGORY, FORUM, GROUP) or METHOD for conditional MAPS statement.</h1>";

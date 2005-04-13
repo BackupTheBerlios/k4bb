@@ -25,9 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: categories.class.php,v 1.2 2005/04/11 02:16:54 k4st Exp $
+* @version $Id: categories.class.php,v 1.3 2005/04/13 02:52:19 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 class MarkCategoryForumsRead extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
@@ -90,7 +96,7 @@ class CategoriesIterator extends FAProxyIterator {
 	var $result;
 
 	function CategoriesIterator($query = NULL) {
-		global $_CONFIG, $_DBA, $_QUERYPARAMS;
+		global $_DBA, $_QUERYPARAMS;
 		
 		$this->query_params	= $_QUERYPARAMS;
 		

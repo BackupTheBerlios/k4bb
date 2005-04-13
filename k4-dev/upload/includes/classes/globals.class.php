@@ -25,9 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: globals.class.php,v 1.1 2005/04/05 03:19:18 k4st Exp $
+* @version $Id: globals.class.php,v 1.2 2005/04/13 02:52:19 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 class GlobalsStack {
 	var $globals = array();

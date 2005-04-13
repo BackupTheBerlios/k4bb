@@ -25,11 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: register.class.php,v 1.1 2005/04/05 03:20:26 k4st Exp $
+* @version $Id: register.class.php,v 1.2 2005/04/13 02:53:03 k4st Exp $
 * @package k42
 */
 
-error_reporting(E_STRICT | E_ALL);
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 class RegisterEvent extends Event {
 	var function Pop($element) {

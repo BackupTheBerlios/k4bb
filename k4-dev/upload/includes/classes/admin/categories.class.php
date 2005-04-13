@@ -25,9 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: categories.class.php,v 1.1 2005/04/11 02:18:25 k4st Exp $
+* @version $Id: categories.class.php,v 1.2 2005/04/13 02:52:47 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 class AdminCategories extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {		
@@ -389,7 +395,7 @@ class AdminCategoryPermissions extends Event {
 			foreach($category as $key => $val)
 				$template->setVar('category_'. $key, $val);
 			
-			$category_maps				= &new MAPSIterator($dba->executeQuery("SELECT * FROM ". MAPS ." WHERE category_id = ". intval($category['id']) ." ORDER BY row_left ASC"), 2);
+			$category_maps				= &new MAPSIterator($dba->executeQuery("SELECT * FROM ". MAPS ." WHERE category_id = ". intval($category['id']) ." AND forum_id = 0 ORDER BY row_left ASC"), 2);
 			
 			$template->setList('category_maps', $category_maps);
 
@@ -452,6 +458,42 @@ class AdminUpdateCategoryPermissions extends Event {
 		}
 
 		return TRUE;
+	}
+}
+
+class AdminCategoriesIterator extends FAProxyIterator {
+	var $dba;
+	var $result;
+
+	function AdminCategoriesIterator($query = NULL) {
+		global $_CONFIG, $_DBA, $_QUERYPARAMS;
+		
+		$this->query_params	= $_QUERYPARAMS;
+		
+		$query_params		= $this->query_params['info'] . $this->query_params['category'];
+
+		$query				= $query == NULL ? "SELECT $query_params FROM ". INFO ." i LEFT JOIN ". CATEGORIES ." c ON c.category_id = i.id AND i.row_type = ". CATEGORY ." ORDER BY i.row_order ASC" : $query;
+		
+		$this->result		= &$_DBA->executeQuery($query);
+
+		parent::FAProxyIterator($this->result);
+	}
+
+	function &current() {
+		$temp = parent::current();
+		
+		if(($temp['row_right'] - $temp['row_left'] - 1) > 0) {
+			
+			$query_params	= $this->query_params['info'] . $this->query_params['forum'];
+
+			$temp['forums'] = &new ForumsIterator("SELECT $query_params FROM ". INFO ." i LEFT JOIN ". FORUMS ." f ON f.forum_id = i.id WHERE i.row_left > ". $temp['row_left'] ." AND i.row_right < ". $temp['row_right'] ." AND i.row_type = ". FORUM ." ORDER BY i.row_left, i.row_order ASC");
+		}
+
+		/* Should we free the result? */
+		if($this->row == $this->size-1)
+			$this->result->freeResult();
+
+		return $temp;
 	}
 }
 

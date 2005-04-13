@@ -25,15 +25,17 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: database.php,v 1.1 2005/04/05 03:21:15 k4st Exp $
+* @version $Id: database.php,v 1.2 2005/04/13 02:53:48 k4st Exp $
 * @package k42
 */
 
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
+
 define('DBA_BASE_DIR', dirname(__FILE__));
-
-
-//require_once FA_BASE_DIR.'/iterator.php';
-
 
 class Database {
 	function &open($info) {
@@ -140,11 +142,11 @@ class FADBStatement {
 	}
 
 	function setFloat($n, $value) {
-		$this->vars[$n] = (float)$value;
+		$this->vars[$n] = floatval($value);
 	}
 
 	function setInt($n, $value) {
-		$this->vars[$n] = (int)$value;
+		$this->vars[$n] = intval($value);
 	}
 
 	function setNull($n) {

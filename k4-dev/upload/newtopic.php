@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: newtopic.php,v 1.3 2005/04/06 00:59:00 k4st Exp $
+* @version $Id: newtopic.php,v 1.4 2005/04/13 02:55:20 k4st Exp $
 * @package k42
 */
 
@@ -83,6 +83,27 @@ class DefaultEvent extends Event {
 		$template->setVar('emoticons_per_row', $template->getVar('smcolumns'));
 		$template->setVar('emoticons_per_row_remainder', $template->getVar('smcolumns')-1);
 		
+		/** 
+		 * Set the posting allowances
+		 */
+		$template->setVar('forum_user_topic_options', sprintf($template->getVar('L_FORUMUSERTOPICPERMS'),
+		iif(($user['maps']['forums'][$forum['id']]['topics']['can_add'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+		iif(($user['maps']['forums'][$forum['id']]['topics']['can_edit'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+		iif(($user['maps']['forums'][$forum['id']]['topics']['can_del'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+		iif(($user['maps']['forums'][$forum['id']]['attachments']['can_add'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN'))));
+
+		$template->setVar('forum_user_reply_options', sprintf($template->getVar('L_FORUMUSERREPLYPERMS'),
+		iif(($user['maps']['forums'][$forum['id']]['replies']['can_add'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+		iif(($user['maps']['forums'][$forum['id']]['replies']['can_edit'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+		iif(($user['maps']['forums'][$forum['id']]['replies']['can_del'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN'))));
+		
+		$template->setVar('posting_code_options', sprintf($template->getVar('L_POSTBBCODEOPTIONS'),
+		iif(($user['maps']['forums'][$forum['id']]['html']['can_add'] > $user['perms']), $template->getVar('L_OFF'), $template->getVar('L_ON')),
+		iif(($user['maps']['forums'][$forum['id']]['bbcode']['can_add'] > $user['perms']), $template->getVar('L_OFF'), $template->getVar('L_ON')),
+		iif(($user['maps']['forums'][$forum['id']]['bbimgcode']['can_add'] > $user['perms']), $template->getVar('L_OFF'), $template->getVar('L_ON')),
+		iif(($user['maps']['forums'][$forum['id']]['bbflashcode']['can_add'] > $user['perms']), $template->getVar('L_OFF'), $template->getVar('L_ON')),
+		iif(($user['maps']['forums'][$forum['id']]['emoticons']['can_add'] > $user['perms']), $template->getVar('L_OFF'), $template->getVar('L_ON'))));
+
 		/* Set the forum info to the template */
 		foreach($forum as $key => $val)
 			$template->setVar('forum_'. $key, $val);

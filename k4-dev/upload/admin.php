@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: admin.php,v 1.2 2005/04/11 02:11:41 k4st Exp $
+* @version $Id: admin.php,v 1.3 2005/04/13 02:55:20 k4st Exp $
 * @package k42
 */
 
@@ -120,6 +120,18 @@ $app->AddEvent('categories_update', new AdminUpdateCategory);
 $app->AddEvent('categories_remove', new AdminRemoveCategory);
 $app->AddEvent('categories_permissions', new AdminCategoryPermissions);
 $app->AddEvent('categories_updateperms', new AdminUpdateCategoryPermissions);
+
+/* Forums */
+$app->AddEvent('forums', new AdminForums);
+$app->AddEvent('forums_add', new AdminAddForum);
+$app->AddEvent('forums_insert', new AdminInsertForum);
+$app->AddEvent('forums_insertmaps', new AdminInsertForumMaps);
+$app->AddEvent('forums_simpleupdate', new AdminSimpleForumUpdate);
+$app->AddEvent('forums_edit', new AdminEditForum);
+$app->AddEvent('forums_update', new AdminUpdateForum);
+$app->AddEvent('forums_remove', new AdminRemoveForum);
+$app->AddEvent('forums_permissions', new AdminForumPermissions);
+$app->AddEvent('forums_updateperms', new AdminUpdateForumPermissions);
 
 $app->ExecutePage();
 

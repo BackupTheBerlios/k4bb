@@ -26,13 +26,13 @@ function emoticon(typed) {
 	editor.value += ' ' + typed;
 }
 
+<maps:if forum="forum_id" var="bbcode" method="can_add">
 /****************************
  * BBCode Control front-end *
  * By Peter Goodman         *
  ****************************/
-
 <core:import id="bbcode" file="bbcode.js" />
-
+</maps:if>
 // -->
 </script>
 <input type="hidden" name="forum_id" value="{$forum_id}" />
@@ -79,17 +79,22 @@ function emoticon(typed) {
 							<!-- Post Message -->
 							<label for="messagecodex" class="smalltext">{$L_POST}</label><br />
 							<if:if var="allowbbcode" eq="0">
-							<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100">{$message}</textarea>
+								<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100">{$message}</textarea>
 							<if:else />
-							<div id="message" style="display: none;">{$message}</div>
-							<script type="text/javascript">
-								bbcodex_init('message', 'message', 10, 100, 'inputbox', 'width: 500px;', 'bbcode_button');
-							</script>
+								<maps:if forum="forum_id" var="bbcode" method="can_add">
+									<div id="message" style="display: none;">{$message}</div>
+									<script type="text/javascript">
+										bbcodex_init('message', 'message', 10, 100, 'inputbox', 'width: 500px;', 'bbcode_button');
+									</script>
+								<maps:else />
+									<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100">{$message}</textarea>
+								</maps:if>
 							</if:if>
 							<!-- / Post Message -->
 
 						</td>
 						<td valign="bottom">
+							<maps:if forum="forum_id" var="emoticons" method="can_add">
 							<list:list id="emoticons">
 							<!-- Emoticons -->
 							<table border="0" cellpadding="0" cellspacing="0">
@@ -117,8 +122,10 @@ function emoticon(typed) {
 							</table>
 							<!-- / Emoticons -->
 							</list:list>
+							</maps:if>
 						</td>
 					</tr>
+					<maps:if forum="forum_id" var="posticons" method="can_add">
 					<tr>
 						<td colspan="2">
 							<list:list id="posticons">
@@ -154,6 +161,7 @@ function emoticon(typed) {
 							</list:list>
 						</td>
 					</tr>
+					</maps:if>
 				</table>
 			</div>
 			<!-- / Main Posting Inputs -->
@@ -190,3 +198,33 @@ function emoticon(typed) {
 	</tr>
 </table>
 </form:form>
+<br />
+<!-- Posting Code Allowances -->
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="2">{$L_POSTINGRULES}</td>
+	</tr>
+	<tr class="panel">
+		<td valign="top">
+			<div align="left" class="minitext">
+				{$posting_code_options}
+			</div>
+		</td>
+		<td valign="top">
+			<div align="right" class="minitext">
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td valign="top">
+							{$forum_user_reply_options}
+						</td>
+						<td>&nbsp;&nbsp;</td>
+						<td valign="top">
+							{$forum_user_topic_options}
+						</td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+<!-- / Posting Code Allowances -->

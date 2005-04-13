@@ -1,0 +1,123 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<form id="add_forum" name="add_forum" action="admin.php?act=forums_insert" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="resetErrors();"><script type="text/javascript">resetErrors();</script>
+<input type="hidden" name="category_id" value="<?php echo $context->getVar("category_id"); ?>" />
+<input type="hidden" name="forum_id" value="<?php echo $context->getVar("forum_id"); ?>" />
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="2"><?php echo $context->getVar("L_ADDFORUM"); ?></td>
+	</tr>
+	<tr class="alt1">
+		<td width="30%"><strong><?php echo $context->getVar("L_NAME"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('forum_name');</script>
+			<input type="text" name="name" id="name" value="" maxlength="255" class="inputbox" tabindex="1" />
+			<script type="text/javascript">addVerification('name', '.+', 'name_error', 'inputfailed');</script><div id="name_error" style="display: none;"><?php echo $context->getVar("L_INSERTFORUMNAME"); ?></div>
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="30%"><strong><?php echo $context->getVar("L_DESCRIPTION"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('forum_description');</script>
+			<textarea name="description" id="description" rows="2" style="width: 80%;" class="inputbox" tabindex="2"></textarea>
+			<script type="text/javascript">addVerification('description', '(\\\n|.)+', 'description_error', 'inputfailed');</script><div id="description_error" style="display: none;"><?php echo $context->getVar("L_INSERTFORUMDESC"); ?></div>
+		</td>
+	</tr>
+	<tr class="alt1">
+		<td width="30%"><strong><?php echo $context->getVar("L_ORDER"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('forum_order');</script>
+			<input type="text" name="row_order" id="row_order" value="" maxlength="5" size="3" class="inputbox" tabindex="3" />
+			<script type="text/javascript">addVerification('row_order', '.+', 'row_order_error', 'inputfailed');</script><div id="row_order_error" style="display: none;"><?php echo $context->getVar("L_INSERTFORUMORDER"); ?></div>
+			<script type="text/javascript">addVerification('row_order', '([0-9])+', 'row_order_num_error', 'inputfailed');</script><div id="row_order_num_error" style="display: none;"><?php echo $context->getVar("L_INSERTFORUMORDERNUM"); ?></div>
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="30%"><strong><?php echo $context->getVar("L_FORUMPASSWORD"); ?></strong></td>
+		<td><input type="text" name="pass" class="inputbox" value="" maxlength="32" tabindex="4" /></td>
+	</tr>
+	<tr class="alt1">
+		<td width="30%"><strong><?php echo $context->getVar("L_ISLINK"); ?>:</strong></td>
+		<td>
+			<select name="is_link" id="is_link" tabindex="5">
+				<option value="0"><?php echo $context->getVar("L_NO"); ?></option>
+				<option value="1"><?php echo $context->getVar("L_YES"); ?></option>
+			</select>
+			<span class="smalltext"><br /><?php echo $context->getVar("L_ISDIRECTLINKEXPLAIN"); ?></span>
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="30%"><strong><?php echo $context->getVar("L_LINKURL"); ?>:</strong></td>
+		<td><input type="text" name="link_href" value="http://" class="inputbox" tabindex="6" /></td>
+	</tr>
+	<tr class="alt1">
+		<td width="30%"><strong><?php echo $context->getVar("L_ISDIRECTLINK"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('forum_directlink');</script>
+			<select name="link_show_redirects" id="link_show_redirects" tabindex="7">
+				<option value="0"><?php echo $context->getVar("L_NO"); ?></option>
+				<option value="1"><?php echo $context->getVar("L_YES"); ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="30%"><strong><?php echo $context->getVar("L_FORUMRULES"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('forum_forumrules');</script>
+			<textarea name="forum_rules" id="forum_rules" rows="5" class="inputbox" style="width: 80%;" tabindex="8"></textarea>
+		</td>
+	</tr>
+	<tr class="alt1">
+		<td width="30%"><strong><?php echo $context->getVar("L_SPECIALMESSAGE"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('forum_specialmessage');</script>
+			<textarea name="special_message" id="special_message" rows="5" class="inputbox" style="width: 80%;" tabindex="9"></textarea>
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="30%"><strong><?php echo $context->getVar("L_TOPICSPERPAGE"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('forum_topicsperpage');</script>
+			<input type="text" name="topicsperpage" id="topicsperpage" value="30" maxlength="3" size="3" class="inputbox" tabindex="10" />
+			<script type="text/javascript">addVerification('topicsperpage', '.+', 'topicsperpage_error', 'inputfailed');</script><div id="topicsperpage_error" style="display: none;"><?php echo $context->getVar("L_INSERTFORUMTPP"); ?></div>
+			<script type="text/javascript">addVerification('row_order', '([0-9])+', 'topicsperpage_num_error', 'inputfailed');</script><div id="topicsperpage_num_error" style="display: none;"><?php echo $context->getVar("L_INSERTFORUMTPPNUM"); ?></div>
+		</td>
+	</tr>
+	<tr class="alt1">
+		<td width="30%"><strong><?php echo $context->getVar("L_POSTSPERPAGE"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('forum_postsperpage');</script>
+			<input type="text" name="postsperpage" id="postsperpage" value="9" maxlength="2" size="3" class="inputbox" tabindex="11" />
+			<script type="text/javascript">addVerification('postsperpage', '.+', 'postsperpage_error', 'inputfailed');</script><div id="postsperpage_error" style="display: none;"><?php echo $context->getVar("L_INSERTFORUMPPP"); ?></div>
+			<script type="text/javascript">addVerification('row_order', '([0-9])+', 'postsperpage_num_error', 'inputfailed');</script><div id="postsperpage_num_error" style="display: none;"><?php echo $context->getVar("L_INSERTFORUMPPPNUM"); ?></div>
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="30%"><strong><?php echo $context->getVar("L_MAXPOLLOPTIONS"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('forum_maxpolloptions');</script>
+			<input type="text" name="maxpolloptions" id="maxpolloptions" value="10" maxlength="2" size="3" class="inputbox" tabindex="12" />
+			<script type="text/javascript">addVerification('postsperpage', '.+', 'maxpolloptions_error', 'inputfailed');</script><div id="maxpolloptions_error" style="display: none;"><?php echo $context->getVar("L_INSERTFORUMMPO"); ?></div>
+			<script type="text/javascript">addVerification('row_order', '([0-9])+', 'maxpolloptions_num_error', 'inputfailed');</script><div id="maxpolloptions_num_error" style="display: none;"><?php echo $context->getVar("L_INSERTFORUMMPONUM"); ?></div>
+		</td>
+	</tr>
+	<tr class="alt1">
+		<td width="30%"><strong><?php echo $context->getVar("L_LANGUAGE"); ?>:</strong></td>
+		<td>
+			<select name="defaultlang" id="defaultlang" tabindex="14">
+				<?php if ($context->listReset("languages")): ?>
+				<?php while($context->push($context->listNext("languages"))): ?>
+				<option value="<?php echo $context->getVar("lang"); ?>"><?php echo $context->getVar("name"); ?></option>
+				<?php $context->pop(); endwhile; ?>
+				<?php endif; ?>
+			</select>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="2">
+			<input type="submit" value="<?php echo $context->getVar("L_SAVE"); ?>" tabindex="15" />
+			<input type="reset" value="<?php echo $context->getVar("L_RESET"); ?>" />
+		</td>
+	</tr>
+</table>
+</form>
+<?php endif; ?>

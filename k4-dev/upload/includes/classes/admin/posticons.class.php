@@ -25,9 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: posticons.class.php,v 1.1 2005/04/05 03:19:35 k4st Exp $
+* @version $Id: posticons.class.php,v 1.2 2005/04/13 02:52:47 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 class AdminPostIcons extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {		

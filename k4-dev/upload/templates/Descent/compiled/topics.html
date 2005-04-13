@@ -22,13 +22,11 @@
 	<?php if (is_object($list = &$context->getList("topics")) && !$list->hasNext()): ?>
 	<tr class="alt1">
 		<td colspan="7">
-			<br />
-			<div align="center">
-				<strong><?php echo $context->getVar("main_message"); ?></strong>
+			<div align="center" class="outset_box">
 				<br />
-				<?php echo $context->getVar("forum_controls"); ?>
+				<?php echo $context->getVar("topics_message"); ?>
+				<br /><br />
 			</div>
-			<br />
 		</td>
 	</tr>
 	<?php endif; ?>
@@ -95,8 +93,8 @@
 							<td class="smalltext"><?php echo $context->getVar("L_SORTEDBY"); ?>:</td>
 							<td>
 								<select name="sort" style="width:125px" class="smalltext">
-									<option value="name" ><?php echo $context->getVar("L_TOPICTITLE"); ?></option>
-									<option value="last_reply" selected="selected"><?php echo $context->getVar("L_LASTPOSTTIME"); ?></option>
+									<option value="name"><?php echo $context->getVar("L_TOPICTITLE"); ?></option>
+									<option value="reply_time" selected="selected"><?php echo $context->getVar("L_LASTPOSTTIME"); ?></option>
 									<option value="num_replies" ><?php echo $context->getVar("L_NUMOFREPLIES"); ?></option>
 									<option value="views" ><?php echo $context->getVar("L_NUMOFVIEWS"); ?></option>
 									<option value="poster_name" ><?php echo $context->getVar("L_TOPICSTARTER"); ?></option>
@@ -106,7 +104,7 @@
 							<td class="smalltext"><?php echo $context->getVar("L_SORTORDER"); ?>:</td>
 							<td>
 								<select name="order" style="width:100px" class="smalltext">
-									<option value="ASC" ><?php echo $context->getVar("L_ASC"); ?></option>
+									<option value="ASC"><?php echo $context->getVar("L_ASC"); ?></option>
 									<option value="DESC" selected="selected"><?php echo $context->getVar("L_DESC"); ?></option>
 								</select>
 							</td>
@@ -116,15 +114,15 @@
 							<td>
 								<select name="daysprune" style="width:125px" class="smalltext">
 									<option value="1" ><?php echo $context->getVar("L_LAST_DAY"); ?></option>
-									<option value="2" >{$L_LAST_2_DAYS}</option>
+									<option value="2" ><?php echo $context->getVar("L_LAST_2_DAYS"); ?></option>
 									<option value="7" ><?php echo $context->getVar("L_LAST_WEEK"); ?></option>
-									<option value="10" >{$L_LAST_10_DAYS}</option>
-									<option value="14" >{$L_LAST_2_WEEKS}</option>
+									<option value="10" ><?php echo $context->getVar("L_LAST_10_DAYS"); ?></option>
+									<option value="14" ><?php echo $context->getVar("L_LAST_2_WEEKS"); ?></option>
 									<option value="30" ><?php echo $context->getVar("L_LAST_MONTH"); ?></option>
-									<option value="45" >{$L_LAST_45_DAYS}</option>
-									<option value="60" >{$L_LAST_2_MONTHS}</option>
-									<option value="75" >{$L_LAST_75_DAYS}</option>
-									<option value="100" >{$L_LAST_100_DAYS}</option>
+									<option value="45" ><?php echo $context->getVar("L_LAST_45_DAYS"); ?></option>
+									<option value="60" ><?php echo $context->getVar("L_LAST_2_MONTHS"); ?></option>
+									<option value="75" ><?php echo $context->getVar("L_LAST_75_DAYS"); ?></option>
+									<option value="100" ><?php echo $context->getVar("L_LAST_100_DAYS"); ?></option>
 									<option value="365" ><?php echo $context->getVar("L_LAST_YEAR"); ?></option>
 									<option value="-1" selected="selected"><?php echo $context->getVar("L_BEGINNING"); ?></option>
 								</select>
@@ -149,3 +147,20 @@
 	</tr>
 </table>
 <!-- / Forum Display Options -->
+
+<!-- Forum User Posting Options -->
+<br />
+<div class="minitext" align="right">
+	<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td valign="top">
+				<?php echo $context->getVar("forum_user_reply_options"); ?>
+			</td>
+			<td>&nbsp;&nbsp;</td>
+			<td valign="top">
+				<?php echo $context->getVar("forum_user_topic_options"); ?>
+			</td>
+		</tr>
+	</table>
+</div>
+<!-- / Forum User Posting Options -->

@@ -1,7 +1,9 @@
 <!-- Sub-Forums of '<?php echo $context->getVar("current_location"); ?>' -->
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
-		<td colspan="5" align="left"><?php echo $context->getVar("L_SUBFORUMS"); ?>: <span style="font-weight: normal;"><?php echo $context->getVar("current_location"); ?></span></td>
+		<td colspan="5" align="left">
+		<?php echo $context->getVar("L_SUBFORUMS"); ?>: <span style="font-weight: normal;"><?php echo $context->getVar("forum_name"); ?></span>
+		</td>
 	</tr>
 	<tr class="tcat">
 		<td>&nbsp;</td>
@@ -22,14 +24,13 @@
 			<br />
 			<span class="minitext">
 			<?php echo $context->getVar("description"); ?>
-			<?php if($context->getVar('subforums') == '1'): ?>
+			<?php if($context->getVar('subforums') > '0'): ?>
 			<br /><br />
 			<strong><?php echo $context->getVar("L_SUBFORUMS"); ?>:</strong>
 			<?php if ($context->addList("subforums", $context->getVar("subforums"))): ?>
 				<?php while($context->push($context->listNext("subforums"))): ?>
 				<img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_<?php echo $context->getVar("forum_icon"); ?>_small.gif" alt="<?php echo $context->getVar("forum_alt"); ?>" height="11" width="11" border="0" />
-				<a href="viewforum.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("description"); ?>"><?php echo $context->getVar("name"); ?></a>
-				<?php if (is_object($list = &$context->getList("subforums")) && $list->hasNext()): ?>,<?php endif; ?>
+				<a href="viewforum.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("description"); ?>"><?php echo $context->getVar("name"); ?></a><?php if (is_object($list = &$context->getList("subforums")) && $list->hasNext()): ?>,<?php endif; ?>
 				<?php $context->pop(); endwhile; ?>
 			<?php endif; ?>
 			<?php endif; ?>

@@ -25,9 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: maps.php,v 1.1 2005/04/05 03:18:59 k4st Exp $
+* @version $Id: maps.php,v 1.2 2005/04/13 02:52:05 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 function get_maps() {
 	

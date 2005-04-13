@@ -25,9 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: files.class.php,v 1.3 2005/04/05 21:27:07 k4st Exp $
+* @version $Id: files.class.php,v 1.4 2005/04/13 02:52:47 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 class AdminFileBrowser extends Event {
 	function resize_image($image) {

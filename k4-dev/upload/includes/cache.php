@@ -25,9 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: cache.php,v 1.2 2005/04/11 02:16:36 k4st Exp $
+* @version $Id: cache.php,v 1.3 2005/04/13 02:52:05 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 /**
  * MAPS Caching function
@@ -39,7 +45,15 @@ function get_cached_maps() {
 		$_SESSION['bbcache'] = array();
 
 	if(!isset($_SESSION['bbcache']['maps'])) {
-		$_SESSION['bbcache']['maps'] = get_maps();
+		$_SESSION['bbcache']['maps_time']	= time();
+		$_SESSION['bbcache']['maps']		= get_maps();
+	} else {
+
+		/* If 10 minutes has passed since the last update of the map's */
+		if((time() - $_SESSION['bbcache']['maps_time']) > 600) {
+			$_SESSION['bbcache']['maps_time']	= time();
+			$_SESSION['bbcache']['maps']		= get_maps();
+		}
 	}
 	
 	return $_SESSION['bbcache']['maps'];
@@ -52,23 +66,26 @@ function get_cached_maps() {
 function get_cached_forum($id) {
 	global $_DBA;
 
-	$id			= intval($id);
+	$id														= intval($id);
 
 	if(!isset($_SESSION['bbcache']))
-		$_SESSION['bbcache'] = array();
-
-	if(isset($_SESSION['bbcache']['forums'][$id])) {
+		$_SESSION['bbcache']								= array();
+	
+	/* If the session is set and the last time it was updated is less than or equal to 10 mins ago */
+	if(isset($_SESSION['bbcache']['forums'][$id]) && ((time() - $_SESSION['bbcache']['forums'][$id]['forum_time']) <= 600)) {
 		
 		/* Return the info */
 		return $_SESSION['bbcache']['forums'][$id];
 	} else {
 		
 		/* Get the info */
-		$result = $_DBA->getRow("SELECT i.* FROM ". INFO ." i WHERE id = ". $id);
+		$result												= $_DBA->getRow("SELECT i.* FROM ". INFO ." i WHERE id = ". $id);
 		
 		/* Add this forum/category info to the db */
-		$_SESSION['bbcache']['forums'][$id] = $result;
+		$_SESSION['bbcache']['forums'][$id]					= $result;
 		
+		$_SESSION['bbcache']['forums'][$id]['forum_time']	= time();
+
 		/* Return the info */
 		return $result;
 	}
@@ -85,9 +102,11 @@ function cache_forum($info) {
 		if(isset($info[$val]))
 			$data[$val]	= $info[$val];
 	}
-	$data['subforums']	= intval(@$info['subforums']);
+
+	$data['subforums']											= intval(@$info['subforums']);
 	
-	$_SESSION['bbcache']['forums'][$data['id']] = $data;
+	$_SESSION['bbcache']['forums'][$data['id']]					= $data;
+	$_SESSION['bbcache']['forums'][$data['id']]['forum_time']	= time();
 }
 
 function set_forum_cache_item($name, $val, $id) {

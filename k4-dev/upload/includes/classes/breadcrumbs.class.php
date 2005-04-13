@@ -26,9 +26,15 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: breadcrumbs.class.php,v 1.2 2005/04/11 02:16:54 k4st Exp $
+* @version $Id: breadcrumbs.class.php,v 1.3 2005/04/13 02:52:19 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 function BreadCrumbs(&$template, $location = NULL, $row_left = FALSE, $row_right = FALSE) {
 	

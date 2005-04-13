@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.3 2005/04/11 02:11:41 k4st Exp $
+* @version $Id: viewforum.php,v 1.4 2005/04/13 02:55:20 k4st Exp $
 * @package k42
 */
 
@@ -40,16 +40,21 @@ class DefaultEvent extends Event {
 
 		if(!isset($request['id']) || !$request['id'] || intval($request['id']) == 0) {
 			/* set the breadcrumbs bit */
-			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+			$template				= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
 			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
 		} else {
 			
-			$forum				= get_cached_forum($request['id']);
+			/* Get the current forum/category */
+			$forum					= get_cached_forum($request['id']);
+			$query					= $forum['row_type'] & FORUM ? "SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($request['id']) : "SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'] ." FROM ". CATEGORIES ." c LEFT JOIN ". INFO ." i ON c.category_id = i.id WHERE i.id = ". intval($request['id']);
+			$forum					= $dba->getRow($query);
 
 			if(!$forum || !is_array($forum) || empty($forum)) {
 				/* set the breadcrumbs bit */
 				$template	= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
 				$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+
+				return TRUE;
 			} else {
 				
 				/* Get the users Browsing this category or forum */
@@ -90,7 +95,8 @@ class DefaultEvent extends Event {
 					/* set the breadcrumbs bit */
 					$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
 					$template->setInfo('content', $template->getVar('L_PERMCANTVIEW'), FALSE);
-
+					
+					return TRUE;
 				} else {
 
 					/* Set the breadcrumbs bit */
@@ -106,6 +112,8 @@ class DefaultEvent extends Event {
 							/* set the breadcrumbs bit */
 							$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
 							$template->setInfo('content', $template->getVar('L_PERMCANTVIEW'));
+							
+							return TRUE;
 						}
 
 						/* Set the proper query params */
@@ -154,10 +162,53 @@ class DefaultEvent extends Event {
 						if($user['maps']['forums'][$forum['id']]['topics']['can_view'] > $user['perms']) {
 							/* set the breadcrumbs bit */
 							$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
-							return $template->setInfo('content_extra', $template->getVar('L_CANTVIEWFORUMTOPICS'), FALSE);
+							$template->setInfo('content_extra', $template->getVar('L_CANTVIEWFORUMTOPICS'), FALSE);
+						
+							return TRUE;
 						}
 						
+						/* Set what this user can/cannot do in this forum */
+						$template->setVar('forum_user_topic_options', sprintf($template->getVar('L_FORUMUSERTOPICPERMS'),
+						iif(($user['maps']['forums'][$forum['id']]['topics']['can_add'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+						iif(($user['maps']['forums'][$forum['id']]['topics']['can_edit'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+						iif(($user['maps']['forums'][$forum['id']]['topics']['can_del'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+						iif(($user['maps']['forums'][$forum['id']]['attachments']['can_add'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN'))));
+
+						$template->setVar('forum_user_reply_options', sprintf($template->getVar('L_FORUMUSERREPLYPERMS'),
+						iif(($user['maps']['forums'][$forum['id']]['replies']['can_add'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+						iif(($user['maps']['forums'][$forum['id']]['replies']['can_edit'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+						iif(($user['maps']['forums'][$forum['id']]['replies']['can_del'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN'))));
+						
+						/* Create an array with all of the possible sort orders we can have */						
+						$sort_orders		= array('name', 'reply_time', 'num_replies', 'views', 'reply_uname', 'rating');
+						
 						/* Get the topics for this forum */
+						$topicsperpage		= isset($request['limit']) && is_numeric($request['limit']) ? intval($request['limit']) : $forum['topicsperpage'];
+						$daysprune			= isset($request['daysprune']) && is_numeric($request['daysprune']) ? iif(($request['daysprune'] == -1), 0, intval($request['daysprune'])) : 30;
+						$sortorder			= isset($request['order']) && ($request['order'] == 'ASC' || $request['order'] == 'DESC') ? $request['order'] : 'DESC';
+						$sortedby			= isset($request['sort']) && in_array($request['sort'], $sort_orders) ? $request['sort'] : 'created';
+						$start				= isset($request['start']) && is_numeric($request['start']) ? intval($_GET['start']) : NULL;
+						
+						/* Create the query */
+						$topics				= &$dba->prepareStatement("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE created>=? ORDER BY $sortedby $sortorder LIMIT ?,?");
+						
+						/* Set the query values */
+						$topics->setInt(1, $daysprune * (3600 * 24));
+						$topics->setInt(2, $start);
+						$topics->setInt(3, $topicsperpage);
+						
+						/* Execute the query */
+						$result				= &$topics->executeQuery();
+						
+						/* If there are no topics, set the right messageto display */
+						if($result->numrows() == 0) {
+							$template->setVar('topics_message', iif($daysprune == 0, $template->getVar('L_NOPOSTSINFORUM'), sprintf($template->getVar('L_FORUMNOPOSTSSINCE'), $daysprune)));
+						}
+						
+						/* Apply the topics iterator */
+						$it					= &new TopicsIterator($result);
+
+						$template->setList('topics', $it);
 
 						/* Set the topics template to the content variable */
 						$template->setFile('content_extra', 'topics.html');
@@ -165,7 +216,9 @@ class DefaultEvent extends Event {
 					} else {
 						/* set the breadcrumbs bit */
 						$template	= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
-						return $template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+						$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+
+						return TRUE;
 					}
 				}
 			}

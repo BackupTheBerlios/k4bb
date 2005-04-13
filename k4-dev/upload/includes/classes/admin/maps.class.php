@@ -27,9 +27,15 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: maps.class.php,v 1.2 2005/04/11 02:18:24 k4st Exp $
+* @version $Id: maps.class.php,v 1.3 2005/04/13 02:52:47 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 class AdminMapsGui extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {		

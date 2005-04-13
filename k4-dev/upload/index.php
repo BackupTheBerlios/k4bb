@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.3 2005/04/11 02:11:41 k4st Exp $
+* @version $Id: index.php,v 1.4 2005/04/13 02:55:20 k4st Exp $
 * @package k42
 */
 
@@ -57,8 +57,10 @@ class DefaultEvent extends Event {
 		/* Set the breadcrumbs bit */
 		$template		= BreadCrumbs($template, $template->getVar('L_HOME'));
 		
+		//$dba->executeUpdate("update k4_information set row_level = 3 where row_type = 2 and parent_id = 2");
 		//$dba->executeQuery("delete from k4_information");
 		//$dba->executeQuery("delete from k4_categories");
+		//$dba->executeQuery("delete from k4_forums");
 		
 		/* Set the globals for num_topics and num_replies here */
 		Globals::setGlobal('num_topics', 0);
@@ -71,6 +73,8 @@ class DefaultEvent extends Event {
 		if(!is_a($session['user'], 'Member')) {
 			$template->setVar('welcome_title', sprintf($template->getVar('L_WELCOMETITLE'), $template->getVar('bbtitle')));
 			$template->show('welcome_msg');
+
+			$template->setFile('quick_login', 'login_form_quick.html');
 		}
 		
 		/* Set the online users list */

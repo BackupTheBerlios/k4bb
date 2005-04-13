@@ -53,8 +53,7 @@
 				<list:sublist list="forums" id="subforums" column="subforums">
 					<list:item list="subforums">
 					<img src="Images/{$IMG_DIR}/Icons/forum_{$forum_icon}_small.gif" alt="{$forum_alt}" height="11" width="11" border="0" />
-					<a href="viewforum.php?id={$id}" title="{$description}">{$name}</a>
-					<list:separator list="subforums">,</list:separator>
+					<a href="viewforum.php?id={$id}" title="{$description}">{$name}</a><list:separator list="subforums">,</list:separator>
 					</list:item>
 				</list:sublist>
 				</if:if>

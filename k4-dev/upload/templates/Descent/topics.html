@@ -22,13 +22,11 @@
 	<list:default list="topics">
 	<tr class="alt1">
 		<td colspan="7">
-			<br />
-			<div align="center">
-				<strong>{$main_message}</strong>
+			<div align="center" class="outset_box">
 				<br />
-				{$forum_controls}
+				{$topics_message}
+				<br /><br />
 			</div>
-			<br />
 		</td>
 	</tr>
 	</list:default>
@@ -95,8 +93,8 @@
 							<td class="smalltext">{$L_SORTEDBY}:</td>
 							<td>
 								<select name="sort" style="width:125px" class="smalltext">
-									<option value="name" >{$L_TOPICTITLE}</option>
-									<option value="last_reply" selected="selected">{$L_LASTPOSTTIME}</option>
+									<option value="name">{$L_TOPICTITLE}</option>
+									<option value="reply_time" selected="selected">{$L_LASTPOSTTIME}</option>
 									<option value="num_replies" >{$L_NUMOFREPLIES}</option>
 									<option value="views" >{$L_NUMOFVIEWS}</option>
 									<option value="poster_name" >{$L_TOPICSTARTER}</option>
@@ -106,7 +104,7 @@
 							<td class="smalltext">{$L_SORTORDER}:</td>
 							<td>
 								<select name="order" style="width:100px" class="smalltext">
-									<option value="ASC" >{$L_ASC}</option>
+									<option value="ASC">{$L_ASC}</option>
 									<option value="DESC" selected="selected">{$L_DESC}</option>
 								</select>
 							</td>
@@ -149,3 +147,20 @@
 	</tr>
 </table>
 <!-- / Forum Display Options -->
+
+<!-- Forum User Posting Options -->
+<br />
+<div class="minitext" align="right">
+	<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td valign="top">
+				{$forum_user_reply_options}
+			</td>
+			<td>&nbsp;&nbsp;</td>
+			<td valign="top">
+				{$forum_user_topic_options}
+			</td>
+		</tr>
+	</table>
+</div>
+<!-- / Forum User Posting Options -->

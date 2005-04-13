@@ -25,9 +25,15 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: iterator.php,v 1.2 2005/04/11 02:18:54 k4st Exp $
+* @version $Id: iterator.php,v 1.3 2005/04/13 02:53:33 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 class FAIterator {
 	function &current() {}

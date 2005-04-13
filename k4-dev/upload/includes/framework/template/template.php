@@ -26,9 +26,15 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: template.php,v 1.1 2005/04/05 03:21:47 k4st Exp $
+* @version $Id: template.php,v 1.2 2005/04/13 02:54:17 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 define('TPL_BASE_DIR', dirname(__FILE__));
 define('TPL_FORCE_COMPILE', FALSE);
@@ -64,8 +70,8 @@ class TPL_Source {
 		$root = $this->parse();
 		$compiler = &new TPL_Compiler();
 		$buffer = $compiler->compile($root);
-		$buffer = preg_replace('/{\$([a-zA-Z_\.]+?)}/', '<?php echo $context->getVar("$1"); ?>', $buffer);
-		$buffer = preg_replace('/{\@([a-zA-Z_\.]+?)}/', '$context->getVar("$1")', $buffer);
+		$buffer = preg_replace('/{\$([a-zA-Z0-9_\.]+?)}/', '<?php echo $context->getVar("$1"); ?>', $buffer);
+		$buffer = preg_replace('/{\@([a-zA-Z0-9_\.]+?)}/', '$context->getVar("$1")', $buffer);
 		$buffer = preg_replace('/\?><\?php/', '', $buffer);
 		$buffer = preg_replace('/{ent{(.+?)}}/', '&$1;', $buffer);
 

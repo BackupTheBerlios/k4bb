@@ -25,9 +25,15 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: runtime.php,v 1.1 2005/04/05 03:21:47 k4st Exp $
+* @version $Id: runtime.php,v 1.2 2005/04/13 02:54:16 k4st Exp $
 * @package k42
 */
+
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 class TPL_Context {
 	var $contexts;

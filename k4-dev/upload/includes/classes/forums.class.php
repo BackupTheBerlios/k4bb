@@ -25,10 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.3 2005/04/11 02:16:54 k4st Exp $
+* @version $Id: forums.class.php,v 1.4 2005/04/13 02:52:19 k4st Exp $
 * @package k42
 */
 
+error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 function forum_icon($instance, $temp) {
 	
@@ -55,7 +60,8 @@ function forum_icon($instance, $temp) {
 			$forums[$temp['id']]	= array();
 			$forums					= serialize($forums);
 
-			/** Set a cookie to be cached in the session to be executed on the next refresh,
+			/** 
+			 * Set a cookie to be cached in the session to be executed on the next refresh,
 			 * The cookie will expire when the session is meant to expire 
 			 */
 			bb_setcookie_cache('forums', $forums, time() + ini_get('session.gc_maxlifetime'));
@@ -72,7 +78,8 @@ function forum_icon($instance, $temp) {
 		$forums		= array($temp['id'] => $temp);
 		$forums		= serialize($forums);
 
-		/** Set a cookie to be cached in the session to be executed on the next refresh,
+		/**
+		 * Set a cookie to be cached in the session to be executed on the next refresh,
 		 * The cookie will expire when the session is meant to expire 
 		 */
 		bb_setcookie_cache('forums', $forums, time() + ini_get('session.gc_maxlifetime'));
@@ -80,7 +87,7 @@ function forum_icon($instance, $temp) {
 
 	/* Check if this user's perms are less than is needed to post in this forum */
 
-	if($instance->user['maps']['forums'][$temp['id']]['can_add'] > $instance->user['perms'])
+	if(@$instance->user['maps']['forums'][$temp['id']]['can_add'] > $instance->user['perms'])
 		$icon			.= '_lock';
 	
 	/* Return the icon text to add to the IMG tag */
@@ -146,6 +153,9 @@ class ForumsIterator extends FAProxyIterator {
 
 		/* Set the forum's icon */
 		$temp['forum_icon']	= forum_icon($this, $temp);
+		
+		/* Set a nice representation of what level we're on */
+		$temp['level']	= @str_repeat('&nbsp;&nbsp;&nbsp;', $temp['row_level']-2);
 
 		/* Increment the number of topics and replies */
 		if(Globals::is_set('num_topics') && Globals::is_set('num_replies')) {
