@@ -25,11 +25,15 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: lang.php,v 1.2 2005/04/11 02:20:54 k4st Exp $
+* @version $Id: lang.php,v 1.3 2005/04/13 02:54:54 k4st Exp $
 * @package k42
 */
 
 error_reporting(E_ALL);
+
+if(!defined('IN_K4')) {
+	exit;
+}
 
 function return_language() {
 	$lang = array(
@@ -76,7 +80,7 @@ function return_language() {
 	'L_CANCEL'				=> 'Cancel',
 	'L_USERWELCOMEK4'		=> 'Welcome to the %s forums, Powered by k4 Bulletin Board.',
 	'L_USERWELCOMEMSGK4'	=> "Welcome to the %s forums, Powered by k4 Bulletin Board. \r\n Your user information is as follows..\r\nUsername: %s\r\nPassword: %s\r\n\r\n- k4 Bulletin Board Mailer",
-	
+	'L_LOGINREGISTERMESSAGE'=> 'In order to login you must be registered. Registering takes only a few seconds but gives you increased capabilies. The board administrator may also grant additional permissions to registered users. Before you login please ensure you are familiar with our terms of use and related policies. Please ensure you read any forum rules as you navigate around the board.',
 
 	/* User Titles */
 	'L_JUNIORMEMBER'		=> 'Junior Member',
@@ -176,19 +180,50 @@ function return_language() {
 	'L_NOCATEGORIES'		=> 'There are currently no active Categories.',
 	'L_NOCATEGORYMAPS'		=> 'This category appears to have no set permissions.',
 	'L_UPDATEDCATEGORYPERMS'=> 'Successfully update the permissions for the category <strong>%s</strong>.',
-
-	'L_MODFORUMS'			=> 'Add/Suspend/Lock/Edit/Delete Forums',
-	'L_ADDFORUM'			=> 'Add Forum',
-	'L_SUSPENDFORUM'		=> 'Suspend Forum',
-	'L_DELETEFORUM'			=> 'Delete Forum',
-	'L_DELETECATEGORY'		=> 'Delete Category',
-	'L_LOCKFORUM'			=> 'Lock Forum',
-	'L_UNSUSPENDFORUM'		=> 'Unsuspend Forum',
-	'L_UNLOCKFORUM'			=> 'Unlock Forum',
-	'L_EDITFORUMS'			=> 'Edit Forums',
-	'L_FORUMPERMISSIONS'	=> 'Forum Permissions',
-	'L_CHECKDELFORUM'		=> 'Removing this forum will result in the deletion of all of its topics and replies. Would you like to continue?',
 	
+	'L_MANAGEMENT'			=> 'Management',
+	'L_MANAGEFORUMS'		=> 'Manage Forums',
+	'L_ADDFORUM'			=> 'Add New Forum',
+	'L_ADDSUBFORUM'			=> 'Add New Sub-Forum',
+	'L_INSERTFORUMDESC'		=> 'You must insert a Forum Description.',
+	'L_INSERTFORUMNAME'		=> 'You must insert a Forum Name.',
+	'L_INSERTFORUMORDER'	=> 'You must insert a Forum Order.',
+	'L_INSERTFORUMORDERNUM'	=> 'The Forum Order must be a number.',
+	'L_FORUMNAME'			=> 'Forum Name',
+	'L_EDITFORUMS'			=> 'Edit Forums',
+	'L_ADDEDFORUM'			=> 'Successfully added the forum <strong>%s</strong> to the database.<br /><br /><strong>Please wait while this forum\'s default permissions are added to the database.</strong>',
+	'L_INVALIDFORUM'		=> 'You have specified an invalid Forum ID.',
+	'L_ADDEDFORUMPERMS'		=> 'Successfuly added the forum permissions for <strong>%s</strong>.',
+	'L_UPDATEDFORUM'		=> 'Successfully updated the forum <strong>%s</strong>.',
+	'L_FORUMPERMISSIONS'	=> 'Forum Permissions',
+	'L_EDITFORUM'			=> 'Edit Forum',
+	'L_NOFORUMPERMS'		=> 'This forum does not have any permissions assigned to it',
+	'L_REMOVEDFORUM'		=> 'Successfully removed the forum <strong>%s</strong>.',
+	'L_CHECKDELFORUM'		=> 'Removing this forum will result in the deletion of all of its sub-forums, topics and replies. Would you like to continue?',
+	'L_FORUMPERMISSIONS'	=> 'Forum Permissions',
+	'L_EDITPERMISSIONS'		=> 'Edit Permissions',
+	'L_NOFORUMS'			=> 'There are currently no active Forums.',
+	'L_NOFORUMMAPS'			=> 'This forum appears to have no set permissions.',
+	'L_UPDATEDFORUMPERMS'	=> 'Successfully update the permissions for the forum <strong>%s</strong>.',
+	'L_ALLFORUMS'			=> 'All Forums',
+	'L_LINKURL'				=> 'Link URL <span class="minitext">(only if forum is a link)</span>',
+	'L_ISLINK'				=> 'Is a Link?',
+	'L_ISPRIVATE'			=> 'Is Private?',
+	'L_FORUMPASSWORD'		=> 'Forum Password',
+	'L_ISDIRECTLINK'		=> 'Is a direct link?',
+	'L_ISDIRECTLINKEXPLAIN'	=> '<strong>If this forum is a link</strong>, you can choose to have a direct link, or to track the redirects for this link.',
+	'L_TOPICSPERPAGE'		=> 'Topics per Page',
+	'L_INSERTFORUMTPP'		=> 'Please insert the minimum number of topics to be displayed per page for this forum.',
+	'L_INSERTFORUMTPPNUM'	=> 'The value for the number of topics per page must be a positive integer. e.g. 50',
+	'L_POSTSPERPAGE'		=> 'Posts per Page',
+	'L_INSERTFORUMPPP'		=> 'Please insert the minimum number of posts per page to be displayed in each topic for this forum.',
+	'L_INSERTFORUMPPPNUM'	=> 'The value for the number of posts per page must be a positive integer. e.g. 9',
+	'L_MAXPOLLOPTIONS'		=> 'Maximum number of Poll Options',
+	'L_INSERTFORUMMPO'		=> 'Please insert the maximum number of poll options for this forum.',
+	'L_INSERTFORUMMPONUM'	=> 'The value for the maximum number of poll options must be a positive integer. e.g. 10',
+	'L_LANGUAGE'			=> 'Language',
+	'L_FORUMRULES'			=> 'Forum Rules',
+	'L_SPECIALMESSAGE'		=> 'Special Message',
 	
 	'L_SUSPEND'				=> 'Suspend',
 	'L_UNSUSPEND'			=> 'Unsuspend',
@@ -265,11 +300,6 @@ function return_language() {
 	'L_SELECTFORUM'			=> 'Select a Forum',
 	'L_SELECT'				=> 'Select',
 	'L_MODPERMS'			=> 'Mod Permissions',
-	'L_ALLFORUMS'			=> 'All Forums',
-	'L_LINKURL'				=> 'Link URL <span class="minitext">(only if forum is a link)</span>',
-	'L_ISLINK'				=> 'Is a Link?',
-	'L_ISPRIVATE'			=> 'Is Private?',
-	'L_FORUMPASSWORD'		=> 'Forum Password <span class="minitext">(only if forum is private)</span>',
 
 	'L_PRUNEMESSAGE'		=> 'This will delete any topic which has not been posted to within the number of days you select. If you do not enter a number then all topics will be deleted. It will not remove topics in which polls are still running nor will it remove announcements or sticky topics. You will need to remove these topics manually.',
 	'L_RANKSMESSAGE'		=> 'Ranks are displayed in topics and posts. They can be a way to say that a certain person or group is banned, that someone has won something or that someone is an exceptional user. Feel free to have fun with this feature.',
@@ -387,9 +417,8 @@ function return_language() {
 	'L_CMEXTRA'				=> '<br /><span class="minitext">For when the board is disabled</span>',
 	'L_TOPICLIMIT'			=> 'Default Topic Limit',
 	'L_POSTLIMIT'			=> 'Default Post Limit',
-
+	
 	'L_ABILITIESSETTINGS'	=> 'Abilities Settings',
-	'L_MAXPOLLOPTIONS'		=> 'Max Poll Options',
 	'L_ALLOWBBCODE'			=> 'Allow BB Code',
 	'L_ALLOWSMILIES'		=> 'Allow Smilies',
 	'L_ALLOWPOSTICONS'		=> 'Allow Post Icons',
@@ -490,9 +519,13 @@ function return_language() {
 	'L_NEWESTMEMBER'		=> 'Our newest member is <a href="member.php?id=%s" style="text-decoration: underline;">%s</a>',
 	'L_MOSTUSERSEVERONLINE'	=> 'Most users ever online was %s, %s at %s',
 
-	/* BBcode lang replacments */
+	/* BBcode stuff */
+	'L_POSTINGRULES'		=> 'Posting Rules',
 	'L_QUOTE'				=> 'Quote',
 	'L_WROTE'				=> 'Wrote',
+	'L_POSTBBCODEOPTIONS'	=> 'HTML is <span style="text-decoration: underline;">%s</span><br />BBCode is <span style="text-decoration: underline;">%s</span><br />[IMG] Code is <span style="text-decoration: underline;">%s</span><br />[FLASH] Code is <span style="text-decoration: underline;">%s</span><br />Emoticons are <span style="text-decoration: underline;">%s</span>',
+	'L_ON'					=> 'ON',
+	'L_OFF'					=> 'OFF',
 	
 	/* User Status' */
 	'L_GUEST'				=> 'Guest',
@@ -564,6 +597,12 @@ function return_language() {
 	'L_USERSBROWSINGFORUM'	=> 'Users Browsing this Forum',
 	'L_USERSBROWSINGTOPIC'	=> 'Users Browsing this Topic',
 	'L_VIEWING'				=> 'Viewing',
+	'L_CAN'					=> '<strong>can</strong>',
+	'L_CANNOT'				=> '<strong>cannot</strong>',
+	'L_FORUMUSERREPLYPERMS'	=> 'You %s reply to topics in this forum<br />You %s edit your replies in this forum<br />You %s delete your replies in this forum',
+	'L_FORUMUSERTOPICPERMS'	=> 'You %s post new topics in this forum<br />You %s edit your topics in this forum<br />You %s delete your topics in this forum<br />You %s post attachments in this forum',
+	'L_FORUMNOPOSTSSINCE'	=> '<strong>There have been no posts in the last %s days in this forum.</strong><br /><span class="smalltext">Try using the controls below to search for any older posts that may exist.</span>',
+	'L_NOPOSTSINFORUM'		=> '<strong>There are no posts in this forum.</strong>',
 
 	/* User CP stuff */
 	'L_CONTROLPANEL'		=> 'Control Panel',
@@ -628,6 +667,22 @@ function return_language() {
 	'L_FRIEND'				=> 'Friend',
 	'L_ADDBUDDYTOLIST'		=> 'Add Buddy to List',
 	'L_DELETEMESSAGE'		=> 'Delete Private Message',
+
+	/* Permission Names */
+	'L_POLLS'				=> 'Polls',
+	'L_VOTE_ON_POLL'		=> 'Vote on Polls',
+	'L_RATE_TOPIC'			=> 'Rate Topics',
+	'L_STICKY'				=> 'Sticky Topics',
+	'L_ANNOUNCE'			=> 'Announcement Topics',
+	'L_CLOSED'				=> 'Closed Topics',
+	'L_AVATARS'				=> 'User Avatars',
+	'L_SIGNATURES'			=> 'User Signatures',
+	'L_HTML'				=> 'HTML Code',
+	'L_BBCODE'				=> 'BB Code',
+	'L_BBIMGCODE'			=> 'BB IMG Code',
+	'L_BBFLASHCODE'			=> 'BB Flash Code',
+	'L_POST_SAVE'			=> 'Post Saving',
+	'L_POST_PREVIEW'		=> 'Post Previewing',
 
 	/* Date and time stuff */
 	'L_JANUARY'				=> 'January',
@@ -961,7 +1016,6 @@ function return_language() {
 	'L_HOWTOPMCANCELLEDWORD'	=> 'This is the word that will prefix the title of \'cancelled\' messages in the <i>message tracking</i> section. (You may use HTML)',
 	'L_PMCANCELKILL'			=> 'Delete \'cancelled\' messages?',
 	'L_HOWTOPMCANCELKILL'		=> 'When users \'cancel\' messages in the message tracking area, would you like to remove the message completely? WARNING: Selecting \'yes\' could confuse users who have been notified by email about the message.',
-	'L_MAXPOLLOPTIONS'			=> 'Maximum Options',
 	'L_HOWTOMAXPOLLOPTIONS'		=> 'Maximum number of options a user can select for the poll. Set this to 0 to allow infinitely many options.',
 	'L_UPDATELASTPOST'			=> 'Update last post time?',
 	'L_HOWTOUPDATELASTPOST'		=> 'Update the last post time for the thread (thus returning it to the top of a forum) when a vote is placed.',
@@ -1128,7 +1182,6 @@ function return_language() {
 	'L_CANTVIEWFORUMTOPICS'	=> 'You do not have permission to view the topics in this forum.',
 	'L_CANTPOSTTOCATEGORY'	=> 'You must choose a forum to post your topic to.',
 	'L_DIRECTORYDOESNTEXIST'=> 'The directory <strong>%s</strong> does not exist.',
-	'L_NOPOSTSINFORUM'		=> 'There are no posts in this forum.',
 	'L_NOFORUMPOSTS30DAYS'	=> 'There have been no posts in the last %s days in this forum.',
 	'L_TRYFORUMCONTROLS'	=> 'Try using the controls below to search for any older posts that may exist.',
 	'L_NOFORUMSEXIST'		=> 'There are currently no active Forums.',
