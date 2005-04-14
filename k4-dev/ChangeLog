@@ -1,14 +1,27 @@
+[#######] is a bug ID, bugs are listed at https://developer.berlios.de/bugs/?group_id=3454
++ is a new feature
+* is a bug fix not listed on BerliOS
+
+
+2.0 Alpha 4
+===========
+	[003740] Logged in multiple times in admin - fixed
+	[003746] Forum icons - fixed
+	+ Topic creation
+	+ admin cp: forum and category sections
+	+ Forum Select Menu at bottom of page
+
 2.0 Alpha 3
 ===========
 	* upload/includes/common.php:
 	Session ID was being returned as User ID.
 
-	* upload/includes/classes/forums.class.php
+	* upload/includes/classes/forums.class.php:
 	Removed some uneeded code
 
 2.0 Alpha 2
 ===========
-Fixed sessions bug
+	* Fixed sessions bug
 
 2.0 Alpha 1
 ===========
