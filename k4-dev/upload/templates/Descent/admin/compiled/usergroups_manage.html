@@ -1,0 +1,57 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="5">
+			<script type="text/javascript">doHelpButton('usergroups');</script>
+			<?php echo $context->getVar("L_USERGROUPS"); ?>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="5"><?php echo $context->getVar("L_MANAGEUSERGROUPS"); ?></td>
+	</tr>
+	<tr class="alt3">
+		<td colspan="5">
+			<div align="center">
+				<script type="text/javascript">doHelpButton('add_usergroup');</script>
+				<input type="button" class="minitext" style="font-weight: bold;" value="<?php echo $context->getVar("L_ADDUSERGROUP"); ?>" onclick="document.location='admin.php?act=usergroups_add'" />
+			</div>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="2"><?php echo $context->getVar("L_MANAGEMENT"); ?></td>
+	</tr>
+	<?php if ($context->listReset("usergroups")): ?>
+	<?php if (is_object($list = &$context->getList("usergroups")) && !$list->hasNext()): ?>
+	<tr class="panel">
+		<td colspan="2">
+			<div class="outset_box" align="center">
+				<br />
+				<?php echo $context->getVar("L_NOUSERGROUPS"); ?>
+				<br /><br />
+			</div>
+		</td>
+	</tr>
+	<?php endif; ?>
+	<?php while($context->push($context->listNext("usergroups"))): ?>
+	<?php switch($context->listKey("usergroups") % 2):  case 0: $context->push(array('row_class' => 'alt1')); break;  case 1: $context->push(array('row_class' => 'alt2')); break;  default: $context->push(array()); endswitch; ?>
+	<tr class="<?php echo $context->getVar("row_class"); ?>">
+	<?php $context->pop(); ?>
+		<td>
+			<div align="left">
+				<strong><?php echo $context->getVar("name"); ?></strong>
+				<br />
+				<span class="minitext"><?php echo $context->getVar("description"); ?></span>
+			</div>
+		</td>
+		<td width="10%" align="center">
+			<input type="button" class="minitext" value="<?php echo $context->getVar("L_EDIT"); ?>" onclick="document.location='admin.php?act=usergroups_edit&id=<?php echo $context->getVar("id"); ?>'" />
+			<!--<br />
+			<input type="button" class="minitext" value="<?php echo $context->getVar("L_EDITPERMISSIONS"); ?>" onclick="document.location='admin.php?act=usergroups_permissions&id=<?php echo $context->getVar("id"); ?>'" />
+			--><br />
+			<input type="button" class="minitext" style="color: #FF0000;" value="<?php echo $context->getVar("L_DELETE"); ?>" onclick="if(confirm('<?php echo $context->getVar("L_CHECKDELGROUP"); ?>')) { document.location='admin.php?act=usergroups_remove&id=<?php echo $context->getVar("id"); ?>'; } else { return false; }" />
+		</td>
+	</tr>
+	<?php $context->pop(); endwhile; ?>
+	<?php endif; ?>
+</table>
+<?php endif; ?>

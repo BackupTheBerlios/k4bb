@@ -145,10 +145,8 @@
 	</tr>
 </table>
 <!-- / You don't have permission to view the forums -->
-
 </maps:if>
 <if:else />
-
 <!-- Board is Closed -->
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
@@ -163,8 +161,42 @@
 	</tr>
 </table>
 <!-- / Board is Closed -->
-
 </if:if>
+
+<br />
+
+<!-- Quick Nav Menu -->
+<div align="right" class="smalltext">
+	{$L_JUMPTO}:
+	<select name="quick_nav" id="quick_nav" onchange="jump_to('quick_nav')">
+		<option value="-1">{$L_SELECTAFORUM}</option>
+		<option value="-1">-----------------</option>
+	<list:list id="all_forums">
+	<list:item list="all_forums">
+		<if:if var="row_type" eq="2">
+			<maps:if list="all_forums" forum="id" method="can_view">
+				<if:if var="is_forum" geq="0">
+					<option value="viewforum.php?id={$id}">{$indent_level}{$name}</option>
+				<else:if var="is_link" eq="1" />
+					<if:if var="link_show_redirects" eq="1">
+						<option value="redirect.php?id={$id}">{$indent_level}{$name}</option>
+						<if:else />
+						<option value="{$link_href}">{$indent_level}{$name}</option>
+					</if:if>
+				</if:if>
+			</maps:if>
+		<if:else />
+			<maps:if list="all_forums" category="id" method="can_view">
+				<option value="viewforum.php?id={$id}" class="alt2">{$indent_level}{$name}</option>
+			</maps:if>
+		</if:if>
+	</list:item>
+	</list:list>
+	</select>
+	<input type="button" class="button" value="{$L_GO}" onclick="jump_to('quick_nav')" />
+</div>
+<!-- / Quick Nav Menu -->
+
 <br />
 
 <!-- Footer Breadcrumbs Bit -->
@@ -281,7 +313,7 @@ COPYRIGHT NOTICE
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: forum_base.html,v 1.5 2005/04/13 02:56:41 k4st Exp $
+* @version $Id: forum_base.html,v 1.6 2005/04/19 21:49:19 k4st Exp $
 * @package k42
 */
 -->

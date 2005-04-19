@@ -1,5 +1,11 @@
-INSERT INTO k4_users (name, email, pass, perms) VALUES ('test', 'peter.goodman@gmail.com', '098f6bcd4621d373cade4e832627b4f6', 10);
+INSERT INTO k4_users (name, email, pass, perms, usergroups) VALUES ('test', 'peter.goodman@gmail.com', '098f6bcd4621d373cade4e832627b4f6', 11, 'a:4:{i:0;i:1;i:1;i:3;i:2;i:4;i:3;i:5;}');
 INSERT INTO k4_userinfo (user_id) VALUES (1);
+INSERT INTO k4_users (name, email, pass, perms, usergroups) VALUES ('peter', 'peter.goodman@gmail.com', '098f6bcd4621d373cade4e832627b4f6', 5, 'a:1:{i:0;i:1;}');
+INSERT INTO k4_userinfo (user_id) VALUES (2);
+
+INSERT INTO k4_datastore (varname, data) VALUES ('maxloggedin', 'a:2:{s:9:\"maxonline\";i:0;s:13:\"maxonlinedate\";i:0;}');
+INSERT INTO k4_datastore (varname, data) VALUES ('forumstats', 'a:3:{s:10:\"num_topics\";i:0;s:11:\"num_replies\";i:0;s:11:\"num_members\";i:2;}');
+INSERT INTO k4_datastore (varname, data) VALUES ('search_spiders', 'a:2:{s:13:\"spiderstrings\";s:76:\"googlebot|lycos|ask jeeves|scooter|fast-webcrawler|slurp@inktomi|turnitinbot\";s:11:\"spidernames\";a:7:{s:9:\"googlebot\";s:6:\"Google\";s:5:\"lycos\";s:5:\"Lycos\";s:10:\"ask jeeves\";s:10:\"Ask Jeeves\";s:7:\"scooter\";s:9:\"Altavista\";s:15:\"fast-webcrawler\";s:9:\"AllTheWeb\";s:13:\"slurp@inktomi\";s:7:\"Inktomi\";s:11:\"turnitinbot\";s:12:\"Turnitin.com\";}}');
 
 
 INSERT INTO k4_posticons (description, image) VALUES ('Post', 'icon1.gif');
@@ -29,8 +35,6 @@ INSERT INTO k4_emoticons (description, typed, image, clickable) VALUES('smile', 
 INSERT INTO k4_emoticons (description, typed, image, clickable) VALUES('stick out tongue', ':p', 'icon_razz.gif', 1);
 INSERT INTO k4_emoticons (description, typed, image, clickable) VALUES('wink', ';)', 'icon_wink.gif', 1);
 INSERT INTO k4_emoticons (description, typed, image, clickable) VALUES('twisted', ':twisted:', 'icon_twisted.gif', 1);
-
-INSERT INTO k4_datastore (varname, data) VALUES ('maxloggedin', 'a:2:{s:9:\"maxonline\";i:0;s:13:\"maxonlinedate\";i:0;}');
 
 INSERT INTO k4_styles (name, description) VALUES ('Descent', 'Default theme for the k4 Bulletin Board.');
 
@@ -87,9 +91,14 @@ INSERT INTO k4_css (name, properties, style_id, description) VALUES ('legend', '
 INSERT INTO k4_css (name, properties, style_id, description) VALUES ('td', 'padding: 3px;', 1, 'This applies to every table column.');
 INSERT INTO k4_css (name, properties, style_id, description) VALUES ('td, th, p, li', 'font-size: 10pt;font-family: verdana, geneva, lucida, arial, helvetica, sans-serif;', 1, 'This applies to all table headers, table columns, paragraphs and list items simultaneously.');
 INSERT INTO k4_css (name, properties, style_id, description) VALUES ('td.thead, div.thead', 'padding: 4px;', 1, 'This applies to all secondary header divs and table columns.');
-INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.bbcode_button', 'border: 2px outset #999999; background-color: #F3F3F3;', 1, 'All of the buttons on the BB Code editor.');
-INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.admin_user', 'font-weight: bold;font-style: italic;color: #FFA34F;', 1, 'What the username of an online administrator looks like.');
-INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.mod_user', 'font-style: italic;color: #006600;', 1, 'What the username of an online moderator looks like.');
+INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.bbcode_button', 'border: 2px outset; background-color: #F3F3F3;', 1, 'All of the buttons on the BB Code editor.');
+INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.date_color', 'color: #999999;', 1, 'The different colored text in dates');
+INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.quotetitle', 'width: 90%;font-size: 11px;color: #000000;background-color: #A9B8C2; border: 1px solid #A9B8C2;', 1, 'The title part of a Quote field.');
+INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.quotecontent', 'width: 90%;font-size: 11px;color: #000000;background-color: #FFFFFF; border: 1px solid #A9B8C2;', 1, 'The content part of a Quote field.');
+INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.codetitle', 'width: 90%;font-size: 11px;color: #000000;background-color: #A9B8C2; border: 1px solid #A9B8C2;', 1, 'The title part of a Code field.');
+INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.codecontent', 'width: 90%;font-size: 11px;color: #000000;background-color: #FFFFFF; border: 1px solid #A9B8C2;', 1, 'The content part of a Code field.');
+INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.forumrules', 'padding: 5px;font-size: 11px;background-color: #E4E7F5; border: 1px solid #045975;', 1, 'Forum rules box.');
+INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.forummessage', 'padding: 5px;font-size: 11px;background-color: #E4E7F5; border: 1px solid #045975;', 1, 'Forum special message box.');
 
 INSERT INTO k4_settinggroup VALUES (1,'L_KFOURONOFF',1);
 INSERT INTO k4_settinggroup VALUES (2,'L_GENERALSETTINGS',2);
@@ -134,7 +143,7 @@ INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder
 
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (4,'allowbbimagecode','0','yesno',1);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (4,'allowbbcode','1','yesno',2);
-INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (4,'allowsmilies','1','yesno',3);
+INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (4,'allowemoticons','1','yesno',3);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (4,'maximages','10','',4);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (4,'smcolumns','3','',5);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (4,'smtotal','15','',6);
@@ -192,7 +201,7 @@ INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'enablepms','1','yesno',1);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'privallowbbimgcode','1','yesno',2);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'privallowbbcode','1','yesno',3);
-INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'privallowsmilies','1','yesno',4);
+INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'privallowemoticons','1','yesno',4);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'privallowicons','1','yesno',6);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'pmquota','70','',7);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (14,'checknewpm','1','yesno',8);
@@ -223,16 +232,22 @@ INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder
 INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (1, 14, 1, 'Global Forum Permisions', '', 1, 0, 0, 0, 0, 1, 0, 0, 0, '');
 INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (2, 3, 2, 'Can Users see the Board?', 'can_see_board', 1, 0, 0, 0, 0, 1, 0, 0, 0, '');
 INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (4, 9, 2, 'Who is Online', 'can_see_WO', 1, 0, 0, 0, 0, 1, 0, 0, 0, '');
-INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (5, 6, 3, 'Logged in Users?', 'can_see_WOloggedusers', 1, 0, 0, 0, 0, 1, 0, 0, 0, '');
+INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (5, 5, 3, 'Logged in Users?', 'can_see_WOloggedusers', 1, 0, 0, 0, 0, 1, 0, 0, 0, '');
 INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (7, 8, 3, 'Birthdays?', 'can_see_WObirthdays', 1, 0, 0, 0, 0, 1, 0, 0, 0, '');
 INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (10, 11, 2, 'Memberlist', 'memberlist', 0, 0, 0, 0, 0, 1, 0, 0, 0, '');
 INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (12, 13, 2, 'Advanced Search', 'advsearch', 0, 0, 0, 0, 0, 1, 0, 0, 0, '');
-INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (15, 16, 1, 'FAQ', 'faq', 1, 0, 0, 0, 0, 1, 9, 9, 9, '');
-INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (17, 24, 1, 'Calendar', 'calendar', 0, 0, 0, 0, 0, 1, 2, 2, 7, '');
-INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (18, 19, 2, 'BB Image Code in Event', 'calbbimagecode', 1, 0, 0, 0, 0, 2, 0, 0, 0, '');
-INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (20, 21, 2, 'Smilies in Event', 'calallowsmilies', 1, 0, 0, 0, 0, 2, 0, 0, 0, '');
-INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (22, 23, 2, 'BB Code in Event', 'calallowbbcode', 1, 0, 0, 0, 0, 2, 0, 0, 0, '');
-INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (25, 26, 1, 'User Groups', 'usergroups', 0, 0, 0, 0, 0, 1, 9, 9, 9, '');
+INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (15, 15, 1, 'FAQ', 'faq', 1, 0, 0, 0, 0, 1, 9, 9, 9, '');
+INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (17, 24, 1, 'Calendar', 'calendar', 0, 0, 0, 0, 0, 1, 5, 5, 7, '');
+INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (18, 19, 2, 'BB Image Code in Event', 'calbbimagecode', 1, 0, 0, 0, 0, 5, 0, 0, 0, '');
+INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (20, 21, 2, 'Smilies in Event', 'calallowemoticons', 1, 0, 0, 0, 0, 5, 0, 0, 0, '');
+INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (22, 23, 2, 'BB Code in Event', 'calallowbbcode', 1, 0, 0, 0, 0, 5, 0, 0, 0, '');
+INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (25, 25, 1, 'User Groups', 'usergroups', 0, 0, 0, 0, 0, 1, 9, 9, 9, '');
 INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (27, 28, 1, 'Categories', 'categories', 1, 0, 0, 0, 0, 1, 9, 9, 9, '');
-INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (29, 30, 1, 'Forums', 'forums', 1, 0, 0, 0, 0, 1, 2, 9, 9, '');
+INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (29, 30, 1, 'Forums', 'forums', 1, 0, 0, 0, 0, 1, 9, 9, 9, '');
 INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (31, 32, 1, 'Groups', 'groups', 0, 0, 0, 0, 0, 0, 10, 0, 10, '');
+
+INSERT INTO k4_usergroups (name,description,min_perm,max_perm,color,display_legend) VALUES ('Registered Users', 'Registered users of this board.',5,5,'000000',0);
+INSERT INTO k4_usergroups (name,description,min_perm,max_perm,color,display_legend) VALUES ('Pending Users', 'Users pending registration on this board.',4,4,'999999',0);
+INSERT INTO k4_usergroups (name,description,min_perm,max_perm,color,display_legend) VALUES ('Moderators', 'Moderators of this board.',6,7,'3500CC',1);
+INSERT INTO k4_usergroups (name,description,min_perm,max_perm,color,display_legend) VALUES ('Administrators', 'Administrators of this board.',9,10,'CC0035',1);
+INSERT INTO k4_usergroups (name,description,min_perm,max_perm,color,display_legend) VALUES ('Super Moderators', 'Super Moderators of this board.',7,8,'0E9A04',1);

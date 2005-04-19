@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: maps.class.php,v 1.3 2005/04/13 02:52:47 k4st Exp $
+* @version $Id: maps.class.php,v 1.4 2005/04/19 21:51:45 k4st Exp $
 * @package k42
 */
 
@@ -238,7 +238,7 @@ class AdminInsertMap {
 		/* Prepare the queries */
 		$update_a			= &$this->dba->prepareStatement("UPDATE ". MAPS ." SET row_right = row_right+2 WHERE row_left < ? AND row_right >= ?");
 		$update_b			= &$this->dba->prepareStatement("UPDATE ". MAPS ." SET row_left = row_left+2, row_right=row_right+2 WHERE row_left >= ?");
-		$insert				= &$this->dba->prepareStatement("INSERT INTO ". MAPS ." (row_left,row_right,row_level,name,varname,category_id,forum_id,user_id,group_id,can_view,can_add,can_edit,can_del,inherit) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		$insert				= &$this->dba->prepareStatement("INSERT INTO ". MAPS ." (row_left,row_right,row_level,name,varname,category_id,forum_id,user_id,group_id,can_view,can_add,can_edit,can_del,inherit,value) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 		
 		/* Set the insert variables needed */
 		$update_a->setInt(1, $left);
@@ -260,6 +260,7 @@ class AdminInsertMap {
 		$insert->setInt(12, @$request['can_edit']);
 		$insert->setInt(13, @$request['can_del']);
 		$insert->setInt(14, @$request['inherit']);
+		$insert->setString(15, @$request['value']);
 		
 
 		/**

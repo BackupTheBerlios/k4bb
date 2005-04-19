@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: admin.php,v 1.3 2005/04/13 02:55:20 k4st Exp $
+* @version $Id: admin.php,v 1.4 2005/04/19 21:50:14 k4st Exp $
 * @package k42
 */
 
@@ -132,6 +132,14 @@ $app->AddEvent('forums_update', new AdminUpdateForum);
 $app->AddEvent('forums_remove', new AdminRemoveForum);
 $app->AddEvent('forums_permissions', new AdminForumPermissions);
 $app->AddEvent('forums_updateperms', new AdminUpdateForumPermissions);
+
+/* User Groups */
+$app->AddEvent('usergroups', new AdminUserGroups);
+$app->AddEvent('usergroups_add', new AdminAddUserGroup);
+$app->AddEvent('usergroups_insert', new AdminInsertUserGroup);
+$app->AddEvent('usergroups_remove', new AdminRemoveUserGroup);
+$app->AddEvent('usergroups_edit', new AdminEditUserGroup);
+$app->AddEvent('usergroups_update', new AdminUpdateUserGroup);
 
 $app->ExecutePage();
 

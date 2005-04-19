@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: login.class.php,v 1.2 2005/04/13 02:53:03 k4st Exp $
+* @version $Id: login.class.php,v 1.3 2005/04/19 21:51:59 k4st Exp $
 * @package k42
 */
 
@@ -63,6 +63,7 @@ class LogoutEvent extends Event {
 		/* Make the user into a Guest user rather than a Member */
 		$session['user']		= &new Guest();
 		$session				= session_user_status($session, $_SESSID, TRUE);
+		$session['user']->info['maps'] = get_maps();
 
 		/* Update the database with the new session inforamtion */
 		$update		= &$dba->prepareStatement("UPDATE ". SESSIONS ." SET data=?,name=?,user_id=? WHERE id=?");
@@ -149,6 +150,7 @@ class LoginEvent extends Event {
 		}
 
 		$session		= session_user_status($session, $_SESSID);
+		$session['user']->info['maps'] = get_maps();
 		
 		if(is_a($session['user'], 'Member')) {
 			

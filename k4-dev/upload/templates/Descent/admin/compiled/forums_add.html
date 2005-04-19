@@ -112,6 +112,19 @@
 			</select>
 		</td>
 	</tr>
+	<tr class="alt2">
+		<td width="30%"><strong><?php echo $context->getVar("L_MODERATORS"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('forum_moderators');</script>
+			<select name="moderators[]" id="moderators" tabindex="15" size="5" multiple="multiple">
+				<?php if ($context->listReset("usergroups")): ?>
+				<?php while($context->push($context->listNext("usergroups"))): ?>
+				<option value="<?php echo $context->getVar("id"); ?>"><?php echo $context->getVar("name"); ?></option>
+				<?php $context->pop(); endwhile; ?>
+				<?php endif; ?>
+			</select>
+		</td>
+	</tr>
 	<tr class="tcat">
 		<td colspan="2">
 			<input type="submit" value="<?php echo $context->getVar("L_SAVE"); ?>" tabindex="15" />

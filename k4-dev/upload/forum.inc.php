@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forum.inc.php,v 1.2 2005/04/13 02:55:20 k4st Exp $
+* @version $Id: forum.inc.php,v 1.3 2005/04/19 21:50:14 k4st Exp $
 * @package k42
 */
 
@@ -72,7 +72,7 @@ class Forum_Controller extends Controller {
 	function Forum_Controller($template) {
 
 		/* Globalize the settings and config arrays */
-		global $_SETTINGS;
+		global $_SETTINGS, $_USERGROUPS;
 
 		/* Make sure the default event class exists */
 		if (!class_exists('DefaultEvent'))
@@ -87,6 +87,14 @@ class Forum_Controller extends Controller {
 		/* Set all of the setting values to the template */
 		$this->template->setVarArray($_SETTINGS);
 		
+		/* Set the Jump To Box */
+		$jump_to			= &new AllForumsIterator();
+		$this->template->setList('all_forums', $jump_to);
+		
+		/* Add the usergroups to the template */
+		$usergroups			= &new FAArrayIterator($_USERGROUPS);
+		$this->template->setList('usergroups', $usergroups);
+
 	}
 	
 	/**

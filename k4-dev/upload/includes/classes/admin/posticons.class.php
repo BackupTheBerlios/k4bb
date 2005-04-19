@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: posticons.class.php,v 1.2 2005/04/13 02:52:47 k4st Exp $
+* @version $Id: posticons.class.php,v 1.3 2005/04/19 21:51:45 k4st Exp $
 * @package k42
 */
 
@@ -77,19 +77,24 @@ class AdminInsertPostIcon extends Event {
 			/**		
 			 * Error checking on all _three_ fields :P
 			 */
-			if(!isset($request['description']) || $request['description'] == '')
+			if(!isset($request['description']) || $request['description'] == '') {
 				return $template->setInfo('content', $template->getVar('L_INSERTICONDESC'), TRUE);
-			
-			if(!isset($request['image_browse']) && !isset($_FILES['image_upload']))
+				return TRUE;
+			}
+			if(!isset($request['image_browse']) && !isset($_FILES['image_upload'])) {
 				return $template->setInfo('content', $template->getVar('L_NEEDCHOOSEICONIMG'), TRUE);
+				return TRUE;
+			}
 			
 			if(isset($_FILES['image_upload']) && is_array($_FILES['image_upload']))
 				$filename	= $_FILES['image_upload']['tmp_name'];
 			
-			if(isset($request['image_browse']) && $request['image_browse'] != '')
+			if(isset($request['image_browse']) && $request['image_browse'] != '') {
 				$filename	= $request['image_browse'];
-			else
-				return $template->setInfo('content', $template->getVar('L_NEEDCHOOSEICONIMG'), TRUE);
+			} else {
+				$template->setInfo('content', $template->getVar('L_NEEDCHOOSEICONIMG'), TRUE);
+				return TRUE;
+			}
 			
 
 			$file_ext		= explode(".", $filename);
@@ -98,10 +103,13 @@ class AdminInsertPostIcon extends Event {
 			if(count($file_ext) >= 2) {
 				$file_ext		= $file_ext[count($file_ext) - 1];
 
-				if(!in_array(strtolower($file_ext), $exts))
-					return $template->setInfo('content', $template->getVar('L_INVALIDICONEXT'), TRUE);
+				if(!in_array(strtolower($file_ext), $exts)) {
+					$template->setInfo('content', $template->getVar('L_INVALIDICONEXT'), TRUE);
+					return TRUE;
+				}
 			} else {
-				return $template->setInfo('content', $template->getVar('L_INVALIDICONEXT'), TRUE);
+				$template->setInfo('content', $template->getVar('L_INVALIDICONEXT'), TRUE);
+				return TRUE;
 			}
 			
 			/**
@@ -136,16 +144,23 @@ class AdminRemovePostIcon extends Event {
 		
 		if(is_a($session['user'], 'Member') && ($user['perms'] >= ADMIN)) {
 			
-			if(!isset($request['id']) || intval($request['id']) == 0)
-				return $template->setInfo('content', $template->getVar('L_POSTICONDOESNTEXIST'), FALSE);	
+			if(!isset($request['id']) || intval($request['id']) == 0) {
+				$template->setInfo('content', $template->getVar('L_POSTICONDOESNTEXIST'), FALSE);
+				return TRUE;
+			}
 
 			$icon			= $dba->getRow("SELECT * FROM ". POSTICONS ." WHERE id = ". intval($request['id']));
 			
-			if(!is_array($icon) || empty($icon))
-				return $template->setInfo('content', $template->getVar('L_POSTICONDOESNTEXIST'), FALSE);
+			if(!is_array($icon) || empty($icon)) {
+				$template->setInfo('content', $template->getVar('L_POSTICONDOESNTEXIST'), FALSE);
+				return TRUE;
+			}
 			
 			/* Remove the icon from the db */
 			$dba->executeUpdate("DELETE FROM ". POSTICONS ." WHERE id = ". intval($icon['id']));
+
+			/* Change all of the topics to have no icon */
+			$dba->executeUpdate("UPDATE ". TOPICS ." SET posticon = '' WHERE posticon = '". $dba->quote($icon['image']) ."'");
 			
 			/* Remove the actual icon */
 			$dir		= FORUM_BASE_DIR . '/tmp/upload/posticons';
@@ -168,13 +183,17 @@ class AdminEditPostIcon extends Event {
 		
 		if(is_a($session['user'], 'Member') && ($user['perms'] >= ADMIN)) {
 			
-			if(!isset($request['id']) || intval($request['id']) == 0)
-				return $template->setInfo('content', $template->getVar('L_POSTICONDOESNTEXIST'), FALSE);	
+			if(!isset($request['id']) || intval($request['id']) == 0) {
+				$template->setInfo('content', $template->getVar('L_POSTICONDOESNTEXIST'), FALSE);
+				return TRUE;
+			}
 
 			$icon			= $dba->getRow("SELECT * FROM ". POSTICONS ." WHERE id = ". intval($request['id']));
 			
-			if(!is_array($icon) || empty($icon))
-				return $template->setInfo('content', $template->getVar('L_POSTICONDOESNTEXIST'), FALSE);
+			if(!is_array($icon) || empty($icon)) {
+				$template->setInfo('content', $template->getVar('L_POSTICONDOESNTEXIST'), FALSE);
+				return TRUE;
+			}
 
 			foreach($icon as $key => $val) {
 				$template->setVar('icon_'. $key, $val);
@@ -199,27 +218,34 @@ class AdminUpdatePostIcon extends Event {
 			 * Error checking on all _three_ fields :P
 			 */
 
-			if(!isset($request['id']) || intval($request['id']) == 0)
-				return $template->setInfo('content', $template->getVar('L_POSTICONDOESNTEXIST'), FALSE);	
+			if(!isset($request['id']) || intval($request['id']) == 0) {
+				$template->setInfo('content', $template->getVar('L_POSTICONDOESNTEXIST'), FALSE);	
+				return TRUE;
+			}
 
 			$icon			= $dba->getRow("SELECT * FROM ". POSTICONS ." WHERE id = ". intval($request['id']));
 			
-			if(!is_array($icon) || empty($icon))
-				return $template->setInfo('content', $template->getVar('L_POSTICONDOESNTEXIST'), FALSE);
-
-			if(!isset($request['description']) || $request['description'] == '')
-				return $template->setInfo('content', $template->getVar('L_INSERTICONDESC'), TRUE);
-			
-			if(!isset($request['image_browse']) && !isset($_FILES['image_upload']))
-				return $template->setInfo('content', $template->getVar('L_NEEDCHOOSEICONIMG'), TRUE);
-			
-			if(isset($_FILES['image_upload']) && is_array($_FILES['image_upload']))
+			if(!is_array($icon) || empty($icon)) {
+				$template->setInfo('content', $template->getVar('L_POSTICONDOESNTEXIST'), FALSE);
+				return TRUE;
+			}
+			if(!isset($request['description']) || $request['description'] == '') {
+				$template->setInfo('content', $template->getVar('L_INSERTICONDESC'), TRUE);
+				return TRUE;
+			}
+			if(!isset($request['image_browse']) && !isset($_FILES['image_upload'])) {
+				$template->setInfo('content', $template->getVar('L_NEEDCHOOSEICONIMG'), TRUE);
+				return TRUE;
+			}
+			if(isset($_FILES['image_upload']) && is_array($_FILES['image_upload'])) {
 				$filename	= $_FILES['image_upload']['tmp_name'];
-			
-			if(isset($request['image_browse']) && $request['image_browse'] != '')
+			}
+			if(isset($request['image_browse']) && $request['image_browse'] != '') {
 				$filename	= $request['image_browse'];
-			else
-				return $template->setInfo('content', $template->getVar('L_NEEDCHOOSEICONIMG'), TRUE);
+			} else {
+				$template->setInfo('content', $template->getVar('L_NEEDCHOOSEICONIMG'), TRUE);
+				return TRUE;
+			}
 			
 
 			$file_ext		= explode(".", $filename);
@@ -228,14 +254,17 @@ class AdminUpdatePostIcon extends Event {
 			if(count($file_ext) >= 2) {
 				$file_ext		= $file_ext[count($file_ext) - 1];
 
-				if(!in_array(strtolower($file_ext), $exts))
-					return $template->setInfo('content', $template->getVar('L_INVALIDICONEXT'), TRUE);
+				if(!in_array(strtolower($file_ext), $exts)) {
+					$template->setInfo('content', $template->getVar('L_INVALIDICONEXT'), TRUE);
+					return TRUE;
+				}
 			} else {
-				return $template->setInfo('content', $template->getVar('L_INVALIDICONEXT'), TRUE);
+				$template->setInfo('content', $template->getVar('L_INVALIDICONEXT'), TRUE);
+				return TRUE;
 			}
 			
 			/**
-			 * Add the icon finally
+			 * Update the icon finally
 			 */
 			$query		= &$dba->prepareStatement("UPDATE ". POSTICONS ." SET description=?,image=? WHERE id=?");
 			$query->setString(1, $request['description']);
@@ -250,6 +279,9 @@ class AdminUpdatePostIcon extends Event {
 				@chmod($dir, 0777);
 				@move_uploaded_file($_FILES['image_upload']['tmp_name'], $dir .'/'. $filename);
 			}
+			
+			/* Change all of the topics to have no icon */
+			$dba->executeUpdate("UPDATE ". TOPICS ." SET posticon = '". $dba->quote($filename) ."' WHERE posticon = '". $dba->quote($icon['image']) ."'");
 
 			$template->setInfo('content', $template->getVar('L_UPDATEDPOSTICON'), TRUE);
 			$template->setRedirect('admin.php?act=posticons', 3);

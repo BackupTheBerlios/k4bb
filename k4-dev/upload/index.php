@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.4 2005/04/13 02:55:20 k4st Exp $
+* @version $Id: index.php,v 1.5 2005/04/19 21:50:14 k4st Exp $
 * @package k42
 */
 
@@ -35,12 +35,21 @@ require 'forum.inc.php';
 
 /*
 global $_DBA;
-$query = "";
+$query = "
+delete from k4_sessions;
+delete from k4_users;
+delete from k4_userinfo;
+INSERT INTO k4_users (name, email, pass, perms, usergroups) VALUES ('test', 'peter.goodman@gmail.com', '098f6bcd4621d373cade4e832627b4f6', 11, 'a:3:{i:0;i:1;i:1;i:3;i:2;i:4;}');
+INSERT INTO k4_userinfo (user_id) VALUES (1);
+INSERT INTO k4_users (name, email, pass, perms, usergroups) VALUES ('peter', 'peter.goodman@gmail.com', '098f6bcd4621d373cade4e832627b4f6', 5, 'a:1:{i:0;i:1;}');
+INSERT INTO k4_userinfo (user_id) VALUES (2);";
 
-foreach(explode(";", $query) as $q)
+foreach(explode("\r\n", $query) as $q)
 	if($q != '')
 		$_DBA->executeUpdate($q);
-*//*$result = $_DBA->executeQuery("select * from ". MAPS ." ORDER BY row_left ASC");
+exit;
+*/
+/*$result = $_DBA->executeQuery("select * from ". MAPS ." ORDER BY row_left ASC");
 while($result->next()) {
 	$temp = $result->current();
 	$query = "INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value)";
@@ -52,8 +61,26 @@ exit; */
 class DefaultEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 
-		global $_DATASTORE;
+		global $_DATASTORE, $_USERGROUPS;
+
+		/*
+		$text = ':(<p>hello world</p><a href="www.google.com">hiiii</a>';
 		
+		//echo str_replace('"','\"', serialize(array('spiderstrings'=>'googlebot|lycos|ask jeeves|scooter|fast-webcrawler|slurp@inktomi|turnitinbot','spidernames'=>array('googlebot' => 'Google','lycos' => 'Lycos','ask jeeves' => 'Ask Jeeves','scooter' => 'Altavista','fast-webcrawler' => 'AllTheWeb','slurp@inktomi' => 'Inktomi','turnitinbot' => 'Turnitin.com'))));
+		
+		
+		$bbcode	= &new BBCodex(&$user, $text, 2, TRUE, TRUE, TRUE, TRUE);
+		
+		$text = $bbcode->parse();
+		
+		echo $text;
+		echo '<br />';
+		$bbcode	= &new BBCodex(&$user, $text, 2, TRUE, TRUE, TRUE, TRUE);
+		
+		$text = $bbcode->revert();
+
+		echo '<textarea rows="5" cols="100">'. $text .'</textarea>';
+		*/
 		/* Set the breadcrumbs bit */
 		$template		= BreadCrumbs($template, $template->getVar('L_HOME'));
 		
@@ -61,6 +88,9 @@ class DefaultEvent extends Event {
 		//$dba->executeQuery("delete from k4_information");
 		//$dba->executeQuery("delete from k4_categories");
 		//$dba->executeQuery("delete from k4_forums");
+		//$dba->executeQuery("delete from k4_topics");
+		//$dba->executeQuery("delete from k4_replies");
+		//$dba->executeQuery("delete from k4_sessions");
 		
 		/* Set the globals for num_topics and num_replies here */
 		Globals::setGlobal('num_topics', 0);
@@ -85,10 +115,10 @@ class DefaultEvent extends Event {
 
 		$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members'),
 						'num_invisible'		=> Globals::getGlobal('num_online_invisible'),
-						'num_topics'		=> Globals::getGlobal('num_topics'),
-						'num_replies'		=> Globals::getGlobal('num_replies'),
-						'num_members'		=> $dba->getValue("SELECT COUNT(*) FROM ". USERS),
-						'num_online_total'	=> $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS),
+						'num_topics'		=> $_DATASTORE['forumstats']['num_topics'],
+						'num_replies'		=> $_DATASTORE['forumstats']['num_replies'],
+						'num_members'		=> $_DATASTORE['forumstats']['num_members'],
+						'num_online_total'	=> $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS ),
 						'newest_uid'		=> $newest_user['id'],
 						'newest_user'		=> $newest_user['name']
 						);
@@ -110,7 +140,19 @@ class DefaultEvent extends Event {
 			$query->executeUpdate();
 		}
 		
+		/* Show the forum status icons */
 		$template->show('forum_status_icons');
+		
+		$groups				= array();
+
+		/* Set the usergroups legend list */
+		foreach($_USERGROUPS as $group) {
+			if($group['display_legend'] == 1)
+				$groups[]	= $group;
+		}
+
+		$groups				= &new FAArrayIterator($groups);
+		$template->setList('usergroups_legend', $groups);
 
 		/* Set the forums template to content variable */
 		$template->setFile('content', 'forums.html');

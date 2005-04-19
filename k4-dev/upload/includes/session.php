@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.7 2005/04/13 02:52:05 k4st Exp $
+* @version $Id: session.php,v 1.8 2005/04/19 21:51:02 k4st Exp $
 * @package k42
 */
 
@@ -38,12 +38,15 @@ if(!defined('IN_K4')) {
 
 function session_user_status(&$session, $sessid, $logout = FALSE) {
 	
+	global $_DATASTORE;
+
 	/* Check over the user info and pre set this user to be a Gues */
 	if (!isset($session['user']) || !is_a($session['user'], 'User'))
 		$session['user']					= &new Guest();
 	
 	/* If we are _not_ logging out */
 	if(!$logout) {
+		
 		/* Check to see if we should auto-log this person in or not */
 		if(!is_a($session['user'], 'Member')) {
 			
@@ -60,9 +63,14 @@ function session_user_status(&$session, $sessid, $logout = FALSE) {
 			}
 		}
 	}
-	
-	/* Get the MAPS */
-	$session['user']->info['maps'] = get_cached_maps();
+
+	if(is_a($session['user'], 'Guest')) {
+		preg_match("~(". $_DATASTORE['search_spiders']['spiderstrings'] .")~is", USER_AGENT, $matches);
+		
+		if(count($matches) >= 2) {
+			$session['user']->info['name']	= $_DATASTORE['search_spiders']['spidernames'][$matches[1]];
+		}
+	}
 
 	/* Set the session id to the globals class to get it later */
 	Globals::setGlobal('_SESSID', $sessid);
@@ -75,6 +83,7 @@ class FADBSession {
 	var $write_stmt;
 	var $update_stmt;
 	var $destroy_stmt;
+	var $user_stmt;
 	var $gc_stmt;
 	var $dba;
 	var $url;
@@ -91,9 +100,9 @@ class FADBSession {
 		$this->location_id	= isset($this->url->args['id']) && intval($this->url->args['id']) != 0 ? intval($this->url->args['id']) : 0;
 
 		//$this->read_stmt	= $this->dba->prepareStatement("SELECT * FROM ". SESSIONS ." WHERE id=?");
-		//$this->check_stmt	= $this->dba->prepareStatement("SELECT * FROM ". SESSIONS ." WHERE name=?");
-		$this->write_stmt	= $this->dba->prepareStatement("INSERT INTO ". SESSIONS ." (id, seen, name, user_id, data, location_file, location_act, location_id) VALUES(?,?,?,?,?,?,?,?)");
-		$this->update_stmt	= $this->dba->prepareStatement("UPDATE ". SESSIONS ." SET data=?,seen=?,location_file=?,location_act=?,location_id=? WHERE id=?");
+		$this->user_stmt	= $this->dba->prepareStatement("UPDATE ". USERS ." SET last_seen=? WHERE id=?");
+		$this->write_stmt	= $this->dba->prepareStatement("INSERT INTO ". SESSIONS ." (id, seen, name, user_id, user_agent, data, location_file, location_act, location_id) VALUES(?,?,?,?,?,?,?,?,?)");
+		$this->update_stmt	= $this->dba->prepareStatement("UPDATE ". SESSIONS ." SET name=?,user_id=?,data=?,seen=?,user_agent=?,location_file=?,location_act=?,location_id=? WHERE id=?");
 		$this->destroy_stmt = $this->dba->prepareStatement("DELETE FROM ". SESSIONS ." WHERE sess_id=?");
 		$this->gc_stmt		= $this->dba->prepareStatement("DELETE FROM ". SESSIONS ." WHERE seen<?");
 	}
@@ -108,39 +117,54 @@ class FADBSession {
 
 	function read($sessid) {
 		
-		$rs				= $this->dba->getRow("SELECT * FROM ". SESSIONS ." WHERE id = '". md5($sessid) ."'");
+		$rs							= $this->dba->getRow("SELECT * FROM ". SESSIONS ." WHERE id = '". md5($sessid) ."'");
 		
-		$data			= is_array($rs) && !empty($rs) && $rs['data'] != '' ? @unserialize($rs['data']) : array();
+		$data						= is_array($rs) && !empty($rs) && $rs['data'] != '' ? @unserialize($rs['data']) : array();
 		
-		$data			= session_user_status($data, md5($sessid));
-
+		$data						= session_user_status($data, md5($sessid));
+		
+		/* Set this user's seen time to now or what the session has */
+		$data['seen']				= !isset($rs['seen']) ? time() : $rs['seen'];
+		$data['user']->info['seen']	= !isset($rs['seen']) ? time() : $rs['seen'];
+		
 		/* Add the session to the database.. this could have a user as being logged if the
 		 * logged in cookie is set from a previous login
 		 */
+		
 		if (!is_array($rs) || empty($rs)) {
 			
 			/* Do the 'write' query here */
 			$this->write_stmt->setString(1, md5($sessid));
-			$this->write_stmt->setInt(2,	time());
+			$this->write_stmt->setInt(2,	time()); // bbtime()
 			$this->write_stmt->setString(3, $data['user']->info['name']);
 			$this->write_stmt->setInt(4,	$data['user']->info['id']);
 			$this->write_stmt->setString(5, serialize($data));
-			$this->write_stmt->setString(6, $this->url->file);
-			$this->write_stmt->setString(7, $this->location_act );
-			$this->write_stmt->setInt(8,	$this->location_id );
+			$this->write_stmt->setString(6, USER_AGENT);
+			$this->write_stmt->setString(7, $this->url->file);
+			$this->write_stmt->setString(8, $this->location_act );
+			$this->write_stmt->setInt(9,	$this->location_id );
 			
 			$this->write_stmt->executeUpdate();
 		} else {
 			
 			/* Do the 'update' query here, this is also used for writing */
-			$this->update_stmt->setString(1,	serialize($data));
-			$this->update_stmt->setInt(2,		time());
-			$this->update_stmt->setString(3,	$this->url->file);
-			$this->update_stmt->setString(4,	$this->location_act);
-			$this->update_stmt->setInt(5,		$this->location_id);
-			$this->update_stmt->setString(6,	md5($sessid));
+			$this->update_stmt->setString(1,	$data['user']->info['name']);
+			$this->update_stmt->setInt(2,		$data['user']->info['id']);
+			$this->update_stmt->setString(3,	serialize($data));
+			$this->update_stmt->setInt(4,		time()); // bbtime()
+			$this->update_stmt->setString(5,	USER_AGENT);
+			$this->update_stmt->setString(6,	$this->url->file);
+			$this->update_stmt->setString(7,	$this->location_act);
+			$this->update_stmt->setInt(8,		$this->location_id);
+			$this->update_stmt->setString(9,	md5($sessid));
 			
 			$this->update_stmt->executeUpdate();
+		}
+
+		if(is_a($data['user'], 'Member')) {
+			$this->user_stmt->setInt(1, bbtime());
+			$this->user_stmt->setInt(2, $data['user']->info['id']);
+			$this->user_stmt->executeUpdate();
 		}
 
 		/* Secondary Garbage collecting measures */
@@ -150,6 +174,9 @@ class FADBSession {
 		if(isset($data['bbcache']))
 			$_SESSION['bbcache'] = $data['bbcache'];
 		
+		/* Get this users permissions, they will NOT be inserted into the db */
+		$data['user']->info['maps'] = get_maps();
+
 		Globals::setGlobal('session', &$data);
 		Globals::setGlobal('user', &$data['user']->info);
 
@@ -164,12 +191,18 @@ class FADBSession {
 		$session			= &Globals::getGlobal('session');
 		$session['bbcache'] = $bbcache;
 		
-		$this->update_stmt->setString(1, serialize($session));
-		$this->update_stmt->setInt(2, time());
-		$this->update_stmt->setString(3, $this->url->file);
-		$this->update_stmt->setString(4, $this->location_act);
-		$this->update_stmt->setInt(5, $this->location_id);
-		$this->update_stmt->setString(6, md5($sessid));
+		/* Don't put this user's perms into the database / memory saving */
+		unset($session['user']->info['maps']);
+		
+		$this->update_stmt->setString(1,	$session['user']->info['name']);
+		$this->update_stmt->setInt(2,		$session['user']->info['id']);
+		$this->update_stmt->setString(3,	serialize($session));
+		$this->update_stmt->setInt(4,		time());
+		$this->update_stmt->setString(5,	USER_AGENT);
+		$this->update_stmt->setString(6,	$this->url->file);
+		$this->update_stmt->setString(7,	$this->location_act);
+		$this->update_stmt->setInt(8,		$this->location_id);
+		$this->update_stmt->setString(9,	md5($sessid));
 		
 		$this->update_stmt->executeUpdate();
 

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: init.php,v 1.4 2005/04/13 02:52:05 k4st Exp $
+* @version $Id: init.php,v 1.5 2005/04/19 21:51:02 k4st Exp $
 * @package k42
 */
 
@@ -44,17 +44,13 @@ require FORUM_BASE_DIR. '/includes/maps.php';
 require FORUM_BASE_DIR. '/includes/heirarchy.php';
 require FORUM_BASE_DIR. '/includes/bbcode.php';
 
-/* Sessions */
-require FORUM_BASE_DIR. '/includes/classes/globals.class.php';
-include FORUM_BASE_DIR.	'/includes/session.php';
-
 /* Classes */
 require FORUM_BASE_DIR. '/includes/classes/breadcrumbs.class.php';
 require FORUM_BASE_DIR. '/includes/classes/categories.class.php';
 require FORUM_BASE_DIR. '/includes/classes/forums.class.php';
 require FORUM_BASE_DIR. '/includes/classes/topics.class.php';
 require FORUM_BASE_DIR. '/includes/classes/online_users.class.php';
-
+require FORUM_BASE_DIR. '/includes/classes/globals.class.php';
 require FORUM_BASE_DIR. '/includes/classes/member/login.class.php';
 
 /* Admin Classes */
@@ -64,5 +60,9 @@ require FORUM_BASE_DIR. '/includes/classes/admin/emoticons.class.php';
 require FORUM_BASE_DIR. '/includes/classes/admin/files.class.php';
 require FORUM_BASE_DIR. '/includes/classes/admin/categories.class.php';
 require FORUM_BASE_DIR. '/includes/classes/admin/forums.class.php';
+require FORUM_BASE_DIR. '/includes/classes/admin/usergroups.class.php';
+
+/* Sessions */
+include FORUM_BASE_DIR.	'/includes/session.php';
 
 ?>

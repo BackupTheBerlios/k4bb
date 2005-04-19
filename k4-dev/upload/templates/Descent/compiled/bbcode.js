@@ -93,9 +93,10 @@ function create_color_select(id) {
  * Function to create font size selector
  */
 function create_size_select(id) {
-	var options = new Array('<?php echo $context->getVar("L_FONT_SIZE"); ?>', '<?php echo $context->getVar("L_FONT_NORMAL"); ?>', '<?php echo $context->getVar("L_FONT_TINY"); ?>', '<?php echo $context->getVar("L_FONT_SMALL"); ?>', '<?php echo $context->getVar("L_FONT_LARGE"); ?>', '<?php echo $context->getVar("L_FONT_HUGE"); ?>')
-	var values	= new Array('', 12, 7, 9, 18, 24)
-	var styles	= new Array()
+	
+	var options = new Array('<?php echo $context->getVar("L_FONT_SIZE"); ?>', '<?php echo $context->getVar("L_FONT_TINY"); ?>', '<?php echo $context->getVar("L_FONT_SMALL"); ?>', '<?php echo $context->getVar("L_FONT_NORMAL"); ?>', '<?php echo $context->getVar("L_FONT_LARGE"); ?>', '<?php echo $context->getVar("L_FONT_HUGE"); ?>')
+	var values	= new Array(12, 7, 9, 12, 18, 24)
+	var styles	= new Array('font-size: auto;', 'font-size: 8px;', 'font-size: 9px;', 'font-size: 12px;')
 	
 	/* Create our select menu */
 	draw_select('size', 'size_' + id + 'codex', values, styles, options);

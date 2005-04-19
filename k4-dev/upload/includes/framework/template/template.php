@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: template.php,v 1.2 2005/04/13 02:54:17 k4st Exp $
+* @version $Id: template.php,v 1.3 2005/04/19 21:52:48 k4st Exp $
 * @package k42
 */
 
@@ -235,17 +235,20 @@ class Template {
 		}
 	}
 
-	function setError($section, $error, $backbutton = TRUE) {
+	function setError($section, $error, $backbutton = TRUE, $after) {
 		$this->setFile($section, 'information.html');
 		$this->setVar('information', $error);
 		if($backbutton)
 			$this->show('info_back_button');
 		else
 			$this->hide('info_back_button');
+
+		if($after)
+			$this->setVar('information_after', $after);
 	}
 
-	function setInfo($section, $msg, $backbutton = FALSE) {
-		$this->setError($section, $msg, $backbutton);
+	function setInfo($section, $msg, $backbutton = FALSE, $after = FALSE) {
+		$this->setError($section, $msg, $backbutton, $after);
 	}
 
 	function setRedirect($url, $seconds) {

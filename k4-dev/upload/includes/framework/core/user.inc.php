@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: user.inc.php,v 1.3 2005/04/13 02:53:33 k4st Exp $
+* @version $Id: user.inc.php,v 1.4 2005/04/19 21:52:22 k4st Exp $
 * @package k42
 */
 
@@ -217,20 +217,9 @@ class Member extends User {
 class Guest extends User {
 	function Guest() {
 		parent::User();
-
+		
 		$this->info	= array('name' => '', 'email' => '', 'id' => 0, 'perms' => 1, 'styleset' => '');
 	}
-	/*
-	function __sleep() {
-		return array();
-	}
-
-	function __wakeup() {
-		parent::__wakeup();
-
-		$this->info	= array('name' => '', 'email' => '', 'id' => 0, 'perms' => 1);
-	}
-	*/
 	function Register($info) {
 		
 		$name		= $this->dba->Quote($info['name']);
@@ -239,7 +228,7 @@ class Guest extends User {
 		$pass		= md5($info['pass']);
 		$time		= time();
 		
-		$sql		= "INSERT INTO ". USERS ." (name,email,pass,created) VALUES ('$name','$email','$pass',$time)"; //'". $lang['L_JUNIORMEMBER'] ."'
+		$sql		= "INSERT INTO ". USERS ." (name,email,pass,created) VALUES ('$name','$email','$pass',$time)";
 
 		$this->dba->executeUpdate($sql);
 		$ug			= new Usergroup($info);

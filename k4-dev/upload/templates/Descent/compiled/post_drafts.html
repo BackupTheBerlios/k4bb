@@ -1,0 +1,42 @@
+<!-- Drafts -->
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="3"><?php echo $context->getVar("L_LOADDRAFT"); ?></td>
+	</tr>
+	<tr class="panel">
+		<td colspan="3">
+			<div align="center">
+				<?php echo $context->getVar("L_DRAFTNOTICE"); ?>
+			</td>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td><?php echo $context->getVar("L_SAVEDON"); ?></td>
+		<td><?php echo $context->getVar("L_DRAFTTITLE"); ?></td>
+		<td><?php echo $context->getVar("L_OPTIONS"); ?></td>
+	</tr>
+	<?php if ($context->listReset("drafts")): ?>
+	<?php while($context->push($context->listNext("drafts"))): ?>
+	<?php switch($context->listKey("drafts") % 2):  case 0: $context->push(array('row_class' => 'alt1')); break;  case 1: $context->push(array('row_class' => 'alt2')); break;  default: $context->push(array()); endswitch; ?>
+	<tr class="<?php echo $context->getVar("row_class"); ?>">
+	<?php $context->pop(); ?>
+		<td width="20%">
+			<span class="smalltext">
+				<?php ob_start(); $format = "%b %d %y";  echo $context->getVar("created");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?>&nbsp;<span class="date_color"><?php ob_start(); $format = "%I:%M%p";  echo $context->getVar("created");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?></span>
+			</span>
+		</td>
+		<td width="60%">
+			<strong><?php echo $context->getVar("name"); ?></strong><br />
+			<span class="smalltext">
+				<?php echo $context->getVar("L_FORUM"); ?>: <a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>" title="<?php echo $context->getVar("forum_name"); ?>"><?php echo $context->getVar("forum_name"); ?></a>
+			</span>
+		</td>
+		<td width="20%">
+			<a href="newtopic.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;draft=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_LOADDRAFT"); ?>"><?php echo $context->getVar("L_LOADDRAFT"); ?></a>
+		</td>
+	</tr>
+	<?php $context->pop(); endwhile; ?>
+	<?php endif; ?>
+<table>
+<!-- / Drafts -->
+<br />

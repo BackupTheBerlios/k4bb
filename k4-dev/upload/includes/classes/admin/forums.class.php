@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.1 2005/04/13 02:52:47 k4st Exp $
+* @version $Id: forums.class.php,v 1.2 2005/04/19 21:51:45 k4st Exp $
 * @package k42
 */
 
@@ -196,7 +196,7 @@ class AdminInsertForum extends Event {
 			$update_a			= &$this->dba->prepareStatement("UPDATE ". INFO ." SET row_right = row_right+2 WHERE row_left < ? AND row_right >= ?");
 			$update_b			= &$this->dba->prepareStatement("UPDATE ". INFO ." SET row_left = row_left+2, row_right=row_right+2 WHERE row_left >= ?");
 			$insert_a			= &$dba->prepareStatement("INSERT INTO ". INFO ." (name,row_left,row_right,row_type,row_level,created,row_order,parent_id) VALUES (?,?,?,?,?,?,?,?)");
-			$insert_b			= &$dba->prepareStatement("INSERT INTO ". FORUMS ." (category_id,forum_id,description,pass,is_forum,is_link,link_href,link_show_redirects,forum_rules,special_message,topicsperpage,postsperpage,maxpolloptions,defaultlang) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			$insert_b			= &$dba->prepareStatement("INSERT INTO ". FORUMS ." (category_id,forum_id,description,pass,is_forum,is_link,link_href,link_show_redirects,forum_rules,special_message,topicsperpage,postsperpage,maxpolloptions,defaultlang,moderating_groups) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
 			/* Set the update values */
 			$update_a->setInt(1, $left);
@@ -238,6 +238,7 @@ class AdminInsertForum extends Event {
 			$insert_b->setInt(12, $request['postsperpage']);
 			$insert_b->setInt(13, $request['maxpolloptions']);
 			$insert_b->setString(14, $request['defaultlang']);
+			$insert_b->setString(15, iif(isset($request['moderators']) && is_array($request['moderators']) && !empty($request['moderators']), serialize($request['moderators']), ''));
 			
 			/* Insert the extra forum info */
 			$insert_b->executeUpdate();
@@ -384,7 +385,7 @@ class AdminEditForum extends Event {
 		
 		if(is_a($session['user'], 'Member') && ($user['perms'] >= ADMIN)) {
 			
-			global $_QUERYPARAMS;
+			global $_QUERYPARAMS, $_USERGROUPS;
 
 			if(!isset($request['id']) || intval($request['id']) == 0) {
 				$template->setInfo('content', $template->getVar('L_INVALIDFORUM'), FALSE);
@@ -409,6 +410,19 @@ class AdminEditForum extends Event {
 				if($file != '.' && $file != '..' && is_dir(FORUM_BASE_DIR .'/includes/lang/'. $file)) {
 					$languages[]		= array('lang' => $file, 'name' => ucfirst($file));
 				}
+			}
+
+			$groups		= @unserialize($forum['moderating_groups']);
+			$groups_str	= '';
+
+			if(is_array($groups)) {
+				foreach($groups as $g) {
+					if(isset($_USERGROUPS[$g])) {
+						$groups_str	.= $g .' ';
+					}
+				}
+
+				$template->setVar('forum_moderating_groups', iif(strlen($groups_str) > 0, substr($groups_str, 0, -1), ''));
 			}
 
 			$languages					= &new FAArrayIterator($languages);
@@ -467,7 +481,7 @@ class AdminUpdateForum extends Event {
 						
 			/* Build the queries */
 			$update_a			= &$dba->prepareStatement("UPDATE ". INFO ." SET name=?,row_order=? WHERE id=?");
-			$update_b			= &$dba->prepareStatement("UPDATE ". FORUMS ." SET description=?,pass=?,is_forum=?,is_link=?,link_href=?,link_show_redirects=?,forum_rules=?,special_message=?,topicsperpage=?,postsperpage=?,maxpolloptions=?,defaultlang=? WHERE forum_id=?");
+			$update_b			= &$dba->prepareStatement("UPDATE ". FORUMS ." SET description=?,pass=?,is_forum=?,is_link=?,link_href=?,link_show_redirects=?,forum_rules=?,special_message=?,topicsperpage=?,postsperpage=?,maxpolloptions=?,defaultlang=?,moderating_groups=? WHERE forum_id=?");
 			$update_c			= &$dba->prepareStatement("UPDATE ". MAPS ." SET name=? WHERE varname=?");
 
 			/* Set the query values */
@@ -488,7 +502,8 @@ class AdminUpdateForum extends Event {
 			$update_b->setInt(10, $request['postsperpage']);
 			$update_b->setInt(11, $request['maxpolloptions']);
 			$update_b->setString(12, $request['defaultlang']);
-			$update_b->setInt(13, $forum['id']);
+			$update_b->setString(13, iif(isset($request['moderators']) && is_array($request['moderators']) && !empty($request['moderators']), serialize($request['moderators']), ''));
+			$update_b->setInt(14, $forum['id']);
 			
 			/* Simple update on the maps table */
 			$update_c->setString(1, $request['name']);
@@ -525,25 +540,25 @@ class AdminRemoveForum extends Event {
 			$forum					= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($request['id']));
 
 			if(!is_array($forum) || empty($forum))
-				return $template->setInfo('content', $template->getVar('L_INVALIDFORUM'), FALSE);			
-			
-			$forum_maps		= $dba->getRow("SELECT * FROM ". MAPS ." WHERE varname = 'forum". $forum['id'] ."'");
+				return $template->setInfo('content', $template->getVar('L_INVALIDFORUM'), FALSE);
 
-			$delete_a		= &$dba->prepareStatement("DELETE FROM ". FORUMS ." WHERE forum_id=?");
-			$delete_b		= &$dba->prepareStatement("DELETE FROM ". TOPICS ." WHERE forum_id=?");
-			$delete_c		= &$dba->prepareStatement("DELETE FROM ". REPLIES ." WHERE forum_id=?");
+			$forums			= &$dba->executeQuery("SELECT * FROM ". INFO ." WHERE row_left >= ". intval($forum['row_left']) ." AND row_right <= ". intval($forum['row_right']) ." AND row_type = ". FORUM);
 			
 			$heirarchy		= &new Heirarchy();
+			
+			/* Deal with this forum and any sub-forums */
+			while($forums->next()) {
+				$f				= $forums->current();
+				$forum_maps		= $dba->getRow("SELECT * FROM ". MAPS ." WHERE varname = 'forum". $f['id'] ."'");
+				$heirarchy->removeNode($forum_maps, MAPS);
+
+				$dba->executeUpdate("DELETE FROM ". FORUMS ." WHERE forum_id=". intval($f['id']));
+				$dba->executeUpdate("DELETE FROM ". TOPICS ." WHERE forum_id=". intval($f['id']));
+				$dba->executeUpdate("DELETE FROM ". REPLIES ." WHERE forum_id=". intval($f['id']));
+			}
+			
+			/* This will take care of everything in the INFO table */
 			$heirarchy->removeNode($forum, INFO);
-			$heirarchy->removeNode($forum_maps, MAPS);
-
-			$delete_a->setInt(1, $forum['id']);
-			$delete_b->setInt(1, $forum['id']);
-			$delete_c->setInt(1, $forum['id']);
-
-			$delete_a->executeUpdate();
-			$delete_b->executeUpdate();
-			$delete_c->executeUpdate();
 			
 			$template->setInfo('content', sprintf($template->getVar('L_REMOVEDFORUM'), $forum['name']), FALSE);
 			$template->setRedirect('admin.php?act=forums', 3);

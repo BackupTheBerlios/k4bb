@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: online_users.class.php,v 1.3 2005/04/13 02:52:19 k4st Exp $
+* @version $Id: online_users.class.php,v 1.4 2005/04/19 21:51:27 k4st Exp $
 * @package k42
 */
 
@@ -37,21 +37,25 @@ if(!defined('IN_K4')) {
 
 class OnlineUsersIterator extends FAProxyIterator {
 	var $dba;
+	var $groups;
+	var $bots;
+	var $result;
 	
 	function OnlineUsersIterator($extra = NULL) {
-		global $_CONFIG, $_DBA, $_QUERYPARAMS;
+		global $_CONFIG, $_DBA, $_QUERYPARAMS, $_USERGROUPS;
 		
-		$this->dba		= $_DBA;
+		$this->groups	= $_USERGROUPS;
+		$this->dba		= &$_DBA;
 		$expired		= time() - ini_get('session.gc_maxlifetime');
 		
-		$query			= "SELECT ". $_QUERYPARAMS['user'] . $_QUERYPARAMS['session'] ." FROM ". USERS ." u LEFT JOIN ". SESSIONS ." s ON u.id = s.user_id WHERE s.seen >= $expired $extra GROUP BY u.name ORDER BY u.seen DESC";
+		$query			= "SELECT ". $_QUERYPARAMS['user'] . $_QUERYPARAMS['session'] ." FROM ". USERS ." u, ". SESSIONS ." s WHERE (u.id = s.user_id) OR (s.user_id = 0 AND s.name <> '') AND s.seen >= $expired $extra GROUP BY u.name ORDER BY s.seen DESC";
 		
-		$result			= $this->dba->executeQuery($query);
+		$this->result	= &$this->dba->executeQuery($query);
 
-		Globals::setGlobal('num_online_members', $result->numrows());
+		Globals::setGlobal('num_online_members', $this->result->numrows());
 		Globals::setGlobal('num_online_invisible', 0);
 
-		parent::FAProxyIterator($result);
+		parent::FAProxyIterator($this->result);
 	}
 
 	function &current() {
@@ -59,13 +63,37 @@ class OnlineUsersIterator extends FAProxyIterator {
 		
 		if($temp['invisible'] == 1)
 			Globals::setGlobal('num_online_invisible', Globals::getGlobal('num_online_invisible')+1);
+		
+		if($temp['user_id'] != 0) {
+			$groups				= @unserialize($temp['usergroups']);
+			
+			if(is_array($groups)) {
+				
+				foreach($groups as $g) {
+					
+					/* If the group variable isn't set, set it */
+					if(!isset($group) && isset($this->groups[$g]))
+						$group	= $this->groups[$g];
+					
+					/**
+					 * If the perms of this group are greater than that of the $group 'prev group', 
+					 * set is as this users group 
+					 */
+					if(@$this->groups[$g]['max_perm'] > @$group['max_perm'])
+						$group	= $this->groups[$g];
+				}
+			}
+			
+			$temp['color']			= !isset($group['color']) || $group['color'] == '' ? '000000' : $group['color'];
+			$temp['font_weight']	= @$group['min_perm'] > MEMBER ? 'bold' : 'normal';
+		}
 
-		if($temp['perms'] >= ADMIN)
-			$temp['name'] = '<span class="admin_user">'. $temp['name'] .'</span>';
-		if($temp['perms'] >= MODERATOR)
-			$temp['name'] = '<span class="mod_user">'. $temp['name'] .'</span>';
+		/* Should we free the result? */
+		if($this->row == $this->size-1)
+			$this->result->freeResult();
 
-		return $temp;
+		if($temp['name'] != '' && ((isset($temp['invisible']) && $temp['invisible'] == 0) || !isset($temp['invisible'])))
+			return $temp;
 	}
 }
 

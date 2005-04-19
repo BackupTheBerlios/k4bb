@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: sqlite.php,v 1.3 2005/04/13 02:54:00 k4st Exp $
+* @version $Id: sqlite.php,v 1.4 2005/04/19 21:52:35 k4st Exp $
 * @package k42
 */
 
@@ -46,7 +46,7 @@ class SQLiteResultIterator extends FADBResult {
 	var $current;
 
 	function SQLiteResultIterator($id, $mode) {
-		$this->id = $id;
+		$this->id	= $id;
 		$this->mode = $mode;
 		$this->size = sqlite_num_rows($this->id);
 	}

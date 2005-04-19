@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.4 2005/04/13 02:55:20 k4st Exp $
+* @version $Id: viewforum.php,v 1.5 2005/04/19 21:50:14 k4st Exp $
 * @package k42
 */
 
@@ -36,7 +36,7 @@ require 'forum.inc.php';
 class DefaultEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
-		global $_URL, $_QUERYPARAMS;
+		global $_URL, $_QUERYPARAMS, $_USERGROUPS;
 
 		if(!isset($request['id']) || !$request['id'] || intval($request['id']) == 0) {
 			/* set the breadcrumbs bit */
@@ -63,10 +63,9 @@ class DefaultEvent extends Event {
 				/* Set the extra SQL query fields to check */
 				$extra				= " AND s.location_file = '". $dba->Quote($_URL->file) ."' AND s.location_id = ". $location_id;	
 
-				/* Get the number of people browsing this forum */
-				$num_online_total	= $dba->getValue("SELECT COUNT(s.id) FROM ". SESSIONS ." s WHERE s.id != '' $extra");
-
 				$forum_can_view		= $forum['row_type'] & CATEGORY ? $user['maps']['categories'][$forum['id']]['can_view'] : $user['maps']['forums'][$forum['id']]['can_view'];
+				
+				$num_online_total	= $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS ." s WHERE s.id != '' $extra");
 
 				/* If there are more than 0 people browsing the forum, display the stats */
 				if($num_online_total > 0 && $forum_can_view <= $user['perms'] && ($forum['row_type'] & CATEGORY || $forum['row_type'] & FORUM)) {
@@ -89,6 +88,17 @@ class DefaultEvent extends Event {
 				
 					/* Set the User's Browsing file */
 					$template->setFile('users_browsing', 'users_browsing.html');
+				
+					$groups				= array();
+
+					/* Set the usergroups legend list */
+					foreach($_USERGROUPS as $group) {
+						if($group['display_legend'] == 1)
+							$groups[]	= $group;
+					}
+
+					$groups				= &new FAArrayIterator($groups);
+					$template->setList('usergroups_legend', $groups);
 				}
 
 				if($forum_can_view > $user['perms']) {
@@ -190,7 +200,7 @@ class DefaultEvent extends Event {
 						$start				= isset($request['start']) && is_numeric($request['start']) ? intval($_GET['start']) : NULL;
 						
 						/* Create the query */
-						$topics				= &$dba->prepareStatement("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE created>=? ORDER BY $sortedby $sortorder LIMIT ?,?");
+						$topics				= &$dba->prepareStatement("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.created>=? AND i.row_left > ". intval($forum['row_left']) ." AND i.row_right < ". intval($forum['row_right']) ." AND t.is_draft = 0 ORDER BY $sortedby $sortorder LIMIT ?,?");
 						
 						/* Set the query values */
 						$topics->setInt(1, $daysprune * (3600 * 24));
@@ -206,7 +216,7 @@ class DefaultEvent extends Event {
 						}
 						
 						/* Apply the topics iterator */
-						$it					= &new TopicsIterator($result);
+						$it					= &new TopicsIterator($result, &$session, $template->getVar('IMG_DIR'));
 
 						$template->setList('topics', $it);
 
@@ -224,6 +234,9 @@ class DefaultEvent extends Event {
 			}
 		}
 		
+		/* Add the cookies for this forum's topics */
+		bb_execute_topiccache();
+
 		return TRUE;
 	}
 }

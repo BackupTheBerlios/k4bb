@@ -87,7 +87,7 @@
 		<td width="30%"><strong><?php echo $context->getVar("L_POSTSPERPAGE"); ?>:</strong></td>
 		<td>
 			<script type="text/javascript">doHelpButton('forum_postsperpage');</script>
-			<input type="text" name="topicsperpage" id="postsperpage" value="<?php echo $context->getVar("forum_postsperpage"); ?>" maxlength="2" size="3" class="inputbox" tabindex="11" />
+			<input type="text" name="postsperpage" id="postsperpage" value="<?php echo $context->getVar("forum_postsperpage"); ?>" maxlength="2" size="3" class="inputbox" tabindex="11" />
 			<script type="text/javascript">addVerification('postsperpage', '.+', 'postsperpage_error', 'inputfailed');</script><div id="postsperpage_error" style="display: none;"><?php echo $context->getVar("L_INSERTFORUMPPP"); ?></div>
 			<script type="text/javascript">addVerification('row_order', '([0-9])+', 'postsperpage_num_error', 'inputfailed');</script><div id="postsperpage_num_error" style="display: none;"><?php echo $context->getVar("L_INSERTFORUMPPPNUM"); ?></div>
 		</td>
@@ -112,6 +112,20 @@
 				<?php endif; ?>
 			</select>
 			<script type="text/javascript">setIndex('<?php echo $context->getVar("forum_defaultlang"); ?>', 'defaultlang');</script>
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="30%"><strong><?php echo $context->getVar("L_MODERATORS"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('forum_moderators');</script>
+			<select name="moderators[]" id="moderators" tabindex="15" size="5" multiple="multiple">
+				<?php if ($context->listReset("usergroups")): ?>
+				<?php while($context->push($context->listNext("usergroups"))): ?>
+				<option value="<?php echo $context->getVar("id"); ?>"><?php echo $context->getVar("name"); ?></option>
+				<?php $context->pop(); endwhile; ?>
+				<?php endif; ?>
+			</select>
+			<script type="text/javascript">setIndices("<?php echo $context->getVar("forum_moderating_groups"); ?>".split(" "), 'moderators');</script>
 		</td>
 	</tr>
 	<tr class="tcat">

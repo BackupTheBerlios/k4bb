@@ -24,7 +24,7 @@
 	<?php if ($context->listReset("categories")): ?>
 	<?php if (is_object($list = &$context->getList("categories")) && !$list->hasNext()): ?>
 	<tr class="panel">
-		<td>
+		<td colspan="2">
 			<div class="outset_box" align="center">
 				<br />
 				<?php echo $context->getVar("L_NOCATEGORIES"); ?>

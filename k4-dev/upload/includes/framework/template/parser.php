@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: parser.php,v 1.2 2005/04/13 02:54:16 k4st Exp $
+* @version $Id: parser.php,v 1.3 2005/04/19 21:52:48 k4st Exp $
 * @package k42
 */
 
@@ -35,7 +35,7 @@ if(!defined('IN_K4')) {
 	exit;
 }
 
-require_once TPL_BASE_DIR .'/saxparser.php';
+//require_once TPL_BASE_DIR .'/saxparser.php';
 
 class TPL_Element {}
 

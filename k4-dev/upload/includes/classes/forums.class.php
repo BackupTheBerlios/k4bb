@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.4 2005/04/13 02:52:19 k4st Exp $
+* @version $Id: forums.class.php,v 1.5 2005/04/19 21:51:27 k4st Exp $
 * @package k42
 */
 
@@ -37,15 +37,16 @@ if(!defined('IN_K4')) {
 
 function forum_icon($instance, $temp) {
 	
-	$icon = '';
+	$icon		= '';
+	$return		= '';
 	
 	/* Set the forum Icon */
 	if(isset($_COOKIE['forums'])) {
 		
-		$forums				= $_COOKIE['forums'] != null && $_COOKIE['forums'] != '' ? @unserialize($_COOKIE['forums']) : array();
+		$forums				= $_COOKIE['forums'] != NULL && $_COOKIE['forums'] != '' ? @unserialize($_COOKIE['forums']) : array();
 		
 		if(isset($forums[$temp['id']])) {
-
+			
 			/* Get the value of the forum cookie */
 			$cookie_val		= $forums[$temp['id']];
 			
@@ -57,14 +58,17 @@ function forum_icon($instance, $temp) {
 			}
 		} else {
 			
+			if(strftime("%m%d%y", $temp['topic_created']) == strftime("%m%d%y", bbtime()) && $temp['topic_uid'] != $instance->user['id']) {
+				
+				$icon		= 'on';
+			} else {
+				$icon		= 'off';
+			}
+
 			$forums[$temp['id']]	= array();
 			$forums					= serialize($forums);
-
-			/** 
-			 * Set a cookie to be cached in the session to be executed on the next refresh,
-			 * The cookie will expire when the session is meant to expire 
-			 */
-			bb_setcookie_cache('forums', $forums, time() + ini_get('session.gc_maxlifetime'));
+			
+			$return					= $temp['id'];
 		}
 	} else {
 		
@@ -78,12 +82,10 @@ function forum_icon($instance, $temp) {
 		$forums		= array($temp['id'] => $temp);
 		$forums		= serialize($forums);
 
-		/**
-		 * Set a cookie to be cached in the session to be executed on the next refresh,
-		 * The cookie will expire when the session is meant to expire 
-		 */
-		bb_setcookie_cache('forums', $forums, time() + ini_get('session.gc_maxlifetime'));
+		$return		= $temp['id'];
 	}
+
+	
 
 	/* Check if this user's perms are less than is needed to post in this forum */
 
@@ -91,7 +93,7 @@ function forum_icon($instance, $temp) {
 		$icon			.= '_lock';
 	
 	/* Return the icon text to add to the IMG tag */
-	return $icon;
+	return array($icon, $return);
 }
 
 class MarkForumsRead extends Event {
@@ -128,19 +130,24 @@ class ForumsIterator extends FAProxyIterator {
 	var $do_recures;
 	var $user;
 	var $result;
+	var $forums;
+	var $usergroups;
  
 	function ForumsIterator($query = NULL, $do_recurse = TRUE) {
 		
-		global $_SETTINGS, $_DBA, $_QUERYPARAMS;
+		global $_SETTINGS, $_DBA, $_QUERYPARAMS, $_USERGROUPS;
 		
 		$query				= $query == NULL ? "" : $query;
 		
+		$this->usergroups	= $_USERGROUPS;
 		$this->user			= &Globals::getGlobal('user');
 		$this->dba			= $_DBA;
 		$this->settings		= $_SETTINGS;
 		$this->query_params	= $_QUERYPARAMS;
 		$this->do_recurse	= $do_recurse;
 		$this->result		= &$this->dba->executeQuery($query);
+
+		$this->forums		= isset($_COOKIE['forums']) && $_COOKIE['forums'] != NULL && $_COOKIE['forums'] != '' ? @unserialize($_COOKIE['forums']) : array();
 
 		parent::FAProxyIterator($this->result);
 	}
@@ -152,20 +159,18 @@ class ForumsIterator extends FAProxyIterator {
 		cache_forum($temp);
 
 		/* Set the forum's icon */
-		$temp['forum_icon']	= forum_icon($this, $temp);
+		$return				= forum_icon($this, $temp);
 		
-		/* Set a nice representation of what level we're on */
-		$temp['level']	= @str_repeat('&nbsp;&nbsp;&nbsp;', $temp['row_level']-2);
-
-		/* Increment the number of topics and replies */
-		if(Globals::is_set('num_topics') && Globals::is_set('num_replies')) {
-			Globals::setGlobal('num_topics', Globals::getGlobal('num_topics') + $temp['topics']);
-			Globals::setGlobal('num_replies', Globals::getGlobal('num_replies') + $temp['replies']);
+		$temp['forum_icon']	= $return[0];
+		
+		/* Set a default cookie with the unread topic id in it */
+		if(is_numeric($return[1])) {
+			$this->forums[$temp['id']][$return[1]] = TRUE;
 		}
-		
-		/* %D would work as well */
-		$temp['post_created'] = strftime("%m.%d.%y", bbtime($temp['post_created']));
-		
+
+		/* Set a nice representation of what level we're on */
+		$temp['level']		= @str_repeat('&nbsp;&nbsp;&nbsp;', $temp['row_level']-2);
+						
 		/* Should we query down to the next level of forums? */
 		if($this->do_recurse) {
 			$query_params = $this->query_params['info'] . $this->query_params['forum'];
@@ -175,13 +180,69 @@ class ForumsIterator extends FAProxyIterator {
 			}
 		}
 
+		if($temp['moderating_groups'] != '') {
+			
+			$groups					= @unserialize($temp['moderating_groups']);
+			$temp['moderators']		= array();
+
+			if(is_array($groups)) {
+				foreach($groups as $g) {
+					if(isset($this->usergroups[$g])) {
+						$temp['moderators'][]	= $this->usergroups[$g];
+					}
+				}
+
+				$temp['moderators']	= &new FAArrayIterator($temp['moderators']);
+			} else {
+				$temp['moderating_groups'] = '';
+			}
+		}
+
 		/* Should we free the result? */
-		if($this->row == $this->size-1)
+		if($this->row == $this->size-1) {
 			$this->result->freeResult();
+			
+			/* Set cookies for all of the topics */
+			bb_settopic_cache_item('forums', serialize($this->forums), time() + 3600 * 25 * 5);
+		}
 		
 		/* Return the formatted forum info */
 		return $temp;
 	}
 }
+
+class AllForumsIterator extends FAProxyIterator {
+	
+	var $result;
+ 
+	function AllForumsIterator() {
+		
+		global $_DBA, $_QUERYPARAMS;
+		
+		$query				= "SELECT ". $_QUERYPARAMS['info'] ." FROM ". INFO ." i WHERE i.row_type = ". FORUM ." OR i.row_type = ". CATEGORY ." ORDER BY i.row_left ASC";		
+
+		$this->result		= &$_DBA->executeQuery($query);
+
+		parent::FAProxyIterator($this->result);
+	}
+
+	function &current() {
+		$temp	= parent::current();
+		
+		/* Cache this forum in the session */
+		cache_forum($temp);
+		
+		/* Set a nice representation of what level we're on */
+		$temp['indent_level']	= @str_repeat('&nbsp;&nbsp;&nbsp;', $temp['row_level']-1);
+
+		/* Should we free the result? */
+		if($this->row == $this->size-1)
+			$this->result->freeResult();
+
+		/* Return the formatted forum info */
+		return $temp;
+	}
+}
+
 
 ?>

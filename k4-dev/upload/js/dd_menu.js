@@ -24,7 +24,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: dd_menu.js,v 1.2 2005/04/11 02:15:13 k4st Exp $
+* @version $Id: dd_menu.js,v 1.3 2005/04/19 21:50:27 k4st Exp $
 * @package k42
 */
 
@@ -53,23 +53,6 @@ document.onmousemove = function(event) {
 	} catch(e) {
 		//alert(e.message);
 	}
-}
-
-/* Turn a floating point string into a floating point number */
-String.prototype.floatVal = function() { 
-	if(this) {
-		var match = '';
-		
-		/* Check if the string ends with 'px' or 'pt' */
-		match = this.match(/px/) ? 'px' : match; // for IE
-		match = this.match(/pt/) ? 'pt' : match; // for MOZ
-
-		/* Trim and return the string if there were any matches */
-		return (this.substr(0, (this.length - match.length)) * 1);
-	}
-
-	/* Just a placeholder if nothing happened */
-	return this;
 }
 
 /* Array push method */
@@ -138,9 +121,9 @@ function menu_init(link_id, menu_id) {
 	
 	/* Get the left position of the menu, and compensate for 10px in mozilla */
 	if(menu.force_slide_right) {
-		left_style			= (navigator.appName == "Netscape") ? ((left - (menu.posRight - menu.posLeft)) + link.offsetWidth) + 10 : ((left - (menu.posRight - menu.posLeft)) + link.offsetWidth);
+		left_style			= (navigator.appName == "Netscape") ? ((left - (menu.posRight - menu.posLeft)) + link.offsetWidth) : ((left - (menu.posRight - menu.posLeft)) + link.offsetWidth);
 	} else {
-		left_style			= (navigator.appName == "Netscape") ? left + 10 : left;
+		left_style			= (navigator.appName == "Netscape") ? left : left;
 	}
 
 	/* Give the menu a nice shadow if this is IE */
@@ -242,19 +225,18 @@ function menu_init(link_id, menu_id) {
 
 /* Find out if object 'm' (menu) overlaps object 'obj' (generally a <select>) */
 function is_in_grid(m, obj) {
-	var s = {
+	/*var s = {
 			"L"		: fetch_object_posleft(obj),
 			"R"		: fetch_object_posleft(obj) + obj.offsetWidth,
 			"T"		: fetch_object_postop(obj),
 			"B"		: fetch_object_postop(obj) + obj.offsetHeight
 			}
-	
 	if (s['L'] >= m['L'] && s['L'] <= m['R'] && ((s['T'] >= m['T'] && s['T'] <= m['B']) || (s['B'] >= m['T'] && s['B'] <= m['B']))) { return true; }
 	else if (s['R'] >= m['L'] && s['R'] <= m['R'] && ((s['T'] >= m['T'] && s['T'] <= m['B']) || (s['B'] >= m['T'] && s['B'] <= m['B']))) { return true; }
 	else if (s['B'] >= m['T'] && s['T'] <= m['B'] && ((s['L'] >= m['L'] && s['L'] <= m['R']) || (s['R'] >= m['R'] && s['R'] <= m['R']))) { return true; }
 	else if (m['B'] >= s['T'] && m['T'] <= s['B'] && ((m['L'] >= s['L'] && m['L'] <= s['R']) || (m['R'] >= s['R'] && m['R'] <= s['R']))) { return true; }
 	else { return false; }
-
+	*/ return false;
 }
 
 function openmenu(menu) {

@@ -82,9 +82,9 @@
 		<td>
 			<div align="right">
 				<a href="index.php" title="<?php echo $context->getVar("L_HOME"); ?>"><?php echo $context->getVar("L_HOME"); ?></a> 
-				<?php if($context->getVar('calendarenabled') == '1'): ?>| <a href="calendar.php" title="<?php echo $context->getVar("L_CALENDAR"); ?>"><?php echo $context->getVar("L_CALENDAR"); ?></a><?php endif; ?>
-				<?php if($context->getVar('enablememberlist') == '1'): ?>| <a href="member.php?act=list&amp;start=0&amp;limit=30&amp;sort=*" title="<?php echo $context->getVar("L_MEMBERLIST"); ?>"><?php echo $context->getVar("L_MEMBERLIST"); ?></a><?php endif; ?>
-				<?php if($context->getVar('enablesearches') == '1'): ?>| <a href="search.php" title="<?php echo $context->getVar("L_SEARCH"); ?>"><?php echo $context->getVar("L_SEARCH"); ?></a><?php endif; ?>
+				<?php if($context->getVar('calendarenabled') == 1): ?>| <a href="calendar.php" title="<?php echo $context->getVar("L_CALENDAR"); ?>"><?php echo $context->getVar("L_CALENDAR"); ?></a><?php endif; ?>
+				<?php if($context->getVar('enablememberlist') == 1): ?>| <a href="member.php?act=list&amp;start=0&amp;limit=30&amp;sort=*" title="<?php echo $context->getVar("L_MEMBERLIST"); ?>"><?php echo $context->getVar("L_MEMBERLIST"); ?></a><?php endif; ?>
+				<?php if($context->getVar('enablesearches') == 1): ?>| <a href="search.php" title="<?php echo $context->getVar("L_SEARCH"); ?>"><?php echo $context->getVar("L_SEARCH"); ?></a><?php endif; ?>
 				| <a href="faq.php" title="<?php echo $context->getVar("L_FAQ"); ?>"><?php echo $context->getVar("L_FAQ"); ?></a>
 				| <a href="member.php?act=usergroups" title="<?php echo $context->getVar("L_USERGROUPS"); ?>"><?php echo $context->getVar("L_USERGROUPS"); ?></a>
 				| <a class="nav_top" id="quicklinks_link" title="<?php echo $context->getVar("L_QUICKLINKS"); ?>"><?php echo $context->getVar("L_QUICKLINKS"); ?></a>
@@ -101,7 +101,7 @@
 
 <div class="forum_main" id="forum_main">
 <br />
-<?php if($context->getVar('bbactive') == '1'): ?>
+<?php if($context->getVar('bbactive') == 1): ?>
 <?php if(TRUE && (isset($context->session['user']->info['maps']['can_see_board']) && $context->session['user']->info['maps']['can_see_board']['can_view'] <= $context->session['user']->info['perms'])): ?>
 <?php if ($file = $template->getFile("content", "")):  $template->setFilename($file);  $template->render(); endif; ?>
 <?php if ($file = $template->getFile("content_extra", "")):  $template->setFilename($file);  $template->render(); endif; ?>
@@ -145,10 +145,8 @@
 	</tr>
 </table>
 <!-- / You don't have permission to view the forums -->
-
 <?php endif; ?>
 <?php else: ?>
-
 <!-- Board is Closed -->
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
@@ -163,8 +161,42 @@
 	</tr>
 </table>
 <!-- / Board is Closed -->
-
 <?php endif; ?>
+
+<br />
+
+<!-- Quick Nav Menu -->
+<div align="right" class="smalltext">
+	<?php echo $context->getVar("L_JUMPTO"); ?>:
+	<select name="quick_nav" id="quick_nav" onchange="jump_to('quick_nav')">
+		<option value="-1"><?php echo $context->getVar("L_SELECTAFORUM"); ?></option>
+		<option value="-1">-----------------</option>
+	<?php if ($context->listReset("all_forums")): ?>
+	<?php while($context->push($context->listNext("all_forums"))): ?>
+		<?php if($context->getVar('row_type') == 2): ?>
+			<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('id')]['can_view']) && $context->session['user']->info['maps']['forums'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
+				<?php if($context->getVar('is_forum') >= 0): ?>
+					<option value="viewforum.php?id=<?php echo $context->getVar("id"); ?>"><?php echo $context->getVar("indent_level");  echo $context->getVar("name"); ?></option>
+				<?php elseif($context->getVar('is_link') == 1): ?>
+					<?php if($context->getVar('link_show_redirects') == 1): ?>
+						<option value="redirect.php?id=<?php echo $context->getVar("id"); ?>"><?php echo $context->getVar("indent_level");  echo $context->getVar("name"); ?></option>
+						<?php else: ?>
+						<option value="<?php echo $context->getVar("link_href"); ?>"><?php echo $context->getVar("indent_level");  echo $context->getVar("name"); ?></option>
+					<?php endif; ?>
+				<?php endif; ?>
+			<?php endif; ?>
+		<?php else: ?>
+			<?php if(TRUE && (isset($context->session['user']->info['maps']['categories'][$context->getVar('id')]['can_view']) && $context->session['user']->info['maps']['categories'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
+				<option value="viewforum.php?id=<?php echo $context->getVar("id"); ?>" class="alt2"><?php echo $context->getVar("indent_level");  echo $context->getVar("name"); ?></option>
+			<?php endif; ?>
+		<?php endif; ?>
+	<?php $context->pop(); endwhile; ?>
+	<?php endif; ?>
+	</select>
+	<input type="button" class="button" value="<?php echo $context->getVar("L_GO"); ?>" onclick="jump_to('quick_nav')" />
+</div>
+<!-- / Quick Nav Menu -->
+
 <br />
 
 <!-- Footer Breadcrumbs Bit -->
@@ -281,7 +313,7 @@ COPYRIGHT NOTICE
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: forum_base.html,v 1.2 2005/04/13 02:57:00 k4st Exp $
+* @version $Id: forum_base.html,v 1.3 2005/04/19 21:49:04 k4st Exp $
 * @package k42
 */
 -->

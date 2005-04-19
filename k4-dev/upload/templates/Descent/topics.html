@@ -1,3 +1,14 @@
+<if:if var="forum_forum_rules" noteq="">
+<!-- Forum Rules -->
+<div class="forumrules">
+<strong style="color:#FF0000;">{$L_FORUMRULES}:</strong>
+<br /><br />
+{$forum_forum_rules}
+</div>
+<!-- / Forum Rules -->
+<br />
+</if:if>
+
 <!-- Topics List of '{$current_location}' -->
 <div align="left">
 	<maps:if list="forums" var="topics" forum="id" method="can_add">
@@ -12,11 +23,11 @@
 	</tr>
 	<tr class="tcat">
 		<td colspan="2">&nbsp;</td>
-		<td align="center" class="minitext"><a href="viewforum.php?id={$forum_id}&amp;sort=name&amp;order={$order}" title="{$L_TOPICS}">{$L_TOPICS}{$name_sort}</a></td>
-		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id={$forum_id}&amp;sort=num_replies&amp;order={$order}" title="{$L_REPLIES}">{$L_REPLIES}{$num_replies_sort}</a>&nbsp;</td>
+		<td align="center" class="minitext" width="50%"><a href="viewforum.php?id={$forum_id}&amp;sort=name&amp;order={$order}" title="{$L_TOPICS}">{$L_TOPICS}{$name_sort}</a></td>
 		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id={$forum_id}&amp;sort=poster_name&amp;order={$order}" title="{$L_AUTHOR}">{$L_AUTHOR}{$poster_name_sort}</a>&nbsp;</td>
+		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id={$forum_id}&amp;sort=num_replies&amp;order={$order}" title="{$L_REPLIES}">{$L_REPLIES}{$num_replies_sort}</a>&nbsp;</td>
 		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id={$forum_id}&amp;sort=views&amp;order={$order}" title="{$L_VIEWS}">{$L_VIEWS}{$views_sort}</a>&nbsp;</td>
-		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id={$forum_id}&amp;sort=last_reply&amp;order={$order}" title="{$L_LASTPOST}">{$L_LASTPOST}{$last_reply_sort}</a>&nbsp;</td>
+		<td align="center" class="minitext" nowrap="nowrap" width="30%">&nbsp;<a href="viewforum.php?id={$forum_id}&amp;sort=last_reply&amp;order={$order}" title="{$L_LASTPOST}">{$L_LASTPOST}{$last_reply_sort}</a>&nbsp;</td>
 	</tr>
 	<list:list id="topics">
 	<list:default list="topics">
@@ -32,13 +43,29 @@
 	</list:default>
 	<list:item list="topics">
 	<tr class="panel">
-		<td><img src="{$topic_icon}" alt="" border="0" /></td>
-		<td><img src="Images/{$IMG_DIR}/Icons/PostIcons/{$icon}" alt="" border="0" /></td>
-		<td width="60%">{$name}{$pages}{$rating}</td>
-		<td align="center" class="alt1">{$num_children}</td>
+		<td><img src="{$topicicon}" alt="" border="0" /></td>
+		<td><img src="tmp/upload/posticons/{$posticon}" alt="" border="0" /></td>
+		<td width="50%"><a href="viewtopic.php?id={$id}" title="{$name}">{$name}</a>{$pages}{$rating}</td>
 		<td align="center" class="alt2"><a href="member.php?id={$poster_id}" title="{$poster_name}"><strong>{$poster_name}</strong></a></td>
+		<td align="center" class="alt1">{$num_replies}</td>
 		<td align="center" class="alt1">{$views}</td>
-		<td align="center" class="alt2" nowrap="nowrap"><span class="minitext">{$last_reply}<br />{$L_BY}&nbsp;<a href="member.php?id={$reply_uid}" style="text-decoration: underline;" title="{$reply_uname}">{$reply_uname}</a></span></td>
+		<td align="center" class="alt2" nowrap="nowrap" width="30%">
+			<if:if var="reply_time" greater="0">
+			<span class="minitext">
+				<core:date format="%b %d %y">{$reply_time}</core:date>&nbsp;<span class="date_color"><core:date format="%I:%M%p">{$reply_time}</core:date></span>
+				<br />
+				{$L_BY}&nbsp;<a href="member.php?id={$reply_uid}" style="text-decoration: underline;" title="{$reply_uname}">{$reply_uname}</a>
+				<a href="findpost.php?id={$id}" title="{$reply_name}"><img src="Images/{$IMG_DIR}/Icons/icon_latest_reply.gif" border="0" alt="{$reply_name}" /></a>
+			</span>
+			<if:else />
+			<span class="minitext">
+				<core:date format="%b %d %y">{$created}</core:date>&nbsp;<span class="date_color"><core:date format="%I:%M%p">{$created}</core:date></span>
+				<br />
+				{$L_BY}&nbsp;<a href="member.php?id={$poster_id}" style="text-decoration: underline;" title="{$poster_name}">{$poster_name}</a>
+				<a href="viewtopic.php?id={$id}" title="{$name}"><img src="Images/{$IMG_DIR}/Icons/icon_latest_reply.gif" border="0" alt="{$name}" /></a>
+			</span>
+			</if:if>
+		</td>
 	</tr>
 	</list:item>
 	</list:list>

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: core.php,v 1.2 2005/04/13 02:54:29 k4st Exp $
+* @version $Id: core.php,v 1.3 2005/04/19 21:53:01 k4st Exp $
 * @package k42
 */
 
@@ -71,7 +71,7 @@ class Core_Date_Compiler extends TPL_Tag_Compiler {
 	}
 
 	function getClose(&$element) {
-		return "<?php \$date = ob_get_contents(); ob_end_clean(); echo strftime(\$format, intval(\$date)); ?>";
+		return "<?php \$date = ob_get_contents(); ob_end_clean(); echo strftime(\$format, intval(bbtime(\$date))); ?>";
 	}
 }
 

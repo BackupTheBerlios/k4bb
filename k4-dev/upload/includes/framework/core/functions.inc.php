@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: functions.inc.php,v 1.2 2005/04/13 02:53:33 k4st Exp $
+* @version $Id: functions.inc.php,v 1.3 2005/04/19 21:52:22 k4st Exp $
 * @package k42
 */
 
@@ -219,60 +219,4 @@ function require_class($class) {
 		require $GLOBALS['lazy_load'][strtolower($class)];
 }
 
-function thread_image($thread, $session) {
-	global $settings;
-
-	$dba = DBA::Open();
-	// set with a dot or not
-	if(@$session->info['name'] == $thread['poster_name'])
-		$extra = 'dot_';
-	else
-		$extra = NULL;
-	
-	$EXT = 'gif';
-	
-	$lock = intval(@$thread['row_locked']) == 1 ? 'lock' : NULL;
-	
-	//$seen = $dba->GetRow("SELECT * FROM ". SESSIONS ." WHERE name = '". @$session->info['name'] ."' AND name != 'Guest'");
-	$lastactive = $session->last_active;
-	//$lastactive = $session->info['seen'];
-	
-	if(@$thread['row_status'] == 2) { // announcement
-		if($thread['last_reply'] >= $lastactive)
-			$image = 'Images/'. $settings['imageset'] .'/Icons/Status/newsticky.'.$EXT;
-		else
-			$image = 'Images/'. $settings['imageset'] .'/Icons/Status/sticky.'.$EXT;
-	
-	} else if(@$thread['row_status'] == 3) { // announcement
-		if($thread['last_reply'] >= $lastactive)
-			$image = 'Images/'. $settings['imageset'] .'/Icons/Status/newannounce.'.$EXT;
-		else
-			$image = 'Images/'. $settings['imageset'] .'/Icons/Status/announce.'.$EXT;
-	
-	} else if(@$thread['poll'] == 1) { // poll
-		
-		$image = 'Images/'. $settings['imageset'] .'/Icons/Status/poll.'.$EXT; // hot topic, new posts
-	
-	} else if($thread['views'] >= 300 || intval($thread['num_children']) >= 30) {
-		
-		if($thread['last_reply'] >= $lastactive)
-			$image = 'Images/'. $settings['imageset'] .'/Icons/Status/'.$extra.'newhot'.$lock.'folder.'.$EXT; // hot topic, new posts
-		else
-			$image = 'Images/'. $settings['imageset'] .'/Icons/Status/'.$extra.'hot'.$lock.'folder.'.$EXT; // hot topic, no new posts
-	
-	} else if($thread['views'] < 300 || $thread['num_posts'] < 30) {
-		
-		if($thread['last_reply']>$lastactive)
-			$image = 'Images/'. $settings['imageset'] .'/Icons/Status/'.$extra.'new'.$lock.'folder.'.$EXT; // topic, new posts
-		elseif($thread['last_reply'] < $lastactive || empty($seen))
-			$image = 'Images/'. $settings['imageset'] .'/Icons/Status/'.$extra.$lock.'folder.'.$EXT; // topic, no new posts
-		else
-			$image = 'Images/'. $settings['imageset'] .'/Icons/Status/'.$extra.$lock.'folder.'.$EXT; // topic, no new posts
-	
-	} else {
-		$image = 'Images/'. $settings['imageset'] .'/Icons/Status/'.$extra.'new'.$lock.'folder.'.$EXT; // topic, no new posts
-	}
-	
-	return $image;
-}
 ?>

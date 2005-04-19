@@ -1,3 +1,14 @@
+<?php if($context->getVar('forum_forum_rules') != ''): ?>
+<!-- Forum Rules -->
+<div class="forumrules">
+<strong style="color:#FF0000;"><?php echo $context->getVar("L_FORUMRULES"); ?>:</strong>
+<br /><br />
+<?php echo $context->getVar("forum_forum_rules"); ?>
+</div>
+<!-- / Forum Rules -->
+<br />
+<?php endif; ?>
+
 <!-- Topics List of '<?php echo $context->getVar("current_location"); ?>' -->
 <div align="left">
 	<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add'] <= $context->session['user']->info['perms'])): ?>
@@ -12,11 +23,11 @@
 	</tr>
 	<tr class="tcat">
 		<td colspan="2">&nbsp;</td>
-		<td align="center" class="minitext"><a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=name&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_TOPICS"); ?>"><?php echo $context->getVar("L_TOPICS");  echo $context->getVar("name_sort"); ?></a></td>
-		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=num_replies&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_REPLIES"); ?>"><?php echo $context->getVar("L_REPLIES");  echo $context->getVar("num_replies_sort"); ?></a>&nbsp;</td>
+		<td align="center" class="minitext" width="50%"><a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=name&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_TOPICS"); ?>"><?php echo $context->getVar("L_TOPICS");  echo $context->getVar("name_sort"); ?></a></td>
 		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=poster_name&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_AUTHOR"); ?>"><?php echo $context->getVar("L_AUTHOR");  echo $context->getVar("poster_name_sort"); ?></a>&nbsp;</td>
+		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=num_replies&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_REPLIES"); ?>"><?php echo $context->getVar("L_REPLIES");  echo $context->getVar("num_replies_sort"); ?></a>&nbsp;</td>
 		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=views&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_VIEWS"); ?>"><?php echo $context->getVar("L_VIEWS");  echo $context->getVar("views_sort"); ?></a>&nbsp;</td>
-		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=last_reply&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_LASTPOST"); ?>"><?php echo $context->getVar("L_LASTPOST");  echo $context->getVar("last_reply_sort"); ?></a>&nbsp;</td>
+		<td align="center" class="minitext" nowrap="nowrap" width="30%">&nbsp;<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=last_reply&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_LASTPOST"); ?>"><?php echo $context->getVar("L_LASTPOST");  echo $context->getVar("last_reply_sort"); ?></a>&nbsp;</td>
 	</tr>
 	<?php if ($context->listReset("topics")): ?>
 	<?php if (is_object($list = &$context->getList("topics")) && !$list->hasNext()): ?>
@@ -32,13 +43,29 @@
 	<?php endif; ?>
 	<?php while($context->push($context->listNext("topics"))): ?>
 	<tr class="panel">
-		<td><img src="<?php echo $context->getVar("topic_icon"); ?>" alt="" border="0" /></td>
-		<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/PostIcons/<?php echo $context->getVar("icon"); ?>" alt="" border="0" /></td>
-		<td width="60%"><?php echo $context->getVar("name");  echo $context->getVar("pages");  echo $context->getVar("rating"); ?></td>
-		<td align="center" class="alt1"><?php echo $context->getVar("num_children"); ?></td>
+		<td><img src="<?php echo $context->getVar("topicicon"); ?>" alt="" border="0" /></td>
+		<td><img src="tmp/upload/posticons/<?php echo $context->getVar("posticon"); ?>" alt="" border="0" /></td>
+		<td width="50%"><a href="viewtopic.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("name"); ?>"><?php echo $context->getVar("name"); ?></a><?php echo $context->getVar("pages");  echo $context->getVar("rating"); ?></td>
 		<td align="center" class="alt2"><a href="member.php?id=<?php echo $context->getVar("poster_id"); ?>" title="<?php echo $context->getVar("poster_name"); ?>"><strong><?php echo $context->getVar("poster_name"); ?></strong></a></td>
+		<td align="center" class="alt1"><?php echo $context->getVar("num_replies"); ?></td>
 		<td align="center" class="alt1"><?php echo $context->getVar("views"); ?></td>
-		<td align="center" class="alt2" nowrap="nowrap"><span class="minitext"><?php echo $context->getVar("last_reply"); ?><br /><?php echo $context->getVar("L_BY"); ?>&nbsp;<a href="member.php?id=<?php echo $context->getVar("reply_uid"); ?>" style="text-decoration: underline;" title="<?php echo $context->getVar("reply_uname"); ?>"><?php echo $context->getVar("reply_uname"); ?></a></span></td>
+		<td align="center" class="alt2" nowrap="nowrap" width="30%">
+			<?php if($context->getVar('reply_time') > 0): ?>
+			<span class="minitext">
+				<?php ob_start(); $format = "%b %d %y";  echo $context->getVar("reply_time");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?>&nbsp;<span class="date_color"><?php ob_start(); $format = "%I:%M%p";  echo $context->getVar("reply_time");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?></span>
+				<br />
+				<?php echo $context->getVar("L_BY"); ?>&nbsp;<a href="member.php?id=<?php echo $context->getVar("reply_uid"); ?>" style="text-decoration: underline;" title="<?php echo $context->getVar("reply_uname"); ?>"><?php echo $context->getVar("reply_uname"); ?></a>
+				<a href="findpost.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("reply_name"); ?>"><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/icon_latest_reply.gif" border="0" alt="<?php echo $context->getVar("reply_name"); ?>" /></a>
+			</span>
+			<?php else: ?>
+			<span class="minitext">
+				<?php ob_start(); $format = "%b %d %y";  echo $context->getVar("created");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?>&nbsp;<span class="date_color"><?php ob_start(); $format = "%I:%M%p";  echo $context->getVar("created");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?></span>
+				<br />
+				<?php echo $context->getVar("L_BY"); ?>&nbsp;<a href="member.php?id=<?php echo $context->getVar("poster_id"); ?>" style="text-decoration: underline;" title="<?php echo $context->getVar("poster_name"); ?>"><?php echo $context->getVar("poster_name"); ?></a>
+				<a href="viewtopic.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("name"); ?>"><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/icon_latest_reply.gif" border="0" alt="<?php echo $context->getVar("name"); ?>" /></a>
+			</span>
+			<?php endif; ?>
+		</td>
 	</tr>
 	<?php $context->pop(); endwhile; ?>
 	<?php endif; ?>

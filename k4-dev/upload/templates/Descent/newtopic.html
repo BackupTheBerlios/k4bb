@@ -1,4 +1,15 @@
-<form:form name="posttopic_form" id="pottopic_form" action="newtopic.php?act=posttopic" method="post" enctype="multipart/form-data">
+<if:if var="forum_forum_rules" noteq="">
+<!-- Forum Rules -->
+<div class="forumrules">
+<strong style="color:#FF0000;">{$L_FORUMRULES}:</strong>
+<br /><br />
+{$forum_forum_rules}
+</div>
+<!-- / Forum Rules -->
+<br />
+</if:if>
+<core:import id="drafts" />
+<form:form name="posttopic_form" id="pottopic_form" action="{$newtopic_action}" method="post" enctype="multipart/form-data">
 <input type="hidden" name="forum_id" value="{$forum_id}" />
 <script type="text/javascript">
 // <!--
@@ -36,6 +47,7 @@ function emoticon(typed) {
 // -->
 </script>
 <input type="hidden" name="forum_id" value="{$forum_id}" />
+<core:block id="topic_id" hidden="yes"><input type="hidden" name="topic_id" value="{$topic_id}" /></core:block>
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<core:block id="post_topic">
 	<tr class="thead" colspan="2">
@@ -50,7 +62,7 @@ function emoticon(typed) {
 	</core:block>
 	<core:block id="edit_post" hidden="yes">
 	<tr class="thead" colspan="2">
-		<td colspan="2">{$L_EDITPOST} : <span style="font-weight: normal;">{$posttitle}</span><input type="hidden" name="post_id" value="{$post_id}" /></td>
+		<td colspan="2">{$L_EDITPOST} : <span style="font-weight: normal;">{$topic_name}</span><input type="hidden" name="post_id" value="{$post_id}" /></td>
 	</tr>
 	</core:block>
 	<tr class="panel">
@@ -58,15 +70,34 @@ function emoticon(typed) {
 			
 			<!-- Main Posting Inputs -->
 			<div class="outset_box" align="left">
-				<div class="smalltext" style="float: right;">
-					{$L_LOGGEDAS} <a href="member.php?id={$user_id}" style="text-decoration: underline;">{$user_name}</a>
-				</div>
+				<span class="smalltext" style="float: right;">
+					{$L_LOGGEDAS}
+					<is:logged>
+					<a href="member.php?id={$user_id}" style="text-decoration: underline;">{$user_name}</a>
+					<if:else />
+					<strong>{$L_GUEST}</strong>
+					</is:logged>
+				</span>
 				<table border="0" cellpadding="0" cellspacing="0">
+					<is:unlogged>
+					<tr>
+						<td>
+							<!-- Poster Name -->
+							<label for="{$L_YOURNAME}" class="smalltext">{$L_YOURNAME}</label><br />
+							<input type="text" name="poster_name" id="poster_name" value="{$poster_name}" size="{$maxuserlength}" class="inputbox" maxlength="{$maxuserlength}" />
+							<!-- / Poster Name -->
+						</td>
+						<td valign="bottom">
+							<img id="display_posticon" src="tmp/upload/posticons/clear.gif" alt="" />
+						</td>
+					</tr>
+					</is:unlogged>
 					<tr>
 						<td>
 							<!-- Post Title -->
 							<label for="{$L_POSTTITLE}" class="smalltext">{$L_POSTTITLE}</label><br />
-							<input type="text" name="title" id="{$L_POSTTITLE}" value="{$posttitle}" style="width: 500px;" class="inputbox" maxlength="255" />
+							<input type="text" name="name" id="name" value="{$topic_name}" style="width: 500px;" class="inputbox" maxlength="255" />
+							<form:error id="name_error" for="name" setclass="inputfailed" regex=".+">{$L_INSERTTOPICNAME}</form:error>
 							<!-- / Post Title -->
 						</td>
 						<td valign="bottom">
@@ -79,23 +110,25 @@ function emoticon(typed) {
 							<!-- Post Message -->
 							<label for="messagecodex" class="smalltext">{$L_POST}</label><br />
 							<if:if var="allowbbcode" eq="0">
-								<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100">{$message}</textarea>
+								<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100" wrap="SOFT">{$topic_body_text}</textarea>
 							<if:else />
 								<maps:if forum="forum_id" var="bbcode" method="can_add">
-									<div id="message" style="display: none;">{$message}</div>
+									<div id="message" style="display: none;">{$topic_body_text}</div>
 									<script type="text/javascript">
 										bbcodex_init('message', 'message', 10, 100, 'inputbox', 'width: 500px;', 'bbcode_button');
 									</script>
 								<maps:else />
-									<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100">{$message}</textarea>
+									<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100" wrap="SOFT">{$message}</textarea>
 								</maps:if>
 							</if:if>
+							<form:error id="messagecodex_error" for="messagecodex" setclass="inputfailed" regex="(\n|.)+">{$L_INSERTTOPICMESSAGE}</form:error>
 							<!-- / Post Message -->
 
 						</td>
 						<td valign="bottom">
 							<maps:if forum="forum_id" var="emoticons" method="can_add">
 							<list:list id="emoticons">
+							
 							<!-- Emoticons -->
 							<table border="0" cellpadding="0" cellspacing="0">
 								<tr>
@@ -121,6 +154,7 @@ function emoticon(typed) {
 								</tr>
 							</table>
 							<!-- / Emoticons -->
+
 							</list:list>
 							</maps:if>
 						</td>
@@ -129,6 +163,7 @@ function emoticon(typed) {
 					<tr>
 						<td colspan="2">
 							<list:list id="posticons">
+							
 							<!-- Post Icons -->
 							<table border="0" cellpadding="0" cellspacing="0" width="100%">
 								<tr>
@@ -136,13 +171,13 @@ function emoticon(typed) {
 										<fieldset>
 											<legend>{$L_POSTICONS}</legend>
 											<span class="smalltext">{$L_POSTICONSPOSTCHOOSE}</span>
-											<label for="noicon" style="float: left;margin-top: 10px;"><input type="radio" name="posticon" id="noicon" value="-1" checked="checked" onclick="swap_posticon(null)" />&nbsp;{$L_NOICON}</label>
+											<label for="noicon" style="float: left;margin-top: 10px;"><input type="radio" name="posticon" id="noicon" value="clear.gif" checked="checked" onclick="swap_posticon(null)" />&nbsp;{$L_NOICON}</label>
 											<table cellpadding="3" cellspacing="1" border="0" id="posticons">
 												<tr>
 													<list:item list="posticons">
 													<td align="center">
 														<label for="pi{$id}">
-															<input type="radio" name="posticon" id="pi{$id}" value="{$id}" style="float: left;padding-right: 5px;" onclick="swap_posticon('pi_{$id}')" />&nbsp;&nbsp;<img src="tmp/upload/posticons/{$image}" alt="{$description}" id="pi_{$id}" style="margin-right:15px;" />
+															<input type="radio" name="posticon" id="pi{$id}" value="{$image}" style="float: left;padding-right: 5px;" onclick="swap_posticon('pi_{$id}')" />&nbsp;&nbsp;<img src="tmp/upload/posticons/{$image}" alt="{$description}" id="pi_{$id}" style="margin-right:15px;" />
 														</label>
 													</td>
 													<list:separator list="posticons">
@@ -158,6 +193,7 @@ function emoticon(typed) {
 								</tr>
 							</table>
 							<!-- / Post Icons -->
+
 							</list:list>
 						</td>
 					</tr>
@@ -168,35 +204,51 @@ function emoticon(typed) {
 
 		</td>
 	</tr>
-	<core:block id="post_icons" hidden="yes">
-	<tr class="panel">
-		<td colspan="2">
-			<fieldset style="float:left; width:95%;">
-			<legend><label>{$L_POSTICONS}</label></legend>
-			<div align="center">
-			<label for="noicon"><input type="radio" name="posticon" id="noicon" value="-1" checked="checked" onclick="swap_posticon(null)" /> {$L_NOICON}</label>&nbsp;&nbsp;&nbsp;
-			<table cellpadding="3" cellspacing="1" border="0" id="posticons">
-				<tr class="panel">
-					<list:list id="posticons">
-					<list:item list="posticons">
-					<td>
-						<label for="pi{$id}"><input type="radio" name="posticon" id="pi{$id}" value="{$id}" onclick="swap_posticon(pi_{$id})" /><img src="Images/{$IMG_DIR}/Icons/PostIcons/{$image}" alt="{$description}" title="{$description}" style="margin-right:10px;" id="pi_{$id}" /></label>						
-					</td>
-					</list:item>
-					</list:list>
-				</tr>	
-			</table>
-			</div>
-			</fieldset>
-		</td>
-	</tr>
-	</core:block>
 	<tr class="tcat">
 		<td align="left" colspan="2">
-			<input type="submit" class="button" value="{$L_SAVE}" accesskey="s" /><input type="reset" class="button" value="{$L_RESET}" />
+			<input type="submit" name="submit" class="button" value="{$L_SUBMIT}" accesskey="s" />
+			<core:block id="save_draft">
+			<is:logged>
+				<maps:if forum="forum_id" var="post_save" method="can_add">
+					<input type="submit" name="submit" class="button" value="{$L_SAVEDRAFT}" />
+				</maps:if>
+			</is:logged>
+			</core:block>
+			<maps:if forum="forum_id" var="post_preview" method="can_add">
+				<input type="submit" name="submit" class="button" value="{$L_PREVIEW}" />
+			</maps:if>
+			<core:block id="load_button" hidden="yes">
+			<input type="button" value="{$L_LOADDRAFT}" onclick="document.location='newtopic.php?id={$forum_id}&load_drafts=1'" />
+			</core:block>
+			<input type="reset" class="button" value="{$L_RESET}" />
 		</td>
 	</tr>
 </table>
+<br />
+
+<!-- Additional Post Options -->
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td>{$L_ADDITIONALOPTIONS}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">
+				<fieldset>
+					<legend>{$L_MISCOPTIONS}</legend>
+					<maps:if forum="forum_id" var="html" method="can_add"><input type="checkbox" name="disable_html" id="disable_html" checked="checked" />&nbsp;<label for="disable_html">{$L_DISABLEHTML}</label><br /></maps:if>
+					<input type="checkbox" name="disable_bbcode" id="disable_bbcode" />&nbsp;<label for="disable_bbcode">{$L_DISABLEBBCODE}</label><br />
+					<input type="checkbox" name="disable_emoticons" id="disable_emoticons" />&nbsp;<label for="disable_emoticons">{$L_DISABLEEMOTICONS}</label><br />
+					<input type="checkbox" name="disable_aurls" id="disable_aurls" />&nbsp;<label for="disable_aurls">{$L_PARSEURLS}</label><br />
+					<input type="checkbox" name="enable_sig" id="enable_sig" checked="checked" />&nbsp;<label for="enable_sig">{$L_ATTACHSIGNATURE}</label><br />
+					<input type="checkbox" name="disable_areply" id="disable_areply" />&nbsp;<label for="disable_areply">{$L_NOTIFYONREPLY}</label>
+				</fieldset>
+			</div>
+		</td>
+	</tr>
+</table>
+<!-- / Additional Post Options -->
+
 </form:form>
 <br />
 <!-- Posting Code Allowances -->
@@ -228,3 +280,50 @@ function emoticon(typed) {
 	</tr>
 </table>
 <!-- / Posting Code Allowances -->
+
+<core:block id="edit_topic" hidden="yes">
+<!-- Edit Topic Javascript -->
+<script type="text/javascript">
+	// <!-- 
+
+	/**
+	 * Get the main posting options
+	 */
+	
+	try {
+		var disable_html			= document.getElementById('disable_html');
+		var disable_bbcode			= document.getElementById('disable_bbcode');
+		var disable_emoticons		= document.getElementById('disable_emoticons');
+		var disable_aurls			= document.getElementById('disable_aurls');
+		var enable_sig				= document.getElementById('enable_sig');
+		var disable_areply			= document.getElementById('disable_areply');
+		
+		disable_html.checked		= ({$topic_disable_html} == 1) ? true : false;
+		disable_bbcode.checked		= ({$topic_disable_bbcode} == 1) ? true : false;
+		disable_emoticons.checked	= ({$topic_disable_emoticons} == 1) ? true : false;
+		disable_aurls.checked		= ({$topic_disable_aurls} == 1) ? true : false;
+		enable_sig.checked			= ({$topic_disable_sig} == 1) ? false : true;
+		disable_areply.checked		= ({$topic_disable_areply} == 1) ? true : false;
+	
+	} catch(e) {
+		alert(e.message);
+	}
+
+
+	/**
+	 * Get the post icons
+	 */
+	for (var i = 0; i < sizeof(document.forms[0].radios.length); i++) {
+		if(document.forms[0].radios[i].name == 'posticon') {
+			if(document.forms[0].radios[i].value == '{$topic_posticon}') {
+				document.forms[0].radios[i].checked = true;
+			} else {
+				document.forms[0].radios[i].checked = false;
+			}
+		}
+	}
+
+	// -->
+</script>
+<!-- / Edit Topic Javascript -->
+</core:block>

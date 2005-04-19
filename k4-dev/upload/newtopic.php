@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: newtopic.php,v 1.4 2005/04/13 02:55:20 k4st Exp $
+* @version $Id: newtopic.php,v 1.5 2005/04/19 21:50:14 k4st Exp $
 * @package k42
 */
 
@@ -45,7 +45,7 @@ class DefaultEvent extends Event {
 			return $template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
 		}
 			
-		$forum				= get_cached_forum($request['id']);
+		$forum				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($request['id']));
 		
 		/* Check the forum data given */
 		if(!$forum || !is_array($forum) || empty($forum)) {
@@ -107,6 +107,52 @@ class DefaultEvent extends Event {
 		/* Set the forum info to the template */
 		foreach($forum as $key => $val)
 			$template->setVar('forum_'. $key, $val);
+		
+		$template->setVar('newtopic_action', 'newtopic.php?act=posttopic');
+
+		/**
+		 * Get topic drafts for this forum
+		 */
+		$drafts		= $dba->executeQuery("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE t.forum_id = ". intval($forum['id']) ." AND t.is_draft = 1 AND t.poster_id = ". intval($user['id']));
+		if($drafts->numrows() > 0) {
+			$template->show('load_button');
+		
+			if(isset($request['load_drafts']) && $request['load_drafts'] == 1) {
+				$template->hide('load_button');
+				$template->setFile('drafts', 'post_drafts.html');
+				$template->setList('drafts', $drafts);
+			}
+			if(isset($request['draft']) && intval($request['draft']) != 0) {
+
+				/* Get our topic */
+				$draft				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id = ". intval($request['draft']) ." AND t.is_draft = 1 AND t.poster_id = ". intval($user['id']));
+				
+				if(!$draft || !is_array($draft) || empty($draft)) {
+					/* set the breadcrumbs bit */
+					$template		= BreadCrumbs($template, $template->getVar('L_INVALIDDRAFT'));
+					$template->setInfo('content', $template->getVar('L_DRAFTDOESNTEXIST'), FALSE);
+
+					return TRUE;
+				}
+				
+				$template->setVar('newtopic_action', 'newtopic.php?act=postdraft');
+				$template->setInfo('drafts', $template->getVar('L_DRAFTLOADED'), FALSE, '<br />');
+				
+				/* Turn the draft text back into bbcode */
+				$bbcode				= new BBCodex($user, $draft['body_text'], $forum['id'], TRUE, TRUE, TRUE, TRUE);
+				$draft['body_text']	= $bbcode->revert();
+				
+				$template->hide('save_draft');
+				$template->hide('load_button');
+				$template->show('edit_topic');
+				$template->show('topic_id');
+
+				/* Assign the draft information to the template */
+				foreach($draft as $key => $val)
+					$template->setVar('topic_'. $key, $val);
+				
+			}
+		}
 
 		/* set the breadcrumbs bit */
 		$template	= BreadCrumbs($template, $template->getVar('L_POSTTOPIC'), $forum['row_left'], $forum['row_right']);
@@ -122,6 +168,7 @@ class DefaultEvent extends Event {
 $app = new Forum_Controller('forum_base.html');
 
 $app->AddEvent('posttopic', new PostTopic);
+$app->AddEvent('postdraft', new PostDraft);
 
 $app->ExecutePage();
 

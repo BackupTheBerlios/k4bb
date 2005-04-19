@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: categories.class.php,v 1.2 2005/04/13 02:52:47 k4st Exp $
+* @version $Id: categories.class.php,v 1.3 2005/04/19 21:51:45 k4st Exp $
 * @package k42
 */
 
@@ -77,17 +77,25 @@ class AdminInsertCategory extends Event {
 		if(is_a($session['user'], 'Member') && ($user['perms'] >= ADMIN)) {
 			
 			/* Error checking on the fields */
-			if(!isset($request['name']) || $request['name'] == '')
-				return $template->setInfo('content', $template->getVar('L_INSERTCATNAME'), TRUE);
+			if(!isset($request['name']) || $request['name'] == '') {
+				$template->setInfo('content', $template->getVar('L_INSERTCATNAME'), TRUE);
+				return TRUE;
+			}
 						
-			if(!isset($request['description']) || $request['description'] == '')
-				return $template->setInfo('content', $template->getVar('L_INSERTCATDESC'), TRUE);
+			if(!isset($request['description']) || $request['description'] == '') {
+				$template->setInfo('content', $template->getVar('L_INSERTCATDESC'), TRUE);
+				return TRUE;
+			}
 			
-			if(!isset($request['row_order']) || $request['row_order'] == '')
-				return $template->setInfo('content', $template->getVar('L_INSERTCATORDER'), TRUE);
+			if(!isset($request['row_order']) || $request['row_order'] == '') {
+				$template->setInfo('content', $template->getVar('L_INSERTCATORDER'), TRUE);
+				return TRUE;
+			}
 
-			if(!is_numeric($request['row_order']))
-				return $template->setInfo('content', $template->getVar('L_INSERTCATORDERNUM'), TRUE);
+			if(!is_numeric($request['row_order'])) {
+				$template->setInfo('content', $template->getVar('L_INSERTCATORDERNUM'), TRUE);
+				return TRUE;
+			}
 			
 			$abs_right			= $dba->getValue("SELECT row_right FROM ". INFO ." WHERE row_type = ". CATEGORY ." ORDER BY row_right DESC LIMIT 1");
 
@@ -137,13 +145,17 @@ class AdminInsertCategoryMaps extends Event {
 			
 			global $_MAPITEMS, $_QUERYPARAMS;
 
-			if(!isset($request['id']) || intval($request['id']) == 0)
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);			
+			if(!isset($request['id']) || intval($request['id']) == 0) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 
 			$category					= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'] ." FROM ". CATEGORIES ." c LEFT JOIN ". INFO ." i ON c.category_id = i.id WHERE i.id = ". intval($request['id']));
 
-			if(!is_array($category) || empty($category))
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+			if(!is_array($category) || empty($category)) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 
 			$parent_id					= $dba->getValue("SELECT id FROM ". MAPS ." WHERE varname = 'categories'");
 
@@ -162,7 +174,8 @@ class AdminInsertCategoryMaps extends Event {
 
 			if(Error::grab()) {
 				$error					= &Error::grab();
-				return $template->setError('content', $template->getVar($error->message));
+				$template->setError('content', $template->getVar($error->message));
+				return TRUE;
 			}
 			
 			$category_map_id			= $dba->getInsertId();
@@ -183,7 +196,8 @@ class AdminInsertCategoryMaps extends Event {
 
 					if(Error::grab()) {
 						$error				= &Error::grab();
-						return $template->setError('content', $template->getVar($error->message));
+						$template->setError('content', $template->getVar($error->message));
+						return TRUE;
 					}
 				}
 			}
@@ -209,19 +223,25 @@ class AdminSimpleCategoryUpdate extends Event {
 			
 			global $_MAPITEMS, $_QUERYPARAMS;
 
-			if(!isset($request['id']) || intval($request['id']) == 0)
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);			
+			if(!isset($request['id']) || intval($request['id']) == 0) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 
 			$category					= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'] ." FROM ". CATEGORIES ." c LEFT JOIN ". INFO ." i ON c.category_id = i.id WHERE i.id = ". intval($request['id']));
 
-			if(!is_array($category) || empty($category))
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+			if(!is_array($category) || empty($category)) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 
-			if(!isset($request['row_order']) || $request['row_order'] == '')
-				return $template->setInfo('content', $template->getVar('L_INSERTCATORDER'), TRUE);
+			if(!isset($request['row_order']) || $request['row_order'] == '') {
+				$template->setInfo('content', $template->getVar('L_INSERTCATORDER'), TRUE);
+				return TRUE;
+			}
 
 			if(!is_numeric($request['row_order']))
-				return $template->setInfo('content', $template->getVar('L_INSERTCATORDERNUM'), TRUE);
+				$template->setInfo('content', $template->getVar('L_INSERTCATORDERNUM'), TRUE);
 
 			$update		= &$dba->prepareStatement("UPDATE ". INFO ." SET row_order=? WHERE id=?");
 			$update->setInt(1, $request['row_order']);
@@ -247,13 +267,17 @@ class AdminEditCategory extends Event {
 			
 			global $_QUERYPARAMS;
 
-			if(!isset($request['id']) || intval($request['id']) == 0)
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);			
+			if(!isset($request['id']) || intval($request['id']) == 0) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 
 			$category					= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'] ." FROM ". CATEGORIES ." c LEFT JOIN ". INFO ." i ON c.category_id = i.id WHERE i.id = ". intval($request['id']));
 
-			if(!is_array($category) || empty($category))
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);			
+			if(!is_array($category) || empty($category)) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 			
 			foreach($category as $key => $val)
 				$template->setVar('category_'. $key, $val);
@@ -276,25 +300,37 @@ class AdminUpdateCategory extends Event {
 			global $_QUERYPARAMS;
 
 			/* Error checking on the fields */
-			if(!isset($request['id']) || intval($request['id']) == 0)
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);			
+			if(!isset($request['id']) || intval($request['id']) == 0) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 
 			$category					= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'] ." FROM ". CATEGORIES ." c LEFT JOIN ". INFO ." i ON c.category_id = i.id WHERE i.id = ". intval($request['id']));
 
-			if(!is_array($category) || empty($category))
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+			if(!is_array($category) || empty($category)) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 
-			if(!isset($request['name']) || $request['name'] == '')
-				return $template->setInfo('content', $template->getVar('L_INSERTCATNAME'), TRUE);
+			if(!isset($request['name']) || $request['name'] == '') {
+				$template->setInfo('content', $template->getVar('L_INSERTCATNAME'), TRUE);
+				return TRUE;
+			}
 						
-			if(!isset($request['description']) || $request['description'] == '')
-				return $template->setInfo('content', $template->getVar('L_INSERTCATDESC'), TRUE);
+			if(!isset($request['description']) || $request['description'] == '') {
+				$template->setInfo('content', $template->getVar('L_INSERTCATDESC'), TRUE);
+				return TRUE;
+			}
 			
-			if(!isset($request['row_order']) || $request['row_order'] == '')
-				return $template->setInfo('content', $template->getVar('L_INSERTCATORDER'), TRUE);
+			if(!isset($request['row_order']) || $request['row_order'] == '') {
+				$template->setInfo('content', $template->getVar('L_INSERTCATORDER'), TRUE);
+				return TRUE;
+			}
 
-			if(!is_numeric($request['row_order']))
-				return $template->setInfo('content', $template->getVar('L_INSERTCATORDERNUM'), TRUE);
+			if(!is_numeric($request['row_order'])) {
+				$template->setInfo('content', $template->getVar('L_INSERTCATORDERNUM'), TRUE);
+				return TRUE;
+			}
 						
 			/* Build the queries */
 			$update_a			= &$dba->prepareStatement("UPDATE ". INFO ." SET name=?,row_order=? WHERE id=?");
@@ -337,35 +373,43 @@ class AdminRemoveCategory extends Event {
 			
 			global $_QUERYPARAMS;
 
-			if(!isset($request['id']) || intval($request['id']) == 0)
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);			
+			if(!isset($request['id']) || intval($request['id']) == 0) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 
 			$category					= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'] ." FROM ". CATEGORIES ." c LEFT JOIN ". INFO ." i ON c.category_id = i.id WHERE i.id = ". intval($request['id']));
 
-			if(!is_array($category) || empty($category))
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);			
+			if(!is_array($category) || empty($category)) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 			
 			$category_maps	= $dba->getRow("SELECT * FROM ". MAPS ." WHERE varname = 'category". $category['id'] ."'");
-
-			$delete_a		= &$dba->prepareStatement("DELETE FROM ". CATEGORIES ." WHERE category_id=?");
-			$delete_b		= &$dba->prepareStatement("DELETE FROM ". FORUMS ." WHERE category_id=?");
-			$delete_c		= &$dba->prepareStatement("DELETE FROM ". TOPICS ." WHERE category_id=?");
-			$delete_d		= &$dba->prepareStatement("DELETE FROM ". REPLIES ." WHERE category_id=?");
+			
+			$dba->executeUpdate("DELETE FROM ". CATEGORIES ." WHERE category_id=". intval($category['id']));
+			
+			/* Get this category's forums */
+			$forums			= &$dba->executeQuery("SELECT * FROM ". INFO ." WHERE row_left > ". intval($category['row_left']) ." AND row_right < ". intval($category['row_right']) ." AND row_type = ". FORUM);
 			
 			$heirarchy		= &new Heirarchy();
+			
+			/* Deal with this forum and any sub-forums */
+			while($forums->next()) {
+				$f				= $forums->current();
+				$forum_maps		= $dba->getRow("SELECT * FROM ". MAPS ." WHERE varname = 'forum". $f['id'] ."'");
+				$heirarchy->removeNode($forum_maps, MAPS);
+
+				$dba->executeUpdate("DELETE FROM ". FORUMS ." WHERE forum_id=". intval($f['id']));
+				$dba->executeUpdate("DELETE FROM ". TOPICS ." WHERE forum_id=". intval($f['id']));
+				$dba->executeUpdate("DELETE FROM ". REPLIES ." WHERE forum_id=". intval($f['id']));
+			}
+
+			/* This will take care of everything in the INFO table */
 			$heirarchy->removeNode($category, INFO);
+
 			$heirarchy->removeNode($category_maps, MAPS);
 
-			$delete_a->setInt(1, $category['id']);
-			$delete_b->setInt(1, $category['id']);
-			$delete_c->setInt(1, $category['id']);
-			$delete_d->setInt(1, $category['id']);
-
-			$delete_a->executeUpdate();
-			$delete_b->executeUpdate();
-			$delete_c->executeUpdate();
-			$delete_d->executeUpdate();
-			
 			$template->setInfo('content', sprintf($template->getVar('L_REMOVEDCATEGORY'), $category['name']), FALSE);
 			$template->setRedirect('admin.php?act=categories', 3);
 
@@ -384,13 +428,17 @@ class AdminCategoryPermissions extends Event {
 			
 			global $_QUERYPARAMS;
 
-			if(!isset($request['id']) || intval($request['id']) == 0)
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);			
+			if(!isset($request['id']) || intval($request['id']) == 0) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 
 			$category					= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'] ." FROM ". CATEGORIES ." c LEFT JOIN ". INFO ." i ON c.category_id = i.id WHERE i.id = ". intval($request['id']));
 
-			if(!is_array($category) || empty($category))
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);			
+			if(!is_array($category) || empty($category)) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 			
 			foreach($category as $key => $val)
 				$template->setVar('category_'. $key, $val);
@@ -416,13 +464,17 @@ class AdminUpdateCategoryPermissions extends Event {
 			
 			global $_QUERYPARAMS;
 
-			if(!isset($request['id']) || intval($request['id']) == 0)
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);			
+			if(!isset($request['id']) || intval($request['id']) == 0) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 
 			$category					= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'] ." FROM ". CATEGORIES ." c LEFT JOIN ". INFO ." i ON c.category_id = i.id WHERE i.id = ". intval($request['id']));
 
-			if(!is_array($category) || empty($category))
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);			
+			if(!is_array($category) || empty($category)) {
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				return TRUE;
+			}
 			
 			foreach($category as $key => $val)
 				$template->setVar('category_'. $key, $val);

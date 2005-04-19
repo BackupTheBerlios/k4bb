@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: javascript.js,v 1.1 2005/04/05 03:22:59 k4st Exp $
+* @version $Id: javascript.js,v 1.2 2005/04/19 21:50:27 k4st Exp $
 * @package k42
 */
 
@@ -39,6 +39,20 @@ var is_nav = ((clientPC.indexOf('mozilla')!=-1) && (clientPC.indexOf('spoofer')=
                 && (clientPC.indexOf('compatible') == -1) && (clientPC.indexOf('opera')==-1)
                 && (clientPC.indexOf('webtv')==-1) && (clientPC.indexOf('hotjava')==-1));
 
+
+/* Function to jump from one forum to another */
+function jump_to(select_id) {
+	var select			= document.getElementById(select_id);
+	if(select) {
+		if(select.selectedIndex) {
+			if(select[select.selectedIndex].value != '-1') {
+				document.location = select[select.selectedIndex].value;
+			} else {
+				return;
+			}
+		}
+	}
+}
 
 /* Show or Hide an html element */
 function ShowHide(Id) {
@@ -54,6 +68,21 @@ function ShowHide(Id) {
 function setIndex(element, array) {
 	var temp = document.getElementById(array);
 	temp.selectedIndex = getSelectedIndex(element, temp);
+}
+
+/* Set the indices on a multi-select select field */
+function setIndices(values_array, select) {
+	var temp = document.getElementById(select);
+	
+	if(values_array.length > 1) {
+		for(var i = 0; i < temp.options.length; i++) {
+			if(in_array(temp.options[i].value, values_array)) {
+				temp.options[i].selected = true;
+			}
+		}
+	} else {
+		setIndex(values_array[0], select);
+	}
 }
 
 /* Get the positiong of an element in an array */
@@ -125,14 +154,9 @@ function in_array(needle, haystack) {
 	return bool;
 }
 function array_push(thearray, value) {
-	thearray[ getarraysize(thearray) ] = value;
+	thearray[getarraysize(thearray)] = value;
 }
-function QuickJump(Id) {
-	if(Id.options[Id.selectedIndex].value != -1)
-		document.location = '#' + Id.options[Id.selectedIndex].value;
-	else
-		return false;
-}
+
 
 //*** The following is copyright 2003 by Gavin Kistner, gavin@refinery.com
 //*** It is covered under the license viewable at http://phrogz.net/JS/_ReuseLicense.txt

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: cache.php,v 1.3 2005/04/13 02:52:05 k4st Exp $
+* @version $Id: cache.php,v 1.4 2005/04/19 21:51:02 k4st Exp $
 * @package k42
 */
 
@@ -156,7 +156,7 @@ function get_cached_styleset($styleset, $default_styleset) {
 	if(!file_exists(FORUM_BASE_DIR .'/tmp/cache/'. $styleset .'.css')) {
 
 		$query			= &$_DBA->prepareStatement("SELECT css.name as name, css.properties as properties FROM ". CSS ." css LEFT JOIN ". STYLES ." styles ON styles.id = css.style_id WHERE styles.name = ? ORDER BY css.name ASC");
-		$css			= "/* k4 Bulletin Board v". VERSION ." CSS Style Set :: ". $styleset ." */\r\n\r\n";
+		$css			= "/* k4 Bulletin Board v". VERSION ." CSS Generated Style Set :: ". $styleset ." */\r\n\r\n";
 
 		/* Set the user's styleset to the query */
 		$query->setString(1, $styleset);
@@ -202,6 +202,15 @@ function bb_setcookie_cache($name, $value, $expire) {
 	$_SESSION['bbcache']['cookies'][] = array('name' => $name, 'value' => $value, 'expire' => $expire);
 }
 
+/* Set a page-context temporary cached cookie item value for topics-only */
+function bb_settopic_cache_item($name, $value, $expire) {
+	if(!isset($_SESSION['bbcache']))
+		$_SESSION['bbcache'] = array();
+
+	$_SESSION['bbcache']['temp_cookies'][] = array('name' => $name, 'value' => $value, 'expire' => $expire);
+}
+
+
 /* Funtion to execute and unset all bbcache cookie items */
 function bb_execute_cache() {
 	if(isset($_SESSION['bbcache'])) {
@@ -218,6 +227,25 @@ function bb_execute_cache() {
 
 		/* Clear the bbcache session under 'cookies' */
 		$_SESSION['bbcache']['cookies'] = array();
+	}
+}
+
+/* Funtion to execute and unset all bbcache temp cookie (topic) items */
+function bb_execute_topiccache() {
+	if(isset($_SESSION['bbcache'])) {
+		
+		/* Cached cookie setting */
+		if(isset($_SESSION['bbcache']['temp_cookies'])) {
+			for($i = 0; $i < count($_SESSION['bbcache']['temp_cookies']); $i++) {
+				
+				$temp = $_SESSION['bbcache']['temp_cookies'][$i];
+
+				setcookie($temp['name'], $temp['value'], $temp['expire']);
+			}
+		}
+
+		/* Clear the bbcache session under 'cookies' */
+		$_SESSION['bbcache']['temp_cookies'] = array();
 	}
 }
 

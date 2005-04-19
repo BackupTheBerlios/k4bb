@@ -24,7 +24,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.js,v 1.5 2005/04/11 02:15:13 k4st Exp $
+* @version $Id: bbcode.js,v 1.6 2005/04/19 21:50:27 k4st Exp $
 * @package k42
 */
 
@@ -36,21 +36,31 @@ var bbcode_opentags			= new Array()
 var bbcode_button_objects	= new Array()
 
 /**
- * Array Push function 
+ * count()/sizeof() like function for an array
  */
-Array.prototype.push = function(value) {
-	this[this.length] = value;
-	//alert('pushed: ' +bbcode_opentags[bbcode_opentags.length - 1]);
+function sizeof(thearray) {
+	for (i = 0; i < thearray.length; i++) {
+		if ((thearray[i] == "undefined") || (thearray[i] == "") || (thearray[i] == null)) {
+			return i;
+		}
+	}
+	return thearray.length;
 }
 
 /**
- * Array pop function, but for a given value 
+ * Array Push function 
  */
-Array.prototype.unset = function(value) {
-	for(var i = 0; i < this.length; i++) {
-		if(this[i] == value) {
-			//alert('popped: ' +bbcode_opentags[i]);
-			delete this[i];
+function array_push(thearray, value) {
+	thearray[sizeof(thearray)] = value;
+}
+
+/**
+ * Array unset function for a given value 
+ */
+function array_unset(thearray, value) {
+	for(var i = 0; i < sizeof(thearray); i++) {
+		if(thearray[i] == value) {
+			delete thearray[i];
 		}
 	}
 
@@ -60,13 +70,14 @@ Array.prototype.unset = function(value) {
 /**
  * In array type function
  */
-Array.prototype.in_array = function(value) {
-	for(var i = 0; i < this.length; i++) {
-		if(this[i] == value) {
-			return true;
+function in_array(thearray, needle) {
+	var bool = false;
+	for (var i=0; i < sizeof(thearray); i++) {
+		if (thearray[i] == needle) {
+			bool = true;
 		}
 	}
-	return false;
+	return bool;
 }
 
 /**
@@ -75,8 +86,7 @@ Array.prototype.in_array = function(value) {
 function get_obj_pos(tag) {
 	var tmp = 0;
 
-	//alert(bbcode_opentags[1]);
-	for(var i = 0; i < bbcode_opentags.length; i++) {
+	for(var i = 0; i < sizeof(bbcode_opentags); i++) {
 		if(bbcode_opentags[i]) {
 			if(bbcode_opentags[i][0] == tag) {
 				tmp = i;
@@ -141,7 +151,7 @@ function replace_selection(editor, open, close, selection) {
 			matches									= selected_text.match(/(\[.+\])+(.+)+(\[\/.+\])/);
 
 			/* Set the new selection data */
-			if(matches && matches != null && matches.length > 0 && matches[1] == open) {
+			if(matches && matches != null && sizeof(matches) > 0 && matches[1] == open) {
 				editor.value						= before_tag + matches[2] + after_tag;
 			} else {
 				editor.value						= before_tag + open + selected_text + close + after_tag;
@@ -153,7 +163,7 @@ function replace_selection(editor, open, close, selection) {
 		
 		matches										= selection.match(/(\[.+\])+(.+)+(\[\/.+\])/);
 		
-		if(matches && matches != null && matches.length > 0 && matches[1] == open) {
+		if(matches && matches != null && sizeof(matches) > 0 && matches[1] == open) {
 			document.getSelection()					= matches[2];					
 		} else {	
 			document.getSelection()					= open + document.getSelection() + close;
@@ -162,7 +172,7 @@ function replace_selection(editor, open, close, selection) {
 
 		/* Internet Explorer */		
 		matches										= selection.match(/(\[.+\])+(.+)+(\[\/.+\])/);
-		if(matches && matches != null && matches.length > 0 && matches[1] == open) {
+		if(matches && matches != null && sizeof(matches) > 0 && matches[1] == open) {
 			document.selection.createRange().text	= matches[2];					
 		} else {
 			document.selection.createRange().text	= open + document.selection.createRange().text + close;
@@ -179,16 +189,16 @@ function bbcodex_button_click(i) {
 
 	/* Get this context's editor */
 	var editor		= bbcode_button_objects[i].split('_');
-	editor			= document.getElementById(editor[editor.length-1]);
+	editor			= document.getElementById(editor[sizeof(editor)-1]);
 
 	/* Get selected text, if any */
 	var selection	= get_selection(editor);
 	
 	/* Get the value of a select option if it is a select */
-	var value		= obj.length ? obj[obj.selectedIndex].value : null;
+	var value		= sizeof(obj) ? obj[obj.selectedIndex].value : null;
 	
 	/* If we are using a select box, and the value of the selected index is null */
-	if(obj.length) {
+	if(sizeof(obj)) {
 		if(obj[obj.selectedIndex] && obj[obj.selectedIndex].value == '') {
 			
 			/* Return nothing, but focus the editor */
@@ -233,7 +243,7 @@ function bbcodex_button_click(i) {
 			var new_obj		= new Array(obj.tag, obj.closed_tag, obj)
 			
 			/* Add this tag to the open tags array */
-			bbcode_opentags.push(new_obj);
+			array_push(bbcode_opentags, new_obj);
 		}
 	}
 
@@ -250,12 +260,11 @@ function close_tag(obj, editor) {
 	obj.value		= obj.name.toUpperCase();
 
 	var obj_i		= get_obj_pos(obj.tag);
-
-	//alert((bbcode_opentags.length - 1) + ' ' + obj_i);
+	
 	var new_obj		= bbcode_opentags[obj_i];
 
 	/* Loop through the open tags array */
-	for(var i = (bbcode_opentags.length - 1); i > obj_i; i--) {
+	for(var i = (sizeof(bbcode_opentags) - 1); i > obj_i; i--) {
 		
 		/* If the open tag is not the current button object, and that we arn't passed this tag */
 		//if(bbcode_opentags[i][0] != obj.tag && new_obj != null) {
@@ -268,7 +277,7 @@ function close_tag(obj, editor) {
 				bbcode_opentags[i][2].value	= bbcode_opentags[i][2].name.toUpperCase();
 
 				/* Remove this tag from the open tags array */
-				bbcode_opentags.unset(bbcode_opentags[i]);
+				array_unset(bbcode_opentags, bbcode_opentags[i]);
 			}
 		//} else {
 		//	new_obj							= bbcode_opentags[i];
@@ -284,14 +293,14 @@ function close_tag(obj, editor) {
 	editor.value	+= new_obj[1];
 
 	/* Remove this tag from the open tags array */
-	bbcode_opentags.unset(new_obj);
+	array_unset(bbcode_opentags, new_obj);
 }
 
 /** 
  * Tag open wrapping 
  */
 function tag_open(key, val) {
-	if(bbcode_adv.in_array(key)) {
+	if(in_array(bbcode_adv, key)) {
 		return '[' + key + '=' + val + ']';
 	} else {
 		return '[' + key + ']';
@@ -314,13 +323,13 @@ function get_open_tag(obj, val) {
 	tag = tag_open(obj.name, val);
 
 	/* Loop through all open tags */
-	for(var i = 0; i < bbcode_opentags.length; i++) {
+	for(var i = 0; i < sizeof(bbcode_opentags); i++) {
 		
 		if(bbcode_opentags[i]) {
 			
 			/* The bbcode_opentags[i].tag can be flimsy, so we create a temporary tag to check against */
 			//temp_value = null;
-			//if(bbcode_opentags[i].length) {
+			//if(sizeof(bbcode_opentags[i])) {
 			//	temp_value = bbcode_opentags[i][bbcode_opentags[i].selectedIndex].value;
 			//}
 
@@ -347,7 +356,7 @@ function bbcodex_close_tags(editor_id) {
 	var editor = document.getElementById(editor_id);
 
 	/* Loop through the open tags array */
-	for(var i = (bbcode_opentags.length - 1); i >= 0; i--) {
+	for(var i = (sizeof(bbcode_opentags) - 1); i >= 0; i--) {
 		
 		if(bbcode_opentags[i]) { 
 			/* Update the editor value */
@@ -357,7 +366,7 @@ function bbcodex_close_tags(editor_id) {
 			bbcode_opentags[i].value	= bbcode_opentags[i][2].name.toUpperCase();
 
 			/* Remove this tag from the open tags array */
-			bbcode_opentags.unset(bbcode_opentags[i]);
+			array_unset(bbcode_opentags, bbcode_opentags[i]);
 		}
 	}
 }
@@ -371,9 +380,9 @@ function bbcodex_init(name, id, rows, cols, classname, style, button_style) {
 	document.write('<div id="bbcode_buttons_' + id + '" align="left">');
 	
 	/* loop the buttons array, then spit out the data */
-	for(var i = 0; i < bbcode_buttons.length; i++) {
+	for(var i = 0; i < sizeof(bbcode_buttons); i++) {
 		document.write('<input type="button" name="' + bbcode_buttons[i] + '" id="' + bbcode_buttons[i] + '_' + id + 'codex" value="' + bbcode_buttons[i].toUpperCase() + '" class="' + button_style + '" style="' + (bbcode_button_styles[i] ? bbcode_button_styles[i] : '') + '" accesskey="' + bbcode_buttons[i] + '" onclick="bbcodex_button_click(' + i + ')" onmouseover="bbcodex_helpline(\'' + bbcode_buttons[i] + '\', \'' + bbcode_buttons[i] + '_' + id + 'codex\')" />');
-		bbcode_button_objects.push(bbcode_buttons[i] + '_' + id + 'codex');
+		array_push(bbcode_button_objects, bbcode_buttons[i] + '_' + id + 'codex');
 	}
 
 	document.write('<input type="button" name="URL" id="URL_' + id + 'codex" value="URL" class="' + button_style + '" onclick="BBCurl(\'' + id + '\')" onmouseover="bbcodex_helpline(\'w\', \'URL_' + id + 'codex\')" />');
@@ -383,8 +392,10 @@ function bbcodex_init(name, id, rows, cols, classname, style, button_style) {
 
 	/* Create the color selection box */
 	create_color_select(id);
+	
 	/* Create the size selection box */
 	create_size_select(id);
+	
 	/* Close all tags button */
 	close_tags_button(id);
 	
@@ -397,7 +408,7 @@ function bbcodex_init(name, id, rows, cols, classname, style, button_style) {
 	document.write('</div>');
 
 	/* Create our textarea */
-	document.write('<textarea name="' + name + '" id="' + id + 'codex" rows="' + rows + '" cols="' + cols + '" class="' + classname + '" style="' + style + '"></textarea>');
+	document.write('<textarea name="' + name + '" id="' + id + 'codex" rows="' + rows + '" cols="' + cols + '" class="' + classname + '" style="' + style + '" wrap="PHYSICAL"></textarea>');
 	
 	/* Get the div and the textarea */
 	var container			= document.getElementById(id);
@@ -410,7 +421,7 @@ function bbcodex_init(name, id, rows, cols, classname, style, button_style) {
 	editor.value			= container.innerHTML;
 
 	/* Register this editor */
-	bbcode_editors.push(editor);
+	array_push(bbcode_editors, editor);
 
 }
 
@@ -418,20 +429,21 @@ function bbcodex_init(name, id, rows, cols, classname, style, button_style) {
  * Function to dispay a select field
  */
 function draw_select(name, id, values, styles, options) {
-	if(values.length > 0) {
+
+	if(sizeof(values) > 0) {
 		
 		/* Open the select tag */
-		document.write('<select name="' + name + '" id="' + id + '" onchange="bbcodex_button_click(' + bbcode_button_objects.length + ')" onmouseover="bbcodex_helpline(\'' + name + '\', \'' + id + '\')">');
+		document.write('<select name="' + name + '" id="' + id + '" onchange="bbcodex_button_click(' + sizeof(bbcode_button_objects) + ')" onmouseover="bbcodex_helpline(\'' + name + '\', \'' + id + '\')">');
 		
 		/* Loop through the options and populate the select */
-		for(var i = 0; i < values.length; i++) {
+		for(var i = 0; i < sizeof(values); i++) {
 			document.write('<option value="' + values[i] + '" style="' + (styles[i] ? styles[i] : '') + '">' + options[i] + '</option>');
 		}
 
 		/* Close the select tag */
 		document.write('</select>');
 
-		bbcode_button_objects.push(id);
+		array_push(bbcode_button_objects, id);
 	}
 }
 
@@ -441,8 +453,8 @@ function draw_select(name, id, values, styles, options) {
 function bbcodex_helpline(name, id) {
 	var editor			= id.split("_");
 	
-	if(editor.length > 0) {
-		var helpline	= document.getElementById('helpline_' + editor[editor.length - 1]);
+	if(sizeof(editor) > 0) {
+		var helpline	= document.getElementById('helpline_' + editor[sizeof(editor) - 1]);
 		helpline.value	= eval(name + '_help');
 	}
 }
