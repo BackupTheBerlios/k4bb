@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: url.inc.php,v 1.3 2005/04/20 20:34:22 k4st Exp $
+* @version $Id: url.inc.php,v 1.4 2005/04/20 20:42:31 k4st Exp $
 * @package k42
 */
 
@@ -73,9 +73,10 @@ class Url {
 			$this->user = $query['port'];
 
 		if (isset($query['path'])) {
+
 			$path = dirname($query['path']);
 
-			if ($path == DIRECTORY_SEPARATOR)
+			if ($path == '/' || $path == '\\')
 				$path = '';
 
 			$this->path = $path;
@@ -108,8 +109,8 @@ class Url {
 		}
 
 		if ($this->host) $url .= $this->host;
-		if ($this->path) $url .= "{$this->path}/";
-		if ($this->file) $url .= $this->file;
+		if ($this->path) $url .= "{$this->path}";
+		if ($this->file) $url .= "/{$this->file}";
 		for ($i = 0; list($key, $value) = each($this->args); $i++)
 			$url .= ($i > 0) ? "&$key=$value" : "?$key=$value";
 		if ($this->anchor) $url .= "#{$this->anchor}";
