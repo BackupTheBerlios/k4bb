@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: timer.class.php,v 1.4 2005/04/20 20:36:59 k4st Exp $
+* @version $Id: timer.class.php,v 1.3 2005/04/20 20:34:22 k4st Exp $
 * @package k42
 */
 
@@ -40,7 +40,7 @@ class Timer {
 	var $precision;
 
 	function Timer($precision = 4) {
-		if (is_numeric($precision)) {
+		if (ctype_digit($precision)) {
 			$this->precision	= ceil($precision);
 		}
 
