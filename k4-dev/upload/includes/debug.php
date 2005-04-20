@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: debug.php,v 1.8 2005/04/20 20:52:20 k4st Exp $
+* @version $Id: debug.php,v 1.9 2005/04/20 21:00:10 k4st Exp $
 * @package k42
 */
 
@@ -66,7 +66,7 @@ function debug_header($filename) {
 		.debug_query {
 			border: 1px solid #999999;
 			background-color: #F6F6F6;
-			color: #8C8C8C;
+			color: #777777;
 			font-size: 11px;
 			overflow: auto;
 			width: 99%;
