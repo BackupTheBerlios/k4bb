@@ -34,7 +34,7 @@ CREATE TABLE k4_userinfo (
 	signature		VARCHAR(255) NOT NULL DEFAULT '',
 	birthday		VARCHAR(10) NOT NULL DEFAULT '',
 	homepage		VARCHAR(255) NOT NULL DEFAULT '',
-	language		VARCHAR(20) NOT NULL DEFAULT 'English',
+	language		VARCHAR(20) NOT NULL DEFAULT 'english',
 	styleset		VARCHAR(100) NOT NULL DEFAULT 'Descent',
 	imgset			VARCHAR(100) NOT NULL DEFAULT 'Descent',
 	tplset			VARCHAR(100) NOT NULL DEFAULT 'Descent',
