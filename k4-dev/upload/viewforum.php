@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.5 2005/04/19 21:50:14 k4st Exp $
+* @version $Id: viewforum.php,v 1.6 2005/04/20 00:32:52 k4st Exp $
 * @package k42
 */
 
@@ -65,8 +65,10 @@ class DefaultEvent extends Event {
 
 				$forum_can_view		= $forum['row_type'] & CATEGORY ? $user['maps']['categories'][$forum['id']]['can_view'] : $user['maps']['forums'][$forum['id']]['can_view'];
 				
-				$num_online_total	= $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS ." s WHERE s.id != '' $extra");
+				$expired			= time() - ini_get('session.gc_maxlifetime');
 
+				$num_online_total	= $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS ." s WHERE s.seen >= $expired $extra GROUP BY s.name");
+				
 				/* If there are more than 0 people browsing the forum, display the stats */
 				if($num_online_total > 0 && $forum_can_view <= $user['perms'] && ($forum['row_type'] & CATEGORY || $forum['row_type'] & FORUM)) {
 

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewtopic.php,v 1.1 2005/04/19 21:50:14 k4st Exp $
+* @version $Id: viewtopic.php,v 1.2 2005/04/20 00:32:52 k4st Exp $
 * @package k42
 */
 
@@ -90,7 +90,9 @@ class DefaultEvent extends Event {
 		/* Set the extra SQL query fields to check */
 		$extra				= " AND s.location_file = '". $dba->Quote($_URL->file) ."' AND s.location_id = ". $location_id;	
 		
-		$num_online_total	= $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS ." s WHERE s.id != '' $extra");
+		$expired			= time() - ini_get('session.gc_maxlifetime');
+
+		$num_online_total	= $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS ." s WHERE s.seen >= $expired $extra GROUP BY s.name");
 
 		if($num_online_total > 0) {
 
