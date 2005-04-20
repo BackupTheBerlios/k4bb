@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.6 2005/04/20 00:32:52 k4st Exp $
+* @version $Id: viewforum.php,v 1.7 2005/04/20 18:02:42 k4st Exp $
 * @package k42
 */
 
@@ -67,7 +67,7 @@ class DefaultEvent extends Event {
 				
 				$expired			= time() - ini_get('session.gc_maxlifetime');
 
-				$num_online_total	= $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS ." s WHERE s.seen >= $expired $extra GROUP BY s.name");
+				$num_online_total	= $dba->getValue("SELECT COUNT(s.id) FROM ". SESSIONS ." s WHERE s.seen >= $expired $extra GROUP BY s.name");
 				
 				/* If there are more than 0 people browsing the forum, display the stats */
 				if($num_online_total > 0 && $forum_can_view <= $user['perms'] && ($forum['row_type'] & CATEGORY || $forum['row_type'] & FORUM)) {
@@ -155,7 +155,7 @@ class DefaultEvent extends Event {
 							$template->setVar('forum_'. $key, $val);
 
 						/* If this forum has sub-forums */
-						if( (isset_forum_cache_item('subforums', $forum['id']) && $forum['subforums'] == 1) || ($dba->GetValue("SELECT COUNT(*) FROM ". INFO ." WHERE parent_id = ". $forum['id'] ." AND row_type = ". FORUM) > 0)) {
+						if( (isset_forum_cache_item('subforums', $forum['id']) && $forum['subforums'] == 1)) {
 							
 							/* Cache this forum as having subforums */
 							set_forum_cache_item('subforums', 1, $forum['id']);
