@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: debug.php,v 1.4 2005/04/20 19:56:51 k4st Exp $
+* @version $Id: debug.php,v 1.5 2005/04/20 19:58:39 k4st Exp $
 * @package k42
 */
 
@@ -88,6 +88,9 @@ function debug_header($filename) {
 	</style>
 	</head>
 	<body>
+	<div align="left">
+		<h1>k4 Bulletin Board SQL Debug</h1>
+	</div>
 	<div class="debug_content">
 		<h2>SQL Queries for: <?php echo $filename; ?></h2>
 	<?php
