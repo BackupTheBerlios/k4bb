@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: controller.class.php,v 1.3 2005/04/13 02:53:33 k4st Exp $
+* @version $Id: controller.class.php,v 1.4 2005/04/20 02:56:24 k4st Exp $
 * @package k42
 */
 
@@ -116,7 +116,7 @@ class Controller {
 	 */
 	function Execute(&$template) {
 		
-		global $_DBA;
+		global $_DBA, $_URL;
 
 		/**
 		 * General Variable Setting
@@ -150,7 +150,7 @@ class Controller {
 		$this->template->setVar('css_styles', get_cached_styleset($styleset, $template->getVar('styleset')));
 		
 		$template_dir		= FORUM_BASE_DIR . DIRECTORY_SEPARATOR . 'templates'. DIRECTORY_SEPARATOR;
-		$imgs_dir			= FORUM_BASE_DIR . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
+		$imgs_dir			= FORUM_BASE_DIR . DIRECTORY_SEPARATOR . 'Images' . DIRECTORY_SEPARATOR;
 
 		/* Should we get the template set that goes with this styleset? */
 		$templateset		= is_dir($template_dir . $styleset) ? $template_dir . $styleset : $template_dir . $templateset;
@@ -171,7 +171,7 @@ class Controller {
 		$this->template->setVar('IMG_DIR', $imageset);
 
 		/* Determine which language to get, and then include the appropriate file */
-		$language			= is_a($session['user'], 'Member') ? $user['language'] : strtolower(get_setting('application', 'lang'));
+		$language			= is_a($session['user'], 'Member') ? strtolower($user['language']) : strtolower(get_setting('application', 'lang'));
 		
 		/* Check to see if this is an invalid language file */
 		if(!file_exists(FORUM_BASE_DIR. '/includes/lang/'. $language .'/lang.php'))
@@ -195,7 +195,6 @@ class Controller {
 		
 		/* Memory Saving */
 		unset($lang);
-
 		
 		/**
 		 * Event Execution
@@ -209,7 +208,6 @@ class Controller {
 		if ($result	== FALSE)
 			$this->default->Execute(&$template, $request, &$_DBA, &$session, &$user);
 		
-
 		/**
 		 * User Information
 		 */
@@ -237,7 +235,14 @@ class Controller {
 		$template->setVar('num_queries', $_DBA->num_queries);
 		
 		/* Set the Load time */
-		$this->template->setVar('load_time', $this->timer->__toString());
+		$template->setVar('load_time', $this->timer->__toString());
+		
+		if(DEBUG_SQL) {
+			debug_sql();
+
+			$template->setVar('debug_file', $_URL->file);
+			$template->show('sql_debug');
+		}
 
 		/* Render the template */
 		$template->Render();

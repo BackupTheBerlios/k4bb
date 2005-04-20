@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: init.php,v 1.5 2005/04/19 21:51:02 k4st Exp $
+* @version $Id: init.php,v 1.6 2005/04/20 02:54:45 k4st Exp $
 * @package k42
 */
 
@@ -35,6 +35,7 @@ if(!defined('IN_K4')) {
 	exit;
 }
 
+require FORUM_BASE_DIR. '/includes/debug.php';
 require FORUM_BASE_DIR. '/includes/framework/pagecraft.php';
 
 /* Functions */

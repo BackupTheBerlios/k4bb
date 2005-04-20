@@ -268,10 +268,13 @@
 
 <!-- Benchmarking -->
 <div align="center">
-	<div style="width:400px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">
+	<div style="width:450px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">
 		[ <a href="http://www.newmediums.net" title="k4 BB Home Page" target="_blank">Powered By: k4 v.{$VERSION}</a> ]
 		[ Load time: {$load_time} ]
 		[ Num Queries: {$num_queries} ]
+		<core:block id="sql_debug" hidden="yes">
+		[ <a href="tmp/debug/{$debug_file}">Debug</a> ]
+		</core:block>
 		<br />
 		{$copyrighttext}
 	</div>
@@ -313,7 +316,7 @@ COPYRIGHT NOTICE
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: forum_base.html,v 1.6 2005/04/19 21:49:19 k4st Exp $
+* @version $Id: forum_base.html,v 1.7 2005/04/20 02:58:29 k4st Exp $
 * @package k42
 */
 -->

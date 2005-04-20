@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: mysql.php,v 1.3 2005/04/13 02:54:00 k4st Exp $
+* @version $Id: mysql.php,v 1.5 2005/04/20 02:57:37 k4st Exp $
 * @package k42
 */
 
@@ -139,6 +139,9 @@ class MysqlConnection extends FADBConnection {
 		if ($result == FALSE)
 			return trigger_error("Invalid query: ".mysql_error($this->link), E_USER_ERROR);
 		
+		if(DEBUG_SQL)
+			set_debug_item($stmt, $result);
+
 		/* Increment the number of queries */
 		$this->num_queries++;
 
@@ -158,7 +161,12 @@ class MysqlConnection extends FADBConnection {
 		/* Increment the number of queries */
 		$this->num_queries++;
 
-		return new MysqlResultIterator($result, $mode);
+		$result = &new MysqlResultIterator($result, $mode);
+
+		if(DEBUG_SQL)
+			set_debug_item($stmt, $result);
+
+		return $result;
 	}
 
 	function getRow($query, $type = DBA_ASSOC) {
@@ -173,6 +181,10 @@ class MysqlConnection extends FADBConnection {
 		$this->num_queries++;
 
 		while($row = mysql_fetch_array($result, $type)) {
+			
+			if(DEBUG_SQL)
+				set_debug_item($query, $row);
+			
 			return $row;
 		}
 
@@ -191,6 +203,9 @@ class MysqlConnection extends FADBConnection {
 				$row	= mysql_fetch_array($result, MYSQL_NUM);
 
 				mysql_free_result($result);
+				
+				if(DEBUG_SQL)
+					set_debug_item($query, $row[0]);
 
 				return $row[0];
 			}

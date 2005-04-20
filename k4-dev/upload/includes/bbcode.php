@@ -26,7 +26,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.php,v 1.3 2005/04/19 21:51:02 k4st Exp $
+* @version $Id: bbcode.php,v 1.4 2005/04/20 02:54:45 k4st Exp $
 * @package k42
 */
 
@@ -487,7 +487,7 @@ class BBEmoticons extends BBCodeTag {
 				
 				$proportions			= getimagesize($file);
 
-				$this->instance->text	= str_ireplace($smilie['typed'], '<!-- EMOTICON '. $smilie['typed'] .' --><img src="'. $file .'" alt="'. $smilie['description'] .'" width="'. $proportions[0] .'" height="'. $proportions[1] .'" border="0" /><!-- / EMOTICON -->', $this->instance->text);
+				$this->instance->text	= preg_replace('~'. preg_quote($smilie['typed']) .'~i', '<!-- EMOTICON '. $smilie['typed'] .' --><img src="'. $file .'" alt="'. $smilie['description'] .'" width="'. $proportions[0] .'" height="'. $proportions[1] .'" border="0" /><!-- / EMOTICON -->', $this->instance->text);
 			}
 		}		
 		return $this->instance->text;

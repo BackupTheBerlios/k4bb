@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: common.php,v 1.6 2005/04/19 21:51:02 k4st Exp $
+* @version $Id: common.php,v 1.7 2005/04/20 02:54:45 k4st Exp $
 * @package k42
 */
 
@@ -36,6 +36,8 @@ error_reporting(E_ALL);
 if(!defined('IN_K4')) {
 	exit;
 }
+
+define('DEBUG_SQL', TRUE);
 
 
 /**
@@ -164,7 +166,7 @@ exit;
 $result								= &$_DBA->executeQuery("SELECT * FROM ". DATASTORE);
 while ($result->next()) {
 	$temp							= $result->current();
-	$datastore[$temp['varname']]	= @unserialize($temp['data']);
+	$datastore[$temp['varname']]	= @unserialize(stripslashes($temp['data']));
 }
 $result->freeResult();
 
@@ -190,5 +192,6 @@ $GLOBALS['_DATASTORE']		= &$datastore;
 $GLOBALS['_QUERYPARAMS']	= &$query_params;
 $GLOBALS['_MAPITEMS']		= &$map_items;
 $GLOBALS['_USERGROUPS']		= &$usergroups;
+$GLOBALS['_DEBUGITEMS']		= array();
 
 ?>

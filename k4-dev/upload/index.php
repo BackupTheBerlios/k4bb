@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.6 2005/04/20 00:32:52 k4st Exp $
+* @version $Id: index.php,v 1.7 2005/04/20 02:54:15 k4st Exp $
 * @package k42
 */
 
@@ -110,27 +110,27 @@ class DefaultEvent extends Event {
 		/* Set the online users list */
 		$online_users						= &new OnlineUsersIterator(NULL);
 		$template->setList('online_users', $online_users);
-
+		
 		$newest_user						= $dba->getRow("SELECT name, id FROM ". USERS ." ORDER BY id DESC LIMIT 1");
-
+		
 		$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members'),
 						'num_invisible'		=> Globals::getGlobal('num_online_invisible'),
 						'num_topics'		=> $_DATASTORE['forumstats']['num_topics'],
 						'num_replies'		=> $_DATASTORE['forumstats']['num_replies'],
 						'num_members'		=> $_DATASTORE['forumstats']['num_members'],
-						'num_online_total'	=> $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS ." GROUP BY s.name"),
+						'num_online_total'	=> $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS),
 						'newest_uid'		=> $newest_user['id'],
 						'newest_user'		=> $newest_user['name']
 						);
-				
+		
 		$template->setVar('num_online_members', $stats['num_online_members']);
-
+		
 		$template->setVar('newest_member',	sprintf($template->getVar('L_NEWESTMEMBER'),		$stats['newest_uid'], $stats['newest_user']));
 		$template->setVar('total_users',	sprintf($template->getVar('L_TOTALUSERS'),			$stats['num_members']));
 		$template->setVar('total_posts',	sprintf($template->getVar('L_TOTALPOSTS'),			($stats['num_topics'] + $stats['num_replies']), $stats['num_topics'], $stats['num_replies']));
 		$template->setVar('online_stats',	sprintf($template->getVar('L_ONLINEUSERSTATS'),		$stats['num_online_total'], $stats['num_online_members'], ($stats['num_online_total'] - $stats['num_online_members'] - $stats['num_invisible']), $stats['num_invisible']));
 		$template->setVar('most_users_ever',sprintf($template->getVar('L_MOSTUSERSEVERONLINE'),	$_DATASTORE['maxloggedin']['maxonline'], date("n/j/Y", bbtime($_DATASTORE['maxloggedin']['maxonlinedate'])), date("g:ia", bbtime($_DATASTORE['maxloggedin']['maxonlinedate']))));
-
+		
 		if($stats['num_online_total'] >= $_DATASTORE['maxloggedin']['maxonline']) {
 			$maxloggedin	= array('maxonline' => $stats['num_online_total'], 'maxonlinedate' => time());
 			$query			= $dba->prepareStatement("UPDATE ". DATASTORE ." SET data = ? WHERE varname = ?");
