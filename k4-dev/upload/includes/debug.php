@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: debug.php,v 1.7 2005/04/20 20:50:08 k4st Exp $
+* @version $Id: debug.php,v 1.8 2005/04/20 20:52:20 k4st Exp $
 * @package k42
 */
 
@@ -177,7 +177,7 @@ function format_results(&$results) {
 function set_debug_item($query, &$result) {
 	global $_DEBUGITEMS;
 	
-	$query			= preg_replace('~(\s|\b)(SELECT|UPDATE|DELETE|COUNT|FROM|WHERE|AND|AS)(\s|\b)~i', '<strong class="debug_sql_method">\\1\\2\\3</strong>', $query);
+	$query			= preg_replace('~(\s|\b)(SELECT|SET|LEFT|RIGHT|ORDER|BY|GROUP|ASC|DESC|JOIN|ON|UPDATE|DELETE|COUNT|FROM|WHERE|AND|AS)(\s|\b)~i', '<strong class="debug_sql_method">\\1\\2\\3</strong>', $query);
 
 	$backtrace		= debug_backtrace();
 	$backtrace		= $backtrace[count($backtrace)-1];
