@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewtopic.php,v 1.3 2005/04/20 18:02:42 k4st Exp $
+* @version $Id: viewtopic.php,v 1.4 2005/04/20 19:44:49 k4st Exp $
 * @package k42
 */
 
@@ -92,7 +92,7 @@ class DefaultEvent extends Event {
 		
 		$expired			= time() - ini_get('session.gc_maxlifetime');
 
-		$num_online_total	= $dba->getValue("SELECT COUNT(s.id) FROM ". SESSIONS ." s WHERE s.seen >= $expired $extra GROUP BY s.name");
+		$num_online_total	= $dba->getValue("SELECT COUNT(s.id) FROM ". SESSIONS ." s WHERE s.seen >= $expired $extra");
 
 		if($num_online_total > 0) {
 

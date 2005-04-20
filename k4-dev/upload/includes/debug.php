@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: debug.php,v 1.2 2005/04/20 12:25:35 k4st Exp $
+* @version $Id: debug.php,v 1.3 2005/04/20 19:44:31 k4st Exp $
 * @package k42
 */
 
@@ -123,6 +123,10 @@ function debug_item($backtrace, $query, &$results) {
 function debug_footer() {
 	?>
 	</div>
+	
+	<div style="width:300px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">
+		[ <a href="http://www.k4forums.com" title="k4 BB Home Page" target="_blank">Powered By: k4 Bulletin Board</a> ]
+	</div>
 
 	</body>
 	</html>
@@ -143,7 +147,7 @@ function format_results(&$results) {
 			$array = ob_get_contents();
 			ob_end_clean();
 
-			$result_str .= '<strong>Array Returned:</strong><br />'. nl2br($array);
+			$result_str .= '<strong>Array Returned:</strong><br />'. preg_replace('~\n~', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', nl2br($array));
 		} else if(is_numeric($results)) {
 			$result_str	.= '<strong>Integer Returned:</strong> '. $results;
 		} else if(is_string($results)) {

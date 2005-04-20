@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.7 2005/04/20 18:02:42 k4st Exp $
+* @version $Id: viewforum.php,v 1.8 2005/04/20 19:44:49 k4st Exp $
 * @package k42
 */
 
@@ -67,7 +67,7 @@ class DefaultEvent extends Event {
 				
 				$expired			= time() - ini_get('session.gc_maxlifetime');
 
-				$num_online_total	= $dba->getValue("SELECT COUNT(s.id) FROM ". SESSIONS ." s WHERE s.seen >= $expired $extra GROUP BY s.name");
+				$num_online_total	= $dba->getValue("SELECT COUNT(s.id) as num_online_total FROM ". SESSIONS ." s WHERE s.seen >= $expired $extra");
 				
 				/* If there are more than 0 people browsing the forum, display the stats */
 				if($num_online_total > 0 && $forum_can_view <= $user['perms'] && ($forum['row_type'] & CATEGORY || $forum['row_type'] & FORUM)) {

@@ -291,14 +291,14 @@ function emoticon(typed) {
 	 */
 	
 	try {
-		var disable_html			= document.getElementById('disable_html');
+		<maps:if forum="forum_id" var="html" method="can_add">var disable_html			= document.getElementById('disable_html');</maps:if>
 		var disable_bbcode			= document.getElementById('disable_bbcode');
 		var disable_emoticons		= document.getElementById('disable_emoticons');
 		var disable_aurls			= document.getElementById('disable_aurls');
 		var enable_sig				= document.getElementById('enable_sig');
 		var disable_areply			= document.getElementById('disable_areply');
 		
-		disable_html.checked		= ({$topic_disable_html} == 1) ? true : false;
+		<maps:if forum="forum_id" var="html" method="can_add">disable_html.checked		= ({$topic_disable_html} == 1) ? true : false;</maps:if>
 		disable_bbcode.checked		= ({$topic_disable_bbcode} == 1) ? true : false;
 		disable_emoticons.checked	= ({$topic_disable_emoticons} == 1) ? true : false;
 		disable_aurls.checked		= ({$topic_disable_aurls} == 1) ? true : false;

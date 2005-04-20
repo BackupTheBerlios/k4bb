@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.11 2005/04/20 18:08:22 k4st Exp $
+* @version $Id: session.php,v 1.12 2005/04/20 19:44:31 k4st Exp $
 * @package k42
 */
 
@@ -204,7 +204,7 @@ class FADBSession {
 		unset($session['user']->info['maps']);
 		
 		/* If this is a guest, make sure that their name is unique */
-		if(is_a($data['user'], 'Guest')) {
+		if(is_a($session['user'], 'Guest')) {
 			$session['user']->info['name'] = md5($sessid);
 		}
 

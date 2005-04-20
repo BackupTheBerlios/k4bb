@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.8 2005/04/20 18:08:09 k4st Exp $
+* @version $Id: index.php,v 1.9 2005/04/20 19:44:49 k4st Exp $
 * @package k42
 */
 
@@ -118,7 +118,7 @@ class DefaultEvent extends Event {
 						'num_topics'		=> $_DATASTORE['forumstats']['num_topics'],
 						'num_replies'		=> $_DATASTORE['forumstats']['num_replies'],
 						'num_members'		=> $_DATASTORE['forumstats']['num_members'],
-						'num_online_total'	=> $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS ." GROUP BY name"),
+						'num_online_total'	=> $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS),
 						'newest_uid'		=> $newest_user['id'],
 						'newest_user'		=> $newest_user['name']
 						);
