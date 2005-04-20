@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: debug.php,v 1.5 2005/04/20 19:58:39 k4st Exp $
+* @version $Id: debug.php,v 1.6 2005/04/20 20:34:07 k4st Exp $
 * @package k42
 */
 
@@ -152,7 +152,7 @@ function format_results(&$results) {
 			ob_end_clean();
 
 			$result_str .= '<strong>Array Returned:</strong><br />'. preg_replace('~\n~', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', nl2br($array));
-		} else if(is_numeric($results)) {
+		} else if(ctype_digit($results)) {
 			$result_str	.= '<strong>Integer Returned:</strong> '. $results;
 		} else if(is_string($results)) {
 			$result_str	.= '<strong>String Returned:</strong> '. $results;
@@ -199,10 +199,8 @@ function debug_sql() {
 	$debug_contents = ob_get_contents();
 	ob_end_clean();
 
-	$handle = @fopen(FORUM_BASE_DIR .'/tmp/debug/'. $_URL->file, "w");
-	@chmod(FORUM_BASE_DIR .'/tmp/debug/'. $_URL->file, 0777);
-	@fwrite($handle, $debug_contents);
-	@fclose($handle);
+	print($debug_contents);
+	exit;
 }
 
 ?>

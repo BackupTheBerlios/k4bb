@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: controller.class.php,v 1.6 2005/04/20 03:02:55 k4st Exp $
+* @version $Id: controller.class.php,v 1.7 2005/04/20 20:34:22 k4st Exp $
 * @package k42
 */
 
@@ -238,8 +238,15 @@ class Controller {
 		$template->setVar('load_time', $this->timer->__toString());
 		
 		if(DEBUG_SQL) {
-			$template->setVar('debug_file', $_URL->file);
+			$_URL->args['debug']		= 1;
+			$template->setVar('debug_url', $_URL->__toString());
 			$template->show('sql_debug');
+
+			if(isset($request['debug']) && $request['debug'] == 1) {
+				
+				/* Output our debugged SQL */
+				debug_sql();
+			}
 		}
 
 		/* Render the template */

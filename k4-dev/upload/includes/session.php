@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.12 2005/04/20 19:44:31 k4st Exp $
+* @version $Id: session.php,v 1.13 2005/04/20 20:34:07 k4st Exp $
 * @package k42
 */
 
@@ -219,12 +219,7 @@ class FADBSession {
 		$this->update_stmt->setString(9,	md5($sessid));
 		
 		$this->update_stmt->executeUpdate();
-		
-		/* Debug all of our SQL statements */
-		if(DEBUG_SQL) {
-			debug_sql();
-		}
-		
+				
 		/* Memory saving */
 		unset($session);
 			

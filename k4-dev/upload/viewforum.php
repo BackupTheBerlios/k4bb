@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.8 2005/04/20 19:44:49 k4st Exp $
+* @version $Id: viewforum.php,v 1.9 2005/04/20 20:35:13 k4st Exp $
 * @package k42
 */
 
@@ -195,11 +195,11 @@ class DefaultEvent extends Event {
 						$sort_orders		= array('name', 'reply_time', 'num_replies', 'views', 'reply_uname', 'rating');
 						
 						/* Get the topics for this forum */
-						$topicsperpage		= isset($request['limit']) && is_numeric($request['limit']) ? intval($request['limit']) : $forum['topicsperpage'];
-						$daysprune			= isset($request['daysprune']) && is_numeric($request['daysprune']) ? iif(($request['daysprune'] == -1), 0, intval($request['daysprune'])) : 30;
+						$topicsperpage		= isset($request['limit']) && ctype_digit($request['limit']) ? intval($request['limit']) : $forum['topicsperpage'];
+						$daysprune			= isset($request['daysprune']) && ctype_digit($request['daysprune']) ? iif(($request['daysprune'] == -1), 0, intval($request['daysprune'])) : 30;
 						$sortorder			= isset($request['order']) && ($request['order'] == 'ASC' || $request['order'] == 'DESC') ? $request['order'] : 'DESC';
 						$sortedby			= isset($request['sort']) && in_array($request['sort'], $sort_orders) ? $request['sort'] : 'created';
-						$start				= isset($request['start']) && is_numeric($request['start']) ? intval($_GET['start']) : NULL;
+						$start				= isset($request['start']) && ctype_digit($request['start']) ? intval($_GET['start']) : NULL;
 						
 						/* Create the query */
 						$topics				= &$dba->prepareStatement("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.created>=? AND i.row_left > ". intval($forum['row_left']) ." AND i.row_right < ". intval($forum['row_right']) ." AND t.is_draft = 0 ORDER BY $sortedby $sortorder LIMIT ?,?");

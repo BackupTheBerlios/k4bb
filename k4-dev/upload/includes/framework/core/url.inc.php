@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: url.inc.php,v 1.2 2005/04/13 02:53:33 k4st Exp $
+* @version $Id: url.inc.php,v 1.3 2005/04/20 20:34:22 k4st Exp $
 * @package k42
 */
 
@@ -104,8 +104,9 @@ class Url {
 		if ($this->user) {
 			$url .= $this->user;
 			if ($this->pass) $url .= ":{$this->pass}";
-			$url .= '@';
+			if($this->user && $this->host) $url .= '@';
 		}
+
 		if ($this->host) $url .= $this->host;
 		if ($this->path) $url .= "{$this->path}/";
 		if ($this->file) $url .= $this->file;
