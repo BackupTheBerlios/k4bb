@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: controller.class.php,v 1.4 2005/04/20 02:56:24 k4st Exp $
+* @version $Id: controller.class.php,v 1.5 2005/04/20 03:01:37 k4st Exp $
 * @package k42
 */
 
@@ -236,13 +236,6 @@ class Controller {
 		
 		/* Set the Load time */
 		$template->setVar('load_time', $this->timer->__toString());
-		
-		if(DEBUG_SQL) {
-			debug_sql();
-
-			$template->setVar('debug_file', $_URL->file);
-			$template->show('sql_debug');
-		}
 
 		/* Render the template */
 		$template->Render();
