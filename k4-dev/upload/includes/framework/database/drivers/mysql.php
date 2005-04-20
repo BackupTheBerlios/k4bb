@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: mysql.php,v 1.5 2005/04/20 02:57:37 k4st Exp $
+* @version $Id: mysql.php,v 1.4 2005/04/20 02:55:12 k4st Exp $
 * @package k42
 */
 
@@ -205,7 +205,7 @@ class MysqlConnection extends FADBConnection {
 				mysql_free_result($result);
 				
 				if(DEBUG_SQL)
-					set_debug_item($query, $row[0]);
+					set_debug_item($stmt, $row[0]);
 
 				return $row[0];
 			}

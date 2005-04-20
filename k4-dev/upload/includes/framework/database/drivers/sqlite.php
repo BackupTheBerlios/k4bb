@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: sqlite.php,v 1.4 2005/04/19 21:52:35 k4st Exp $
+* @version $Id: sqlite.php,v 1.5 2005/04/20 02:55:12 k4st Exp $
 * @package k42
 */
 
@@ -140,6 +140,9 @@ class SQLiteConnection extends FADBConnection {
 		if ($result == FALSE)
 			return trigger_error("Invalid query: ".sqlite_error_string(sqlite_last_error($this->link)), E_USER_ERROR);
 		
+		if(DEBUG_SQL)
+			set_debug_item($stmt, $result);
+
 		/* Increment the number of queries */
 		$this->num_queries++;
 
@@ -160,7 +163,12 @@ class SQLiteConnection extends FADBConnection {
 		/* Increment the number of queries */
 		$this->num_queries++;
 
-		return new SQLiteResultIterator($result, $mode);
+		$result = &new SQLiteResultIterator($result, $mode);
+
+		if(DEBUG_SQL)
+			set_debug_item($stmt, $result);
+
+		return $result;
 	}
 
 	function getRow($query, $type = DBA_ASSOC) {
@@ -177,7 +185,10 @@ class SQLiteConnection extends FADBConnection {
 		if (sqlite_has_more($result)) {
 			if (isset($type)) {
 				$row	= sqlite_fetch_array($result, $type);
-								
+				
+				if(DEBUG_SQL)
+					set_debug_item($query, $row);		
+
 				return $row;
 			}
 		}
@@ -196,6 +207,9 @@ class SQLiteConnection extends FADBConnection {
 			if (sqlite_has_more($result)) {
 
 				$value	= sqlite_fetch_single($result);
+				
+				if(DEBUG_SQL)
+					set_debug_item($query, $value);
 
 				return $value;
 			}
@@ -206,6 +220,7 @@ class SQLiteConnection extends FADBConnection {
 	}
 	
 	function getInsertId() {
+		
 		/* Increment the number of queries */
 		$this->num_queries++;
 
