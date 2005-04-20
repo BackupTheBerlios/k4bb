@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.9 2005/04/20 03:01:23 k4st Exp $
+* @version $Id: session.php,v 1.10 2005/04/20 03:03:16 k4st Exp $
 * @package k42
 */
 
@@ -209,9 +209,6 @@ class FADBSession {
 		/* Debug all of our SQL statements */
 		if(DEBUG_SQL) {
 			debug_sql();
-
-			$template->setVar('debug_file', $_URL->file);
-			$template->show('sql_debug');
 		}
 
 		return TRUE;
