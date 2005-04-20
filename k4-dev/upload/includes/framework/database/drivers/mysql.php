@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: mysql.php,v 1.4 2005/04/20 02:55:12 k4st Exp $
+* @version $Id: mysql.php,v 1.6 2005/04/20 19:38:10 k4st Exp $
 * @package k42
 */
 
@@ -174,7 +174,7 @@ class MysqlConnection extends FADBConnection {
 		$result			= mysql_query($query, $this->link);
 
 		if (!is_resource($result)) {
-			return trigger_error("Invalid query: ".sqlite_error_string(sqlite_last_error($this->link)), E_USER_ERROR);
+			return trigger_error("Invalid query: ".mysql_error($this->link), E_USER_ERROR);
 		}
 		
 		/* Increment the number of queries */
@@ -205,12 +205,12 @@ class MysqlConnection extends FADBConnection {
 				mysql_free_result($result);
 				
 				if(DEBUG_SQL)
-					set_debug_item($stmt, $row[0]);
+					set_debug_item($query, $row[0]);
 
 				return $row[0];
 			}
 		} else {
-			return trigger_error("Invalid query: ".sqlite_error_string(sqlite_last_error($this->link)), E_USER_ERROR);
+			return trigger_error("Invalid query: ".mysql_error($this->link), E_USER_ERROR);
 		}
 		return FALSE;
 	}
