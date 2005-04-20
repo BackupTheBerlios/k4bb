@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.10 2005/04/20 03:03:16 k4st Exp $
+* @version $Id: session.php,v 1.11 2005/04/20 18:08:22 k4st Exp $
 * @package k42
 */
 
@@ -68,6 +68,7 @@ function session_user_status(&$session, $sessid, $logout = FALSE) {
 		preg_match("~(". $_DATASTORE['search_spiders']['spiderstrings'] .")~is", USER_AGENT, $matches);
 		
 		if(count($matches) >= 2) {
+			$session['user']->info['id']	= -1;
 			$session['user']->info['name']	= $_DATASTORE['search_spiders']['spidernames'][$matches[1]];
 		}
 	}
@@ -131,6 +132,11 @@ class FADBSession {
 		 * logged in cookie is set from a previous login
 		 */
 		
+		/* If this is a guest, make sure that their name is unique */
+		if(is_a($data['user'], 'Guest')) {
+			$data['user']->info['name'] = md5($sessid);
+		}
+
 		if (!is_array($rs) || empty($rs)) {
 			
 			/* Do the 'write' query here */
@@ -179,6 +185,9 @@ class FADBSession {
 
 		Globals::setGlobal('session', &$data);
 		Globals::setGlobal('user', &$data['user']->info);
+		
+		/* Memory saving */
+		unset($data);
 
 		return TRUE;
 
@@ -194,6 +203,11 @@ class FADBSession {
 		/* Don't put this user's perms into the database / memory saving */
 		unset($session['user']->info['maps']);
 		
+		/* If this is a guest, make sure that their name is unique */
+		if(is_a($data['user'], 'Guest')) {
+			$session['user']->info['name'] = md5($sessid);
+		}
+
 		$this->update_stmt->setString(1,	$session['user']->info['name']);
 		$this->update_stmt->setInt(2,		$session['user']->info['id']);
 		$this->update_stmt->setString(3,	serialize($session));
@@ -210,7 +224,10 @@ class FADBSession {
 		if(DEBUG_SQL) {
 			debug_sql();
 		}
-
+		
+		/* Memory saving */
+		unset($session);
+			
 		return TRUE;
 	}
 
