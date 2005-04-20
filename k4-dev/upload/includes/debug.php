@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: debug.php,v 1.1 2005/04/20 02:54:45 k4st Exp $
+* @version $Id: debug.php,v 1.2 2005/04/20 12:25:35 k4st Exp $
 * @package k42
 */
 
@@ -93,12 +93,20 @@ function debug_header($filename) {
 	<?php
 }
 function debug_item($backtrace, $query, &$results) {
-	//print_r($backtrace); exit;
 	?>
 	<br />
 	<span class="debug_file">
-		<?php echo substr(str_replace(FORUM_BASE_DIR, '', $backtrace['file']), 1); ?>
-		(Line <?php echo $backtrace['line']; ?>)
+		<?php 
+		if(isset($backtrace['file']))
+			echo substr(str_replace(FORUM_BASE_DIR, '', $backtrace['file']), 1); 
+		else if(isset($backtrace['function']) && isset($backtrace['class']))
+			echo '<strong style="color: darkgreen;">'. $backtrace['class'] .'</strong>->'. $backtrace['function'] .'() ';
+		if(isset($backtrace['line'])) {
+			?>
+			(Line <?php echo $backtrace['line']; ?>)
+			<?php
+		}
+		?>
 	</span>
 	<div class="debug_item">
 		<div class="debug_query"><?php echo $query; ?></div>
