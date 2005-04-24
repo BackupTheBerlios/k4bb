@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: heirarchy.php,v 1.2 2005/04/13 02:52:05 k4st Exp $
+* @version $Id: heirarchy.php,v 1.3 2005/04/24 03:55:19 k4st Exp $
 * @package k42
 */
 
@@ -42,7 +42,7 @@ class Heirarchy {
 	function Heirarchy() {
 		global $_DBA;
 
-		$this->dba = &$_DBA;
+		$this->dba	= &$_DBA;
 	}
 	function removeNode($info, $table) {
 		$val = (($info['row_right'] - $info['row_left'] - 1) / 2) + 2;

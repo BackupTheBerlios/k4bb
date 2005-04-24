@@ -1,7 +1,8 @@
 CHANGELOG 
-$Id: CHANGELOG.txt,v 1.1 2005/04/24 02:15:07 k4st Exp $
+$Id: CHANGELOG.txt,v 1.2 2005/04/24 03:58:02 k4st Exp $
 
-23/04/2005 - updated the bbcode parser
-23/04/2005 - added post preview support for topics
-23/04/2005 - moved all of the buttons into the 'english' folder under language
-22/04/2005 - changed the way the bbcode parser looks at most things
+23/04/2005 - added remove draft class (topics.class.php)
+23/04/2005 - updated the bbcode parser (bbcode.php)
+23/04/2005 - added post preview support for topics (topics.class.php)
+23/04/2005 - moved all of the buttons into the 'english' folder under language (Images)
+22/04/2005 - changed the way the bbcode parser looks at most things (bbcode.php)

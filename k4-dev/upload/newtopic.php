@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: newtopic.php,v 1.6 2005/04/24 02:05:31 k4st Exp $
+* @version $Id: newtopic.php,v 1.7 2005/04/24 03:56:53 k4st Exp $
 * @package k42
 */
 
@@ -150,6 +150,7 @@ $app = new Forum_Controller('forum_base.html');
 
 $app->AddEvent('posttopic', new PostTopic);
 $app->AddEvent('postdraft', new PostDraft);
+$app->AddEvent('delete_draft', new DeleteDraft);
 
 $app->ExecutePage();
 

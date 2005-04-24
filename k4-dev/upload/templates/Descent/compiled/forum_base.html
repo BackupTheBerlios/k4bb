@@ -82,11 +82,9 @@
 		<td>
 			<div align="right">
 				<a href="index.php" title="<?php echo $context->getVar("L_HOME"); ?>"><?php echo $context->getVar("L_HOME"); ?></a> 
-				<?php if($context->getVar('calendarenabled') == 1): ?>| <a href="calendar.php" title="<?php echo $context->getVar("L_CALENDAR"); ?>"><?php echo $context->getVar("L_CALENDAR"); ?></a><?php endif; ?>
 				<?php if($context->getVar('enablememberlist') == 1): ?>| <a href="member.php?act=list&amp;start=0&amp;limit=30&amp;sort=*" title="<?php echo $context->getVar("L_MEMBERLIST"); ?>"><?php echo $context->getVar("L_MEMBERLIST"); ?></a><?php endif; ?>
 				<?php if($context->getVar('enablesearches') == 1): ?>| <a href="search.php" title="<?php echo $context->getVar("L_SEARCH"); ?>"><?php echo $context->getVar("L_SEARCH"); ?></a><?php endif; ?>
 				| <a href="faq.php" title="<?php echo $context->getVar("L_FAQ"); ?>"><?php echo $context->getVar("L_FAQ"); ?></a>
-				| <a href="member.php?act=usergroups" title="<?php echo $context->getVar("L_USERGROUPS"); ?>"><?php echo $context->getVar("L_USERGROUPS"); ?></a>
 				| <a class="nav_top" id="quicklinks_link" title="<?php echo $context->getVar("L_QUICKLINKS"); ?>"><?php echo $context->getVar("L_QUICKLINKS"); ?></a>
 				<?php if (is_a($context->session['user'], 'Member')): ?>| <a href="member.php?act=logout" title="<?php echo $context->getVar("L_LOGOUT"); ?>"><?php echo $context->getVar("L_LOGOUT"); ?> [<strong><?php echo $context->getVar("user_name"); ?></strong>]</a><?php endif; ?>
 				<?php if (!is_a($context->session['user'], 'Member')): ?>| <a href="member.php?act=register" title="<?php echo $context->getVar("L_REGISTER"); ?>"><?php echo $context->getVar("L_REGISTER"); ?></a>
@@ -260,22 +258,33 @@
 		<tr class="tcat">
 			<td><?php echo $context->getVar("L_QUICKLINKS"); ?></td>
 		</tr>
+		<?php if($context->getVar('calendarenabled') == 1): ?>
 		<tr class="alt1">
-			<td><a href="search.php?act=new_posts" title="<?php echo $context->getVar("L_NEWPOSTS"); ?>"><?php echo $context->getVar("L_NEWPOSTS"); ?></a></td>
+			<td><a href="calendar.php" title="<?php echo $context->getVar("L_CALENDAR"); ?>" class="smalltext"><?php echo $context->getVar("L_CALENDAR"); ?></a></td>
+		</tr>
+		<?php endif; ?>
+		<tr class="alt1">
+			<td><a href="member.php?act=usergroups" title="<?php echo $context->getVar("L_USERGROUPS"); ?>" class="smalltext"><?php echo $context->getVar("L_USERGROUPS"); ?></a></td>
+		</tr>
+		<tr class="alt1">
+			<td><a href="search.php?act=new_posts" title="<?php echo $context->getVar("L_NEWPOSTS"); ?>" class="smalltext"><?php echo $context->getVar("L_NEWPOSTS"); ?></a></td>
+		</tr>
+		<tr class="alt1">
+			<td><a href="search.php?act=my_posts" title="<?php echo $context->getVar("L_MYPOSTS"); ?>" class="smalltext"><?php echo $context->getVar("L_MYPOSTS"); ?></a></td>
 		</tr>
 		<?php if (is_a($context->session['user'], 'Member')): ?>
 		<tr class="tcat">
 			<td nowrap="nowrap"><?php echo $context->getVar("L_USERCONTROLPANEL"); ?></td>
 		</tr>
 		<tr class="alt1">
-			<td><a href="member.php?act=profile" title="<?php echo $context->getVar("L_PROFILE"); ?>"><?php echo $context->getVar("L_PROFILE"); ?></a></td>
+			<td><a href="member.php?act=profile" title="<?php echo $context->getVar("L_PROFILE"); ?>" class="smalltext"><?php echo $context->getVar("L_PROFILE"); ?></a></td>
 		</tr>
 		<?php endif; ?>
 		<tr class="tcat">
 			<td><?php echo $context->getVar("L_MISCELLANEOUS"); ?></td>
 		</tr>
 		<tr class="alt1">
-			<td nowrap="nowrap"><a href="index.php?act=markforums" title="<?php echo $context->getVar("L_MARKFORUMSREAD"); ?>"><?php echo $context->getVar("L_MARKFORUMSREAD"); ?></a></td>
+			<td nowrap="nowrap"><a href="index.php?act=markforums" title="<?php echo $context->getVar("L_MARKFORUMSREAD"); ?>" class="smalltext"><?php echo $context->getVar("L_MARKFORUMSREAD"); ?></a></td>
 		</tr>
 	</table>
 </div>
@@ -319,7 +328,7 @@ COPYRIGHT NOTICE
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: forum_base.html,v 1.5 2005/04/24 02:08:02 k4st Exp $
+* @version $Id: forum_base.html,v 1.6 2005/04/24 03:57:46 k4st Exp $
 * @package k42
 */
 -->
