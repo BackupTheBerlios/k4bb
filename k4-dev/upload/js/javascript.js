@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: javascript.js,v 1.2 2005/04/19 21:50:27 k4st Exp $
+* @version $Id: javascript.js,v 1.3 2005/04/24 02:08:26 k4st Exp $
 * @package k42
 */
 
@@ -39,6 +39,61 @@ var is_nav = ((clientPC.indexOf('mozilla')!=-1) && (clientPC.indexOf('spoofer')=
                 && (clientPC.indexOf('compatible') == -1) && (clientPC.indexOf('opera')==-1)
                 && (clientPC.indexOf('webtv')==-1) && (clientPC.indexOf('hotjava')==-1));
 
+/**
+ * count()/sizeof() like function for an array
+ */
+function sizeof(thearray) {
+	for (i = 0; i < thearray.length; i++) {
+		if ((thearray[i] == "undefined") || (thearray[i] == "") || (thearray[i] == null)) {
+			return i;
+		}
+	}
+	return thearray.length;
+}
+
+/**
+ * Array Push function 
+ */
+function array_push(thearray, value) {
+	thearray[sizeof(thearray)] = value;
+}
+
+/**
+ * Array unset function for a given value 
+ */
+function array_unset(thearray, value) {
+	for(var i = 0; i < sizeof(thearray); i++) {
+		if(thearray[i] == value) {
+			delete thearray[i];
+		}
+	}
+
+	return true;
+}
+
+/**
+ * In array type function
+ */
+function in_array(thearray, needle) {
+	var bool = false;
+	for (var i=0; i < sizeof(thearray); i++) {
+		if (thearray[i] == needle) {
+			bool = true;
+		}
+	}
+	return bool;
+}
+
+/**
+ * iif(), like mIRC script 
+ */
+function iif(condition, trueval, falseval) {
+	if(condition) {
+		return trueval;
+	} else {
+		return falseval;
+	}
+}
 
 /* Function to jump from one forum to another */
 function jump_to(select_id) {
@@ -54,13 +109,88 @@ function jump_to(select_id) {
 	}
 }
 
+function resize_bbimgs(ruler_id) {
+	var ruler					= document.getElementById(ruler_id);
+	
+	if(ruler) {
+		var divs				= document.getElementsByTagName('div');
+		for(var i = 0; i < sizeof(divs); i++) {
+			if(divs[i] && divs[i].className) {
+				if(divs[i].className == 'bbcode_img') {
+
+					bbcodeimages	= divs[i].getElementsByTagName('img');
+
+					if(sizeof(bbcodeimages) > 0) {
+						
+						divs[i].align	= 'center';
+
+						divs[i].onclick = function() {
+							return document.location = bbcodeimages[0].src;
+						}
+
+						try {
+							divs[i].style.cursor = 'pointer';
+						} catch(e) {
+							divs[i].style.cursor = 'hand';
+						}
+
+						if(divs[i].offsetWidth > ruler.offsetWidth) {
+
+							/* Scale the image accordingly */
+							bbcodeimages[0].width.value = (ruler.offsetWidth - 200);
+							bbcodeimages[0].height = ((ruler.offsetWidth - 200) / divs[i].offsetWidth) * divs[i].offsetHeight;
+						
+					
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+var collapsed_items = new Array()
+
+function switch_button(open, button) {
+	if(open) {
+		button_regex		= new RegExp("_collapsed\\.gif$");
+		button.src			= button.src.replace(button_regex, '.gif');
+	} else {
+		button_regex		= new RegExp("\\.gif$");
+		button.src			= button.src.replace(button_regex, '_collapsed.gif');
+	}
+	button.style.display	= 'block';
+}
+
+function collapse_tbody(buttonId, Id) {
+	var tbody	= document.getElementById(Id);
+	var button	= document.getElementById(buttonId);
+	
+	try {
+		if(tbody) {
+			if(tbody.style.display == 'none') {
+				switch_button(true, button);
+				tbody.style.display = '';
+			} else {
+				switch_button(false, button);
+				tbody.style.display = 'none';
+			}
+		}
+	} catch(e) {
+		alert(e.message);
+	}
+}
+
 /* Show or Hide an html element */
 function ShowHide(Id) {
-	var id = document.getElementById(Id);
-	if(id.style.display == 'none') {
-		id.style.display = 'block';
-	} else {
-		id.style.display = 'none';
+	var obj = document.getElementById(Id);
+	
+	if(obj) {
+		if(obj.style.display == 'none') {
+			obj.style.display = 'block';
+		} else {
+			obj.style.display = 'none';
+		}
 	}
 }
 
@@ -74,9 +204,9 @@ function setIndex(element, array) {
 function setIndices(values_array, select) {
 	var temp = document.getElementById(select);
 	
-	if(values_array.length > 1) {
-		for(var i = 0; i < temp.options.length; i++) {
-			if(in_array(temp.options[i].value, values_array)) {
+	if(sizeof(values_array) > 1) {
+		for(var i = 0; i < sizeof(temp.options); i++) {
+			if(in_array(values_array, temp.options[i].value)) {
 				temp.options[i].selected = true;
 			}
 		}
@@ -88,7 +218,7 @@ function setIndices(values_array, select) {
 /* Get the positiong of an element in an array */
 function getSelectedIndex(element, array) {
 	var pos = '';
-	for(var i=0;i<array.length;i++) {
+	for(var i = 0; i < sizeof(array); i++) {
 		if(array[i].value == element) {
 			pos = i;
 		}
@@ -141,20 +271,6 @@ function delete_cookie(name)
 {
 	var expireNow = new Date();
 	document.cookie = name + "=" + "; expires=Thu, 01-Jan-70 00:00:01 GMT" +  "; path=/";
-}
-
-/* Checks if 'needle' is in the array 'haystack' */
-function in_array(needle, haystack) {
-	var bool = false;
-	for (var i=0; i<haystack.length; i++) {
-		if (haystack[i] == needle) {
-			bool = true;
-		}
-	}
-	return bool;
-}
-function array_push(thearray, value) {
-	thearray[getarraysize(thearray)] = value;
 }
 
 

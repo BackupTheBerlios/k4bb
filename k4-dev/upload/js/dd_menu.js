@@ -24,9 +24,20 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: dd_menu.js,v 1.3 2005/04/19 21:50:27 k4st Exp $
+* @version $Id: dd_menu.js,v 1.4 2005/04/24 02:08:26 k4st Exp $
 * @package k42
 */
+
+// Check for Browser & Platform for PC & IE specific bits
+// More details from: http://www.mozilla.org/docs/web-developer/sniffer/browser_type.html
+var clientPC = navigator.userAgent.toLowerCase(); // Get client info
+var clientVer = parseInt(navigator.appVersion); // Get browser version
+
+var is_ie	= ((clientPC.indexOf("msie") != -1) && (clientPC.indexOf("opera") == -1));
+var is_nav	= ((clientPC.indexOf('mozilla')!=-1) && (clientPC.indexOf('spoofer')==-1)
+                && (clientPC.indexOf('compatible') == -1) && (clientPC.indexOf('opera')==-1)
+                && (clientPC.indexOf('webtv')==-1) && (clientPC.indexOf('hotjava')==-1));
+var is_op	= (clientPC.indexOf('opera') != -1);
 
 var active_menus			= new Array()
 var open_menu				= false;
@@ -53,11 +64,6 @@ document.onmousemove = function(event) {
 	} catch(e) {
 		//alert(e.message);
 	}
-}
-
-/* Array push method */
-function array_push(array, value) {
-	array[array.length] = value;
 }
 
 /* Get the left position of an object */
@@ -91,7 +97,7 @@ function menu_init(link_id, menu_id) {
 	
 	/* Get where the menu should end up being */
 	var left				= fetch_object_posleft(link);
-	var top					= fetch_object_postop(link) + link.offsetHeight;
+	var top					= fetch_object_postop(link) + link.offsetHeight + iif((is_ie || is_nav), 3, 0); // 3 is for padding
 
 	/* Set the link id to the menu */
 	menu.link_id			= link.id;

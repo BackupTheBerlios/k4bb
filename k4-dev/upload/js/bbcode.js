@@ -24,7 +24,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.js,v 1.6 2005/04/19 21:50:27 k4st Exp $
+* @version $Id: bbcode.js,v 1.7 2005/04/24 02:08:26 k4st Exp $
 * @package k42
 */
 
@@ -34,51 +34,6 @@ var bbcode_button_styles	= new Array('font-weight: bold;', 'font-style: italic;'
 var bbcode_adv				= new Array('color', 'font', 'size')
 var bbcode_opentags			= new Array()
 var bbcode_button_objects	= new Array()
-
-/**
- * count()/sizeof() like function for an array
- */
-function sizeof(thearray) {
-	for (i = 0; i < thearray.length; i++) {
-		if ((thearray[i] == "undefined") || (thearray[i] == "") || (thearray[i] == null)) {
-			return i;
-		}
-	}
-	return thearray.length;
-}
-
-/**
- * Array Push function 
- */
-function array_push(thearray, value) {
-	thearray[sizeof(thearray)] = value;
-}
-
-/**
- * Array unset function for a given value 
- */
-function array_unset(thearray, value) {
-	for(var i = 0; i < sizeof(thearray); i++) {
-		if(thearray[i] == value) {
-			delete thearray[i];
-		}
-	}
-
-	return true;
-}
-
-/**
- * In array type function
- */
-function in_array(thearray, needle) {
-	var bool = false;
-	for (var i=0; i < sizeof(thearray); i++) {
-		if (thearray[i] == needle) {
-			bool = true;
-		}
-	}
-	return bool;
-}
 
 /**
  * Get the position of an object in an array depending on its opening tag
@@ -374,55 +329,49 @@ function bbcodex_close_tags(editor_id) {
 /** 
  * Function to make the opening tag of the textarea 
  */
-function bbcodex_init(name, id, rows, cols, classname, style, button_style) {
+function bbcodex_init(name, id, rows, cols, button_style) {
 	
-	/* Do the buttons */
-	document.write('<div id="bbcode_buttons_' + id + '" align="left">');
+	try {
+		/* Do the buttons */
+		document.write('<div id="bbcode_buttons_' + id + '" align="left">');
+		
+		/* loop the buttons array, then spit out the data */
+		for(var i = 0; i < sizeof(bbcode_buttons); i++) {
+			document.write('<input type="button" name="' + bbcode_buttons[i] + '" id="' + bbcode_buttons[i] + '_' + id + 'codex" value="' + bbcode_buttons[i].toUpperCase() + '" class="' + button_style + '" style="' + (bbcode_button_styles[i] ? bbcode_button_styles[i] : '') + '" accesskey="' + bbcode_buttons[i] + '" onclick="bbcodex_button_click(' + i + ')" onmouseover="bbcodex_helpline(\'' + bbcode_buttons[i] + '\', \'' + bbcode_buttons[i] + '_' + id + 'codex\')" />&nbsp;');
+			array_push(bbcode_button_objects, bbcode_buttons[i] + '_' + id + 'codex');
+		}
+
+		document.write('<input type="button" name="URL" id="URL_' + id + 'codex" value="URL" class="' + button_style + '" onclick="BBCurl(\'' + id + '\')" onmouseover="bbcodex_helpline(\'w\', \'URL_' + id + 'codex\')" />&nbsp;');
+		document.write('<input type="button" name="IMG" id="IMG_' + id + 'codex" value="IMG" class="' + button_style + '" onclick="BBCimg(\'' + id + '\')" onmouseover="bbcodex_helpline(\'p\', \'IMG_' + id + 'codex\')" />');
+		
+		document.write('<br />');
+
+		/* Create the color selection box */
+		create_color_select(id);
+		
+		/* Create the size selection box */
+		create_size_select(id);
+		
+		/* Close all tags button */
+		close_tags_button(id);
+		
+		document.write('<br />');
+
+		/* Help Line */
+		create_helpline(id);
+
+		/* Close the buttons div */
+		document.write('</div>');
+
+		/* Get the textarea */
+		var editor				= document.getElementById(id + 'codex');
+
+		/* Register this editor */
+		array_push(bbcode_editors, editor);
 	
-	/* loop the buttons array, then spit out the data */
-	for(var i = 0; i < sizeof(bbcode_buttons); i++) {
-		document.write('<input type="button" name="' + bbcode_buttons[i] + '" id="' + bbcode_buttons[i] + '_' + id + 'codex" value="' + bbcode_buttons[i].toUpperCase() + '" class="' + button_style + '" style="' + (bbcode_button_styles[i] ? bbcode_button_styles[i] : '') + '" accesskey="' + bbcode_buttons[i] + '" onclick="bbcodex_button_click(' + i + ')" onmouseover="bbcodex_helpline(\'' + bbcode_buttons[i] + '\', \'' + bbcode_buttons[i] + '_' + id + 'codex\')" />');
-		array_push(bbcode_button_objects, bbcode_buttons[i] + '_' + id + 'codex');
+	} catch(e) {
+		alert(e.message);
 	}
-
-	document.write('<input type="button" name="URL" id="URL_' + id + 'codex" value="URL" class="' + button_style + '" onclick="BBCurl(\'' + id + '\')" onmouseover="bbcodex_helpline(\'w\', \'URL_' + id + 'codex\')" />');
-	document.write('<input type="button" name="IMG" id="IMG_' + id + 'codex" value="IMG" class="' + button_style + '" onclick="BBCimg(\'' + id + '\')" onmouseover="bbcodex_helpline(\'p\', \'IMG_' + id + 'codex\')" />');
-	
-	document.write('<br />');
-
-	/* Create the color selection box */
-	create_color_select(id);
-	
-	/* Create the size selection box */
-	create_size_select(id);
-	
-	/* Close all tags button */
-	close_tags_button(id);
-	
-	document.write('<br />');
-
-	/* Help Line */
-	create_helpline(id);
-
-	/* Close the buttons div */
-	document.write('</div>');
-
-	/* Create our textarea */
-	document.write('<textarea name="' + name + '" id="' + id + 'codex" rows="' + rows + '" cols="' + cols + '" class="' + classname + '" style="' + style + '" wrap="PHYSICAL"></textarea>');
-	
-	/* Get the div and the textarea */
-	var container			= document.getElementById(id);
-	var editor				= document.getElementById(id + 'codex');
-	
-	/* Hide the div */
-	container.style.display	= 'none';
-
-	/* Insert the values of the div into the editor */
-	editor.value			= container.innerHTML;
-
-	/* Register this editor */
-	array_push(bbcode_editors, editor);
-
 }
 
 /**
@@ -441,7 +390,7 @@ function draw_select(name, id, values, styles, options) {
 		}
 
 		/* Close the select tag */
-		document.write('</select>');
+		document.write('</select>&nbsp;');
 
 		array_push(bbcode_button_objects, id);
 	}
