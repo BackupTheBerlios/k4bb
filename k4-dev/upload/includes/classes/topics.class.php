@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topics.class.php,v 1.7 2005/04/24 02:11:13 k4st Exp $
+* @version $Id: topics.class.php,v 1.8 2005/04/24 03:55:37 k4st Exp $
 * @package k42
 */
 
@@ -35,6 +35,9 @@ if(!defined('IN_K4')) {
 	exit;
 }
 
+/**
+ * Post / Preview a topic
+ */
 class PostTopic extends Event {
 	function getNumOnLevel($row_left, $row_right, $level) {
 		return $this->dba->GetValue("SELECT COUNT(*) FROM ". INFO ." WHERE row_left > $row_left AND row_right < $row_right AND row_level = $level");
@@ -306,6 +309,9 @@ class PostTopic extends Event {
 	}
 }
 
+/**
+ * Post / Preview a draft topic
+ */
 class PostDraft extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
@@ -517,6 +523,64 @@ class PostDraft extends Event {
 			$template->setFile('preview', 'post_preview.html');
 			$template->setFile('content', 'newtopic.html');
 		}
+
+		return TRUE;
+	}
+}
+
+
+/**
+ * Delete a topic draft
+ */
+class DeleteDraft extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_QUERYPARAMS, $_DATASTORE;
+
+		$this->dba			= &$dba;
+		
+		/* Get our draft */
+		$draft				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id = ". intval($request['id']) ." AND t.is_draft = 1 AND t.poster_id = ". intval($user['id']));
+		
+		if(!$draft || !is_array($draft) || empty($draft)) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDDRAFT'));
+			$template->setInfo('content', $template->getVar('L_DRAFTDOESNTEXIST'), FALSE);
+
+			return TRUE;
+		}
+		
+		$forum				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($draft['forum_id']));
+		
+		/* Check the forum data given */
+		if(!$forum || !is_array($forum) || empty($forum)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+			
+		/* Make sure the we are trying to post into a forum */
+		if(!($forum['row_type'] & FORUM)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_CANTPOSTTOCATEGORY'), FALSE);
+			return TRUE;
+		}			
+
+		/* set the breadcrumbs bit */
+		$template	= BreadCrumbs($template, $template->getVar('L_DELETEDRAFT'), $forum['row_left'], $forum['row_right']);
+		
+		/* Remove this draft from the information table */
+		$h			= &new Heirarchy();
+		$h->removeNode($draft, INFO);
+		
+		/* Now remove the information stored in the topics table */
+		$dba->executeUpdate("DELETE FROM ". TOPICS ." WHERE topic_id = ". intval($draft['id']) ." AND is_draft = 1");
+		
+		/* Redirect the user */
+		$template->setInfo('content', sprintf($template->getVar('L_REMOVEDDRAFT'), $draft['name'], $forum['name']));
+		$template->setRedirect('viewforum.php?id='. $forum['id'], 3);
 
 		return TRUE;
 	}
