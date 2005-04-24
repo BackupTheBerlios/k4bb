@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: categories.class.php,v 1.3 2005/04/13 02:52:19 k4st Exp $
+* @version $Id: categories.class.php,v 1.4 2005/04/24 02:11:13 k4st Exp $
 * @package k42
 */
 
@@ -102,7 +102,7 @@ class CategoriesIterator extends FAProxyIterator {
 		
 		$query_params		= $this->query_params['info'] . $this->query_params['category'];
 
-		$query				= $query == NULL ? "SELECT $query_params FROM ". INFO ." i LEFT JOIN ". CATEGORIES ." c ON c.category_id = i.id AND i.row_type = ". CATEGORY ." ORDER BY i.row_order ASC" : $query;
+		$query				= $query == NULL ? "SELECT $query_params FROM ". INFO ." i LEFT JOIN ". CATEGORIES ." c ON c.category_id = i.id WHERE i.row_type = ". CATEGORY ." ORDER BY i.row_order ASC" : $query;
 		
 		$this->result		= &$_DBA->executeQuery($query);
 

@@ -9,6 +9,7 @@
 <br />
 <?php endif; ?>
 <?php if ($file = $template->getFile("drafts", "")):  $template->setFilename($file);  $template->render(); endif; ?>
+<?php if ($file = $template->getFile("preview", "")):  $template->setFilename($file);  $template->render(); endif; ?>
 <form name="posttopic_form" id="pottopic_form" action="<?php echo $context->getVar("newtopic_action"); ?>" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="resetErrors();"><script type="text/javascript">resetErrors();</script>
 <input type="hidden" name="forum_id" value="<?php echo $context->getVar("forum_id"); ?>" />
 <script type="text/javascript">
@@ -95,7 +96,7 @@ function emoticon(typed) {
 					<tr>
 						<td>
 							<!-- Post Title -->
-							<label for="<?php echo $context->getVar("L_POSTTITLE"); ?>" class="smalltext"><?php echo $context->getVar("L_POSTTITLE"); ?></label><br />
+							<label for="name" class="smalltext"><?php echo $context->getVar("L_POSTTITLE"); ?></label><br />
 							<input type="text" name="name" id="name" value="<?php echo $context->getVar("topic_name"); ?>" style="width: 500px;" class="inputbox" maxlength="255" />
 							<script type="text/javascript">addVerification('name', '.+', 'name_error', 'inputfailed');</script><div id="name_error" style="display: none;"><?php echo $context->getVar("L_INSERTTOPICNAME"); ?></div>
 							<!-- / Post Title -->
@@ -109,18 +110,14 @@ function emoticon(typed) {
 							<br />
 							<!-- Post Message -->
 							<label for="messagecodex" class="smalltext"><?php echo $context->getVar("L_POST"); ?></label><br />
-							<?php if($context->getVar('allowbbcode') == 0): ?>
-								<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100" wrap="SOFT"><?php echo $context->getVar("topic_body_text"); ?></textarea>
-							<?php else: ?>
+							<?php if($context->getVar('allowbbcode') == 1): ?>
 								<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['bbcode']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['bbcode']['can_add'] <= $context->session['user']->info['perms'])): ?>
-									<div id="message" style="display: none;"><?php echo $context->getVar("topic_body_text"); ?></div>
 									<script type="text/javascript">
-										bbcodex_init('message', 'message', 10, 100, 'inputbox', 'width: 500px;', 'bbcode_button');
+										try { bbcodex_init('message', 'message', 10, 100, 'bbcode_button'); } catch(e) { alert(e.message); }
 									</script>
 								<?php else: ?>
-									<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100" wrap="SOFT"><?php echo $context->getVar("message"); ?></textarea>
-								<?php endif; ?>
 							<?php endif; ?>
+							<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100" wrap="SOFT" style="width: 500px;"><?php echo $context->getVar("topic_body_text"); ?></textarea>
 							<script type="text/javascript">addVerification('messagecodex', '(\\\n|.)+', 'messagecodex_error', 'inputfailed');</script><div id="messagecodex_error" style="display: none;"><?php echo $context->getVar("L_INSERTTOPICMESSAGE"); ?></div>
 							<!-- / Post Message -->
 
@@ -218,7 +215,7 @@ function emoticon(typed) {
 				<input type="submit" name="submit" class="button" value="<?php echo $context->getVar("L_PREVIEW"); ?>" />
 			<?php endif; ?>
 			<?php if ($template->isVisible('load_button', FALSE)): ?>
-			<input type="button" value="<?php echo $context->getVar("L_LOADDRAFT"); ?>" onclick="document.location='newtopic.php?id=<?php echo $context->getVar("forum_id"); ?>&load_drafts=1'" />
+			<input type="button" class="button" value="<?php echo $context->getVar("L_LOADDRAFT"); ?>" onclick="document.location='newtopic.php?id=<?php echo $context->getVar("forum_id"); ?>&load_drafts=1'" />
 			<?php endif; ?>
 			<input type="reset" class="button" value="<?php echo $context->getVar("L_RESET"); ?>" />
 		</td>
@@ -229,55 +226,64 @@ function emoticon(typed) {
 <!-- Additional Post Options -->
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
-		<td><?php echo $context->getVar("L_ADDITIONALOPTIONS"); ?></td>
-	</tr>
-	<tr class="panel">
 		<td>
-			<div class="outset_box">
-				<fieldset>
-					<legend><?php echo $context->getVar("L_MISCOPTIONS"); ?></legend>
-					<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add'] <= $context->session['user']->info['perms'])): ?><input type="checkbox" name="disable_html" id="disable_html" checked="checked" />&nbsp;<label for="disable_html"><?php echo $context->getVar("L_DISABLEHTML"); ?></label><br /><?php endif; ?>
-					<input type="checkbox" name="disable_bbcode" id="disable_bbcode" />&nbsp;<label for="disable_bbcode"><?php echo $context->getVar("L_DISABLEBBCODE"); ?></label><br />
-					<input type="checkbox" name="disable_emoticons" id="disable_emoticons" />&nbsp;<label for="disable_emoticons"><?php echo $context->getVar("L_DISABLEEMOTICONS"); ?></label><br />
-					<input type="checkbox" name="disable_aurls" id="disable_aurls" />&nbsp;<label for="disable_aurls"><?php echo $context->getVar("L_PARSEURLS"); ?></label><br />
-					<input type="checkbox" name="enable_sig" id="enable_sig" checked="checked" />&nbsp;<label for="enable_sig"><?php echo $context->getVar("L_ATTACHSIGNATURE"); ?></label><br />
-					<input type="checkbox" name="disable_areply" id="disable_areply" />&nbsp;<label for="disable_areply"><?php echo $context->getVar("L_NOTIFYONREPLY"); ?></label>
-				</fieldset>
-			</div>
+			<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapse_po', 'postoptions')" title="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>"><img id="collapse_po" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/collapse_thead.gif" alt="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>" border="0" /></a></div>
+			<?php echo $context->getVar("L_ADDITIONALOPTIONS"); ?>
 		</td>
 	</tr>
+	<tbody id="postoptions">
+		<tr class="panel">
+			<td>
+				<div class="outset_box">
+					<fieldset>
+						<legend><?php echo $context->getVar("L_MISCOPTIONS"); ?></legend>
+						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add'] <= $context->session['user']->info['perms'])): ?><input type="checkbox" name="disable_html" id="disable_html" checked="checked" />&nbsp;<label for="disable_html"><?php echo $context->getVar("L_DISABLEHTML"); ?></label><br /><?php endif; ?>
+						<input type="checkbox" name="disable_bbcode" id="disable_bbcode" />&nbsp;<label for="disable_bbcode"><?php echo $context->getVar("L_DISABLEBBCODE"); ?></label><br />
+						<input type="checkbox" name="disable_emoticons" id="disable_emoticons" />&nbsp;<label for="disable_emoticons"><?php echo $context->getVar("L_DISABLEEMOTICONS"); ?></label><br />
+						<input type="checkbox" name="disable_aurls" id="disable_aurls" />&nbsp;<label for="disable_aurls"><?php echo $context->getVar("L_PARSEURLS"); ?></label><br />
+						<input type="checkbox" name="enable_sig" id="enable_sig" checked="checked" />&nbsp;<label for="enable_sig"><?php echo $context->getVar("L_ATTACHSIGNATURE"); ?></label><br />
+						<input type="checkbox" name="disable_areply" id="disable_areply" />&nbsp;<label for="disable_areply"><?php echo $context->getVar("L_NOTIFYONREPLY"); ?></label>
+					</fieldset>
+				</div>
+			</td>
+		</tr>
+	</tbody>
 </table>
 <!-- / Additional Post Options -->
 
-</form>
+<?php endif; ?>
 <br />
 <!-- Posting Code Allowances -->
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
-		<td colspan="2"><?php echo $context->getVar("L_POSTINGRULES"); ?></td>
+		<td colspan="2">
+			<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapse_pr', 'postingrules')" title="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>"><img id="collapse_pr" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/collapse_thead.gif" alt="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>" border="0" /></a></div>
+			<?php echo $context->getVar("L_POSTINGRULES"); ?></td>
 	</tr>
-	<tr class="panel">
-		<td valign="top">
-			<div align="left" class="minitext">
-				<?php echo $context->getVar("posting_code_options"); ?>
-			</div>
-		</td>
-		<td valign="top">
-			<div align="right" class="minitext">
-				<table cellpadding="0" cellspacing="0" border="0">
-					<tr>
-						<td valign="top">
-							<?php echo $context->getVar("forum_user_reply_options"); ?>
-						</td>
-						<td>&nbsp;&nbsp;</td>
-						<td valign="top">
-							<?php echo $context->getVar("forum_user_topic_options"); ?>
-						</td>
-					</tr>
-				</table>
-			</div>
-		</td>
-	</tr>
+	<tbody id="postingrules">
+		<tr class="panel">
+			<td valign="top">
+				<div align="left" class="minitext">
+					<?php echo $context->getVar("posting_code_options"); ?>
+				</div>
+			</td>
+			<td valign="top">
+				<div align="right" class="minitext">
+					<table cellpadding="0" cellspacing="0" border="0">
+						<tr>
+							<td valign="top">
+								<?php echo $context->getVar("forum_user_reply_options"); ?>
+							</td>
+							<td>&nbsp;&nbsp;</td>
+							<td valign="top">
+								<?php echo $context->getVar("forum_user_topic_options"); ?>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</td>
+		</tr>
+	</tbody>
 </table>
 <!-- / Posting Code Allowances -->
 
@@ -291,14 +297,14 @@ function emoticon(typed) {
 	 */
 	
 	try {
-		var disable_html			= document.getElementById('disable_html');
+		<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add'] <= $context->session['user']->info['perms'])): ?>var disable_html			= document.getElementById('disable_html');<?php endif; ?>
 		var disable_bbcode			= document.getElementById('disable_bbcode');
 		var disable_emoticons		= document.getElementById('disable_emoticons');
 		var disable_aurls			= document.getElementById('disable_aurls');
 		var enable_sig				= document.getElementById('enable_sig');
 		var disable_areply			= document.getElementById('disable_areply');
 		
-		disable_html.checked		= (<?php echo $context->getVar("topic_disable_html"); ?> == 1) ? true : false;
+		<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add'] <= $context->session['user']->info['perms'])): ?>disable_html.checked		= (<?php echo $context->getVar("topic_disable_html"); ?> == 1) ? true : false;<?php endif; ?>
 		disable_bbcode.checked		= (<?php echo $context->getVar("topic_disable_bbcode"); ?> == 1) ? true : false;
 		disable_emoticons.checked	= (<?php echo $context->getVar("topic_disable_emoticons"); ?> == 1) ? true : false;
 		disable_aurls.checked		= (<?php echo $context->getVar("topic_disable_aurls"); ?> == 1) ? true : false;
@@ -313,7 +319,7 @@ function emoticon(typed) {
 	/**
 	 * Get the post icons
 	 */
-	for (i=0;i<document.forms[0].radios.length;i++) {
+	for (var i = 0; i < sizeof(document.forms[0].radios.length); i++) {
 		if(document.forms[0].radios[i].name == 'posticon') {
 			if(document.forms[0].radios[i].value == '<?php echo $context->getVar("topic_posticon"); ?>') {
 				document.forms[0].radios[i].checked = true;
@@ -326,4 +332,4 @@ function emoticon(typed) {
 	// -->
 </script>
 <!-- / Edit Topic Javascript -->
-<?php endif; ?>
+<?php endif; ?></form>

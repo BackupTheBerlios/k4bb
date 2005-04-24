@@ -9,6 +9,7 @@
 <br />
 </if:if>
 <core:import id="drafts" />
+<core:import id="preview" />
 <form:form name="posttopic_form" id="pottopic_form" action="{$newtopic_action}" method="post" enctype="multipart/form-data">
 <input type="hidden" name="forum_id" value="{$forum_id}" />
 <script type="text/javascript">
@@ -95,7 +96,7 @@ function emoticon(typed) {
 					<tr>
 						<td>
 							<!-- Post Title -->
-							<label for="{$L_POSTTITLE}" class="smalltext">{$L_POSTTITLE}</label><br />
+							<label for="name" class="smalltext">{$L_POSTTITLE}</label><br />
 							<input type="text" name="name" id="name" value="{$topic_name}" style="width: 500px;" class="inputbox" maxlength="255" />
 							<form:error id="name_error" for="name" setclass="inputfailed" regex=".+">{$L_INSERTTOPICNAME}</form:error>
 							<!-- / Post Title -->
@@ -109,18 +110,14 @@ function emoticon(typed) {
 							<br />
 							<!-- Post Message -->
 							<label for="messagecodex" class="smalltext">{$L_POST}</label><br />
-							<if:if var="allowbbcode" eq="0">
-								<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100" wrap="SOFT">{$topic_body_text}</textarea>
-							<if:else />
+							<if:if var="allowbbcode" eq="1">
 								<maps:if forum="forum_id" var="bbcode" method="can_add">
-									<div id="message" style="display: none;">{$topic_body_text}</div>
 									<script type="text/javascript">
-										bbcodex_init('message', 'message', 10, 100, 'inputbox', 'width: 500px;', 'bbcode_button');
+										try { bbcodex_init('message', 'message', 10, 100, 'bbcode_button'); } catch(e) { alert(e.message); }
 									</script>
 								<maps:else />
-									<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100" wrap="SOFT">{$message}</textarea>
-								</maps:if>
 							</if:if>
+							<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100" wrap="SOFT" style="width: 500px;">{$topic_body_text}</textarea>
 							<form:error id="messagecodex_error" for="messagecodex" setclass="inputfailed" regex="(\n|.)+">{$L_INSERTTOPICMESSAGE}</form:error>
 							<!-- / Post Message -->
 
@@ -218,7 +215,7 @@ function emoticon(typed) {
 				<input type="submit" name="submit" class="button" value="{$L_PREVIEW}" />
 			</maps:if>
 			<core:block id="load_button" hidden="yes">
-			<input type="button" value="{$L_LOADDRAFT}" onclick="document.location='newtopic.php?id={$forum_id}&load_drafts=1'" />
+			<input type="button" class="button" value="{$L_LOADDRAFT}" onclick="document.location='newtopic.php?id={$forum_id}&load_drafts=1'" />
 			</core:block>
 			<input type="reset" class="button" value="{$L_RESET}" />
 		</td>
@@ -229,23 +226,28 @@ function emoticon(typed) {
 <!-- Additional Post Options -->
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
-		<td>{$L_ADDITIONALOPTIONS}</td>
-	</tr>
-	<tr class="panel">
 		<td>
-			<div class="outset_box">
-				<fieldset>
-					<legend>{$L_MISCOPTIONS}</legend>
-					<maps:if forum="forum_id" var="html" method="can_add"><input type="checkbox" name="disable_html" id="disable_html" checked="checked" />&nbsp;<label for="disable_html">{$L_DISABLEHTML}</label><br /></maps:if>
-					<input type="checkbox" name="disable_bbcode" id="disable_bbcode" />&nbsp;<label for="disable_bbcode">{$L_DISABLEBBCODE}</label><br />
-					<input type="checkbox" name="disable_emoticons" id="disable_emoticons" />&nbsp;<label for="disable_emoticons">{$L_DISABLEEMOTICONS}</label><br />
-					<input type="checkbox" name="disable_aurls" id="disable_aurls" />&nbsp;<label for="disable_aurls">{$L_PARSEURLS}</label><br />
-					<input type="checkbox" name="enable_sig" id="enable_sig" checked="checked" />&nbsp;<label for="enable_sig">{$L_ATTACHSIGNATURE}</label><br />
-					<input type="checkbox" name="disable_areply" id="disable_areply" />&nbsp;<label for="disable_areply">{$L_NOTIFYONREPLY}</label>
-				</fieldset>
-			</div>
+			<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapse_po', 'postoptions')" title="{$L_EXPANDCOLLAPSE}"><img id="collapse_po" src="Images/{$IMG_DIR}/Icons/collapse_thead.gif" alt="{$L_EXPANDCOLLAPSE}" border="0" /></a></div>
+			{$L_ADDITIONALOPTIONS}
 		</td>
 	</tr>
+	<tbody id="postoptions">
+		<tr class="panel">
+			<td>
+				<div class="outset_box">
+					<fieldset>
+						<legend>{$L_MISCOPTIONS}</legend>
+						<maps:if forum="forum_id" var="html" method="can_add"><input type="checkbox" name="disable_html" id="disable_html" checked="checked" />&nbsp;<label for="disable_html">{$L_DISABLEHTML}</label><br /></maps:if>
+						<input type="checkbox" name="disable_bbcode" id="disable_bbcode" />&nbsp;<label for="disable_bbcode">{$L_DISABLEBBCODE}</label><br />
+						<input type="checkbox" name="disable_emoticons" id="disable_emoticons" />&nbsp;<label for="disable_emoticons">{$L_DISABLEEMOTICONS}</label><br />
+						<input type="checkbox" name="disable_aurls" id="disable_aurls" />&nbsp;<label for="disable_aurls">{$L_PARSEURLS}</label><br />
+						<input type="checkbox" name="enable_sig" id="enable_sig" checked="checked" />&nbsp;<label for="enable_sig">{$L_ATTACHSIGNATURE}</label><br />
+						<input type="checkbox" name="disable_areply" id="disable_areply" />&nbsp;<label for="disable_areply">{$L_NOTIFYONREPLY}</label>
+					</fieldset>
+				</div>
+			</td>
+		</tr>
+	</tbody>
 </table>
 <!-- / Additional Post Options -->
 
@@ -254,30 +256,34 @@ function emoticon(typed) {
 <!-- Posting Code Allowances -->
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
-		<td colspan="2">{$L_POSTINGRULES}</td>
+		<td colspan="2">
+			<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapse_pr', 'postingrules')" title="{$L_EXPANDCOLLAPSE}"><img id="collapse_pr" src="Images/{$IMG_DIR}/Icons/collapse_thead.gif" alt="{$L_EXPANDCOLLAPSE}" border="0" /></a></div>
+			{$L_POSTINGRULES}</td>
 	</tr>
-	<tr class="panel">
-		<td valign="top">
-			<div align="left" class="minitext">
-				{$posting_code_options}
-			</div>
-		</td>
-		<td valign="top">
-			<div align="right" class="minitext">
-				<table cellpadding="0" cellspacing="0" border="0">
-					<tr>
-						<td valign="top">
-							{$forum_user_reply_options}
-						</td>
-						<td>&nbsp;&nbsp;</td>
-						<td valign="top">
-							{$forum_user_topic_options}
-						</td>
-					</tr>
-				</table>
-			</div>
-		</td>
-	</tr>
+	<tbody id="postingrules">
+		<tr class="panel">
+			<td valign="top">
+				<div align="left" class="minitext">
+					{$posting_code_options}
+				</div>
+			</td>
+			<td valign="top">
+				<div align="right" class="minitext">
+					<table cellpadding="0" cellspacing="0" border="0">
+						<tr>
+							<td valign="top">
+								{$forum_user_reply_options}
+							</td>
+							<td>&nbsp;&nbsp;</td>
+							<td valign="top">
+								{$forum_user_topic_options}
+							</td>
+						</tr>
+					</table>
+				</div>
+			</td>
+		</tr>
+	</tbody>
 </table>
 <!-- / Posting Code Allowances -->
 

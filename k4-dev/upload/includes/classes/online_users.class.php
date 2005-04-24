@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: online_users.class.php,v 1.4 2005/04/19 21:51:27 k4st Exp $
+* @version $Id: online_users.class.php,v 1.5 2005/04/24 02:11:13 k4st Exp $
 * @package k42
 */
 
@@ -48,7 +48,7 @@ class OnlineUsersIterator extends FAProxyIterator {
 		$this->dba		= &$_DBA;
 		$expired		= time() - ini_get('session.gc_maxlifetime');
 		
-		$query			= "SELECT ". $_QUERYPARAMS['user'] . $_QUERYPARAMS['session'] ." FROM ". USERS ." u, ". SESSIONS ." s WHERE (u.id = s.user_id) OR (s.user_id = 0 AND s.name <> '') AND s.seen >= $expired $extra GROUP BY u.name ORDER BY s.seen DESC";
+		$query			= "SELECT ". $_QUERYPARAMS['user'] . $_QUERYPARAMS['session'] ." FROM ". USERS ." u, ". SESSIONS ." s WHERE (u.id = s.user_id) OR (s.user_id = -1 AND s.name <> '') AND s.seen >= $expired $extra GROUP BY s.name ORDER BY s.seen DESC";
 		
 		$this->result	= &$this->dba->executeQuery($query);
 
@@ -65,24 +65,8 @@ class OnlineUsersIterator extends FAProxyIterator {
 			Globals::setGlobal('num_online_invisible', Globals::getGlobal('num_online_invisible')+1);
 		
 		if($temp['user_id'] != 0) {
-			$groups				= @unserialize($temp['usergroups']);
 			
-			if(is_array($groups)) {
-				
-				foreach($groups as $g) {
-					
-					/* If the group variable isn't set, set it */
-					if(!isset($group) && isset($this->groups[$g]))
-						$group	= $this->groups[$g];
-					
-					/**
-					 * If the perms of this group are greater than that of the $group 'prev group', 
-					 * set is as this users group 
-					 */
-					if(@$this->groups[$g]['max_perm'] > @$group['max_perm'])
-						$group	= $this->groups[$g];
-				}
-			}
+			$group					= get_user_max_group($temp, $this->groups);
 			
 			$temp['color']			= !isset($group['color']) || $group['color'] == '' ? '000000' : $group['color'];
 			$temp['font_weight']	= @$group['min_perm'] > MEMBER ? 'bold' : 'normal';

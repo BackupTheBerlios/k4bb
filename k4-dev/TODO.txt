@@ -1,0 +1,7 @@
+TODO:
+
+- make it so users can't access draft topics
+- when deleting categories/forums, update users' post count.
+- check if a user has read a post or not
+- add pagination to the topics list in a forum
+- add pagination to the replies list in a topic

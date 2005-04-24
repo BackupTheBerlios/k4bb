@@ -9,11 +9,11 @@
 	</tr>
 	<?php endif; ?>
 	<tr class="tcat">
-		<td>&nbsp;</td>
-		<td align="center"><?php echo $context->getVar("L_NAME"); ?></td>
-		<td align="center">&nbsp;<?php echo $context->getVar("L_POSTS"); ?>&nbsp;</td>
-		<td align="center">&nbsp;<?php echo $context->getVar("L_TOPICS"); ?>&nbsp;</td>
-		<td align="center"><?php echo $context->getVar("L_LASTPOST"); ?></td>
+		<td width="5%">&nbsp;</td>
+		<td width="60%" align="center"><?php echo $context->getVar("L_NAME"); ?></td>
+		<td width="5%" align="center">&nbsp;<?php echo $context->getVar("L_POSTS"); ?>&nbsp;</td>
+		<td width="5%" align="center">&nbsp;<?php echo $context->getVar("L_TOPICS"); ?>&nbsp;</td>
+		<td width="30%" align="center"><?php echo $context->getVar("L_LASTPOST"); ?></td>
 	</tr>
 	<?php if ($context->listReset("categories")): ?>
 	<?php if (is_object($list = &$context->getList("categories")) && !$list->hasNext()): ?>
@@ -29,12 +29,14 @@
 	<?php endif; ?>
 	<?php while($context->push($context->listNext("categories"))): ?>
 	<?php if(TRUE && (isset($context->session['user']->info['maps']['categories'][$context->getVar('id')]['can_view']) && $context->session['user']->info['maps']['categories'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
-		<tr class="thead">
-			<td colspan="5">
-				<a href="viewforum.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("c.description"); ?>"><?php echo $context->getVar("name"); ?></a>
-				<span class="minitext" style="font-weight: normal;"><br /><?php echo $context->getVar("description"); ?></span>
-			</td>
-		</tr>
+	<tr class="thead">
+		<td colspan="5">
+			<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapse_<?php echo $context->getVar("id"); ?>', 'forums_<?php echo $context->getVar("id"); ?>')" title="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>"><img id="collapse_<?php echo $context->getVar("id"); ?>" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/collapse_thead.gif" alt="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>" border="0" /></a></div>
+			<a href="viewforum.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("c.description"); ?>"><?php echo $context->getVar("name"); ?></a>
+			<span class="minitext" style="font-weight: normal;"><br /><?php echo $context->getVar("description"); ?></span>
+		</td>
+	</tr>
+	<tbody id="forums_<?php echo $context->getVar("id"); ?>">
 		<?php if ($context->addList("forums", $context->getVar("forums"))): ?>
 		<?php while($context->push($context->listNext("forums"))): ?>
 		<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('id')]['can_view']) && $context->session['user']->info['maps']['forums'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
@@ -102,6 +104,7 @@
 		<?php endif; ?>
 		<?php $context->pop(); endwhile; ?>
 		<?php endif; ?>
+	</tbody>
 	<?php endif; ?>
 	<?php $context->pop(); endwhile; ?>
 	<?php endif; ?>

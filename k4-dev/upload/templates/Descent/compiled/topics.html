@@ -11,24 +11,25 @@
 
 <!-- Topics List of '<?php echo $context->getVar("current_location"); ?>' -->
 <div align="left">
-	<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add'] <= $context->session['user']->info['perms'])): ?>
-		<a href="newtopic.php?id=<?php echo $context->getVar("forum_id"); ?>" title="<?php echo $context->getVar("L_POSTTOPIC"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/post_topic.gif" alt="<?php echo $context->getVar("L_POSTTOPIC"); ?>" /></a>
-	<?php endif; ?>
+	<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add'] <= $context->session['user']->info['perms'])): ?><a href="newtopic.php?id=<?php echo $context->getVar("forum_id"); ?>" title="<?php echo $context->getVar("L_POSTTOPIC"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/post_topic.gif" alt="<?php echo $context->getVar("L_POSTTOPIC"); ?>" /></a><?php endif; ?>
+	<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add'] <= $context->session['user']->info['perms'])): ?><a href="newtopic.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;poll=1" title="<?php echo $context->getVar("L_POSTPOLL"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/post_poll.gif" alt="<?php echo $context->getVar("L_POSTPOLL"); ?>" /></a><?php endif; ?>
 </div>
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
 		<td colspan="7" align="left">
+			<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapsetopics_<?php echo $context->getVar("forum_id"); ?>', 'topics_<?php echo $context->getVar("forum_id"); ?>')" title="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>"><img id="collapsetopics_<?php echo $context->getVar("forum_id"); ?>" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/collapse_thead.gif" alt="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>" border="0" /></a></div>
 			<?php echo $context->getVar("L_TOPICSINFORUM"); ?>: <span style="font-weight: normal;"><?php echo $context->getVar("name"); ?></span>
 		</td>
 	</tr>
 	<tr class="tcat">
-		<td colspan="2">&nbsp;</td>
+		<td width="5%" colspan="2">&nbsp;</td>
 		<td align="center" class="minitext" width="50%"><a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=name&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_TOPICS"); ?>"><?php echo $context->getVar("L_TOPICS");  echo $context->getVar("name_sort"); ?></a></td>
 		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=poster_name&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_AUTHOR"); ?>"><?php echo $context->getVar("L_AUTHOR");  echo $context->getVar("poster_name_sort"); ?></a>&nbsp;</td>
 		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=num_replies&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_REPLIES"); ?>"><?php echo $context->getVar("L_REPLIES");  echo $context->getVar("num_replies_sort"); ?></a>&nbsp;</td>
 		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=views&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_VIEWS"); ?>"><?php echo $context->getVar("L_VIEWS");  echo $context->getVar("views_sort"); ?></a>&nbsp;</td>
 		<td align="center" class="minitext" nowrap="nowrap" width="30%">&nbsp;<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=last_reply&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_LASTPOST"); ?>"><?php echo $context->getVar("L_LASTPOST");  echo $context->getVar("last_reply_sort"); ?></a>&nbsp;</td>
 	</tr>
+	<tbody id="topics_<?php echo $context->getVar("forum_id"); ?>">
 	<?php if ($context->listReset("topics")): ?>
 	<?php if (is_object($list = &$context->getList("topics")) && !$list->hasNext()): ?>
 	<tr class="alt1">
@@ -69,11 +70,11 @@
 	</tr>
 	<?php $context->pop(); endwhile; ?>
 	<?php endif; ?>
+	</tbody>
 </table>
 <div align="left">
-	<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add'] <= $context->session['user']->info['perms'])): ?>
-		<a href="newtopic.php?id=<?php echo $context->getVar("forum_id"); ?>" title="<?php echo $context->getVar("L_POSTTOPIC"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/post_topic.gif" alt="<?php echo $context->getVar("L_POSTTOPIC"); ?>" /></a>
-	<?php endif; ?>
+	<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add'] <= $context->session['user']->info['perms'])): ?><a href="newtopic.php?id=<?php echo $context->getVar("forum_id"); ?>" title="<?php echo $context->getVar("L_POSTTOPIC"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/post_topic.gif" alt="<?php echo $context->getVar("L_POSTTOPIC"); ?>" /></a><?php endif; ?>
+	<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add'] <= $context->session['user']->info['perms'])): ?><a href="newtopic.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;poll=1" title="<?php echo $context->getVar("L_POSTPOLL"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/post_poll.gif" alt="<?php echo $context->getVar("L_POSTPOLL"); ?>" /></a><?php endif; ?>
 </div>
 <!-- / Topics List of '<?php echo $context->getVar("current_location"); ?>' -->
 
@@ -81,97 +82,102 @@
 <!-- Forum Display Options -->
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
-		<td colspan="2"><?php echo $context->getVar("L_DISPLAYOPTIONS"); ?></td>
-	</tr>
-	<tr class="alt1">
-		<td>
-			<table width="" cellpadding="0" cellspacing="0" border="0">
-				<tr> 
-					<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/newfolder.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext">Open Topic (new replies)&nbsp;</td>
-					<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/announce.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext"><?php echo $context->getVar("L_ANNOUNCEMENT"); ?>&nbsp;</td>
-				</tr>
-				<tr> 
-					<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/folder.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext">Open Topic (no new replies)&nbsp;</td>
-					<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/poll.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext">Poll&nbsp;</td>
-				</tr>
-				<tr> 
-					<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/newhotfolder.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext">Hot Topic (new replies)&nbsp;</td>
-					<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/lockfolder.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext">Locked Topic&nbsp;</td>
-				</tr>
-				<tr> 
-					<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/hotfolder.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext">Hot Topic (no new replies)&nbsp;</td>
-				</tr>
-			</table>
-		</td>
-		<td width="80%">
-			<div align="right">
-				<form action="viewforum.php" method="get" enctype="multipart/form-data">
-					<input type="hidden" name="id" value="<?php echo $context->getVar("forum_id"); ?>" />
-					<input type="hidden" name="start" value="<?php echo $context->getVar("pag_start"); ?>" />
-					<table cellpadding="0" cellspacing="1" border="0">
-						<tr>
-							<td class="smalltext"><?php echo $context->getVar("L_SORTEDBY"); ?>:</td>
-							<td>
-								<select name="sort" style="width:125px" class="smalltext">
-									<option value="name"><?php echo $context->getVar("L_TOPICTITLE"); ?></option>
-									<option value="reply_time" selected="selected"><?php echo $context->getVar("L_LASTPOSTTIME"); ?></option>
-									<option value="num_replies" ><?php echo $context->getVar("L_NUMOFREPLIES"); ?></option>
-									<option value="views" ><?php echo $context->getVar("L_NUMOFVIEWS"); ?></option>
-									<option value="poster_name" ><?php echo $context->getVar("L_TOPICSTARTER"); ?></option>
-									<option value="rating" ><?php echo $context->getVar("L_TOPICRATING"); ?></option>
-								</select>
-							</td>
-							<td class="smalltext"><?php echo $context->getVar("L_SORTORDER"); ?>:</td>
-							<td>
-								<select name="order" style="width:100px" class="smalltext">
-									<option value="ASC"><?php echo $context->getVar("L_ASC"); ?></option>
-									<option value="DESC" selected="selected"><?php echo $context->getVar("L_DESC"); ?></option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td class="smalltext"><?php echo $context->getVar("L_FROMTHE"); ?>:</td>
-							<td>
-								<select name="daysprune" style="width:125px" class="smalltext">
-									<option value="1" ><?php echo $context->getVar("L_LAST_DAY"); ?></option>
-									<option value="2" ><?php echo $context->getVar("L_LAST_2_DAYS"); ?></option>
-									<option value="7" ><?php echo $context->getVar("L_LAST_WEEK"); ?></option>
-									<option value="10" ><?php echo $context->getVar("L_LAST_10_DAYS"); ?></option>
-									<option value="14" ><?php echo $context->getVar("L_LAST_2_WEEKS"); ?></option>
-									<option value="30" ><?php echo $context->getVar("L_LAST_MONTH"); ?></option>
-									<option value="45" ><?php echo $context->getVar("L_LAST_45_DAYS"); ?></option>
-									<option value="60" ><?php echo $context->getVar("L_LAST_2_MONTHS"); ?></option>
-									<option value="75" ><?php echo $context->getVar("L_LAST_75_DAYS"); ?></option>
-									<option value="100" ><?php echo $context->getVar("L_LAST_100_DAYS"); ?></option>
-									<option value="365" ><?php echo $context->getVar("L_LAST_YEAR"); ?></option>
-									<option value="-1" selected="selected"><?php echo $context->getVar("L_BEGINNING"); ?></option>
-								</select>
-							</td>
-							<td class="smallfont">
-								<?php echo $context->getVar("L_LIMIT"); ?>: 
-								<select name="limit" class="smalltext">
-									<option value="5">5</option>
-									<option value="10">10</option>
-									<option value="20">20</option>
-									<option value="30" selected="selected">30</option>
-									<option value="40">40</option>
-									<option value="50">50</option>
-								</select>
-							</td>
-							<td><input type="submit" class="button" value="<?php echo $context->getVar("L_SHOWTOPICS"); ?>" style="width:100px" /></td>
-						</tr>
-					</table>
-				</form>
-			</div>
+		<td colspan="2">
+		<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapsedo_<?php echo $context->getVar("forum_id"); ?>', 'do_<?php echo $context->getVar("forum_id"); ?>')" title="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>"><img id="collapsedo_<?php echo $context->getVar("forum_id"); ?>" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/collapse_thead.gif" alt="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>" border="0" /></a></div>
+		<?php echo $context->getVar("L_DISPLAYOPTIONS"); ?>
 		</td>
 	</tr>
+	<tbody id="do_<?php echo $context->getVar("forum_id"); ?>">
+		<tr class="alt1">
+			<td>
+				<table width="" cellpadding="0" cellspacing="0" border="0">
+					<tr> 
+						<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/newfolder.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext">Open Topic (new replies)&nbsp;</td>
+						<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/announce.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext"><?php echo $context->getVar("L_ANNOUNCEMENT"); ?>&nbsp;</td>
+					</tr>
+					<tr> 
+						<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/folder.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext">Open Topic (no new replies)&nbsp;</td>
+						<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/poll.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext">Poll&nbsp;</td>
+					</tr>
+					<tr> 
+						<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/newhotfolder.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext">Hot Topic (new replies)&nbsp;</td>
+						<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/lockfolder.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext">Locked Topic&nbsp;</td>
+					</tr>
+					<tr> 
+						<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/Status/hotfolder.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext">Hot Topic (no new replies)&nbsp;</td>
+					</tr>
+				</table>
+			</td>
+			<td width="80%">
+				<div align="right">
+					<form action="viewforum.php" method="get" enctype="multipart/form-data">
+						<input type="hidden" name="id" value="<?php echo $context->getVar("forum_id"); ?>" />
+						<input type="hidden" name="start" value="<?php echo $context->getVar("pag_start"); ?>" />
+						<table cellpadding="0" cellspacing="1" border="0">
+							<tr>
+								<td class="smalltext"><?php echo $context->getVar("L_SORTEDBY"); ?>:</td>
+								<td>
+									<select name="sort" style="width:125px" class="smalltext">
+										<option value="name"><?php echo $context->getVar("L_TOPICTITLE"); ?></option>
+										<option value="reply_time" selected="selected"><?php echo $context->getVar("L_LASTPOSTTIME"); ?></option>
+										<option value="num_replies" ><?php echo $context->getVar("L_NUMOFREPLIES"); ?></option>
+										<option value="views" ><?php echo $context->getVar("L_NUMOFVIEWS"); ?></option>
+										<option value="poster_name" ><?php echo $context->getVar("L_TOPICSTARTER"); ?></option>
+										<option value="rating" ><?php echo $context->getVar("L_TOPICRATING"); ?></option>
+									</select>
+								</td>
+								<td class="smalltext"><?php echo $context->getVar("L_SORTORDER"); ?>:</td>
+								<td>
+									<select name="order" style="width:100px" class="smalltext">
+										<option value="ASC"><?php echo $context->getVar("L_ASC"); ?></option>
+										<option value="DESC" selected="selected"><?php echo $context->getVar("L_DESC"); ?></option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class="smalltext"><?php echo $context->getVar("L_FROMTHE"); ?>:</td>
+								<td>
+									<select name="daysprune" style="width:125px" class="smalltext">
+										<option value="1" ><?php echo $context->getVar("L_LAST_DAY"); ?></option>
+										<option value="2" ><?php echo $context->getVar("L_LAST_2_DAYS"); ?></option>
+										<option value="7" ><?php echo $context->getVar("L_LAST_WEEK"); ?></option>
+										<option value="10" ><?php echo $context->getVar("L_LAST_10_DAYS"); ?></option>
+										<option value="14" ><?php echo $context->getVar("L_LAST_2_WEEKS"); ?></option>
+										<option value="30" ><?php echo $context->getVar("L_LAST_MONTH"); ?></option>
+										<option value="45" ><?php echo $context->getVar("L_LAST_45_DAYS"); ?></option>
+										<option value="60" ><?php echo $context->getVar("L_LAST_2_MONTHS"); ?></option>
+										<option value="75" ><?php echo $context->getVar("L_LAST_75_DAYS"); ?></option>
+										<option value="100" ><?php echo $context->getVar("L_LAST_100_DAYS"); ?></option>
+										<option value="365" ><?php echo $context->getVar("L_LAST_YEAR"); ?></option>
+										<option value="-1" selected="selected"><?php echo $context->getVar("L_BEGINNING"); ?></option>
+									</select>
+								</td>
+								<td class="smallfont">
+									<?php echo $context->getVar("L_LIMIT"); ?>: 
+									<select name="limit" class="smalltext">
+										<option value="5">5</option>
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="30" selected="selected">30</option>
+										<option value="40">40</option>
+										<option value="50">50</option>
+									</select>
+								</td>
+								<td><input type="submit" class="button" value="<?php echo $context->getVar("L_SHOWTOPICS"); ?>" style="width:100px" /></td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</td>
+		</tr>
+	</tbody>
 </table>
 <!-- / Forum Display Options -->
 

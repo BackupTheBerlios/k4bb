@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: categories.class.php,v 1.3 2005/04/19 21:51:45 k4st Exp $
+* @version $Id: categories.class.php,v 1.4 2005/04/24 02:11:42 k4st Exp $
 * @package k42
 */
 
@@ -92,7 +92,7 @@ class AdminInsertCategory extends Event {
 				return TRUE;
 			}
 
-			if(!is_numeric($request['row_order'])) {
+			if(!ctype_digit($request['row_order'])) {
 				$template->setInfo('content', $template->getVar('L_INSERTCATORDERNUM'), TRUE);
 				return TRUE;
 			}
@@ -240,7 +240,7 @@ class AdminSimpleCategoryUpdate extends Event {
 				return TRUE;
 			}
 
-			if(!is_numeric($request['row_order']))
+			if(!ctype_digit($request['row_order']))
 				$template->setInfo('content', $template->getVar('L_INSERTCATORDERNUM'), TRUE);
 
 			$update		= &$dba->prepareStatement("UPDATE ". INFO ." SET row_order=? WHERE id=?");
@@ -327,7 +327,7 @@ class AdminUpdateCategory extends Event {
 				return TRUE;
 			}
 
-			if(!is_numeric($request['row_order'])) {
+			if(!ctype_digit($request['row_order'])) {
 				$template->setInfo('content', $template->getVar('L_INSERTCATORDERNUM'), TRUE);
 				return TRUE;
 			}

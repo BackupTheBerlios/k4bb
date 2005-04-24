@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: conditionals.php,v 1.3 2005/04/19 21:53:01 k4st Exp $
+* @version $Id: conditionals.php,v 1.4 2005/04/24 02:09:41 k4st Exp $
 * @package k42
 */
 
@@ -53,7 +53,7 @@ class If_If_Compiler extends TPL_Tag_Compiler {
 			
 			preg_match('/{\@([a-zA-Z_\.]+?)}/', $element->attribs[$this->keys[1]], $matches);
 			
-			return "<?php if(\$context->getVar('". $element->attribs['var'] ."') ". $this->attribs[$this->keys[1]] ." ". iif(count($matches) > 0, $element->attribs[$this->keys[1]], iif(is_numeric($element->attribs[$this->keys[1]]), $element->attribs[$this->keys[1]], "'" . $element->attribs[$this->keys[1]] ."'")) ."): ?>";
+			return "<?php if(\$context->getVar('". $element->attribs['var'] ."') ". $this->attribs[$this->keys[1]] ." ". iif(count($matches) > 1, $element->attribs[$this->keys[1]], iif(ctype_digit($element->attribs[$this->keys[1]]) && $element->attribs[$this->keys[1]] != '', $element->attribs[$this->keys[1]], "'" . $element->attribs[$this->keys[1]] ."'")) ."): ?>";
 
 			return "<h1>Missing EQ or NOTEQ, MODULO, GREATER, GEQ, LESS OR LESSEQ for conditional IF statement.</h1>";
 		}
@@ -83,7 +83,7 @@ class Else_If_Compiler extends TPL_Tag_Compiler {
 			
 			preg_match('/{\@([a-zA-Z_\.]+?)}/', $element->attribs[$this->keys[1]], $matches);
 			
-			return "<?php elseif(\$context->getVar('". $element->attribs['var'] ."') ". $this->attribs[$this->keys[1]] ." ". iif(count($matches) > 0, $element->attribs[$this->keys[1]], iif(is_numeric($element->attribs[$this->keys[1]]), $element->attribs[$this->keys[1]], "'" . $element->attribs[$this->keys[1]] ."'")) ."): ?>";			
+			return "<?php elseif(\$context->getVar('". $element->attribs['var'] ."') ". $this->attribs[$this->keys[1]] ." ". iif(count($matches) > 1, $element->attribs[$this->keys[1]], iif(ctype_digit($element->attribs[$this->keys[1]]) && $element->attribs[$this->keys[1]] != '', $element->attribs[$this->keys[1]], "'" . $element->attribs[$this->keys[1]] ."'")) ."): ?>";			
 
 			return "<h1>Missing EQ or NOTEQ, MODULO, GREATER, GEQ, LESS OR LESSEQ for conditional ELSEIF statement.</h1>";
 		}

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.5 2005/04/19 21:51:27 k4st Exp $
+* @version $Id: forums.class.php,v 1.6 2005/04/24 02:11:13 k4st Exp $
 * @package k42
 */
 
@@ -164,7 +164,7 @@ class ForumsIterator extends FAProxyIterator {
 		$temp['forum_icon']	= $return[0];
 		
 		/* Set a default cookie with the unread topic id in it */
-		if(is_numeric($return[1])) {
+		if(ctype_digit($return[1])) {
 			$this->forums[$temp['id']][$return[1]] = TRUE;
 		}
 

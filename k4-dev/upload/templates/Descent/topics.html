@@ -11,24 +11,25 @@
 
 <!-- Topics List of '{$current_location}' -->
 <div align="left">
-	<maps:if list="forums" var="topics" forum="id" method="can_add">
-		<a href="newtopic.php?id={$forum_id}" title="{$L_POSTTOPIC}"><img border="0" src="Images/{$IMG_DIR}/Buttons/post_topic.gif" alt="{$L_POSTTOPIC}" /></a>
-	</maps:if>
+	<maps:if list="forums" var="topics" forum="id" method="can_add"><a href="newtopic.php?id={$forum_id}" title="{$L_POSTTOPIC}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/post_topic.gif" alt="{$L_POSTTOPIC}" /></a></maps:if>
+	<maps:if list="forums" var="topics" forum="id" method="can_add"><a href="newtopic.php?id={$forum_id}&amp;poll=1" title="{$L_POSTPOLL}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/post_poll.gif" alt="{$L_POSTPOLL}" /></a></maps:if>
 </div>
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
 		<td colspan="7" align="left">
+			<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapsetopics_{$forum_id}', 'topics_{$forum_id}')" title="{$L_EXPANDCOLLAPSE}"><img id="collapsetopics_{$forum_id}" src="Images/{$IMG_DIR}/Icons/collapse_thead.gif" alt="{$L_EXPANDCOLLAPSE}" border="0" /></a></div>
 			{$L_TOPICSINFORUM}: <span style="font-weight: normal;">{$name}</span>
 		</td>
 	</tr>
 	<tr class="tcat">
-		<td colspan="2">&nbsp;</td>
+		<td width="5%" colspan="2">&nbsp;</td>
 		<td align="center" class="minitext" width="50%"><a href="viewforum.php?id={$forum_id}&amp;sort=name&amp;order={$order}" title="{$L_TOPICS}">{$L_TOPICS}{$name_sort}</a></td>
 		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id={$forum_id}&amp;sort=poster_name&amp;order={$order}" title="{$L_AUTHOR}">{$L_AUTHOR}{$poster_name_sort}</a>&nbsp;</td>
 		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id={$forum_id}&amp;sort=num_replies&amp;order={$order}" title="{$L_REPLIES}">{$L_REPLIES}{$num_replies_sort}</a>&nbsp;</td>
 		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id={$forum_id}&amp;sort=views&amp;order={$order}" title="{$L_VIEWS}">{$L_VIEWS}{$views_sort}</a>&nbsp;</td>
 		<td align="center" class="minitext" nowrap="nowrap" width="30%">&nbsp;<a href="viewforum.php?id={$forum_id}&amp;sort=last_reply&amp;order={$order}" title="{$L_LASTPOST}">{$L_LASTPOST}{$last_reply_sort}</a>&nbsp;</td>
 	</tr>
+	<tbody id="topics_{$forum_id}">
 	<list:list id="topics">
 	<list:default list="topics">
 	<tr class="alt1">
@@ -69,11 +70,11 @@
 	</tr>
 	</list:item>
 	</list:list>
+	</tbody>
 </table>
 <div align="left">
-	<maps:if list="forums" var="topics" forum="id" method="can_add">
-		<a href="newtopic.php?id={$forum_id}" title="{$L_POSTTOPIC}"><img border="0" src="Images/{$IMG_DIR}/Buttons/post_topic.gif" alt="{$L_POSTTOPIC}" /></a>
-	</maps:if>
+	<maps:if list="forums" var="topics" forum="id" method="can_add"><a href="newtopic.php?id={$forum_id}" title="{$L_POSTTOPIC}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/post_topic.gif" alt="{$L_POSTTOPIC}" /></a></maps:if>
+	<maps:if list="forums" var="topics" forum="id" method="can_add"><a href="newtopic.php?id={$forum_id}&amp;poll=1" title="{$L_POSTPOLL}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/post_poll.gif" alt="{$L_POSTPOLL}" /></a></maps:if>
 </div>
 <!-- / Topics List of '{$current_location}' -->
 
@@ -81,97 +82,102 @@
 <!-- Forum Display Options -->
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
-		<td colspan="2">{$L_DISPLAYOPTIONS}</td>
-	</tr>
-	<tr class="alt1">
-		<td>
-			<table width="" cellpadding="0" cellspacing="0" border="0">
-				<tr> 
-					<td><img src="Images/{$IMG_DIR}/Icons/Status/newfolder.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext">Open Topic (new replies)&nbsp;</td>
-					<td><img src="Images/{$IMG_DIR}/Icons/Status/announce.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext">{$L_ANNOUNCEMENT}&nbsp;</td>
-				</tr>
-				<tr> 
-					<td><img src="Images/{$IMG_DIR}/Icons/Status/folder.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext">Open Topic (no new replies)&nbsp;</td>
-					<td><img src="Images/{$IMG_DIR}/Icons/Status/poll.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext">Poll&nbsp;</td>
-				</tr>
-				<tr> 
-					<td><img src="Images/{$IMG_DIR}/Icons/Status/newhotfolder.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext">Hot Topic (new replies)&nbsp;</td>
-					<td><img src="Images/{$IMG_DIR}/Icons/Status/lockfolder.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext">Locked Topic&nbsp;</td>
-				</tr>
-				<tr> 
-					<td><img src="Images/{$IMG_DIR}/Icons/Status/hotfolder.gif" alt="" border="0" /></td>
-					<td nowrap="nowrap" class="smalltext">Hot Topic (no new replies)&nbsp;</td>
-				</tr>
-			</table>
-		</td>
-		<td width="80%">
-			<div align="right">
-				<form action="viewforum.php" method="get" enctype="multipart/form-data">
-					<input type="hidden" name="id" value="{$forum_id}" />
-					<input type="hidden" name="start" value="{$pag_start}" />
-					<table cellpadding="0" cellspacing="1" border="0">
-						<tr>
-							<td class="smalltext">{$L_SORTEDBY}:</td>
-							<td>
-								<select name="sort" style="width:125px" class="smalltext">
-									<option value="name">{$L_TOPICTITLE}</option>
-									<option value="reply_time" selected="selected">{$L_LASTPOSTTIME}</option>
-									<option value="num_replies" >{$L_NUMOFREPLIES}</option>
-									<option value="views" >{$L_NUMOFVIEWS}</option>
-									<option value="poster_name" >{$L_TOPICSTARTER}</option>
-									<option value="rating" >{$L_TOPICRATING}</option>
-								</select>
-							</td>
-							<td class="smalltext">{$L_SORTORDER}:</td>
-							<td>
-								<select name="order" style="width:100px" class="smalltext">
-									<option value="ASC">{$L_ASC}</option>
-									<option value="DESC" selected="selected">{$L_DESC}</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td class="smalltext">{$L_FROMTHE}:</td>
-							<td>
-								<select name="daysprune" style="width:125px" class="smalltext">
-									<option value="1" >{$L_LAST_DAY}</option>
-									<option value="2" >{$L_LAST_2_DAYS}</option>
-									<option value="7" >{$L_LAST_WEEK}</option>
-									<option value="10" >{$L_LAST_10_DAYS}</option>
-									<option value="14" >{$L_LAST_2_WEEKS}</option>
-									<option value="30" >{$L_LAST_MONTH}</option>
-									<option value="45" >{$L_LAST_45_DAYS}</option>
-									<option value="60" >{$L_LAST_2_MONTHS}</option>
-									<option value="75" >{$L_LAST_75_DAYS}</option>
-									<option value="100" >{$L_LAST_100_DAYS}</option>
-									<option value="365" >{$L_LAST_YEAR}</option>
-									<option value="-1" selected="selected">{$L_BEGINNING}</option>
-								</select>
-							</td>
-							<td class="smallfont">
-								{$L_LIMIT}: 
-								<select name="limit" class="smalltext">
-									<option value="5">5</option>
-									<option value="10">10</option>
-									<option value="20">20</option>
-									<option value="30" selected="selected">30</option>
-									<option value="40">40</option>
-									<option value="50">50</option>
-								</select>
-							</td>
-							<td><input type="submit" class="button" value="{$L_SHOWTOPICS}" style="width:100px" /></td>
-						</tr>
-					</table>
-				</form>
-			</div>
+		<td colspan="2">
+		<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapsedo_{$forum_id}', 'do_{$forum_id}')" title="{$L_EXPANDCOLLAPSE}"><img id="collapsedo_{$forum_id}" src="Images/{$IMG_DIR}/Icons/collapse_thead.gif" alt="{$L_EXPANDCOLLAPSE}" border="0" /></a></div>
+		{$L_DISPLAYOPTIONS}
 		</td>
 	</tr>
+	<tbody id="do_{$forum_id}">
+		<tr class="alt1">
+			<td>
+				<table width="" cellpadding="0" cellspacing="0" border="0">
+					<tr> 
+						<td><img src="Images/{$IMG_DIR}/Icons/Status/newfolder.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext">Open Topic (new replies)&nbsp;</td>
+						<td><img src="Images/{$IMG_DIR}/Icons/Status/announce.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext">{$L_ANNOUNCEMENT}&nbsp;</td>
+					</tr>
+					<tr> 
+						<td><img src="Images/{$IMG_DIR}/Icons/Status/folder.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext">Open Topic (no new replies)&nbsp;</td>
+						<td><img src="Images/{$IMG_DIR}/Icons/Status/poll.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext">Poll&nbsp;</td>
+					</tr>
+					<tr> 
+						<td><img src="Images/{$IMG_DIR}/Icons/Status/newhotfolder.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext">Hot Topic (new replies)&nbsp;</td>
+						<td><img src="Images/{$IMG_DIR}/Icons/Status/lockfolder.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext">Locked Topic&nbsp;</td>
+					</tr>
+					<tr> 
+						<td><img src="Images/{$IMG_DIR}/Icons/Status/hotfolder.gif" alt="" border="0" /></td>
+						<td nowrap="nowrap" class="smalltext">Hot Topic (no new replies)&nbsp;</td>
+					</tr>
+				</table>
+			</td>
+			<td width="80%">
+				<div align="right">
+					<form action="viewforum.php" method="get" enctype="multipart/form-data">
+						<input type="hidden" name="id" value="{$forum_id}" />
+						<input type="hidden" name="start" value="{$pag_start}" />
+						<table cellpadding="0" cellspacing="1" border="0">
+							<tr>
+								<td class="smalltext">{$L_SORTEDBY}:</td>
+								<td>
+									<select name="sort" style="width:125px" class="smalltext">
+										<option value="name">{$L_TOPICTITLE}</option>
+										<option value="reply_time" selected="selected">{$L_LASTPOSTTIME}</option>
+										<option value="num_replies" >{$L_NUMOFREPLIES}</option>
+										<option value="views" >{$L_NUMOFVIEWS}</option>
+										<option value="poster_name" >{$L_TOPICSTARTER}</option>
+										<option value="rating" >{$L_TOPICRATING}</option>
+									</select>
+								</td>
+								<td class="smalltext">{$L_SORTORDER}:</td>
+								<td>
+									<select name="order" style="width:100px" class="smalltext">
+										<option value="ASC">{$L_ASC}</option>
+										<option value="DESC" selected="selected">{$L_DESC}</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class="smalltext">{$L_FROMTHE}:</td>
+								<td>
+									<select name="daysprune" style="width:125px" class="smalltext">
+										<option value="1" >{$L_LAST_DAY}</option>
+										<option value="2" >{$L_LAST_2_DAYS}</option>
+										<option value="7" >{$L_LAST_WEEK}</option>
+										<option value="10" >{$L_LAST_10_DAYS}</option>
+										<option value="14" >{$L_LAST_2_WEEKS}</option>
+										<option value="30" >{$L_LAST_MONTH}</option>
+										<option value="45" >{$L_LAST_45_DAYS}</option>
+										<option value="60" >{$L_LAST_2_MONTHS}</option>
+										<option value="75" >{$L_LAST_75_DAYS}</option>
+										<option value="100" >{$L_LAST_100_DAYS}</option>
+										<option value="365" >{$L_LAST_YEAR}</option>
+										<option value="-1" selected="selected">{$L_BEGINNING}</option>
+									</select>
+								</td>
+								<td class="smallfont">
+									{$L_LIMIT}: 
+									<select name="limit" class="smalltext">
+										<option value="5">5</option>
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="30" selected="selected">30</option>
+										<option value="40">40</option>
+										<option value="50">50</option>
+									</select>
+								</td>
+								<td><input type="submit" class="button" value="{$L_SHOWTOPICS}" style="width:100px" /></td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</td>
+		</tr>
+	</tbody>
 </table>
 <!-- / Forum Display Options -->
 

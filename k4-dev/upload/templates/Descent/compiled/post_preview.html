@@ -1,0 +1,61 @@
+<!-- Post Preview -->
+<?php if ($context->listReset("topic")): ?>
+<?php while($context->push($context->listNext("topic"))): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="2"><?php echo $context->getVar("L_PREVIEW"); ?></td>
+	</tr>
+	<tr class="tcat">
+		<td width="20%"><div align="center"><?php echo $context->getVar("L_AUTHOR"); ?></div></td>
+		<td width="80%"><div align="center"><?php echo $context->getVar("L_MESSAGE"); ?></div></td>
+	</tr>
+	<tr class="panel">
+		<td width="20%" class="alt1">
+			<div align="center">
+				<?php if($context->getVar('poster_id') > 0): ?>
+				<strong style="color: #<?php echo $context->getVar("post_user_color"); ?>"><?php echo $context->getVar("poster_name"); ?></strong>
+				<?php else: ?>
+				<strong><?php if($context->getVar('poster_name') == ''):  echo $context->getVar("L_GUEST");  else:  echo $context->getVar("poster_name");  endif; ?></strong>
+				<?php endif; ?>
+			</div>
+		</td>
+		<td width="80%">
+			<div style="float: right" class="smalltext">
+				<?php ob_start(); $format = "%b %d %y";  echo $context->getVar("created");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?>&nbsp;<span class="date_color"><?php ob_start(); $format = "%I:%M%p";  echo $context->getVar("created");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?></span>
+			</div>
+			<div class="smalltext">
+				<strong><?php echo $context->getVar("L_POSTSUBJECT"); ?>:</strong> <?php echo $context->getVar("name"); ?>&nbsp;<img src="tmp/upload/posticons/<?php echo $context->getVar("posticon"); ?>" alt="" border="0" />
+			</div>
+		</td>
+	</tr>
+	<tr class="panel">
+		<td width="20%" valign="top" rowspan="2" class="alt1">
+			<div class="smalltext">
+			<?php if($context->getVar('poster_id') > 0): ?>
+				<?php if($context->getVar('post_user_avatar') != ''): ?>
+				<img src="images.php?avatar=<?php echo $context->getVar("poster_id"); ?>" alt="" border="" />
+				<?php endif; ?>
+				<strong><?php echo $context->getVar("L_JOINED"); ?>:</strong> <?php ob_start(); $format = "%b %d %y";  echo $context->getVar("post_user_created");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?><br />
+				<strong><?php echo $context->getVar("L_POSTS"); ?>:</strong> <?php echo $context->getVar("post_user_num_posts"); ?>
+				<?php if($context->getVar('user_location') != ''): ?>
+				<br /><strong><?php echo $context->getVar("L_LOCATION"); ?>:</strong> <?php echo $context->getVar("post_user_location"); ?>
+				<?php endif; ?>
+			<?php endif; ?>
+			</div>
+		</td>
+		<td width="80%" id="topic<?php echo $context->getVar("id"); ?>" valign="top">
+			<?php echo $context->getVar("body_text"); ?>
+			<?php if($context->getVar('disable_sig') == 0): ?>
+			<?php if($context->getVar('post_user_signature') != ''): ?>
+			<br />
+			_________________
+			<?php echo $context->getVar("post_user_signature"); ?>
+			<?php endif; ?>
+			<?php endif; ?>
+		</td>
+	</tr>
+</table>
+<?php $context->pop(); endwhile; ?>
+<?php endif; ?>
+<br />
+<!-- / Post Preview -->

@@ -1,38 +1,43 @@
 <br />
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
-		<td><?php echo $context->getVar("users_browsing"); ?></td>
-	</tr>
-	<tr class="panel">
 		<td>
-			<div class="minitext" align="left">
-				<strong><?php echo $context->getVar("L_LEGEND"); ?>:</strong>
-				<?php if ($context->listReset("usergroups")): ?>
-				<?php while($context->push($context->listNext("usergroups_legend"))): ?>
-				<a href="usergroups.php?id=<?php echo $context->getVar("id"); ?>" style="color: #<?php echo $context->getVar("color"); ?>;font-weight: bold;" title="<?php echo $context->getVar("name"); ?>"><?php echo $context->getVar("name"); ?></a><?php if (is_object($list = &$context->getList("usergroups_legend")) && $list->hasNext()): ?>,<?php endif; ?>
-				<?php $context->pop(); endwhile; ?>
-				<?php endif; ?>
-			</div>
+			<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapse_ub', 'usersbrowsing')" title="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>"><img id="collapse_ub" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/collapse_thead.gif" alt="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>" border="0" /></a></div>
+			<?php echo $context->getVar("users_browsing"); ?>
 		</td>
 	</tr>
-	<tr class="panel">
-		<td>
-			<div class="minitext" align="left">
-				<?php echo $context->getVar("online_stats"); ?>
-				<br />
-				<?php if($context->getVar('num_online_members') > 0): ?>
-				<?php if ($context->listReset("users_browsing")): ?>
-					<?php echo $context->getVar("L_REGISTEREDUSERS"); ?>:
-					<?php while($context->push($context->listNext("users_browsing"))): ?>
-					<?php if($context->getVar('name') != ''): ?>
-					<?php if($context->getVar('invisible') == 0): ?>
-						<?php if($context->getVar('id') != 0): ?><a href="member.php?id=<?php echo $context->getVar("id"); ?>" style="color: #<?php echo $context->getVar("color"); ?>;font-weight: <?php echo $context->getVar("font_weight"); ?>;" class="minitext"><?php echo $context->getVar("name"); ?></a><?php else: ?><strong style="font-style: italic;"><?php echo $context->getVar("name"); ?></strong><?php endif;  if (is_object($list = &$context->getList("users_browsing")) && $list->hasNext()): ?>,<?php endif; ?>
-					<?php endif; ?>
-					<?php endif; ?>
+	<tbody id="usersbrowsing">
+		<tr class="panel">
+			<td>
+				<div class="minitext" align="left">
+					<strong><?php echo $context->getVar("L_LEGEND"); ?>:</strong>
+					<?php if ($context->listReset("usergroups")): ?>
+					<?php while($context->push($context->listNext("usergroups_legend"))): ?>
+					<a href="usergroups.php?id=<?php echo $context->getVar("id"); ?>" style="color: #<?php echo $context->getVar("color"); ?>;font-weight: bold;" title="<?php echo $context->getVar("name"); ?>"><?php echo $context->getVar("name"); ?></a><?php if (is_object($list = &$context->getList("usergroups_legend")) && $list->hasNext()): ?>,<?php endif; ?>
 					<?php $context->pop(); endwhile; ?>
-				<?php endif; ?>
-				<?php endif; ?>
-			</div>
-		</td>
-	</tr>
+					<?php endif; ?>
+				</div>
+			</td>
+		</tr>
+		<tr class="panel">
+			<td>
+				<div class="minitext" align="left">
+					<?php echo $context->getVar("online_stats"); ?>
+					<br />
+					<?php if($context->getVar('num_online_members') > 0): ?>
+					<?php if ($context->listReset("users_browsing")): ?>
+						<?php echo $context->getVar("L_REGISTEREDUSERS"); ?>:
+						<?php while($context->push($context->listNext("users_browsing"))): ?>
+						<?php if($context->getVar('name') != ''): ?>
+						<?php if($context->getVar('invisible') == 0): ?>
+							<?php if($context->getVar('id') != 0): ?><a href="member.php?id=<?php echo $context->getVar("id"); ?>" style="color: #<?php echo $context->getVar("color"); ?>;font-weight: <?php echo $context->getVar("font_weight"); ?>;" class="minitext"><?php echo $context->getVar("name"); ?></a><?php else: ?><strong style="font-style: italic;"><?php echo $context->getVar("name"); ?></strong><?php endif;  if (is_object($list = &$context->getList("users_browsing")) && $list->hasNext()): ?>,<?php endif; ?>
+						<?php endif; ?>
+						<?php endif; ?>
+						<?php $context->pop(); endwhile; ?>
+					<?php endif; ?>
+					<?php endif; ?>
+				</div>
+			</td>
+		</tr>
+	</tbody>
 </table>

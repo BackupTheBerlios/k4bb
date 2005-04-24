@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: lang.php,v 1.3 2005/04/13 02:54:54 k4st Exp $
+* @version $Id: lang.php,v 1.4 2005/04/24 02:09:24 k4st Exp $
 * @package k42
 */
 
@@ -58,7 +58,7 @@ function return_language() {
 	'L_IN'					=> 'In',
 	'L_ON_LINE'				=> 'On Line',
 	'L_STACKTRACE'			=> 'Stack Trace',
-	'L_ON'					=> 'on',
+	'L_SMALLON'				=> 'on',
 	'L_CHECKLOGOUT'			=> 'Are you sure you want to log out?',
 	'L_ADMINPANEL'			=> 'Admin Panel',
 	'L_REQUIREDFIELDS'		=> 'The following field must be filled in',
@@ -81,6 +81,7 @@ function return_language() {
 	'L_USERWELCOMEK4'		=> 'Welcome to the %s forums, Powered by k4 Bulletin Board.',
 	'L_USERWELCOMEMSGK4'	=> "Welcome to the %s forums, Powered by k4 Bulletin Board. \r\n Your user information is as follows..\r\nUsername: %s\r\nPassword: %s\r\n\r\n- k4 Bulletin Board Mailer",
 	'L_LOGINREGISTERMESSAGE'=> 'In order to login you must be registered. Registering takes only a few seconds but gives you increased capabilies. The board administrator may also grant additional permissions to registered users. Before you login please ensure you are familiar with our terms of use and related policies. Please ensure you read any forum rules as you navigate around the board.',
+	'L_EXPANDCOLLAPSE'		=> 'Expand/Collapse',
 
 	/* User Titles */
 	'L_JUNIORMEMBER'		=> 'Junior Member',
@@ -100,6 +101,8 @@ function return_language() {
 	'L_LOGOUT'				=> 'Logout',
 	'L_USERGROUPS'			=> 'User Groups',
 	'L_MISCELLANEOUS'		=> 'Miscellaneous',
+	'L_JUMPTO'				=> 'Jump to',
+	'L_SELECTAFORUM'		=> 'Select a Forum',
 
 	/* Forum sort menu */
 	'L_LASTPAGE'			=> 'Last Page',
@@ -139,7 +142,8 @@ function return_language() {
 	'L_CENSORING'			=> 'Word Censoring',
 	'L_PRUNE'				=> 'Prune Posts',
 	'L_ICONS'				=> 'Icons',
-	'L_RANKS'				=> 'User Ranks',
+	'L_USERRANKS'			=> 'User Ranks',
+	'L_USERTITLES'			=> 'User Title',
 	'L_SQL'					=> 'SQL',
 	'L_VIEWFORUM'			=> 'Forum Home Page',
 	'L_STYLES'				=> 'Board Styles',
@@ -152,11 +156,12 @@ function return_language() {
 	/* Admin CP */
 	'L_ADMINISTRATION'		=> 'Administration',
 	'L_WELCOMEACP'			=> 'Welcome to the k4 Admin Control Panel',
-	'L_ACPWELCOME'			=> 'Welcome to the k4 administration control panel. From here you can control vital aspects of the forum. Depending on whether you are an administrator or a moderator you can:',
+	'L_ACPWELCOME'			=> 'Welcome to the k4 Administration Control Panel. From here you can control vital aspects of the forum. Depending on whether you are an administrator or a moderator you can:',
 	'L_ACPFEATURES'			=> '<ul><li>Do all sorts of stuff.</li></ul>',
 	'L_MODGROUPS'			=> 'Edit/Modify User Groups',
 	'L_ADDGROUP'			=> 'Add Group',
 	
+	/* Category Management */
 	'L_ORDER'				=> 'Order',
 	'L_MANAGECATEGORIES'	=> 'Manage Categories',
 	'L_ADDCATEGORY'			=> 'Add New Category',
@@ -180,7 +185,9 @@ function return_language() {
 	'L_NOCATEGORIES'		=> 'There are currently no active Categories.',
 	'L_NOCATEGORYMAPS'		=> 'This category appears to have no set permissions.',
 	'L_UPDATEDCATEGORYPERMS'=> 'Successfully update the permissions for the category <strong>%s</strong>.',
-	
+	/* / Category Management */
+
+	/* Forum Management */
 	'L_MANAGEMENT'			=> 'Management',
 	'L_MANAGEFORUMS'		=> 'Manage Forums',
 	'L_ADDFORUM'			=> 'Add New Forum',
@@ -192,7 +199,9 @@ function return_language() {
 	'L_FORUMNAME'			=> 'Forum Name',
 	'L_EDITFORUMS'			=> 'Edit Forums',
 	'L_ADDEDFORUM'			=> 'Successfully added the forum <strong>%s</strong> to the database.<br /><br /><strong>Please wait while this forum\'s default permissions are added to the database.</strong>',
-	'L_INVALIDFORUM'		=> 'You have specified an invalid Forum ID.',
+	'L_INVALIDFORUM'		=> 'You have specified an invalid forum ID.',
+	'L_INVALIDTOPIC'		=> 'You have specified an invalid topic ID.',
+	'L_INVALIDDRAFT'		=> 'You have specified an invalid draft ID.',
 	'L_ADDEDFORUMPERMS'		=> 'Successfuly added the forum permissions for <strong>%s</strong>.',
 	'L_UPDATEDFORUM'		=> 'Successfully updated the forum <strong>%s</strong>.',
 	'L_FORUMPERMISSIONS'	=> 'Forum Permissions',
@@ -224,14 +233,36 @@ function return_language() {
 	'L_LANGUAGE'			=> 'Language',
 	'L_FORUMRULES'			=> 'Forum Rules',
 	'L_SPECIALMESSAGE'		=> 'Special Message',
-	
+	/* / Forum Management */
+
 	'L_SUSPEND'				=> 'Suspend',
 	'L_UNSUSPEND'			=> 'Unsuspend',
 	'L_LOCK'				=> 'Lock',
 	'L_UNLOCK'				=> 'Unlock',
 	
-	
-	
+	/* User Groups */
+	'L_NOUSERGROUPS'		=> 'There are currently no active user groups.',
+	'L_ADDUSERGROUP'		=> 'Add New User Group',
+	'L_MANAGEUSERGROUPS'	=> 'Manage User Groups',
+	'L_CHECKDELGROUP'		=> 'Are you sure that you want to remove this usergroup?',
+	'L_INSERTGROUPDESC'		=> 'Please insert a description for this user group.',
+	'L_INSERTGROUPNAME'		=> 'Please insert a name for this user group.',
+	'L_MINGROUPPERM'		=> 'Minimum Group Permission',
+	'L_MAXGROUPPERM'		=> 'Maximum Group Permission',
+	'L_PUBLICDISPLAY'		=> 'Allow Public Display',
+	'L_MODERATORSNAME'		=> 'Moderator\'s Name',
+	'L_INSERTMODNAME'		=> 'Please insert a moderator name.',
+	'L_INSERTGROUPCOLOR'	=> 'Please insert the group color. (Must be hexadecimal A-F and/or 0-9)',
+	'L_GROUPAVATAR'			=> 'Group Avatar',
+	'L_INVALIDMODNAME'		=> 'The selected user name for the moderator is incorrect.',
+	'L_INVALIDAVATAREXT'	=> 'The specified avatar has an invalid file extension. Valid file extensions are: gif, jpg, jpeg, bmp, png, tiff',
+	'L_GROUPNAMEEXISTS'		=> 'A user group already exists with that name. Please specify another one.',
+	'L_ADDEDUSERGROUP'		=> 'Successfully added the user group <strong>%s</strong>.',
+	'L_INVALIDUSERGROUP'	=> 'You have specified and invalid User Group.',
+	'L_REMOVEDUSERGROUP'	=> 'Successfully removed the user group <strong>%s</strong>.',
+	'L_UPDATEDUSERGROUP'	=> 'Successfully updated the user group <strong>%s</strong>.',
+	/* / User Groups */
+
 	'L_SELCATEGORY'			=> 'Select a Category',
 	'L_POSITION'			=> 'Position',
 	'L_UPDATE'				=> 'Update',
@@ -420,7 +451,7 @@ function return_language() {
 	
 	'L_ABILITIESSETTINGS'	=> 'Abilities Settings',
 	'L_ALLOWBBCODE'			=> 'Allow BB Code',
-	'L_ALLOWSMILIES'		=> 'Allow Smilies',
+	'L_ALLOWEMOTICONS'		=> 'Allow Emoticons',
 	'L_ALLOWPOSTICONS'		=> 'Allow Post Icons',
 	'L_ALLOWHTML'			=> 'Allow HTML',
 	'L_ALLOWEDHTMLTAGS'		=> 'Allowed HTML Tags',
@@ -513,7 +544,7 @@ function return_language() {
 	'L_ONLINEUSERSTATS'		=> 'In total there are <strong>%s</strong> users online :: %s Registered and %s Guests (%s Invisible)',
 	'L_USERSBROWSINGSTATS'	=> '<strong>%s</strong> user(s) :: %s Registered and %s Guests (%s Invisible)',
 	'L_ADMINISTRATOR'		=> 'Administrator',
-	'L_MODERATOR'			=> 'Moderator',
+	'L_MODERATORS'			=> 'Moderators',
 	'L_TOTALPOSTS'			=> 'Our users have posted a total of <strong>%s</strong> articles; %s topics and %s replies',
 	'L_TOTALUSERS'			=> 'We have <strong>%s</strong> registered users',
 	'L_NEWESTMEMBER'		=> 'Our newest member is <a href="member.php?id=%s" style="text-decoration: underline;">%s</a>',
@@ -522,6 +553,7 @@ function return_language() {
 	/* BBcode stuff */
 	'L_POSTINGRULES'		=> 'Posting Rules',
 	'L_QUOTE'				=> 'Quote',
+	'L_CODE'				=> 'Code',
 	'L_WROTE'				=> 'Wrote',
 	'L_POSTBBCODEOPTIONS'	=> 'HTML is <span style="text-decoration: underline;">%s</span><br />BBCode is <span style="text-decoration: underline;">%s</span><br />[IMG] Code is <span style="text-decoration: underline;">%s</span><br />[FLASH] Code is <span style="text-decoration: underline;">%s</span><br />Emoticons are <span style="text-decoration: underline;">%s</span>',
 	'L_ON'					=> 'ON',
@@ -529,7 +561,9 @@ function return_language() {
 	
 	/* User Status' */
 	'L_GUEST'				=> 'Guest',
+	'L_PENDINGMEMBER'		=> 'Pending Member',
 	'L_MEMBER'				=> 'Member',
+	'L_SUPERMEMBER'			=> 'Super Member',
 	'L_MODERATOR'			=> 'Moderator',
 	'L_SUPERMODERATOR'		=> 'Super Moderator',
 	'L_ADMIN'				=> 'Admin',
@@ -544,9 +578,11 @@ function return_language() {
 
 	/* Single topic & replies view */
 	'L_SIMILARTHREADS'		=> 'Similar Topics',
-	'L_EDITEDON'			=> 'Edited On:',
+	'L_EDITEDON'			=> 'Edited on',
+	'L_JOINED'				=> 'Joined',
 	'L_TOPICTOOLS'			=> 'Topic Tools',
 	'L_DISPLAYMODES'		=> 'Display Modes',
+	'L_POSTSUBJECT'			=> 'Post subject',
 	'L_RATE'				=> 'Rate',
 	'L_RATING'				=> 'Rating',
 	'L_VOTES'				=> 'Votes',
@@ -626,7 +662,7 @@ function return_language() {
 	'L_INSTANTMESSAGING'	=> 'Instant Messaging',
 	'L_PERSONALINFO'		=> 'Personal Information',
 	'L_ADDITIONALINFO'		=> 'Additional Information',
-	'L_LOCATION'			=> 'Location (Where you live)',
+	'L_LOCATION'			=> 'Location',
 	'L_OCCUPATION'			=> 'Occupation',
 	'L_INTERESTS'			=> 'Interests',
 	'L_BIOGRAPHY'			=> 'Biography',
@@ -670,6 +706,9 @@ function return_language() {
 
 	/* Permission Names */
 	'L_POLLS'				=> 'Polls',
+	'L_OTHER_TOPICS'		=> 'Other People\'s Topics',
+	'L_OTHER_POLLS'			=> 'Other People\'s Polls',
+	'L_OTHER_REPLIES'		=> 'Other People\'s Replies',
 	'L_VOTE_ON_POLL'		=> 'Vote on Polls',
 	'L_RATE_TOPIC'			=> 'Rate Topics',
 	'L_STICKY'				=> 'Sticky Topics',
@@ -766,12 +805,14 @@ function return_language() {
 	'L_SEARCHRESULTS'		=> 'Search Results',
 
 	/* Posting Vars */
-	'L_DISABLE_HTML'		=> 'Disable HTML in this post',
-	'L_DISABLE_BBCODE'		=> 'Disable BBCode in this post',
-	'L_DISABLE_SMILIES'		=> 'Disable Smilies in this post',
-	'L_ATTACH_SIGNATURE'	=> 'Attach a signature (signatures can be altered via the UCP)',
-	'L_NOTIFY_ON_REPLY'		=> 'Send me an email when a reply is posted',
-	'L_PARSE_URLS'			=> 'Do not automatically parse URLs',
+	'L_ADDITIONALOPTIONS'	=> 'Additional Options',
+	'L_DISABLEHTML'			=> 'Disable HTML',
+	'L_DISABLEBBCODE'		=> 'Disable BBCode',
+	'L_DISABLEEMOTICONS'	=> 'Disable Emoticons',
+	'L_ATTACHSIGNATURE'		=> 'Attach a signature (signatures can be altered via the UCP)',
+	'L_NOTIFYONREPLY'		=> 'Send me an email when a reply is posted',
+	'L_PARSEURLS'			=> 'Do not automatically parse URLs',
+	'L_MISCOPTIONS'			=> 'Miscellaneous Options',
 	'L_EDITPOST'			=> 'Edit Post',
 	'L_NEITHER'				=> 'Neither',
 	'L_MAKEANNOUNCEMENT'	=> 'Make this post an Announcement',
@@ -793,9 +834,17 @@ function return_language() {
 	'L_POST'				=> 'Post',
 	'L_LOGGEDAS'			=> 'Logged in as',
 	'L_SAVE'				=> 'Save',
+	'L_SUBMIT'				=> 'Submit',
+	'L_SAVEDRAFT'			=> 'Save as Draft',
+	'L_LOADDRAFT'			=> 'Load Draft',
+	'L_PREVIEW'				=> 'Preview',
 	'L_REPLYTO'				=> 'Reply To',
 	'L_POSTICONS'			=> 'Post Icons',
 	'L_NOICON'				=> 'No Icon',
+	'L_DRAFTNOTICE'			=> 'Here you are able to select the draft you want to continue writing. Your current post will be canceled, all current post contents will be deleted. View, edit and delete drafts within your User Control Panel.',
+	'L_SAVEDON'				=> 'Saved on',
+	'L_DRAFTTITLE'			=> 'Draft Title',
+	'L_DRAFTLOADED'			=> 'Draft loaded into posting area, you may want to finish your post now.',
 
 	'L_COLOR_DEFAULT'		=> 'Default', 
 	'L_BLACK'				=> 'Black',
@@ -858,6 +907,10 @@ function return_language() {
 	'L_ERROR'				=> 'Error!',
 	'L_ENTERIMG'			=> 'Enter your image URL',
 	'L_ERRORENTERIMG'		=> 'You have not entered the URL yet!',
+	
+	/* Posting errors */
+	'L_INSERTTOPICNAME'		=> 'Please insert a title for this Topic.',
+	'L_INSERTTOPICMESSAGE'	=> 'Please insert a message for this Topic.',
 
 	/* Settings */
 	'L_KFOURONOFF'			=> 'Turn k4 on and off',
@@ -915,17 +968,17 @@ function return_language() {
 	'L_HOWTOFAXNUMBER'			=> 'Enter the fax number for your company here. COPPA forms will be faxed to it.\r\n</p>\r\n<p>You may wish to check out <a href="http://www.efax.com/" target=_blank>http://www.efax.com/</a>',
 	'L_ALLOWBBIMAGECODE'		=> 'Allow BB IMG code in posts/signatures?',
 	'L_ALLOWBBCODE'				=> 'Allow BB Code in posts/signatures?',
-	'L_ALLOWSMILIES'			=> 'Allow Smilies (Emoticons) in posts/signatures?',
+	'L_ALLOWEMOTICONS'			=> 'Allow Smilies (Emoticons) in posts/signatures?',
 	'L_MAXIMAGES'				=> 'Maximum images per post/signature',
 	'L_HOWTOMAXIMAGES'			=> 'Maximum number of images to allow in posts/signatures. Set this to 0 to have no effect.',
 	'L_SMCOLUMNS'				=> 'Clickable Smilies per Row',
-	'L_HOWTOSMCOLUMNS'			=> 'When a user has enabled the clickable k4 code/smilies how many smilies do you want to show per row?',
+	'L_HOWTOSMCOLUMNS'			=> 'When a user has enabled the clickable k4 code/emoticons how many emoticons do you want to show per row?',
 	'L_SMTOTAL'					=> 'Clickable Smilies Total',
-	'L_HOWTOSMTOTAL'			=> 'When a user has enabled the clickable k4 code/smilies how many smilies do you want to display on the screen before the user is prompted to click for more.',
+	'L_HOWTOSMTOTAL'			=> 'When a user has enabled the clickable k4 code/emoticons how many emoticons do you want to display on the screen before the user is prompted to click for more.',
 	'L_ALLOWDYNIMG'				=> 'Allow Dynamic URL for [img] tags?',
 	'L_HOWTOALLOWDYNIMG'		=> 'If this is set to \'no\', the [img] tag will not be displayed if the path to the image contains dynamic characters such as ? and &. This can prevent malicious use of the tag.',
 	'L_ALLOWCODEBUTTONS'		=> 'Allow BB code Buttons & Clickable Smilies?',
-	'L_HOWTOALLOWCODEBUTTONS'	=> 'This global switch allows you to completely disable BB code buttons and clickable smilies.',
+	'L_HOWTOALLOWCODEBUTTONS'	=> 'This global switch allows you to completely disable BB code buttons and clickable emoticons.',
 	'L_SHOWSUBFORUMS'			=> 'Show Sub-Forums forums?',
 	'L_HOWTOSHOWSUBFORUMS'		=> 'Display sub-forums of a forum withing the forum row?',
 	'L_SHOWLOCKS'				=> 'Show Locked forums?',
@@ -1003,7 +1056,7 @@ function return_language() {
 	'L_HOWTOENABLEPMS'			=> 'Enabling this will add some performance overhead on the main index and it may not be a feature you wish to have at all.',
 	'L_PRIVALLOWBBIMGCODE'		=> 'Allow IMG code in private messages?',
 	'L_PRIVALLOWBBCODE'			=> 'Allow BB code in private messages?',
-	'L_PRIVALLOWSMILIES'		=> 'Allow smilies in private messages?',
+	'L_PRIVALLOWEMOTICONS'		=> 'Allow emoticons in private messages?',
 	'L_PRIVALLOWICONS'			=> 'Allow message icons?',
 	'L_HOWTOPRIVALLOWICONS'		=> 'Allow the use of the standard message icons for private messages.',
 	'L_PMQUOTA'					=> 'Maximum saved messages',
@@ -1047,8 +1100,8 @@ function return_language() {
 	'L_HOWTOCALSHOWBIRTHDAYS'	=> 'Show the individual birthdays for each user on the calendar? Set this to NO to just show a link if a particular day has birthdays on it.',
 	'L_CALBBIMAGECODE'			=> 'bbimagecode',
 	'L_HOWTOCALBBIMAGECODE'		=> 'Allow [IMG] code to be used in calendar events?',
-	'L_CALALLOWSMILIES'			=> 'smilies',
-	'L_HOWTOCALALLOWSMILIES'	=> 'Allow smilies to be used in calendar events?',
+	'L_CALALLOWEMOTICONS'			=> 'emoticons',
+	'L_HOWTOCALALLOWEMOTICONS'	=> 'Allow emoticons to be used in calendar events?',
 	'L_CALALLOWBBCODE'			=> 'bbcode',
 	'L_HOWTOCALALLOWBBCODE'		=> 'Allow BB code to be used in calendar events?',
 	'L_WOENABLE'				=> 'Enable Who\'s Online?',
@@ -1117,7 +1170,8 @@ function return_language() {
 	'L_AVATARSUCCESS'		=> 'You have successfully updated your user avatar settings.',
 	'L_SETTINGSSUCCESS'		=> 'You have successfully updated your user settings.',
 	'L_PROFILESUCCESS'		=> 'You have successfully updated your profile.',
-	'L_ADDEDTHREAD'			=> 'Successfully added topic.',
+	'L_ADDEDTOPIC'			=> 'Successfully added the topic <strong>%s</strong> to the forum <strong>%s</strong>.',
+	'L_SAVEDDRAFTTOPIC'		=> 'Successfully saved the topic <strong>%s</strong> as a draft to post in the forum <strong>%s</strong>.',
 	'L_TOOMANYPOLLOPTIONS'	=> 'You have put in %s poll options. The maximum number of poll options is %s.',
 	'L_ERRORFILESTOOBIG'	=> 'The files that you have tried to upload are too big.',
 	'L_ERRORADDINGUTG'		=> 'There was an error while trying to add the user to the Members user group. Please contact the forum Administrator.',
@@ -1141,6 +1195,7 @@ function return_language() {
 	'L_INVALIDFORUM'		=> 'You have selected and invalid forum or category to view.',
 	'L_ERRORVIEWFORUM'		=> 'An error occured while trying to view the selected category or forum.',
 	'L_PERMCANTVIEW'		=> 'You do not have permission to view this Category or Forum.',
+	'L_PERMCANTVIEWTOPIC'	=> 'You do not have permission to view topics in this forum.',
 	'L_INVALIDTHREADID'		=> 'You have chosen an invalid topic to view.',
 	'L_PERMSEDITPOST'		=> 'You do not have permission to edit this post.',
 	'L_INVALIDPOSTID'		=> 'The selected post does not exist.',
@@ -1159,7 +1214,8 @@ function return_language() {
 	'L_PERMCANTREPLY'		=> 'You do not have permission to reply to this topic.',
 	'L_PERMCANTPOST'		=> 'You do not have permission to post in this forum.',
 	'L_PERMCANTREAD'		=> 'You do not have permission to read this topic.',
-	'L_TOPICDOESNTEXIST'	=> 'The Selected Topic does not exist.',
+	'L_DRAFTDOESNTEXIST'	=> 'The selected Draft does not exist.',
+	'L_TOPICDOESNTEXIST'	=> 'The selected Topic does not exist.',
 	'L_FORUMDOESNTEXIST'	=> 'The selected Category or Forum does not exist.',
 	'L_USERDOESNTEXIST'		=> 'The selected User does not exist.',
 	'L_GROUPDOESNTEXIST'	=> 'The selected User Group does not exist.',

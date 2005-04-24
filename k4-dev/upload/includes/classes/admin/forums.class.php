@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.2 2005/04/19 21:51:45 k4st Exp $
+* @version $Id: forums.class.php,v 1.3 2005/04/24 02:11:42 k4st Exp $
 * @package k42
 */
 
@@ -173,7 +173,7 @@ class AdminInsertForum extends Event {
 				$template->setInfo('content', $template->getVar('L_INSERTCATORDER'), TRUE);
 				return TRUE;
 			}
-			if(!is_numeric($request['row_order'])) {
+			if(!ctype_digit($request['row_order'])) {
 				$template->setInfo('content', $template->getVar('L_INSERTCATORDERNUM'), TRUE);
 				return TRUE;
 			}
@@ -358,7 +358,7 @@ class AdminSimpleForumUpdate extends Event {
 				return TRUE;
 			}
 
-			if(!is_numeric($request['row_order'])) {
+			if(!ctype_digit($request['row_order'])) {
 				$template->setInfo('content', $template->getVar('L_INSERTCATORDERNUM'), TRUE);
 				return TRUE;
 			}
@@ -474,7 +474,7 @@ class AdminUpdateForum extends Event {
 				return TRUE;
 			}
 
-			if(!is_numeric($request['row_order'])) {
+			if(!ctype_digit($request['row_order'])) {
 				$template->setInfo('content', $template->getVar('L_INSERTCATORDERNUM'), TRUE);
 				return TRUE;
 			}

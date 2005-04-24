@@ -9,11 +9,11 @@
 	</tr>
 	</core:block>
 	<tr class="tcat">
-		<td>&nbsp;</td>
-		<td align="center">{$L_NAME}</td>
-		<td align="center">&nbsp;{$L_POSTS}&nbsp;</td>
-		<td align="center">&nbsp;{$L_TOPICS}&nbsp;</td>
-		<td align="center">{$L_LASTPOST}</td>
+		<td width="5%">&nbsp;</td>
+		<td width="60%" align="center">{$L_NAME}</td>
+		<td width="5%" align="center">&nbsp;{$L_POSTS}&nbsp;</td>
+		<td width="5%" align="center">&nbsp;{$L_TOPICS}&nbsp;</td>
+		<td width="30%" align="center">{$L_LASTPOST}</td>
 	</tr>
 	<list:list id="categories">
 	<list:default list="categories">
@@ -29,12 +29,14 @@
 	</list:default>
 	<list:item list="categories">
 	<maps:if list="categories" category="id" method="can_view">
-		<tr class="thead">
-			<td colspan="5">
-				<a href="viewforum.php?id={$id}" title="{$c.description}">{$name}</a>
-				<span class="minitext" style="font-weight: normal;"><br />{$description}</span>
-			</td>
-		</tr>
+	<tr class="thead">
+		<td colspan="5">
+			<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapse_{$id}', 'forums_{$id}')" title="{$L_EXPANDCOLLAPSE}"><img id="collapse_{$id}" src="Images/{$IMG_DIR}/Icons/collapse_thead.gif" alt="{$L_EXPANDCOLLAPSE}" border="0" /></a></div>
+			<a href="viewforum.php?id={$id}" title="{$c.description}">{$name}</a>
+			<span class="minitext" style="font-weight: normal;"><br />{$description}</span>
+		</td>
+	</tr>
+	<tbody id="forums_{$id}">
 		<list:sublist list="categories" id="forums" column="forums">
 		<list:item list="forums">
 		<maps:if list="forums" forum="id" method="can_view">
@@ -102,6 +104,7 @@
 		</maps:if>
 		</list:item>
 		</list:sublist>
+	</tbody>
 	</maps:if>
 	</list:item>
 	</list:list>

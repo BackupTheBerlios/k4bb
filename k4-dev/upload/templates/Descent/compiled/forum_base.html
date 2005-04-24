@@ -112,20 +112,22 @@
 
 <!-- Forum Status Icons -->
 <br />
-<table cellpadding="0" cellspacing="0" border="0">
-	<tr>
-		<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_on.gif" alt="<?php echo $context->getVar("L_FORUMNEWPOSTS"); ?>" /></td>
-		<td><span class="smalltext"><?php echo $context->getVar("L_FORUMNEWPOSTS"); ?></span></td>
-	</tr>
-	<tr>
-		<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_off.gif" alt="<?php echo $context->getVar("L_FORUMNONEWPOSTS"); ?>" /></td>
-		<td><span class="smalltext"><?php echo $context->getVar("L_FORUMNONEWPOSTS"); ?></span></td>
-	</tr>
-	<tr>
-		<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_off_lock.gif" alt="<?php echo $context->getVar("L_FORUMLOCKED"); ?>" /></td>
-		<td><span class="smalltext"><?php echo $context->getVar("L_FORUMLOCKED"); ?></span></td>
-	</tr>
-</table>
+<div align="left">
+	<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_on.gif" alt="<?php echo $context->getVar("L_FORUMNEWPOSTS"); ?>" /></td>
+			<td><span class="smalltext"><?php echo $context->getVar("L_FORUMNEWPOSTS"); ?></span></td>
+		</tr>
+		<tr>
+			<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_off.gif" alt="<?php echo $context->getVar("L_FORUMNONEWPOSTS"); ?>" /></td>
+			<td><span class="smalltext"><?php echo $context->getVar("L_FORUMNONEWPOSTS"); ?></span></td>
+		</tr>
+		<tr>
+			<td><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_off_lock.gif" alt="<?php echo $context->getVar("L_FORUMLOCKED"); ?>" /></td>
+			<td><span class="smalltext"><?php echo $context->getVar("L_FORUMLOCKED"); ?></span></td>
+		</tr>
+	</table>
+</div>
 <!-- / Forum Status Icons -->
 
 <?php endif; ?>
@@ -236,6 +238,22 @@
 </div>
 <br />
 
+<!-- Benchmarking -->
+<div align="center">
+	<span style="width:450px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">
+		[ <a href="http://www.k4forums.com" title="k4 BB Home Page" target="_blank">Powered By: k4 v.<?php echo $context->getVar("VERSION"); ?></a> ]
+		[ Load time: <?php echo $context->getVar("load_time"); ?> ]
+		[ Num Queries: <?php echo $context->getVar("num_queries"); ?> ]
+		<?php if ($template->isVisible('sql_debug', FALSE)): ?>
+		[ <a href="<?php echo $context->getVar("debug_url"); ?>">Debug</a> ]
+		<?php endif; ?>
+		<br />
+		<?php echo $context->getVar("copyrighttext"); ?>
+	</span>
+	<br />
+</div>
+<!-- / Benchmarking -->
+
 <!-- Quick Links Drop Down Menu -->
 <div id="quicklinks_menu" class="nav_menu" style="">
 	<table cellpadding="0" cellspacing="1" border="0" class="forum_content">
@@ -265,21 +283,6 @@
 	menu_init('quicklinks_link', 'quicklinks_menu');
 </script>
 <!-- / Quick Links Drop Down Menu -->
-
-<!-- Benchmarking -->
-<div align="center">
-	<div style="width:450px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">
-		[ <a href="http://www.newmediums.net" title="k4 BB Home Page" target="_blank">Powered By: k4 v.<?php echo $context->getVar("VERSION"); ?></a> ]
-		[ Load time: <?php echo $context->getVar("load_time"); ?> ]
-		[ Num Queries: <?php echo $context->getVar("num_queries"); ?> ]
-		<?php if ($template->isVisible('sql_debug', FALSE)): ?>
-		[ <a href="tmp/debug/<?php echo $context->getVar("debug_file"); ?>">Debug</a> ]
-		<?php endif; ?>
-		<br />
-		<?php echo $context->getVar("copyrighttext"); ?>
-	</div>
-</div>
-<!-- / Benchmarking -->
 
 <a name="bottom" id="bottom"></a>
 
@@ -316,7 +319,7 @@ COPYRIGHT NOTICE
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: forum_base.html,v 1.4 2005/04/20 02:58:41 k4st Exp $
+* @version $Id: forum_base.html,v 1.5 2005/04/24 02:08:02 k4st Exp $
 * @package k42
 */
 -->
