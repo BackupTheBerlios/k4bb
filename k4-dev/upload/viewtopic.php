@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewtopic.php,v 1.4 2005/04/20 19:44:49 k4st Exp $
+* @version $Id: viewtopic.php,v 1.5 2005/04/24 02:05:31 k4st Exp $
 * @package k42
 */
 
@@ -125,7 +125,27 @@ class DefaultEvent extends Event {
 			$groups				= &new FAArrayIterator($groups);
 			$template->setList('usergroups_legend', $groups);
 		}
+		
+		/* Add the topic info to the template */
+		foreach($topic as $key => $val)
+			$template->setVar('topic_'. $key, $val);
 
+		/* Update the number of views for this topic */
+		$dba->executeUpdate("UPDATE ". TOPICS ." SET views=views+1 WHERE topic_id=". intval($topic['id']));
+		
+		/* Set query values for when we fetch the replies */
+		$topic['postsperpage']		= isset($request['limit']) && ctype_digit($request['limit']) ? intval($request['limit']) : $forum['postsperpage'];
+		$topic['daysprune']			= isset($request['daysprune']) && ctype_digit($request['daysprune']) ? iif(($request['daysprune'] == -1), 0, intval($request['daysprune'])) : 0;
+		$topic['sortorder']			= isset($request['order']) && ($request['order'] == 'ASC' || $request['order'] == 'DESC') ? $request['order'] : 'DESC';
+		$topic['sortedby']			= isset($request['sort']) && in_array($request['sort'], $sort_orders) ? $request['sort'] : 'created';
+		$topic['start']				= isset($request['start']) && ctype_digit($request['start']) ? intval($_GET['start']) : 0;
+		
+		/* set the topic iterator */
+		$topic						= &new TopicIterator($topic, TRUE);
+
+		$template->setList('topic', $topic);
+
+		$template->setFile('content', 'viewtopic.html');
 
 		return TRUE;
 	}
