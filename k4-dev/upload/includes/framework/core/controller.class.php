@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: controller.class.php,v 1.7 2005/04/20 20:34:22 k4st Exp $
+* @version $Id: controller.class.php,v 1.8 2005/04/24 02:10:39 k4st Exp $
 * @package k42
 */
 
@@ -127,6 +127,13 @@ class Controller {
 
 		/* Merge the post and get arrays */
 		$request			= array_merge($this->get, $this->post, $this->cookie);
+		
+		/* Strip annoying slashes on everything */
+		foreach($request as $key => $val) {
+			if(!is_array($val))
+				$request[$key]	= stripslashes($val);
+		}
+		
 		$result				= FALSE;
 		
 		/* Get the act var */
@@ -179,6 +186,9 @@ class Controller {
 		
 		/* Require the lnaguage file */
 		require FORUM_BASE_DIR. '/includes/lang/'. $language .'/lang.php';
+		
+		/* Set the language variable to the template */
+		$template->setVar('LANG', $language);
 
 		/* Check if the language function exists */
 		if(!function_exists('return_language'))
@@ -227,9 +237,11 @@ class Controller {
 		
 
 		/* If the user is logged in, set all of his user info to the template */
-		if(is_a($session['user'], 'Member'))
-			foreach($user as $key => $val)
+		if(is_a($session['user'], 'Member')) {
+			foreach($user as $key => $val) {
 				$this->template->setVar('user_'. $key, $val);
+			}
+		}
 
 		/* Set the number of queries */
 		$template->setVar('num_queries', $_DBA->num_queries);
