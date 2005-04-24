@@ -6,10 +6,10 @@
 .alt3 { background-color: #E4E7F5;color: #000000; }
 .answer { border: 1px solid #999999;list-style-type: none;background-color: #FFFFFF;padding: 5px;top:-2px;position: relative;width: 90%;text-align: left; }
 .bbcode_button { border: 2px outset; background-color: #F3F3F3; }
-.button { font-size: 11px;font-family: verdana, geneva, lucida, arial, helvetica, sans-serif; }
+.button { background-image:url(../../Images/Descent/background_button.gif);background-position:left top;background-repeat:repeat-x;font-size: 11px;font-family: verdana, geneva, lucida, arial, helvetica, sans-serif;border-right: 1px solid #B3B3B3;border-left: 1px solid #B3B3B3;border-top: 1px solid #F6F6F7;border-bottom: 1px solid #919194; }
 .cat_name { cursor: pointer;cursor: hand; }
-.codecontent { width: 90%;font-size: 11px;color: #000000;background-color: #FFFFFF; border: 1px solid #A9B8C2; }
-.codetitle { width: 90%;font-size: 11px;color: #000000;background-color: #A9B8C2; border: 1px solid #A9B8C2; }
+.codecontent { text-align:left;width: 90%;font-size: 11px;color: #000000;background-color: #FFFFFF; border: 1px solid #A9B8C2;padding: 3px; }
+.codetitle { text-align:left;width: 90%;font-weight: bold;font-size: 11px;color: #000000;background-color: #A9B8C2; border: 1px solid #A9B8C2;padding: 3px; }
 .color_picker { position: absolute;top: 1em;left: 0; }
 .colorpicker { border: 1px solid black; }
 .colorpicker td { width: 10px;height: 10px;max-width: 10px;max-height: 10px;cursor: hand;cursor: pointer; }
@@ -20,7 +20,8 @@
 .forum_header { padding-left: 10px;padding-right: 10px;background-color: #FFFFFF; }
 .forum_main { padding-left: 10px;padding-right: 10px;background-color: #FFFFFF; }
 .forummessage { padding: 5px;font-size: 11px;background-color: #E4E7F5; border: 1px solid #045975; }
-.forumrules { padding: 5px;font-size: 11px;background-color: #E4E7F5; border: 1px solid #045975; }
+.forumrules { text-align:left;padding: 5px;font-size: 11px;background-color: #E4E7F5; border: 1px solid #045975; }
+.hidden { display: none; }
 .hidden { display: none; }
 .inputbox {  border : 1px solid #999999;font-size:11px; }
 .inputbox:focus { border : 1px solid #666666;font-size:11px; }
@@ -37,19 +38,20 @@
 .quote { border: 1px solid #999999; }
 .quote * { font-size: 11px;color: #666666; }
 .quote legend { font-weight: bold;color: #333333; }
-.quotecontent { width: 90%;font-size: 11px;color: #000000;background-color: #FFFFFF; border: 1px solid #A9B8C2; }
-.quotetitle { width: 90%;font-size: 11px;color: #000000;background-color: #A9B8C2; border: 1px solid #A9B8C2; }
+.quotecontent { text-align:left;width: 90%;font-size: 11px;color: #000000;background-color: #FFFFFF; border: 1px solid #A9B8C2;padding: 3px; }
+.quotetitle { text-align:left;width: 90%;font-weight: bold;font-size: 11px;color: #000000;background-color: #A9B8C2; border: 1px solid #A9B8C2;padding: 3px; }
 .smalltext, .smalltext *, *.smalltext { font-size:11px; padding:0px; }
 .special_panel { background-color: #FFDDDD;color: #000000;padding: 10px;border: outset 2px; }
 .tcat * { color: #FFFFFF;font-size: 11px;font-weight: bold;font-family: arial, helvetica, sans-serif; }
 .tcat a:hover { color: #FFFF66;text-decoration: underline; }
 .tcat a:link, .tcat a:visited, .tcat a:active { color: #FFFFFF;text-decoration: none; }
 .tcat input { color: #000000;font-size: 11px;font-weight: bold;font-family: arial, helvetica, sans-serif; }
-.tcat, .tcat td { padding: 4px;cursor: default; background-color: #333333; }
-.thead { background-color: #045975;color: #FFFFFF;font-size: 11px;font-weight: bold;font-family: tahoma, verdana, geneva, lucida, arial, helvetica, sans-serif; }
+.tcat, .tcat td { background-image:url(../../Images/Descent/background_tcat.gif);background-position:left top;background-repeat:repeat-x;padding: 4px;cursor: default; background-color: #333333; }
+.thead { background-image:url(../../Images/Descent/background_thead.gif);background-position:left top;background-repeat:repeat-x;background-color: #045975;color: #FFFFFF;font-size: 11px;font-weight: bold;font-family: tahoma, verdana, geneva, lucida, arial, helvetica, sans-serif; }
 .thead a, .thead div { font-size: 12px;color: #FFFFFF; }
 .threaded_off td { background-color: #FEFEFE;padding: 0px;margin:0px;color: #000000; }
 .threaded_on, .threaded_on td { background-color: #CCCCCC;padding: 0px;margin:0px;height: 20px; }
+.visible {  }
 .visible { display: block;border: 1px solid #BDD786;padding: 3px;width: 95%; }
 a { color: #000000;text-decoration: none; }
 a:hover { text-decoration: underline; }
