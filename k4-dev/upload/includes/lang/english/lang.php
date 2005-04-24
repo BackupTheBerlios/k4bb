@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: lang.php,v 1.4 2005/04/24 02:09:24 k4st Exp $
+* @version $Id: lang.php,v 1.5 2005/04/24 03:54:48 k4st Exp $
 * @package k42
 */
 
@@ -539,6 +539,7 @@ function return_language() {
 
 	/* Stuff on the Online Users Panel and main page */
 	'L_NEWPOSTS'			=> 'New Posts',
+	'L_MYPOSTS'				=> 'My Posts',
 	'L_NONEWPOSTS'			=> 'No New Posts',
 	'L_REGISTEREDUSERS'		=> 'Registered Users',
 	'L_ONLINEUSERSTATS'		=> 'In total there are <strong>%s</strong> users online :: %s Registered and %s Guests (%s Invisible)',
@@ -837,6 +838,7 @@ function return_language() {
 	'L_SUBMIT'				=> 'Submit',
 	'L_SAVEDRAFT'			=> 'Save as Draft',
 	'L_LOADDRAFT'			=> 'Load Draft',
+	'L_DELETEDRAFT'			=> 'Delete Draft',
 	'L_PREVIEW'				=> 'Preview',
 	'L_REPLYTO'				=> 'Reply To',
 	'L_POSTICONS'			=> 'Post Icons',
@@ -1171,6 +1173,7 @@ function return_language() {
 	'L_SETTINGSSUCCESS'		=> 'You have successfully updated your user settings.',
 	'L_PROFILESUCCESS'		=> 'You have successfully updated your profile.',
 	'L_ADDEDTOPIC'			=> 'Successfully added the topic <strong>%s</strong> to the forum <strong>%s</strong>.',
+	'L_REMOVEDDRAFT'		=> 'Successfully removed the draft topic <strong>%s</strong> from the forum <strong>%s</strong>.',
 	'L_SAVEDDRAFTTOPIC'		=> 'Successfully saved the topic <strong>%s</strong> as a draft to post in the forum <strong>%s</strong>.',
 	'L_TOOMANYPOLLOPTIONS'	=> 'You have put in %s poll options. The maximum number of poll options is %s.',
 	'L_ERRORFILESTOOBIG'	=> 'The files that you have tried to upload are too big.',
