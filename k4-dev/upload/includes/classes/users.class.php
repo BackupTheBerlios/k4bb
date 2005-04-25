@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: users.class.php,v 1.1 2005/04/24 02:11:13 k4st Exp $
+* @version $Id: users.class.php,v 1.2 2005/04/25 19:51:54 k4st Exp $
 * @package k42
 */
 
@@ -35,25 +35,46 @@ if(!defined('IN_K4')) {
 	exit;
 }
 
+/**
+ * Get the highest permissioned group that a user belongs to
+ */
 function get_user_max_group($temp, $all_groups) {
 	$groups				= @unserialize($temp['usergroups']);
 			
 	if(is_array($groups)) {
 		
+		
+		/**
+		 * Loop through all of the groups and all of this users groups
+		 * Find the one with the highest permission and use it as the color
+		 * for this person's username. The avatar is separate because not all
+		 * groups will automatically have avatars, so get the highest possible
+		 * set avatar for this user.
+		 */
 		foreach($groups as $g) {
 			
 			/* If the group variable isn't set, set it */
 			if(!isset($group) && isset($all_groups[$g]))
 				$group	= $all_groups[$g];
 			
+			if(!isset($avatar) && isset($all_groups[$g]) && $all_groups[$g]['avatar'] != '')
+				$avatar	= $all_groups[$g]['avatar'];
+
 			/**
 			 * If the perms of this group are greater than that of the $group 'prev group', 
 			 * set is as this users group 
 			 */
-			if(@$all_groups[$g]['max_perm'] > @$group['max_perm'])
+			if(@$all_groups[$g]['max_perm'] > @$group['max_perm']) {
 				$group	= $all_groups[$g];
+				
+				/* Give this user an appropriate group avatar */
+				if($all_groups[$g]['avatar'] != '')
+					$avatar	= $all_groups[$g]['avatar'];
+			}
 		}
 	}
+	
+	$group['avatar']		= isset($avatar) ? $avatar : '';
 
 	return $group;
 }

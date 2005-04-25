@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: lang.php,v 1.5 2005/04/24 03:54:48 k4st Exp $
+* @version $Id: lang.php,v 1.6 2005/04/25 19:53:38 k4st Exp $
 * @package k42
 */
 
@@ -43,6 +43,8 @@ function return_language() {
 	/* Base vars */
 	'L_HOME'				=> 'Home',
 	'L_NAME'				=> 'Name',
+	'L_NICENAME'			=> 'Nice Name',
+	'L_RE'					=> 'Re',
 	'L_POSTS'				=> 'Posts',
 	'L_TOPICS'				=> 'Topics',
 	'L_AUTHOR'				=> 'Author',
@@ -202,6 +204,8 @@ function return_language() {
 	'L_INVALIDFORUM'		=> 'You have specified an invalid forum ID.',
 	'L_INVALIDTOPIC'		=> 'You have specified an invalid topic ID.',
 	'L_INVALIDDRAFT'		=> 'You have specified an invalid draft ID.',
+	'L_INVALIDREPLY'		=> 'You have specified an invalid reply ID.',
+	'L_INVALIDTOPICVIEW'	=> 'You have specified an invalid topic.',
 	'L_ADDEDFORUMPERMS'		=> 'Successfuly added the forum permissions for <strong>%s</strong>.',
 	'L_UPDATEDFORUM'		=> 'Successfully updated the forum <strong>%s</strong>.',
 	'L_FORUMPERMISSIONS'	=> 'Forum Permissions',
@@ -247,6 +251,7 @@ function return_language() {
 	'L_CHECKDELGROUP'		=> 'Are you sure that you want to remove this usergroup?',
 	'L_INSERTGROUPDESC'		=> 'Please insert a description for this user group.',
 	'L_INSERTGROUPNAME'		=> 'Please insert a name for this user group.',
+	'L_INSERTGROUPNICENAME'	=> 'Please insert a nice name for this user group.',
 	'L_MINGROUPPERM'		=> 'Minimum Group Permission',
 	'L_MAXGROUPPERM'		=> 'Maximum Group Permission',
 	'L_PUBLICDISPLAY'		=> 'Allow Public Display',
@@ -676,6 +681,7 @@ function return_language() {
 	'L_INVISIBLEMODE'		=> 'Invisible Mode',
 	'L_USEAVATAR'			=> 'Use an Avatar?',
 	'L_YOURAVATAR'			=> 'Your Avatar',
+	'L_YOURNAME'			=> 'Your Name',
 	'L_UPLOADNEWAVATAR'		=> 'Upload new Avatar',
 	'L_AVATARINFO'			=> 'To use an avatar on this board, you must upload it. The avatar MUST be a GIF image, and must not be more than 75px in height and/or width.',
 	'L_PRIVATE_MSGS'		=> 'Private&nbsp;Messages',
@@ -815,6 +821,8 @@ function return_language() {
 	'L_PARSEURLS'			=> 'Do not automatically parse URLs',
 	'L_MISCOPTIONS'			=> 'Miscellaneous Options',
 	'L_EDITPOST'			=> 'Edit Post',
+	'L_EDITTOPIC'			=> 'Edit Topic',
+	'L_DELETETOPIC'			=> 'Delete Topic',
 	'L_NEITHER'				=> 'Neither',
 	'L_MAKEANNOUNCEMENT'	=> 'Make this post an Announcement',
 	'L_MAKEGLOBALANNOUNCEMENT'=> 'Make this post a Global Announcement',
@@ -836,6 +844,7 @@ function return_language() {
 	'L_LOGGEDAS'			=> 'Logged in as',
 	'L_SAVE'				=> 'Save',
 	'L_SUBMIT'				=> 'Submit',
+	'L_CANTVIEWDRAFT'		=> 'The selected topic is saved as a draft. You will only be able to see and reply to it once it has been posted.',
 	'L_SAVEDRAFT'			=> 'Save as Draft',
 	'L_LOADDRAFT'			=> 'Load Draft',
 	'L_DELETEDRAFT'			=> 'Delete Draft',
@@ -1049,7 +1058,7 @@ function return_language() {
 	'L_HOWTOMAXSEARCHLENGTH'	=> 'Enter the maximum word length that the search engine is to index.  The larger this number is, the larger your search index, and conversely your database is going to be.',
 	'L_ALLOWWILDCARDS'			=> 'Allow Wild Cards?',
 	'L_HOWTOALLOWWILDCARDS'		=> 'Allow users to use a star (*) in searches to match partial words?',
-	'L_SHOWEDITEDBY'			=> 'Show the \'Edited by xxx on yyy\' when a post is edited?',
+	'L_SHOWEDITEDBY'			=> 'Show the <strong>Edited on xxx by yyy</strong> when a post is edited?',
 	'L_ONTEXT'					=> 'Text for \'on\'',
 	'L_HOWTOONTEXT'				=> 'Text that means on. This is used to keep the code language independent. It is used with the BB code / HTML code On / Off settings for postings.',
 	'L_OFFTEXT'					=> 'Text for \'off\'',
@@ -1147,7 +1156,8 @@ function return_language() {
 	'L_FEATUREDENIED'		=> 'This feature of k4 Bulletin board has been denied to you by the Administrator.',
 	'L_EMAILSENT'			=> 'Successfully sent the Email to <strong>%s</strong>.',
 	'L_OPTIONSUPDATED'		=> 'Successfully updated Board Settings.',
-	'L_UPDATEDPOST'			=> 'You have successfully updated the topic/post.',
+	'L_UPDATEDREPLY'		=> 'You have successfully updated the reply <strong>%s</strong>.',
+	'L_UPDATEDTOPIC'		=> 'Successfully upated the topic <strong>%s</strong>.',
 	'L_CANNOTUSEFEATURE'	=> 'You cannot use this feature of the k4 Bulletin Board.',
 	'L_CANTPOSTPOLLSFORUM'	=> 'You cannot post polls in this forum.',
 	'L_RANKUPDATED'			=> 'You have successfully updated the user Rank.',
@@ -1175,6 +1185,7 @@ function return_language() {
 	'L_ADDEDTOPIC'			=> 'Successfully added the topic <strong>%s</strong> to the forum <strong>%s</strong>.',
 	'L_REMOVEDDRAFT'		=> 'Successfully removed the draft topic <strong>%s</strong> from the forum <strong>%s</strong>.',
 	'L_SAVEDDRAFTTOPIC'		=> 'Successfully saved the topic <strong>%s</strong> as a draft to post in the forum <strong>%s</strong>.',
+	'L_DELETEDTOPIC'		=> 'Successfully deleted the topic <strong>%s</strong> from the forum <strong>%s</strong>.',
 	'L_TOOMANYPOLLOPTIONS'	=> 'You have put in %s poll options. The maximum number of poll options is %s.',
 	'L_ERRORFILESTOOBIG'	=> 'The files that you have tried to upload are too big.',
 	'L_ERRORADDINGUTG'		=> 'There was an error while trying to add the user to the Members user group. Please contact the forum Administrator.',
@@ -1217,8 +1228,10 @@ function return_language() {
 	'L_PERMCANTREPLY'		=> 'You do not have permission to reply to this topic.',
 	'L_PERMCANTPOST'		=> 'You do not have permission to post in this forum.',
 	'L_PERMCANTREAD'		=> 'You do not have permission to read this topic.',
+	'L_TOPICREVIEW'			=> 'Topic Review',
 	'L_DRAFTDOESNTEXIST'	=> 'The selected Draft does not exist.',
 	'L_TOPICDOESNTEXIST'	=> 'The selected Topic does not exist.',
+	'L_REPLYDOESNTEXIST'	=> 'The selected reply does not exist.',
 	'L_FORUMDOESNTEXIST'	=> 'The selected Category or Forum does not exist.',
 	'L_USERDOESNTEXIST'		=> 'The selected User does not exist.',
 	'L_GROUPDOESNTEXIST'	=> 'The selected User Group does not exist.',
@@ -1239,7 +1252,9 @@ function return_language() {
 	'L_ADDEDMAPSITEM'		=> 'Successfully added the selected MAP item.',
 	'L_REMOVEDMAPSITEM'		=> 'Successfully removed the selected MAP item and all MAP items below it.',
 	'L_CANTVIEWFORUMTOPICS'	=> 'You do not have permission to view the topics in this forum.',
-	'L_CANTPOSTTOCATEGORY'	=> 'You must choose a forum to post your topic to.',
+	'L_CANTPOSTTONONFORUM'	=> 'You must choose a forum to post to.',
+	'L_CANTDELFROMNONFORUM'	=> 'You cannot delete a post from a non-forum.',
+	'L_CANTEDITONNONFORUM'	=> 'You must choose a forum to edit this post in.',
 	'L_DIRECTORYDOESNTEXIST'=> 'The directory <strong>%s</strong> does not exist.',
 	'L_NOFORUMPOSTS30DAYS'	=> 'There have been no posts in the last %s days in this forum.',
 	'L_TRYFORUMCONTROLS'	=> 'Try using the controls below to search for any older posts that may exist.',

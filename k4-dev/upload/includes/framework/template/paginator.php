@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: paginator.php,v 1.2 2005/04/13 02:54:16 k4st Exp $
+* @version $Id: paginator.php,v 1.3 2005/04/25 19:52:58 k4st Exp $
 * @package k42
 */
 
@@ -34,9 +34,6 @@ error_reporting(E_ALL);
 if(!defined('IN_K4')) {
 	exit;
 }
-
-require_once FA_BASE_DIR.'/iterator.php';
-require_once FA_BASE_DIR.'/url.php';
 
 class TPL_PageIterator extends FAIterator {
 	var $current;
@@ -51,9 +48,7 @@ class TPL_PageIterator extends FAIterator {
 			$before = $pager->page_num - 1;
 		if ($after == 'all')
 			$after = $pager->count - $pager->page_num;
-
-		echo "before: $before, after: $after";
-
+		
 		$this->before = $before;
 		$this->after = $after;
 		$this->reset();
@@ -99,10 +94,10 @@ class TPL_Paginator {
 	function TPL_Paginator($base_url, $count, $page_num, $page_size = 15) {
 		assert(is_a($base_url, 'Url'));
 
-		$this->base_url = $base_url;
-		$this->count = $count;
-		$this->page_size = $page_size;
-		$this->page_num = $page_num;
+		$this->base_url		= $base_url;
+		$this->count		= $count;
+		$this->page_size	= $page_size;
+		$this->page_num		= $page_num;
 	}
 
 	function getPage($page) {
@@ -111,7 +106,7 @@ class TPL_Paginator {
 			$url->args['page'] = $page;
 			$url->args['size'] = $this->page_size;
 
-			return $url->toString();
+			return $url->__toString();
 		}
 	}
 

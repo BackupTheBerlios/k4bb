@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.9 2005/04/20 19:44:49 k4st Exp $
+* @version $Id: index.php,v 1.10 2005/04/25 19:50:53 k4st Exp $
 * @package k42
 */
 
@@ -85,12 +85,13 @@ class DefaultEvent extends Event {
 		$template		= BreadCrumbs($template, $template->getVar('L_HOME'));
 		
 		//$dba->executeUpdate("update k4_information set row_level = 3 where row_type = 2 and parent_id = 2");
-		//$dba->executeQuery("delete from k4_information");
-		//$dba->executeQuery("delete from k4_categories");
-		//$dba->executeQuery("delete from k4_forums");
-		//$dba->executeQuery("delete from k4_topics");
-		//$dba->executeQuery("delete from k4_replies");
-		//$dba->executeQuery("delete from k4_sessions");
+		/*$dba->executeQuery("delete from k4_information");
+		$dba->executeQuery("delete from k4_categories");
+		$dba->executeQuery("delete from k4_forums");
+		$dba->executeQuery("delete from k4_topics");
+		$dba->executeQuery("delete from k4_replies");
+		$dba->executeQuery("delete from k4_maps");
+		$dba->executeUpdate("UPDATE ". USERINFO ." SET num_posts = 0");*/
 		
 		/* Set the globals for num_topics and num_replies here */
 		Globals::setGlobal('num_topics', 0);

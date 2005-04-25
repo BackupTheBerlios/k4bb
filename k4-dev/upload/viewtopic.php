@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewtopic.php,v 1.5 2005/04/24 02:05:31 k4st Exp $
+* @version $Id: viewtopic.php,v 1.6 2005/04/25 19:50:53 k4st Exp $
 * @package k42
 */
 
@@ -56,7 +56,15 @@ class DefaultEvent extends Event {
 			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
 
 			return TRUE;
-		}			
+		}	
+		
+		if($topic['is_draft'] == 1) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPICVIEW'));
+			$template->setInfo('content', $template->getVar('L_CANTVIEWDRAFT'), FALSE);
+			
+			return TRUE;
+		}
 
 		/* Get the current forum */
 		$forum				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($topic['forum_id']));

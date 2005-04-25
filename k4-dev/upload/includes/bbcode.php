@@ -26,7 +26,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.php,v 1.5 2005/04/24 02:08:43 k4st Exp $
+* @version $Id: bbcode.php,v 1.6 2005/04/25 19:51:40 k4st Exp $
 * @package k42
 */
 
@@ -82,7 +82,7 @@ class BBCodex {
 		/* Transform unwanted html entities */
 		$this->add_custom('htmlentities', new BBHTMLentities($this));
 
-		if($this->bbcode) {
+		if($this->bbcode && ($this->user['perms'] >= $this->user['maps']['forums'][$this->forum_id]['bbcode']['can_add'])) {
 			
 			/* Simple bb codes */
 			$this->add_bbcode('b', 'b', 'span style="font-weight: bold;"', 'span');
@@ -104,13 +104,13 @@ class BBCodex {
 			$this->add_custom('quote', new BBQuote($this));
 			$this->add_custom('list', new BBList($this));
 			$this->add_custom('code', new BBCode($this));
-			
-			if($this->emoticons)
-				$this->add_custom('emoticons', new BBEmoticons($this));
-
-			if($this->html)
-				$this->add_custom('html', new BBHtml($this));
 		}
+
+		if($this->emoticons && ($this->user['perms'] >= $this->user['maps']['forums'][$this->forum_id]['emoticons']['can_add']))
+			$this->add_custom('emoticons', new BBEmoticons($this));
+
+		if($this->html && ($this->user['perms'] >= $this->user['maps']['forums'][$this->forum_id]['html']['can_add']))
+			$this->add_custom('html', new BBHtml($this));
 	}
 
 	/**
@@ -657,6 +657,7 @@ class BBHTMLentities extends BBCodeTag {
 
 		/* Quote */
 		$this->instance->text = str_replace('"', '&quot;', $this->instance->text);
+		$this->instance->text = str_replace("'", '&#039;', $this->instance->text);
 		
 
 		/* Change the html entities back to what they were */
@@ -678,6 +679,7 @@ class BBHTMLentities extends BBCodeTag {
 
 		/* Quote */
 		$this->instance->text = str_replace('&quot;', '"', $this->instance->text);
+		$this->instance->text = str_replace('&#039;', "'", $this->instance->text);
 
 		/* Ampersands */
 		$this->instance->text = str_replace('&amp;', '&', $this->instance->text);

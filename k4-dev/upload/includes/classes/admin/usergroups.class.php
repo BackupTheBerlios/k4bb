@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: usergroups.class.php,v 1.1 2005/04/19 21:51:45 k4st Exp $
+* @version $Id: usergroups.class.php,v 1.2 2005/04/25 19:52:34 k4st Exp $
 * @package k42
 */
 
@@ -75,6 +75,11 @@ class AdminInsertUserGroup extends Event {
 				$template->setInfo('content', $template->getVar('L_INSERTGROUPNAME'), TRUE);
 				return TRUE;
 			}
+
+			if(!isset($request['nicename']) || $request['nicename'] == '') {
+				$template->setInfo('content', $template->getVar('L_INSERTGROUPNICENAME'), TRUE);
+				return TRUE;
+			}
 			
 			$g = $dba->getRow("SELECT * FROM ". USERGROUPS ." WHERE name = '". $dba->quote($request['name']) ."'");			
 			
@@ -110,7 +115,7 @@ class AdminInsertUserGroup extends Event {
 			if(isset($_FILES['avatar_upload']) && is_array($_FILES['avatar_upload']))
 				$filename	= $_FILES['avatar_upload']['tmp_name'];
 			
-			if(isset($request['image_browse']) && $request['image_browse'] != '') {
+			if(isset($request['avatar_browse']) && $request['avatar_browse'] != '') {
 				$filename	= $request['avatar_browse'];
 			}
 			
@@ -133,20 +138,21 @@ class AdminInsertUserGroup extends Event {
 			}
 			
 			/* Build the queries */
-			$insert_a			= &$dba->prepareStatement("INSERT INTO ". USERGROUPS ." (name,description,mod_name,mod_id,created,min_perm,max_perm,display_legend,color,avatar) VALUES (?,?,?,?,?,?,?,?,?,?)");
+			$insert_a			= &$dba->prepareStatement("INSERT INTO ". USERGROUPS ." (name,nicename,description,mod_name,mod_id,created,min_perm,max_perm,display_legend,color,avatar) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
 			$update_a			= &$dba->prepareStatement("UPDATE ". USERS ." SET usergroups=?,perms=? WHERE id=?");
 
 			/* Set the query values */
 			$insert_a->setString(1, $request['name']);
-			$insert_a->setString(2, $request['description']);
-			$insert_a->setString(3, $moderator['name']);
-			$insert_a->setInt(4, $moderator['id']);
-			$insert_a->setInt(5, time());
-			$insert_a->setInt(6, $request['min_perm']);
-			$insert_a->setInt(7, $request['max_perm']);
-			$insert_a->setInt(8, $request['display_legend']);
-			$insert_a->setInt(9, $request['color']);
-			$insert_a->setString(10, $filename);
+			$insert_a->setString(2, $request['nicename']);
+			$insert_a->setString(3, $request['description']);
+			$insert_a->setString(4, $moderator['name']);
+			$insert_a->setInt(5, $moderator['id']);
+			$insert_a->setInt(6, time());
+			$insert_a->setInt(7, $request['min_perm']);
+			$insert_a->setInt(8, $request['max_perm']);
+			$insert_a->setInt(9, $request['display_legend']);
+			$insert_a->setString(10, $request['color']);
+			$insert_a->setString(11, $filename);
 			
 			/* Add the category to the info table */
 			$insert_a->executeUpdate();
@@ -363,6 +369,11 @@ class AdminUpdateUserGroup extends Event {
 				$template->setInfo('content', $template->getVar('L_INSERTGROUPNAME'), TRUE);
 				return TRUE;
 			}
+
+			if(!isset($request['nicename']) || $request['nicename'] == '') {
+				$template->setInfo('content', $template->getVar('L_INSERTGROUPNICENAME'), TRUE);
+				return TRUE;
+			}
 			
 			$g = $dba->getRow("SELECT * FROM ". USERGROUPS ." WHERE name = '". $dba->quote($request['name']) ."' AND id != ". intval($group['id']));			
 			
@@ -398,7 +409,7 @@ class AdminUpdateUserGroup extends Event {
 			if(isset($_FILES['avatar_upload']) && is_array($_FILES['avatar_upload']))
 				$filename	= $_FILES['avatar_upload']['tmp_name'];
 			
-			if(isset($request['image_browse']) && $request['image_browse'] != '') {
+			if(isset($request['avatar_browse']) && $request['avatar_browse'] != '') {
 				$filename	= $request['avatar_browse'];
 			}
 			
@@ -421,20 +432,21 @@ class AdminUpdateUserGroup extends Event {
 			}
 			
 			/* Build the queries */
-			$update_a			= &$dba->prepareStatement("UPDATE ". USERGROUPS ." SET name=?,description=?,mod_name=?,mod_id=?,min_perm=?,max_perm=?,display_legend=?,color=?,avatar=? WHERE id=?");
+			$update_a			= &$dba->prepareStatement("UPDATE ". USERGROUPS ." SET name=?,nicename=?,description=?,mod_name=?,mod_id=?,min_perm=?,max_perm=?,display_legend=?,color=?,avatar=? WHERE id=?");
 			$update_b			= &$dba->prepareStatement("UPDATE ". USERS ." SET usergroups=?,perms=? WHERE id=?");
 
 			/* Set the query values */
 			$update_a->setString(1, $request['name']);
-			$update_a->setString(2, $request['description']);
-			$update_a->setString(3, $moderator['name']);
-			$update_a->setInt(4, $moderator['id']);
-			$update_a->setInt(5, $request['min_perm']);
-			$update_a->setInt(6, $request['max_perm']);
-			$update_a->setInt(7, $request['display_legend']);
-			$update_a->setInt(8, $request['color']);
-			$update_a->setString(9, $filename);
-			$update_a->setInt(10, $group['id']);
+			$update_a->setString(2, $request['nicename']);
+			$update_a->setString(3, $request['description']);
+			$update_a->setString(4, $moderator['name']);
+			$update_a->setInt(5, $moderator['id']);
+			$update_a->setInt(6, $request['min_perm']);
+			$update_a->setInt(7, $request['max_perm']);
+			$update_a->setInt(8, $request['display_legend']);
+			$update_a->setString(9, $request['color']);
+			$update_a->setString(10, $filename);
+			$update_a->setInt(11, $group['id']);
 			
 			/* Add the category to the info table */
 			$update_a->executeUpdate();

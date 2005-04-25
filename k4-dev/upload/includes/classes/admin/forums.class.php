@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.3 2005/04/24 02:11:42 k4st Exp $
+* @version $Id: forums.class.php,v 1.4 2005/04/25 19:52:34 k4st Exp $
 * @package k42
 */
 
@@ -642,12 +642,13 @@ class AdminUpdateForumPermissions extends Event {
 					
 					if(($request[$f['varname'] .'_can_view'] != $f['can_view']) || ($request[$f['varname'] .'_can_add'] != $f['can_add']) || ($request[$f['varname'] .'_can_edit'] != $f['can_edit']) || ($request[$f['varname'] .'_can_del'] != $f['can_del'])) {
 
-						$update				= &$dba->prepareStatement("UPDATE ". MAPS ." SET can_view=?,can_add=?,can_edit=?,can_del=? WHERE varname=?");
+						$update				= &$dba->prepareStatement("UPDATE ". MAPS ." SET can_view=?,can_add=?,can_edit=?,can_del=? WHERE varname=? AND forum_id=?");
 						$update->setInt(1, $request[$f['varname'] .'_can_view']);
 						$update->setInt(2, $request[$f['varname'] .'_can_add']);
 						$update->setInt(3, $request[$f['varname'] .'_can_edit']);
 						$update->setInt(4, $request[$f['varname'] .'_can_del']);
 						$update->setString(5, $f['varname']);
+						$update->setInt(6, $forum['id']);
 
 						$update->executeUpdate();
 

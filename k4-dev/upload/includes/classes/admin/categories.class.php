@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: categories.class.php,v 1.4 2005/04/24 02:11:42 k4st Exp $
+* @version $Id: categories.class.php,v 1.5 2005/04/25 19:52:34 k4st Exp $
 * @package k42
 */
 
@@ -489,12 +489,13 @@ class AdminUpdateCategoryPermissions extends Event {
 					
 					if(($request[$c['varname'] .'_can_view'] != $c['can_view']) || ($request[$c['varname'] .'_can_add'] != $c['can_add']) || ($request[$c['varname'] .'_can_edit'] != $c['can_edit']) || ($request[$c['varname'] .'_can_del'] != $c['can_del'])) {
 
-						$update				= &$dba->prepareStatement("UPDATE ". MAPS ." SET can_view=?,can_add=?,can_edit=?,can_del=? WHERE varname=?");
+						$update				= &$dba->prepareStatement("UPDATE ". MAPS ." SET can_view=?,can_add=?,can_edit=?,can_del=? WHERE varname=? AND category_id=?");
 						$update->setInt(1, $request[$c['varname'] .'_can_view']);
 						$update->setInt(2, $request[$c['varname'] .'_can_add']);
 						$update->setInt(3, $request[$c['varname'] .'_can_edit']);
 						$update->setInt(4, $request[$c['varname'] .'_can_del']);
 						$update->setString(5, $c['varname']);
+						$update->setInt(6, $category['id']);
 
 						$update->executeUpdate();
 

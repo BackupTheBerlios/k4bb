@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: template.php,v 1.3 2005/04/19 21:52:48 k4st Exp $
+* @version $Id: template.php,v 1.4 2005/04/25 19:52:58 k4st Exp $
 * @package k42
 */
 
@@ -46,6 +46,8 @@ define('TPL_COMPILE_SUBDIR', 'compiled');
 define('TPL_SOURCE', 1);
 define('TPL_COMPILED', 2);
 define('TPL_FILENAME', 3);
+
+require 'paginator.php';
 
 class TPL_Source {
 	var $filename;

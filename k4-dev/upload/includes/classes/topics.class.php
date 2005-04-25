@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topics.class.php,v 1.8 2005/04/24 03:55:37 k4st Exp $
+* @version $Id: topics.class.php,v 1.9 2005/04/25 19:51:54 k4st Exp $
 * @package k42
 */
 
@@ -70,7 +70,7 @@ class PostTopic extends Event {
 		if(!($forum['row_type'] & FORUM)) {
 			/* set the breadcrumbs bit */
 			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
-			$template->setInfo('content', $template->getVar('L_CANTPOSTTOCATEGORY'), FALSE);
+			$template->setInfo('content', $template->getVar('L_CANTPOSTTONONFORUM'), FALSE);
 			return TRUE;
 		}
 
@@ -129,6 +129,15 @@ class PostTopic extends Event {
 		$body_text = $bbcode->parse();
 		
 		if($request['submit'] == $template->getVar('L_SUBMIT') || $request['submit'] == $template->getVar('L_SAVEDRAFT')) {
+			
+			/* Does this person have permission to post a draft? */
+			if($request['submit'] == $template->getVar('L_SAVEDRAFT')) {
+				if($user['perms'] < $user['maps']['forums'][$forum['id']]['post_save']['can_add']) {
+					$template	= BreadCrumbs($template, $template->getVar('L_POSTTOPIC'), $forum['row_left'], $forum['row_right']);
+					$template->setError('content', $template->getVar('L_YOUNEEDPERMS'));
+					return TRUE;
+				}
+			}
 
 			/**
 			 * Build the queries
@@ -149,7 +158,7 @@ class PostTopic extends Event {
 			$update_b->executeUpdate();
 			
 			/* Set the inserts for adding the actual node */
-			$insert_a->setString(1, $request['name']);
+			$insert_a->setString(1, htmlentities($request['name'], ENT_QUOTES));
 			$insert_a->setInt(2, $forum['id']);
 			$insert_a->setInt(3, $left);
 			$insert_a->setInt(4, $right);
@@ -167,10 +176,10 @@ class PostTopic extends Event {
 			$insert_b->setInt(1, $topic_id);
 			$insert_b->setInt(2, $forum['id']);
 			$insert_b->setInt(3, $forum['category_id']);
-			$insert_b->setString(4, $user['name']);
+			$insert_b->setString(4, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
 			$insert_b->setInt(5, $user['id']);
 			$insert_b->setString(6, $body_text);
-			$insert_b->setString(7, @$request['posticon']);
+			$insert_b->setString(7, iif(($user['perms'] >= $user['maps']['forums'][$forum['id']]['posticons']['can_add']), @$request['posticon'], 'clear.gif'));
 			$insert_b->setInt(8, iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0));
 			$insert_b->setInt(9, iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0));
 			$insert_b->setInt(10, iif((isset($request['disable_emoticons']) && $request['disable_emoticons'] == 'on'), 1, 0));
@@ -192,16 +201,16 @@ class PostTopic extends Event {
 			
 			/* If this isn't a draft, update the forums and datastore tables */
 			if($request['submit'] != $template->getVar('L_SAVEDRAFT')) {
-			
+
 				/* Set the forum values */
 				$forum_update->setInt(1, $created);
-				$forum_update->setString(2, $request['name']);
-				$forum_update->setString(3, $user['name']);
+				$forum_update->setString(2, htmlentities($request['name'], ENT_QUOTES));
+				$forum_update->setString(3, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
 				$forum_update->setInt(4, $topic_id);
 				$forum_update->setInt(5, $user['id']);
 				$forum_update->setInt(6, $created);
-				$forum_update->setString(7, $request['name']);
-				$forum_update->setString(8, $user['name']);
+				$forum_update->setString(7, htmlentities($request['name'], ENT_QUOTES));
+				$forum_update->setString(8, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
 				$forum_update->setInt(9, $topic_id);
 				$forum_update->setInt(10, $user['id']);
 				$forum_update->setInt(11, $forum['id']);
@@ -227,11 +236,11 @@ class PostTopic extends Event {
 			if($request['submit'] == $template->getVar('L_SUBMIT')) {
 				
 				/* Redirect the user */
-				$template->setInfo('content', sprintf($template->getVar('L_ADDEDTOPIC'), $request['name'], $forum['name']));
+				$template->setInfo('content', sprintf($template->getVar('L_ADDEDTOPIC'), htmlentities($request['name'], ENT_QUOTES), $forum['name']));
 				$template->setRedirect('viewtopic.php?id='. $topic_id, 3);
 			} else {
 				/* Redirect the user */
-				$template->setInfo('content', sprintf($template->getVar('L_SAVEDDRAFTTOPIC'), $request['name'], $forum['name']));
+				$template->setInfo('content', sprintf($template->getVar('L_SAVEDDRAFTTOPIC'), htmlentities($request['name'], ENT_QUOTES), $forum['name']));
 				$template->setRedirect('viewforum.php?id='. $forum['id'], 3);
 			}
 		} else {
@@ -261,7 +270,7 @@ class PostTopic extends Event {
 			$template = topic_post_options($template, $user, $forum);
 						
 			$topic_preview	= array(
-								'name' => $request['name'],
+								'name' => htmlentities($request['name'], ENT_QUOTES),
 								'body_text' => $body_text,
 								'poster_name' => $user['name'],
 								'poster_id' => $user['id'],
@@ -341,7 +350,7 @@ class PostDraft extends Event {
 		if(!($forum['row_type'] & FORUM)) {
 			/* set the breadcrumbs bit */
 			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
-			$template->setInfo('content', $template->getVar('L_CANTPOSTTOCATEGORY'), FALSE);
+			$template->setInfo('content', $template->getVar('L_CANTPOSTTONONFORUM'), FALSE);
 			return TRUE;
 		}
 
@@ -402,12 +411,12 @@ class PostDraft extends Event {
 			$update_a			= $dba->prepareStatement("UPDATE ". INFO ." SET name=?,created=? WHERE id=?");
 			$update_b			= $dba->prepareStatement("UPDATE ". TOPICS ." SET body_text=?,posticon=?,disable_html=?,disable_bbcode=?,disable_emoticons=?,disable_sig=?,disable_areply=?,disable_aurls=?,is_draft=? WHERE topic_id=?");
 			
-			$update_a->setString(1, $request['name']);
+			$update_a->setString(1, htmlentities($request['name'], ENT_QUOTES));
 			$update_a->setInt(2, $created);
 			$update_a->setInt(3, $draft['id']);
 			
 			$update_b->setString(1, $body_text);
-			$update_b->setString(2, @$request['posticon']);
+			$update_b->setString(2, iif(($user['perms'] >= $user['maps']['forums'][$forum['id']]['posticons']['can_add']), @$request['posticon'], 'clear.gif'));
 			$update_b->setInt(3, iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0));
 			$update_b->setInt(4, iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0));
 			$update_b->setInt(5, iif((isset($request['disable_emoticons']) && $request['disable_emoticons'] == 'on'), 1, 0));
@@ -429,13 +438,13 @@ class PostDraft extends Event {
 				
 			/* Set the forum values */
 			$forum_update->setInt(1, $created);
-			$forum_update->setString(2, $request['name']);
-			$forum_update->setString(3, $user['name']);
+			$forum_update->setString(2, htmlentities($request['name'], ENT_QUOTES));
+			$forum_update->setString(3, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
 			$forum_update->setInt(4, $draft['id']);
 			$forum_update->setInt(5, $user['id']);
 			$forum_update->setInt(6, $created);
-			$forum_update->setString(7, $request['name']);
-			$forum_update->setString(8, $user['name']);
+			$forum_update->setString(7, htmlentities($request['name'], ENT_QUOTES));
+			$forum_update->setString(8, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
 			$forum_update->setInt(9, $draft['id']);
 			$forum_update->setInt(10, $user['id']);
 			$forum_update->setInt(11, $forum['id']);
@@ -454,7 +463,7 @@ class PostDraft extends Event {
 			$datastore_update->executeUpdate();
 
 			/* Redirect the user */
-			$template->setInfo('content', sprintf($template->getVar('L_ADDEDTOPIC'), $request['name'], $forum['name']));
+			$template->setInfo('content', sprintf($template->getVar('L_ADDEDTOPIC'), htmlentities($request['name'], ENT_QUOTES), $forum['name']));
 			$template->setRedirect('viewtopic.php?id='. $draft['id'], 3);
 		
 		} else {
@@ -473,21 +482,16 @@ class PostDraft extends Event {
 			$template->setVar('emoticons_per_row', $template->getVar('smcolumns'));
 			$template->setVar('emoticons_per_row_remainder', $template->getVar('smcolumns')-1);
 			
-			$template	= topic_post_options($template, $user, $forum);
-
-			/* Set the forum info to the template */
-			foreach($forum as $key => $val)
-				$template->setVar('forum_'. $key, $val);
-			
 			$template->setVar('newtopic_action', 'newtopic.php?act=postdraft');
 
-			$template = topic_post_options($template, $user, $forum);
+			$template		= topic_post_options($template, $user, $forum);
 						
 			$topic_preview	= array(
 								'id' => @$draft['id'],
-								'name' => $request['name'],
+								'name' => htmlentities($request['name'], ENT_QUOTES),
+								'posticon' => @$request['posticon'],
 								'body_text' => $body_text,
-								'poster_name' => $user['name'],
+								'poster_name' => html_entity_decode($draft['poster_name'], ENT_QUOTES),
 								'poster_id' => $user['id'],
 								'disable_html' => iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0),
 								'disable_sig' => iif((isset($request['enable_sig']) && $request['enable_sig'] == 'on'), 0, 1),
@@ -564,7 +568,7 @@ class DeleteDraft extends Event {
 		if(!($forum['row_type'] & FORUM)) {
 			/* set the breadcrumbs bit */
 			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
-			$template->setInfo('content', $template->getVar('L_CANTPOSTTOCATEGORY'), FALSE);
+			$template->setInfo('content', $template->getVar('L_CANTPOSTTONONFORUM'), FALSE);
 			return TRUE;
 		}			
 
@@ -582,6 +586,489 @@ class DeleteDraft extends Event {
 		$template->setInfo('content', sprintf($template->getVar('L_REMOVEDDRAFT'), $draft['name'], $forum['name']));
 		$template->setRedirect('viewforum.php?id='. $forum['id'], 3);
 
+		return TRUE;
+	}
+}
+
+/**
+ * Edit a topic
+ */
+class EditTopic extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_QUERYPARAMS, $_DATASTORE;
+
+		$this->dba			= &$dba;
+		
+		/* Get our draft */
+		$topic				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id = ". intval($request['id']));
+		
+		if(!$topic || !is_array($topic) || empty($topic)) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDDRAFT'));
+			$template->setInfo('content', $template->getVar('L_DRAFTDOESNTEXIST'), FALSE);
+
+			return TRUE;
+		}
+		
+		$forum				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($topic['forum_id']));
+		
+		/* Check the forum data given */
+		if(!$forum || !is_array($forum) || empty($forum)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+			
+		/* Make sure the we are trying to post into a forum */
+		if(!($forum['row_type'] & FORUM)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_CANTPOSTTONONFORUM'), FALSE);
+			return TRUE;
+		}
+		
+		/* set the breadcrumbs bit */
+		$template	= BreadCrumbs($template, $template->getVar('L_EDITTOPIC'), $forum['row_left'], $forum['row_right']);
+		
+		if($topic['poster_id'] == $user['id']) {
+			if($user['maps']['forums'][$forum['id']]['topics']['can_edit'] > $user['perms']) {
+				$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+				return TRUE;
+			}
+		} else {
+			if($user['maps']['forums'][$forum['id']]['other_topics']['can_edit'] > $user['perms']) {
+				$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+				return TRUE;
+			}
+		}
+		
+		$bbcode				= &new BBCodex($user, $topic['body_text'], $forum['id'], TRUE, TRUE, TRUE, TRUE);
+		
+		/* Get and set the emoticons and post icons to the template */
+		$emoticons			= &$dba->executeQuery("SELECT * FROM ". EMOTICONS ." WHERE clickable = 1");
+		$posticons			= &$dba->executeQuery("SELECT * FROM ". POSTICONS);
+
+		$template->setList('emoticons', $emoticons);
+		$template->setList('posticons', $posticons);
+
+		$template->setVar('emoticons_per_row', $template->getVar('smcolumns'));
+		$template->setVar('emoticons_per_row_remainder', $template->getVar('smcolumns')-1);
+		
+		$template->setVar('newtopic_action', 'newtopic.php?act=updatetopic');
+
+		$template			= topic_post_options($template, $user, $forum);
+		
+		$topic['body_text'] = $bbcode->revert();
+
+		foreach($topic as $key => $val)
+			$template->setVar('topic_'. $key, $val);
+		
+		/* Assign the forum information to the template */
+		foreach($forum as $key => $val)
+			$template->setVar('forum_'. $key, $val);
+
+		/* Set the the button display options */
+		$template->hide('save_draft');
+		$template->hide('load_button');
+		$template->show('edit_topic');
+		$template->show('topic_id');
+		$template->hide('post_topic');
+		$template->show('edit_post');
+		
+		/* set the breadcrumbs bit */
+		$template	= BreadCrumbs($template, $template->getVar('L_POSTTOPIC'), $forum['row_left'], $forum['row_right']);
+		
+		/* Set the post topic form */
+		$template->setFile('preview', 'post_preview.html');
+		$template->setFile('content', 'newtopic.html');
+
+		return TRUE;
+	}
+}
+
+/**
+ * Update a topic
+ */
+class UpdateTopic extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_QUERYPARAMS, $_DATASTORE;
+
+		$this->dba			= &$dba;
+
+		/* Check the request ID */
+		if(!isset($request['forum_id']) || !$request['forum_id'] || intval($request['forum_id']) == 0) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+			
+		$forum				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($request['forum_id']));
+		
+		/* Check the forum data given */
+		if(!$forum || !is_array($forum) || empty($forum)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+			
+		/* Make sure the we are trying to edit in a forum */
+		if(!($forum['row_type'] & FORUM)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_CANTEDITTONONFORUM'), FALSE);
+			return TRUE;
+		}
+
+		/* General error checking */
+		if(!isset($request['name']) || $request['name'] == '') {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
+			$template->setInfo('content', $template->getVar('L_INSERTTOPICNAME'), TRUE);
+			return TRUE;
+		}
+		if(!isset($request['message']) || $request['message'] == '') {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
+			$template->setInfo('content', $template->getVar('L_INSERTTOPICMESSAGE'), TRUE);
+			return TRUE;
+		}
+		
+		/* Get our topic */
+		$topic				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id = ". intval($request['topic_id']));
+		
+		if(!$topic || !is_array($topic) || empty($topic)) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
+			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
+
+			return TRUE;
+		}
+
+		$type				= $topic['poll'] == 1 ? 'polls' : 'topics';
+
+		/* Does this person have permission to edit this topic? */
+		if($topic['poster_id'] == $user['id']) {
+			if($user['maps']['forums'][$forum['id']][$type]['can_edit'] > $user['perms']) {
+				$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+				return TRUE;
+			}
+		} else {
+			if($user['maps']['forums'][$forum['id']]['other_'. $type]['can_edit'] > $user['perms']) {
+				$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+				return TRUE;
+			}
+		}
+
+		/* set the breadcrumbs bit */
+		$template	= BreadCrumbs($template, $template->getVar('L_EDITTOPIC'), $forum['row_left'], $forum['row_right']);
+				
+		/* Initialize the bbcode parser with the topic message */
+		$bbcode	= &new BBCodex(&$user, $request['message'], $forum['id'], 
+			iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), FALSE, TRUE), 
+			iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), FALSE, TRUE), 
+			iif((isset($request['disable_emoticons']) && $request['disable_emoticons'] == 'on'), FALSE, TRUE), 
+			iif((isset($request['disable_aurls']) && $request['disable_aurls'] == 'on'), FALSE, TRUE));
+		
+		/* Parse the bbcode */
+		$body_text = $bbcode->parse();
+		
+		$template->setVar('newtopic_action', 'newtopic.php?act=updatetopic');
+
+		if($request['submit'] == $template->getVar('L_SUBMIT')) {
+
+			/**
+			 * Build the queries to add the draft
+			 */
+			
+			$update_a			= $dba->prepareStatement("UPDATE ". INFO ." SET name=? WHERE id=?");
+			$update_b			= $dba->prepareStatement("UPDATE ". TOPICS ." SET body_text=?,posticon=?,disable_html=?,disable_bbcode=?,disable_emoticons=?,disable_sig=?,disable_areply=?,disable_aurls=?,is_draft=?,edited_time=?,edited_username=?,edited_userid=? WHERE topic_id=?");
+			
+			$update_a->setString(1, htmlentities($request['name'], ENT_QUOTES));
+			$update_a->setInt(2, $topic['id']);
+			
+			$update_b->setString(1, $body_text);
+			$update_b->setString(2, iif(($user['perms'] >= $user['maps']['forums'][$forum['id']]['posticons']['can_add']), @$request['posticon'], 'clear.gif'));
+			$update_b->setInt(3, iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0));
+			$update_b->setInt(4, iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0));
+			$update_b->setInt(5, iif((isset($request['disable_emoticons']) && $request['disable_emoticons'] == 'on'), 1, 0));
+			$update_b->setInt(6, iif((isset($request['enable_sig']) && $request['enable_sig'] == 'on'), 0, 1));
+			$update_b->setInt(7, iif((isset($request['disable_areply']) && $request['disable_areply'] == 'on'), 1, 0));
+			$update_b->setInt(8, iif((isset($request['disable_aurls']) && $request['disable_aurls'] == 'on'), 1, 0));
+			$update_b->setInt(9, 0);
+			$update_b->setInt(10, time());
+			$update_b->setString(11, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
+			$update_b->setInt(12, $user['id']);
+			$update_b->setInt(13, $topic['id']);
+			
+			/**
+			 * Do the queries
+			 */
+			$update_a->executeUpdate();
+			$update_b->executeUpdate();
+			
+			/* Redirect the user */
+			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDTOPIC'), htmlentities($request['name'], ENT_QUOTES)));
+			$template->setRedirect('viewtopic.php?id='. $topic['id'], 3);
+		
+		} else {
+			
+			/**
+			 * Post Previewing
+			 */
+			
+			/* Get and set the emoticons and post icons to the template */
+			$emoticons	= &$dba->executeQuery("SELECT * FROM ". EMOTICONS ." WHERE clickable = 1");
+			$posticons	= &$dba->executeQuery("SELECT * FROM ". POSTICONS);
+
+			$template->setList('emoticons', $emoticons);
+			$template->setList('posticons', $posticons);
+
+			$template->setVar('emoticons_per_row', $template->getVar('smcolumns'));
+			$template->setVar('emoticons_per_row_remainder', $template->getVar('smcolumns')-1);
+
+			$template		= topic_post_options($template, $user, $forum);
+						
+			$topic_preview	= array(
+								'id' => @$topic['id'],
+								'name' => htmlentities($request['name'], ENT_QUOTES),
+								'posticon' => @$request['posticon'],
+								'body_text' => $body_text,
+								'poster_name' => html_entity_decode($topic['poster_name'], ENT_QUOTES),
+								'poster_id' => $user['id'],
+								'disable_html' => iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0),
+								'disable_sig' => iif((isset($request['enable_sig']) && $request['enable_sig'] == 'on'), 0, 1),
+								'disable_bbcode' => iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0),
+								'disable_emoticons' => iif((isset($request['disable_emoticons']) && $request['disable_emoticons'] == 'on'), 1, 0),
+								'disable_areply' => iif((isset($request['disable_areply']) && $request['disable_areply'] == 'on'), 1, 0),
+								'disable_aurls' => iif((isset($request['disable_aurls']) && $request['disable_aurls'] == 'on'), 1, 0)
+								);
+
+			/* Add the topic information to the template */
+			$topic_iterator = &new TopicIterator($topic_preview, FALSE);
+			$template->setList('topic', $topic_iterator);
+			
+			/* Assign the topic preview values to the template */
+			$topic_preview['body_text'] = $request['message'];
+			foreach($topic_preview as $key => $val)
+				$template->setVar('topic_'. $key, $val);
+			
+			/* Assign the forum information to the template */
+			foreach($forum as $key => $val)
+				$template->setVar('forum_'. $key, $val);
+
+			/* Set the the button display options */
+			$template->hide('save_draft');
+			$template->hide('load_button');
+			$template->show('edit_topic');
+			$template->show('topic_id');
+			$template->hide('post_topic');
+			$template->show('edit_post');
+			
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_POSTTOPIC'), $forum['row_left'], $forum['row_right']);
+			
+			/* Set the post topic form */
+			$template->setFile('preview', 'post_preview.html');
+			$template->setFile('content', 'newtopic.html');
+		}
+
+		return TRUE;
+	}
+}
+
+/**
+ * Delete a topic
+ */
+class DeleteTopic extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_QUERYPARAMS, $_DATASTORE;
+		
+		if(!isset($request['id']) || !$request['id'] || intval($request['id']) == 0) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
+			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+
+		/* Get our topic */
+		$topic				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id = ". intval($request['id']));
+		
+		if(!$topic || !is_array($topic) || empty($topic)) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
+			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
+
+			return TRUE;
+		}
+			
+		$forum				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($topic['forum_id']));
+		
+		/* Check the forum data given */
+		if(!$forum || !is_array($forum) || empty($forum)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+			
+		/* Make sure the we are trying to delete from a forum */
+		if(!($forum['row_type'] & FORUM)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_CANTDELFROMNONFORUM'), FALSE);
+			return TRUE;
+		}
+		
+		/* set the breadcrumbs bit */
+		$template	= BreadCrumbs($template, $template->getVar('L_DELETETOPIC'), $forum['row_left'], $forum['row_right']);
+		
+		/* Are we dealing with a topic or a poll? */
+		$type				= $topic['poll'] == 1 ? 'polls' : 'topics';
+
+		/* Does this person have permission to remove this topic? */
+		if($topic['poster_id'] == $user['id']) {
+			if($user['maps']['forums'][$forum['id']][$type]['can_del'] > $user['perms']) {
+				$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+				return TRUE;
+			}
+		} else {
+			if($user['maps']['forums'][$forum['id']]['other_'. $type]['can_del'] > $user['perms']) {
+				$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+				return TRUE;
+			}
+		}
+		
+		$user_usergroups	= @unserialize($user['usergroups']);
+		$forum_usergroups	= @unserialize($forum['moderating_groups']);
+		
+		/* Check if this user belongs to one of this forums moderatign groups, if any exist */
+		if(is_array($forum_usergroups) && !empty($forum_usergroups)) {
+			if(is_array($user_usergroups) && !empty($user_usergroups)) {
+				
+				$error		= true;
+
+				foreach($user_usergroups as $group) {
+					if(!in_array($group, $forum_usergroups) && !$error)
+						$error = true;
+				}
+				
+				if(!$error) {
+					$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+					return TRUE;
+				}
+			} else {
+				$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+				return TRUE;
+			}
+		}
+				
+		$num_replies		= @(($topic['row_right'] - $topic['row_left'] - 1) / 2);
+		
+		/* Get that last topic in this forum that's not this topic */
+		$last_topic			= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id <> ". intval($topic['id']) ." AND t.is_draft=0 ORDER BY i.created DESC LIMIT 1");
+		$last_topic			= !$last_topic || !is_array($last_topic) ? array() : $last_topic;
+		
+		/* Get that last post in this forum that's not part of/from this topic */
+		$last_post			= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['reply'] ." FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON r.reply_id = i.id WHERE r.topic_id <> ". intval($topic['id']) ." ORDER BY i.created DESC LIMIT 1");
+		$last_post			= !$last_post || !is_array($last_post) ? $last_topic : $last_post;
+		
+		/**
+		 * Update the forum and the datastore
+		 */
+		
+		$forum_update		= &$dba->prepareStatement("UPDATE ". FORUMS ." SET topics=topics-1,posts=posts-?,replies=replies-?,topic_created=?,topic_name=?,topic_uname=?,topic_id=?,topic_uid=?,post_created=?,post_name=?,post_uname=?,post_id=?,post_uid=? WHERE forum_id=?");
+		$datastore_update	= &$dba->prepareStatement("UPDATE ". DATASTORE ." SET data=? WHERE varname=?");
+			
+		/* Set the forum values */
+		$forum_update->setInt(1, intval($num_replies)+1);
+		$forum_update->setInt(2, intval($num_replies));
+		$forum_update->setInt(3, @$last_topic['created']);
+		$forum_update->setString(4, @$last_topic['name']);
+		$forum_update->setString(5, @$last_topic['poster_name']);
+		$forum_update->setInt(6, @$last_topic['id']);
+		$forum_update->setInt(7, @$last_topic['poster_id']);
+		$forum_update->setInt(8, @$last_post['created']);
+		$forum_update->setString(9, @$last_post['name']);
+		$forum_update->setString(10, @$last_post['poster_name']);
+		$forum_update->setInt(11, @$last_post['id']);
+		$forum_update->setInt(12, @$last_post['poster_id']);
+		$forum_update->setInt(13, @$forum['id']);
+		
+		/* Set the datastore values */
+		$datastore					= $_DATASTORE['forumstats'];
+		$datastore['num_topics']	= $datastore['num_topics'] - 1;
+		$datastore['num_replies']	= $datastore['num_replies'] - intval($num_replies);
+		
+		$datastore_update->setString(1, serialize($datastore));
+		$datastore_update->setString(2, 'forumstats');
+		
+		/* Execute the forum and datastore update queries */
+		$forum_update->executeUpdate();
+		$datastore_update->executeUpdate();
+
+		/**
+		 * Change user post counts
+		 */
+		
+		/* Update the user that posted this topic */
+		if($topic['poster_id'] > 0)
+			$dba->executeUpdate("UPDATE ". USERINFO ." SET num_posts=num_posts-1 WHERE user_id=". intval($topic['poster_id']));
+
+		$users						= array();
+		
+		/* Only if there are more than 0 replies should we update post counts */
+		if(intval($num_replies) > 0) {
+			
+			/* Get all of the replies */
+			$replies				= $dba->executeQuery("SELET poster_id FROM ". REPLIES ." WHERE topic_id = ". intval($topic['id']));
+			
+			while($replies->next()) {
+				$reply				= $replies->current();
+				
+				if(!isset($users[$reply]) && $reply > 0)
+					$users[$reply] = 1;
+				
+				$users[$reply] += 1;
+			}
+			
+			/* Memory saving */
+			$replies->freeResult();
+			unset($replies);
+
+			/* Update all of the users that posted */
+			if(count($users) > 0) {
+				
+				/* Loop through the users and change their post counts */
+				foreach($users as $user_id => $num_posts) {
+					$dba->executeUpdate("UPDATE ". USERINFO ." SET num_posts=num_posts-". intval($num_posts) ." WHERE user_id=". intval($user_id));
+				}
+			}
+
+			/* Memory saving */
+			unset($users);
+		}
+
+		/**
+		 * Remove the topic and all of its replies
+		 */
+		
+		/* Remove the topic and all replies from the information table */
+		$h				= &new Heirarchy();
+		$h->removeNode($topic, INFO);
+		
+		/* Now remove the information stored in the topics and replies table */
+		$dba->executeUpdate("DELETE FROM ". TOPICS ." WHERE topic_id = ". intval($topic['id']));
+		$dba->executeUpdate("DELETE FROM ". REPLIES ." WHERE topic_id = ". intval($topic['id']));
+
+		/* Redirect the user */
+		$template->setInfo('content', sprintf($template->getVar('L_DELETEDTOPIC'), $topic['name'], $forum['name']));
+		$template->setRedirect('viewforum.php?id='. $forum['id'], 3);
 		return TRUE;
 	}
 }
@@ -734,12 +1221,16 @@ class TopicIterator extends FAArrayIterator {
 	function &current() {
 		$temp							= parent::current();
 		
+		$temp['posticon']				= @$temp['posticon'] != '' ? iif(file_exists(FORUM_BASE_DIR .'/tmp/upload/posticons/'. @$temp['posticon']), @$temp['posticon'], 'clear.gif') : 'clear.gif';
+
 		if($temp['poster_id'] > 0) {
 			$user						= $this->dba->getRow("SELECT ". $this->qp['user'] . $this->qp['userinfo'] ." FROM ". USERS ." u LEFT JOIN ". USERINFO ." ui ON u.id=ui.user_id WHERE u.id=". intval($temp['poster_id']));
 			
 			$group						= get_user_max_group($user, $this->groups);
-			$user['color']				= !isset($group['color']) || $group['color'] == '' ? '000000' : $group['color'];
-
+			$user['group_color']		= !isset($group['color']) || $group['color'] == '' ? '000000' : $group['color'];
+			$user['group_nicename']		= $group['nicename'];
+			$user['group_avatar']		= $group['avatar'];
+			
 			foreach($user as $key => $val)
 				$temp['post_user_'. $key] = $val;
 			
@@ -754,7 +1245,7 @@ class TopicIterator extends FAArrayIterator {
 
 		if($this->sr && $num_replies > 0) {
 			
-			$this->result				= &$this->dba->executeQuery("SELECT ". $this->qp['info'] . $this->qp['reply'] ." FROM ". INFO ." i LEFT JOIN ". REPLIES ." ON i.id=r.reply_id WHERE r.created >= ". (3600 * 24 * intval($temp['daysprune'])) ." ORDER BY ". $temp['sortedby'] ." ". $temp['sortorder'] ." LIMIT ". intval($temp['start']) .", ". intval($temp['postsperpage']));
+			$this->result				= &$this->dba->executeQuery("SELECT ". $this->qp['info'] . $this->qp['reply'] ." FROM ". INFO ." i LEFT JOIN ". REPLIES ." ON i.id=r.reply_id WHERE i.created >= ". (3600 * 24 * intval($temp['daysprune'])) ." ORDER BY ". $temp['sortedby'] ." ". $temp['sortorder'] ." LIMIT ". intval($temp['start']) .", ". intval($temp['postsperpage']));
 
 			$temp['replies']			= &new RepliesIterator($this->result, $this->qp, $this->dba, $this->users, $this->groups);
 
@@ -783,6 +1274,8 @@ class RepliesIterator extends FAProxyIterator {
 
 	function &current() {
 		$temp					= parent::current();
+		
+		$temp['posticon']		= @$temp['posticon'] != '' ? iif(file_exists(FORUM_BASE_DIR .'/tmp/upload/posticons/'. @$temp['posticon']), @$temp['posticon'], 'clear.gif') : 'clear.gif';
 
 		if($temp['poster_id'] > 0) {
 			
@@ -791,8 +1284,10 @@ class RepliesIterator extends FAProxyIterator {
 				$user						= $this->dba->getRow("SELECT ". $this->qp['user'] . $this->qp['userinfo'] ." FROM ". USERS ." u LEFT JOIN ". USERINFO ." ui ON u.id=ui.user_id WHERE u.id=". intval($temp['poster_id']));
 				
 				$group						= get_user_max_group($user, $this->groups);
-				$user['color']				= !isset($group['color']) || $group['color'] == '' ? '000000' : $group['color'];
-				
+				$user['group_color']		= !isset($group['color']) || $group['color'] == '' ? '000000' : $group['color'];
+				$user['group_nicename']		= $group['nicename'];
+				$user['group_avatar']		= $group['avatar'];
+
 				$this->users[$user['id']]	= $user;
 			} else {
 				
