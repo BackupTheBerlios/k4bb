@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.13 2005/04/20 20:34:07 k4st Exp $
+* @version $Id: session.php,v 1.14 2005/05/01 17:37:10 k4st Exp $
 * @package k42
 */
 
@@ -101,7 +101,7 @@ class FADBSession {
 		$this->location_id	= isset($this->url->args['id']) && intval($this->url->args['id']) != 0 ? intval($this->url->args['id']) : 0;
 
 		//$this->read_stmt	= $this->dba->prepareStatement("SELECT * FROM ". SESSIONS ." WHERE id=?");
-		$this->user_stmt	= $this->dba->prepareStatement("UPDATE ". USERS ." SET last_seen=? WHERE id=?");
+		$this->user_stmt	= $this->dba->prepareStatement("UPDATE ". USERS ." SET last_seen=?,ip=? WHERE id=?");
 		$this->write_stmt	= $this->dba->prepareStatement("INSERT INTO ". SESSIONS ." (id, seen, name, user_id, user_agent, data, location_file, location_act, location_id) VALUES(?,?,?,?,?,?,?,?,?)");
 		$this->update_stmt	= $this->dba->prepareStatement("UPDATE ". SESSIONS ." SET name=?,user_id=?,data=?,seen=?,user_agent=?,location_file=?,location_act=?,location_id=? WHERE id=?");
 		$this->destroy_stmt = $this->dba->prepareStatement("DELETE FROM ". SESSIONS ." WHERE sess_id=?");
@@ -169,7 +169,8 @@ class FADBSession {
 
 		if(is_a($data['user'], 'Member')) {
 			$this->user_stmt->setInt(1, bbtime());
-			$this->user_stmt->setInt(2, $data['user']->info['id']);
+			$this->user_stmt->setString(2, USER_IP);
+			$this->user_stmt->setInt(3, $data['user']->info['id']);
 			$this->user_stmt->executeUpdate();
 		}
 

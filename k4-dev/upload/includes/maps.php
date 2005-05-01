@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: maps.php,v 1.2 2005/04/13 02:52:05 k4st Exp $
+* @version $Id: maps.php,v 1.3 2005/05/01 17:37:10 k4st Exp $
 * @package k42
 */
 
@@ -33,6 +33,38 @@ error_reporting(E_ALL);
 
 if(!defined('IN_K4')) {
 	exit;
+}
+
+function get_map(&$user, $varname, $method, $args) {
+	
+	/* Simple global MAP request */
+	if(is_array($args) && empty($args)) {
+		$perm_needed		= $user['maps'][$varname][$method];
+	} else {
+
+		/* Forum */
+		if(isset($args['forum_id']) && intval($args['forum_id']) != 0) {
+			$perm_needed	= isset($user['maps']['forums'][$args['forum_id']][$varname][$method]) ? $user['maps']['forums'][$args['forum_id']][$varname][$method] : 0;
+		
+		/* Group */
+		} else if(isset($args['group_id']) && intval($args['group_id']) != 0) {
+			$perm_needed	= isset($user['maps']['groups'][$args['group_id']][$varname][$method]) ? $user['maps']['groups'][$args['group_id']][$varname][$method] : 0;
+		
+		/* User */
+		} else if(isset($args['user_id']) && intval($args['user_id']) != 0) {
+			$perm_needed	= isset($user['maps']['users'][$args['user_id']][$varname][$method]) ? $user['maps']['groups'][$args['group_id']][$varname][$method] : 0;
+		
+		/* Category */
+		} else if(isset($args['category_id']) && intval($args['category_id']) != 0) {
+			$perm_needed	= isset($user['maps']['categories'][$args['category_id']][$varname][$method]) ? $user['maps']['categories'][$args['category_id']][$varname][$method] : 0;
+		
+		/* Global */
+		} else {
+			$perm_needed	= isset($user['maps'][$varname][$method]) ? $user['maps'][$varname][$method] : 0;
+		}
+	}
+
+	return $perm_needed;
 }
 
 function get_maps() {
