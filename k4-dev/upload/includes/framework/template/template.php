@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: template.php,v 1.4 2005/04/25 19:52:58 k4st Exp $
+* @version $Id: template.php,v 1.5 2005/05/01 17:45:23 k4st Exp $
 * @package k42
 */
 
@@ -254,7 +254,7 @@ class Template {
 	}
 
 	function setRedirect($url, $seconds) {
-		$this->setVar('meta_redirect', '<meta http-equiv="refresh" content="'. $seconds .'; url='. $url .'">');
+		$this->setVar('javascript_redirect', '<script type="text/javascript">redirect_page('. intval($seconds) .', \''. $url .'\');</script>');
 	}
 
 	// Getters for during runtime
