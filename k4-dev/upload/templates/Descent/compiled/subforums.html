@@ -49,11 +49,17 @@
 		</td>
 		<td align="center" class="alt1"><?php echo $context->getVar("posts"); ?></td>
 		<td align="center" class="alt1"><?php echo $context->getVar("topics"); ?></td>
-		<td class="minitext" nowrap="nowrap" align="center" width="30%">
+		<td class="alt3" nowrap="nowrap" align="center" width="30%">
 			<?php if($context->getVar('post_id') > 0): ?>
-			<a href="viewtopic.php?id=<?php echo $context->getVar("post_id"); ?>" title="<?php echo $context->getVar("post_name"); ?>"><strong><?php ob_start(); $length = "27"; $append = "...";  echo $context->getVar("post_name");  $string = ob_get_contents(); ob_end_clean(); echo (strlen($string) > $length) ? substr($string, 0, $length).$append : $string; ?></strong></a>
-			<br />
-			<?php echo $context->getVar("L_BY"); ?> <a href="member.php?id=<?php echo $context->getVar("post_uid"); ?>" title="<?php echo $context->getVar("post_uname"); ?>"><strong><?php echo $context->getVar("post_uname"); ?></strong></a>&nbsp;<?php echo $context->getVar("L_ON"); ?>&nbsp;<?php echo $context->getVar("post_created"); ?>
+			<div align="left" class="smalltext">
+				<a href="findpost.php?id=<?php echo $context->getVar("post_id"); ?>" title="<?php echo $context->getVar("post_name"); ?>"><strong><?php ob_start(); $length = "27"; $append = "...";  echo $context->getVar("post_name");  $string = ob_get_contents(); ob_end_clean(); echo (strlen($string) > $length) ? substr($string, 0, $length).$append : $string; ?></strong></a>
+				<br />
+				<?php echo $context->getVar("L_BY"); ?> <a href="member.php?id=<?php echo $context->getVar("post_uid"); ?>" title="<?php echo $context->getVar("post_uname"); ?>"><strong><?php echo $context->getVar("post_uname"); ?></strong></a>
+			</div>
+			<div align="right" class="smalltext">
+				<?php ob_start(); $format = "%b %d %y";  echo $context->getVar("post_created");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?>&nbsp;<span class="date_color"><?php ob_start(); $format = "%I:%M%p";  echo $context->getVar("post_created");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?></span>
+				<a href="findpost.php?id=<?php echo $context->getVar("post_id"); ?>" title="<?php echo $context->getVar("post_name"); ?>"><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/icon_latest_reply.gif" border="0" alt="<?php echo $context->getVar("post_name"); ?>" /></a>
+			</div>
 			<?php else: ?>
 			--
 			<?php endif; ?>

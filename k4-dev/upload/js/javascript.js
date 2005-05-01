@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: javascript.js,v 1.3 2005/04/24 02:08:26 k4st Exp $
+* @version $Id: javascript.js,v 1.4 2005/05/01 17:51:24 k4st Exp $
 * @package k42
 */
 
@@ -38,6 +38,16 @@ var is_ie = ((clientPC.indexOf("msie") != -1) && (clientPC.indexOf("opera") == -
 var is_nav = ((clientPC.indexOf('mozilla')!=-1) && (clientPC.indexOf('spoofer')==-1)
                 && (clientPC.indexOf('compatible') == -1) && (clientPC.indexOf('opera')==-1)
                 && (clientPC.indexOf('webtv')==-1) && (clientPC.indexOf('hotjava')==-1));
+
+/**
+ * Alternative to <meta http-equiv="refresh" content="*; url=*">
+ */
+function redirect_page(seconds, url) {
+	setTimeout("document_location('" + url + "')", (seconds * 1000));
+}
+function document_location(url) {
+	return document.location = url;
+}
 
 /**
  * count()/sizeof() like function for an array

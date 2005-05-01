@@ -10,8 +10,11 @@
 <?php endif; ?>
 <?php if ($file = $template->getFile("drafts", "")):  $template->setFilename($file);  $template->render(); endif; ?>
 <?php if ($file = $template->getFile("preview", "")):  $template->setFilename($file);  $template->render(); endif; ?>
-<form name="posttopic_form" id="pottopic_form" action="<?php echo $context->getVar("newtopic_action"); ?>" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="resetErrors();"><script type="text/javascript">resetErrors();</script>
-<input type="hidden" name="forum_id" value="<?php echo $context->getVar("forum_id"); ?>" />
+<form name="postreply_form" id="potreply_form" action="newreply.php?act=postreply" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="resetErrors();"><script type="text/javascript">resetErrors();</script>
+<input type="hidden" name="forum_id" value="<?php echo $context->getVar("reply_forum_id"); ?>" />
+<input type="hidden" name="topic_id" value="<?php echo $context->getVar("reply_topic_id"); ?>" />
+<?php if ($template->isVisible('parent_id', FALSE)): ?><input type="hidden" name="parent_id" value="<?php echo $context->getVar("parent_id"); ?>" /><?php endif; ?>
+<?php if ($template->isVisible('reply_id', FALSE)): ?><input type="hidden" name="reply_id" value="<?php echo $context->getVar("reply_id"); ?>" /><?php endif; ?>
 <script type="text/javascript">
 // <!--
 
@@ -41,19 +44,17 @@ function emoticon(typed) {
 <?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['bbcode']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['bbcode']['can_add'] <= $context->session['user']->info['perms'])): ?>
 <?php if ($file = $template->getFile("bbcode", "bbcode.js")):  $template->setFilename($file);  $template->render(); endif; ?>
 <?php endif; ?>
-
 // -->
 </script>
-<?php if ($template->isVisible('topic_id', FALSE)): ?><input type="hidden" name="topic_id" value="<?php echo $context->getVar("topic_id"); ?>" /><?php endif; ?>
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<?php if ($template->isVisible('post_topic', TRUE)): ?>
 	<tr class="thead" colspan="2">
 		<td colspan="2">
 			<div style="float:right;" class="smalltext">
-				<strong><?php echo $context->getVar("L_FORUM"); ?>:</strong>
-				<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>" class="smalltext" style="font-weight: normal;" title="<?php echo $context->getVar("forum_name"); ?>"><?php echo $context->getVar("forum_name"); ?></a>
+				<strong><?php echo $context->getVar("L_REPLY"); ?>:</strong>
+				<a href="findpost.php?id=<?php echo $context->getVar("parent_id"); ?>" class="smalltext" style="font-weight: normal;" title="<?php echo $context->getVar("parent_name"); ?>"><?php echo $context->getVar("parent_name"); ?></a>
 			</div>
-			<?php echo $context->getVar("L_POSTTOPIC"); ?>
+			<?php echo $context->getVar("L_POSTREPLY"); ?>
 		</td>
 	</tr>
 	<?php endif; ?>
@@ -61,10 +62,10 @@ function emoticon(typed) {
 	<tr class="thead" colspan="2">
 		<td colspan="2">
 			<div style="float:right;" class="smalltext">
-				<strong><?php echo $context->getVar("L_FORUM"); ?>:</strong>
-				<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>" class="smalltext" style="font-weight: normal;" title="<?php echo $context->getVar("forum_name"); ?>"><?php echo $context->getVar("forum_name"); ?></a>
+				<strong><?php echo $context->getVar("L_TOPIC"); ?>:</strong>
+				<a href="viewtopic.php?id=<?php echo $context->getVar("reply_id"); ?>" class="smalltext" style="font-weight: normal;" title="<?php echo $context->getVar("reply_name"); ?>"><?php echo $context->getVar("reply_name"); ?></a>
 			</div>
-			<?php echo $context->getVar("L_EDITPOST"); ?> : <span style="font-weight: normal;"><?php echo $context->getVar("topic_name"); ?></span><input type="hidden" name="post_id" value="<?php echo $context->getVar("post_id"); ?>" />
+			<?php echo $context->getVar("L_EDITPOST"); ?> : <span style="font-weight: normal;"><?php echo $context->getVar("reply_name"); ?></span><input type="hidden" name="post_id" value="<?php echo $context->getVar("post_id"); ?>" />
 		</td>
 	</tr>
 	<?php endif; ?>
@@ -99,7 +100,7 @@ function emoticon(typed) {
 						<td>
 							<!-- Post Title -->
 							<label for="name" class="smalltext"><?php echo $context->getVar("L_POSTTITLE"); ?></label><br />
-							<input type="text" name="name" id="name" value="<?php echo $context->getVar("topic_name"); ?>" style="width: 500px;" class="inputbox" maxlength="255" />
+							<input type="text" name="name" id="name" value="<?php echo $context->getVar("reply_name"); ?>" style="width: 500px;" class="inputbox" maxlength="255" />
 							<script type="text/javascript">addVerification('name', '.+', 'name_error', 'inputfailed');</script><div id="name_error" style="display: none;"><?php echo $context->getVar("L_INSERTTOPICNAME"); ?></div>
 							<!-- / Post Title -->
 						</td>
@@ -115,15 +116,11 @@ function emoticon(typed) {
 							<?php if($context->getVar('allowbbcode') == 1): ?>
 								<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['bbcode']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['bbcode']['can_add'] <= $context->session['user']->info['perms'])): ?>
 									<script type="text/javascript">
-										try { 
-											bbcodex_init('message', 'message', 10, 100, 'bbcode_button'); 
-										} catch(e) { 
-											alert(e.message); 
-										}
+										try { bbcodex_init('message', 'message', 10, 100, 'bbcode_button'); } catch(e) { alert(e.message); }
 									</script>
 								<?php else: ?>
 							<?php endif; ?>
-							<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100" wrap="SOFT" style="width: 500px;"><?php echo $context->getVar("topic_body_text"); ?></textarea>
+							<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100" wrap="SOFT" style="width: 500px;"><?php echo $context->getVar("reply_body_text"); ?></textarea>
 							<script type="text/javascript">addVerification('messagecodex', '(\\\n|.)+', 'messagecodex_error', 'inputfailed');</script><div id="messagecodex_error" style="display: none;"><?php echo $context->getVar("L_INSERTTOPICMESSAGE"); ?></div>
 							<!-- / Post Message -->
 
@@ -210,18 +207,8 @@ function emoticon(typed) {
 	<tr class="tcat">
 		<td align="left" colspan="2">
 			<input type="submit" name="submit" class="button" value="<?php echo $context->getVar("L_SUBMIT"); ?>" accesskey="s" />
-			<?php if ($template->isVisible('save_draft', TRUE)): ?>
-			<?php if (is_a($context->session['user'], 'Member')): ?>
-				<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['post_save']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['post_save']['can_add'] <= $context->session['user']->info['perms'])): ?>
-					<input type="submit" name="submit" class="button" value="<?php echo $context->getVar("L_SAVEDRAFT"); ?>" />
-				<?php endif; ?>
-			<?php endif; ?>
-			<?php endif; ?>
 			<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['post_preview']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['post_preview']['can_add'] <= $context->session['user']->info['perms'])): ?>
 				<input type="submit" name="submit" class="button" value="<?php echo $context->getVar("L_PREVIEW"); ?>" />
-			<?php endif; ?>
-			<?php if ($template->isVisible('load_button', FALSE)): ?>
-			<input type="button" class="button" value="<?php echo $context->getVar("L_LOADDRAFT"); ?>" onclick="document.location='newtopic.php?id=<?php echo $context->getVar("forum_id"); ?>&load_drafts=1'" />
 			<?php endif; ?>
 			<input type="reset" class="button" value="<?php echo $context->getVar("L_RESET"); ?>" />
 		</td>
@@ -250,31 +237,64 @@ function emoticon(typed) {
 						<input type="checkbox" name="enable_sig" id="enable_sig" checked="checked" />&nbsp;<label for="enable_sig"><?php echo $context->getVar("L_ATTACHSIGNATURE"); ?></label><br />
 						<input type="checkbox" name="disable_areply" id="disable_areply" />&nbsp;<label for="disable_areply"><?php echo $context->getVar("L_NOTIFYONREPLY"); ?></label>
 					</fieldset>
-					<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['sticky']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['sticky']['can_add'] <= $context->session['user']->info['perms'])): ?>
-					<br />
-					<div align="center">
-						<?php echo $context->getVar("L_POSTTOPICAS"); ?>: 
-						<input type="radio" name="topic_type" value="1" checked="checked" /> <?php echo $context->getVar("L_NORMAL"); ?>
-						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['sticky']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['sticky']['can_add'] <= $context->session['user']->info['perms'])): ?><input type="radio" name="topic_type" value="2" /> <?php echo $context->getVar("L_STICKYTOPIC");  endif; ?>
-						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['announce']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['announce']['can_add'] <= $context->session['user']->info['perms'])): ?><input type="radio" name="topic_type" value="3" /> <?php echo $context->getVar("L_ANNOUNCEMENT");  endif; ?>
-						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['global']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['global']['can_add'] <= $context->session['user']->info['perms'])): ?><input type="radio" name="topic_type" value="4" /> <?php echo $context->getVar("L_GLOBAL");  endif; ?>
-						<br /><br />
-					</div>
-					<fieldset>
-						<legend><strong><?php echo $context->getVar("L_STICKTOPICFOR"); ?></strong> - <?php echo $context->getVar("L_STICKTOPICFOREXPLAIN"); ?></legend>
-						<input type="text" name="topic_expire" size="3" maxlength="4" value="<?php echo $context->getVar("topic_topic_expire"); ?>" class="inputbox" /> <strong><?php echo $context->getVar("L_DAYS"); ?></strong>
-						<span class="smalltext"><?php echo $context->getVar("L_TOPICEXPIREEXPLAIN"); ?></span>
-					</fieldset>
-					<?php endif; ?>
 				</div>
 			</td>
 		</tr>
-		<?php endif; ?>
 	</tbody>
 </table>
 <!-- / Additional Post Options -->
 
-</form>
+<?php endif; ?>
+<br />
+
+<!-- Topic Review -->
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td>
+			<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapse_tr', 'topicreview')" title="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>"><img id="collapse_tr" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/collapse_thead.gif" alt="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>" border="0" /></a></div>
+			<?php echo $context->getVar("L_TOPICREVIEW"); ?> - <?php echo $context->getVar("reply_name"); ?>
+		</td>
+	</tr>
+	<tbody id="topicreview">
+		<tr class="panel">
+			<td>
+				<div style="height: 300px; overflow: auto;">
+					<?php if ($context->listReset("topic_review")): ?>
+					<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+					<tr class="tcat">
+						<td width="20%"><div align="center"><?php echo $context->getVar("L_AUTHOR"); ?></div></td>
+						<td width="80%"><div align="center"><?php echo $context->getVar("L_MESSAGE"); ?></div></td>
+					</tr>
+					<?php while($context->push($context->listNext("topic_review"))): ?>
+
+					<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('reply_forum_id')]['replies']['can_view']) && $context->session['user']->info['maps']['forums'][$context->getVar('reply_forum_id')]['replies']['can_view'] <= $context->session['user']->info['perms'])): ?>
+					<?php if ($context->addList("replies", $context->getVar("replies"))): ?>
+					<?php while($context->push($context->listNext("replies"))): ?>
+
+					<!-- Reply: <?php echo $context->getVar("name"); ?> -->
+					<?php if ($file = $template->getFile("reply", "post_review.html")):  $template->setFilename($file);  $template->render(); endif; ?>
+					<tr class="alt2">
+						<td colspan="2"><div style="height: 2px;font-size: 2px;"></div></td>
+					</tr>
+					<!-- / Reply: <?php echo $context->getVar("name"); ?> -->
+					<?php $context->pop(); endwhile; ?>
+					<?php endif; ?>
+					
+					<!-- Topic: <?php echo $context->getVar("name"); ?> -->
+					<?php if ($file = $template->getFile("topic", "post_review.html")):  $template->setFilename($file);  $template->render(); endif; ?>
+					<!-- / Topic: <?php echo $context->getVar("name"); ?> -->
+
+					<?php endif; ?>
+					<?php $context->pop(); endwhile; ?>
+					</table>
+					<?php endif; ?>
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<!-- / Topic Review -->
+
 <br />
 <!-- Posting Code Allowances -->
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
@@ -298,10 +318,6 @@ function emoticon(typed) {
 							<td valign="top">
 								<?php echo $context->getVar("forum_user_reply_options"); ?>
 							</td>
-							<td>&nbsp;&nbsp;</td>
-							<td valign="top">
-								<?php echo $context->getVar("forum_user_topic_options"); ?>
-							</td>
 						</tr>
 					</table>
 				</div>
@@ -311,8 +327,8 @@ function emoticon(typed) {
 </table>
 <!-- / Posting Code Allowances -->
 
-<?php if ($template->isVisible('edit_topic', FALSE)): ?>
-<!-- Edit Topic Javascript -->
+<?php if ($template->isVisible('edit_reply', FALSE)): ?>
+<!-- Edit Reply Javascript -->
 <script type="text/javascript">
 	// <!-- 
 
@@ -328,12 +344,12 @@ function emoticon(typed) {
 		var enable_sig				= document.getElementById('enable_sig');
 		var disable_areply			= document.getElementById('disable_areply');
 		
-		<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add'] <= $context->session['user']->info['perms'])): ?>disable_html.checked		= (<?php echo $context->getVar("topic_disable_html"); ?> == 1) ? true : false;<?php endif; ?>
-		disable_bbcode.checked		= (<?php echo $context->getVar("topic_disable_bbcode"); ?> == 1) ? true : false;
-		disable_emoticons.checked	= (<?php echo $context->getVar("topic_disable_emoticons"); ?> == 1) ? true : false;
-		disable_aurls.checked		= (<?php echo $context->getVar("topic_disable_aurls"); ?> == 1) ? true : false;
-		enable_sig.checked			= (<?php echo $context->getVar("topic_disable_sig"); ?> == 1) ? false : true;
-		disable_areply.checked		= (<?php echo $context->getVar("topic_disable_areply"); ?> == 1) ? true : false;
+		<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add'] <= $context->session['user']->info['perms'])): ?>disable_html.checked		= (<?php echo $context->getVar("reply_disable_html"); ?> == 1) ? true : false;<?php endif; ?>
+		disable_bbcode.checked		= (<?php echo $context->getVar("reply_disable_bbcode"); ?> == 1) ? true : false;
+		disable_emoticons.checked	= (<?php echo $context->getVar("reply_disable_emoticons"); ?> == 1) ? true : false;
+		disable_aurls.checked		= (<?php echo $context->getVar("reply_disable_aurls"); ?> == 1) ? true : false;
+		enable_sig.checked			= (<?php echo $context->getVar("reply_disable_sig"); ?> == 1) ? false : true;
+		disable_areply.checked		= (<?php echo $context->getVar("reply_disable_areply"); ?> == 1) ? true : false;
 	
 	} catch(e) {
 		alert(e.message);
@@ -347,7 +363,7 @@ function emoticon(typed) {
 	
 	for (var x = 0; x < sizeof(inputs); x++) {
 		if(inputs[x].name == 'posticon') {
-			if(inputs[x].value == '<?php echo $context->getVar("topic_posticon"); ?>') {
+			if(inputs[x].value == '<?php echo $context->getVar("reply_posticon"); ?>') {
 				inputs[x].checked = true;
 			} else {
 				inputs[x].checked = false;
@@ -356,9 +372,9 @@ function emoticon(typed) {
 	}
 
 	var pi_image	= document.getElementById('display_posticon');
-	pi_image.src	= 'tmp/upload/posticons/<?php echo $context->getVar("topic_posticon"); ?>';
+	pi_image.src	= 'tmp/upload/posticons/<?php echo $context->getVar("reply_posticon"); ?>';
 
 	// -->
 </script>
-<!-- / Edit Topic Javascript -->
-<?php endif; ?>
+<!-- / Edit Reply Javascript -->
+<?php endif; ?></form>

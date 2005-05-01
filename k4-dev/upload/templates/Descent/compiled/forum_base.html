@@ -13,7 +13,6 @@
 	<meta name="author" content="k4 Bulletin Board" />
 	<meta name="distribution" content="GLOBAL" />
 	<meta name="rating" content="general" />
-	<?php echo $context->getVar("meta_redirect"); ?>
 	<link rel="icon" href="favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="tmp/cache/<?php echo $context->getVar("css_styles"); ?>.css" type="text/css" media="screen" />
 	<style type="text/css">
@@ -34,7 +33,6 @@
 	<script type="text/javascript" src="js/javascript.js"></script>
 	<script type="text/javascript" src="js/form_check.js"></script>
 	<script type="text/javascript" src="js/dd_menu.js"></script>
-	<script type="text/javascript" src="js/bbcode.js"></script>
 </head>
 <body>
 <div align="center">
@@ -328,10 +326,10 @@ COPYRIGHT NOTICE
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: forum_base.html,v 1.6 2005/04/24 03:57:46 k4st Exp $
+* @version $Id: forum_base.html,v 1.7 2005/05/01 17:49:22 k4st Exp $
 * @package k42
 */
 -->
-
+<?php echo $context->getVar("javascript_redirect"); ?>
 </body>
 </html>

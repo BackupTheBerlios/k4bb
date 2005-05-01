@@ -4,7 +4,6 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
 	<meta http-equiv="Content-Style-Type" content="text/css" />
-	<?php echo $context->getVar("meta_redirect"); ?>
 	<title><?php echo $context->getVar("forum_name"); ?> - <?php echo $context->getVar("current_location"); ?> - Powered by k4</title>
 	<link rel="icon" href="favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="tmp/cache/<?php echo $context->getVar("css_styles"); ?>.css" type="text/css" media="screen" />
@@ -36,5 +35,6 @@
 	</tr>
 </table>
 <?php endif; ?>
+<?php echo $context->getVar("javascript_redirect"); ?>
 </body>
 </html>

@@ -49,11 +49,17 @@
 		</td>
 		<td align="center" class="alt1">{$posts}</td>
 		<td align="center" class="alt1">{$topics}</td>
-		<td class="minitext" nowrap="nowrap" align="center" width="30%">
+		<td class="alt3" nowrap="nowrap" align="center" width="30%">
 			<if:if var="post_id" greater="0">
-			<a href="viewtopic.php?id={$post_id}" title="{$post_name}"><strong><core:truncate length="27" append="...">{$post_name}</core:truncate></strong></a>
-			<br />
-			{$L_BY} <a href="member.php?id={$post_uid}" title="{$post_uname}"><strong>{$post_uname}</strong></a>&nbsp;{$L_ON}&nbsp;{$post_created}
+			<div align="left" class="smalltext">
+				<a href="findpost.php?id={$post_id}" title="{$post_name}"><strong><core:truncate length="27" append="...">{$post_name}</core:truncate></strong></a>
+				<br />
+				{$L_BY} <a href="member.php?id={$post_uid}" title="{$post_uname}"><strong>{$post_uname}</strong></a>
+			</div>
+			<div align="right" class="smalltext">
+				<core:date format="%b %d %y">{$post_created}</core:date>&nbsp;<span class="date_color"><core:date format="%I:%M%p">{$post_created}</core:date></span>
+				<a href="findpost.php?id={$post_id}" title="{$post_name}"><img src="Images/{$IMG_DIR}/Icons/icon_latest_reply.gif" border="0" alt="{$post_name}" /></a>
+			</div>
 			<if:else />
 			--
 			</if:if>

@@ -1,6 +1,5 @@
-	<tr class="thead">
-		<td width="20%"><div align="center">{$L_AUTHOR}</div></td>
-		<td width="80%"><div align="center">{$L_MESSAGE}</div></td>
+	<tr class="alt2">
+		<td colspan="2"><div style="height: 2px;font-size: 2px;"></div></td>
 	</tr>
 	<tr class="panel">
 		<td width="20%" class="alt1">
@@ -70,27 +69,26 @@
 			</div>
 			<div style="float: right">
 				<maps:if var="replies" forum="topic_forum_id" method="can_add">
-					<a href="newreply.php?id={$id}" title="{$L_POSTREPLY}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/reply.gif" alt="{$L_POSTREPLY}" /></a>
-					<a href="newreply.php?id={$id}&amp;quote=1" title="{$L_QUOTE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/quote.gif" alt="{$L_QUOTE}" /></a>
+					<a href="newreply.php?id={$topic_id}&amp;r={$id}" title="{$L_POSTREPLY}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/reply.gif" alt="{$L_POSTREPLY}" /></a>
+					<a href="newreply.php?id={$topic_id}&amp;r={$id}&amp;quote=1" title="{$L_QUOTE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/quote.gif" alt="{$L_QUOTE}" /></a>
 				</maps:if>
 				<if:if var="poll" eq="0">
 					<if:if var="post_user_id" eq="user_id">
-						<maps:if var="topics" forum="topic_forum_id" method="can_edit"><a href="newtopic.php?act=edittopic&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
-						<maps:if var="topics" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletetopic&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
+						<maps:if var="replies" forum="topic_forum_id" method="can_edit"><a href="newreply.php?act=edittopic&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
+						<maps:if var="replies" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletereply&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
 					<if:else />
-						<maps:if var="other_topics" forum="topic_forum_id" method="can_edit"><a href="newtopic.php?act=edittopic&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
-						<maps:if var="other_topics" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletetopic&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
+						<maps:if var="other_replies" forum="topic_forum_id" method="can_edit"><a href="newreply.php?act=edittopic&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
+						<maps:if var="other_replies" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletereply&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
 					</if:if>
 				<if:else />
 					<if:if var="post_user_id" eq="user_id">
-						<maps:if var="polls" forum="topic_forum_id" method="can_edit"><a href="newtopic.php?act=edittopic&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
-						<maps:if var="polls" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletetopic&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
+						<maps:if var="polls" forum="topic_forum_id" method="can_edit"><a href="newreply.php?act=editreply&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
+						<maps:if var="polls" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletereply&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
 					<if:else />
-						<maps:if var="other_polls" forum="topic_forum_id" method="can_edit"><a href="newtopic.php?act=edittopic&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
-						<maps:if var="other_polls" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletetopic&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
+						<maps:if var="other_polls" forum="topic_forum_id" method="can_edit"><a href="newreply.php?act=editreply&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
+						<maps:if var="other_polls" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletereply&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
 					</if:if>
 				</if:if>
-				<maps:if var="closed" forum="topic_forum_id" method="can_add"><a href="mod.php?act=lock_topic&amp;id={$id}" title="{$L_LOCK}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/lock.gif" alt="{$L_LOCK}" /></a></maps:if>
 			</div>
 		</td>
 	</tr>

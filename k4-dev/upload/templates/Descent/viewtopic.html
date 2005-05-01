@@ -1,4 +1,3 @@
-<h1>{$topic_name}</h1>
 <!-- Posting Buttons -->
 <div align="left">
 	<maps:if var="topics" forum="topic_forum_id" method="can_add">
@@ -11,6 +10,7 @@
 <!-- / Posting Buttons -->
 
 <list:list id="topic">
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 <list:item list="topic">
 
 <!-- Topic: {$name} -->
@@ -29,6 +29,7 @@
 </list:sublist>
 </maps:if>
 </list:item>
+</table>
 </list:list>
 
 <!-- Posting Buttons -->

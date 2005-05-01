@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.12 2005/05/01 01:12:02 k4st Exp $
+* @version $Id: viewforum.php,v 1.13 2005/05/01 17:47:03 k4st Exp $
 * @package k42
 */
 
@@ -210,7 +210,7 @@ class DefaultEvent extends Event {
 						}
 
 						/* Create the query */
-						$topics				= &$dba->prepareStatement("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.created>=? AND i.row_left > ". intval($forum['row_left']) ." AND i.row_right < ". intval($forum['row_right']) ." AND t.forum_id = ". intval($forum['id']) ." AND t.is_draft = 0 AND i.row_type = ". TOPIC ." ORDER BY $sortedby $sortorder LIMIT ?,?");
+						$topics				= &$dba->prepareStatement("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.created>=? AND t.is_draft = 0 AND i.row_type = ". TOPIC ." AND ((t.topic_type = ". TOPIC_NORMAL ." AND t.forum_id = ". intval($forum['id']) .") OR t.topic_type = ". TOPIC_GLOBAL .") ORDER BY $sortedby $sortorder LIMIT ?,?");
 						
 						/* Set the query values */
 						$topics->setInt(1, $daysprune * (3600 * 24));

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.4 2005/04/25 19:52:34 k4st Exp $
+* @version $Id: forums.class.php,v 1.5 2005/05/01 17:43:31 k4st Exp $
 * @package k42
 */
 
@@ -196,7 +196,7 @@ class AdminInsertForum extends Event {
 			$update_a			= &$this->dba->prepareStatement("UPDATE ". INFO ." SET row_right = row_right+2 WHERE row_left < ? AND row_right >= ?");
 			$update_b			= &$this->dba->prepareStatement("UPDATE ". INFO ." SET row_left = row_left+2, row_right=row_right+2 WHERE row_left >= ?");
 			$insert_a			= &$dba->prepareStatement("INSERT INTO ". INFO ." (name,row_left,row_right,row_type,row_level,created,row_order,parent_id) VALUES (?,?,?,?,?,?,?,?)");
-			$insert_b			= &$dba->prepareStatement("INSERT INTO ". FORUMS ." (category_id,forum_id,description,pass,is_forum,is_link,link_href,link_show_redirects,forum_rules,special_message,topicsperpage,postsperpage,maxpolloptions,defaultlang,moderating_groups) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			$insert_b			= &$dba->prepareStatement("INSERT INTO ". FORUMS ." (category_id,forum_id,description,pass,is_forum,is_link,link_href,link_show_redirects,forum_rules,topicsperpage,postsperpage,maxpolloptions,defaultlang,moderating_groups,prune_auto,prune_frequency,prune_post_age,prune_post_viewed_age,prune_old_polls,prune_announcements,prune_stickies) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
 			/* Set the update values */
 			$update_a->setInt(1, $left);
@@ -223,6 +223,8 @@ class AdminInsertForum extends Event {
 			/* Get this forum id */
 			$forum_id			= $dba->getInsertId();
 			
+			$forum_rules		= &new BBCodex(&$user, $request['forum_rules'], FALSE, TRUE, TRUE, TRUE, TRUE);
+
 			/* Build the query for the forums table */
 			$insert_b->setInt(1, $category['id']);
 			$insert_b->setInt(2, $forum_id);
@@ -232,14 +234,20 @@ class AdminInsertForum extends Event {
 			$insert_b->setInt(6, $request['is_link']);
 			$insert_b->setString(7, $request['link_href']);
 			$insert_b->setInt(8, $request['link_show_redirects']);
-			$insert_b->setString(9, $request['forum_rules']);
-			$insert_b->setString(10, $request['special_message']);
-			$insert_b->setInt(11, $request['topicsperpage']);
-			$insert_b->setInt(12, $request['postsperpage']);
-			$insert_b->setInt(13, $request['maxpolloptions']);
-			$insert_b->setString(14, $request['defaultlang']);
-			$insert_b->setString(15, iif(isset($request['moderators']) && is_array($request['moderators']) && !empty($request['moderators']), serialize($request['moderators']), ''));
-			
+			$insert_b->setString(9, $forum_rules->parse());
+			$insert_b->setInt(10, $request['topicsperpage']);
+			$insert_b->setInt(11, $request['postsperpage']);
+			$insert_b->setInt(12, $request['maxpolloptions']);
+			$insert_b->setString(13, $request['defaultlang']);
+			$insert_b->setString(14, iif((isset($request['moderators']) && is_array($request['moderators']) && !empty($request['moderators'])), serialize(@$request['moderators']), ''));
+			$insert_b->setInt(15, $request['prune_auto']);
+			$insert_b->setInt(16, $request['prune_frequency']);
+			$insert_b->setInt(17, $request['prune_post_age']);
+			$insert_b->setInt(18, $request['prune_post_viewed_age']);
+			$insert_b->setInt(19, $request['prune_old_polls']);
+			$insert_b->setInt(20, $request['prune_announcements']);
+			$insert_b->setInt(21, $request['prune_stickies']);
+
 			/* Insert the extra forum info */
 			$insert_b->executeUpdate();
 
@@ -301,25 +309,26 @@ class AdminInsertForumMaps extends Event {
 			/**
 			 * Insert the secondary forum MAP information
 			 */
-			for($i = 1; $i < count($_MAPITEMS['forum']); $i++) {
-				
-				if(isset($_MAPITEMS['forum'][$i]) && is_array($_MAPITEMS['forum'][$i])) {
+			if($forum['is_forum'] == 1) {
+				for($i = 1; $i < count($_MAPITEMS['forum']); $i++) {
 					
-					$forum_array			= array_merge(array('parent_id' => $forum_map_id), $_MAPITEMS['forum'][$i]);
-					
-					$forum_array['name']	= $template->getVar('L_'. strtoupper($forum_array['varname']));
-					
-					Error::reset();
-					$map->insertNode($forum_array, $forum['category_id'], $forum['id']);
+					if(isset($_MAPITEMS['forum'][$i]) && is_array($_MAPITEMS['forum'][$i])) {
+						
+						$forum_array			= array_merge(array('parent_id' => $forum_map_id), $_MAPITEMS['forum'][$i]);
+						
+						$forum_array['name']	= $template->getVar('L_'. strtoupper($forum_array['varname']));
+						
+						Error::reset();
+						$map->insertNode($forum_array, $forum['category_id'], $forum['id']);
 
-					if(Error::grab()) {
-						$error				= &Error::grab();
-						$template->setInfo('content', $template->getVar($error->message));
-						return TRUE;
+						if(Error::grab()) {
+							$error				= &Error::grab();
+							$template->setInfo('content', $template->getVar($error->message));
+							return TRUE;
+						}
 					}
 				}
 			}
-			
 			/**
 			 * If we've gotten to this point.. redirect
 			 */
@@ -399,6 +408,9 @@ class AdminEditForum extends Event {
 				return TRUE;
 			}
 			
+			$forum_rules				= &new BBCodex(&$user, $forum['forum_rules'], $forum['id'], TRUE, TRUE, TRUE, TRUE);
+			$forum['forum_rules']		= $forum_rules->revert();
+
 			foreach($forum as $key => $val)
 				$template->setVar('forum_'. $key, $val);
 			
@@ -478,10 +490,10 @@ class AdminUpdateForum extends Event {
 				$template->setInfo('content', $template->getVar('L_INSERTCATORDERNUM'), TRUE);
 				return TRUE;
 			}
-						
+
 			/* Build the queries */
 			$update_a			= &$dba->prepareStatement("UPDATE ". INFO ." SET name=?,row_order=? WHERE id=?");
-			$update_b			= &$dba->prepareStatement("UPDATE ". FORUMS ." SET description=?,pass=?,is_forum=?,is_link=?,link_href=?,link_show_redirects=?,forum_rules=?,special_message=?,topicsperpage=?,postsperpage=?,maxpolloptions=?,defaultlang=?,moderating_groups=? WHERE forum_id=?");
+			$update_b			= &$dba->prepareStatement("UPDATE ". FORUMS ." SET description=?,pass=?,is_forum=?,is_link=?,link_href=?,link_show_redirects=?,forum_rules=?,topicsperpage=?,postsperpage=?,maxpolloptions=?,defaultlang=?,moderating_groups=?,prune_auto=?,prune_frequency=?,prune_post_age=?,prune_post_viewed_age=?,prune_old_polls=?,prune_announcements=?,prune_stickies=? WHERE forum_id=?");
 			$update_c			= &$dba->prepareStatement("UPDATE ". MAPS ." SET name=? WHERE varname=?");
 
 			/* Set the query values */
@@ -489,6 +501,8 @@ class AdminUpdateForum extends Event {
 			$update_a->setInt(2, $request['row_order']);
 			$update_a->setInt(3, $forum['id']);
 			
+			$forum_rules		= &new BBCodex(&$user, $request['forum_rules'], $forum['id'], TRUE, TRUE, TRUE, TRUE);
+
 			/* Build the query for the forums table */
 			$update_b->setString(1, $request['description']);
 			$update_b->setString(2, $request['pass']);
@@ -496,14 +510,20 @@ class AdminUpdateForum extends Event {
 			$update_b->setInt(4, $request['is_link']);
 			$update_b->setString(5, $request['link_href']);
 			$update_b->setInt(6, $request['link_show_redirects']);
-			$update_b->setString(7, $request['forum_rules']);
-			$update_b->setString(8, $request['special_message']);
-			$update_b->setInt(9, $request['topicsperpage']);
-			$update_b->setInt(10, $request['postsperpage']);
-			$update_b->setInt(11, $request['maxpolloptions']);
-			$update_b->setString(12, $request['defaultlang']);
-			$update_b->setString(13, iif(isset($request['moderators']) && is_array($request['moderators']) && !empty($request['moderators']), serialize($request['moderators']), ''));
-			$update_b->setInt(14, $forum['id']);
+			$update_b->setString(7, $forum_rules->parse());
+			$update_b->setInt(8, $request['topicsperpage']);
+			$update_b->setInt(9, $request['postsperpage']);
+			$update_b->setInt(10, $request['maxpolloptions']);
+			$update_b->setString(11, $request['defaultlang']);
+			$update_b->setString(12, iif(isset($request['moderators']) && is_array($request['moderators']) && !empty($request['moderators']), serialize($request['moderators']), ''));
+			$update_b->setInt(13, $request['prune_auto']);
+			$update_b->setInt(14, $request['prune_frequency']);
+			$update_b->setInt(15, $request['prune_post_age']);
+			$update_b->setInt(16, $request['prune_post_viewed_age']);
+			$update_b->setInt(17, $request['prune_old_polls']);
+			$update_b->setInt(18, $request['prune_announcements']);
+			$update_b->setInt(19, $request['prune_stickies']);
+			$update_b->setInt(20, $forum['id']);
 			
 			/* Simple update on the maps table */
 			$update_c->setString(1, $request['name']);

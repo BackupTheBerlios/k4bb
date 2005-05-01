@@ -17,7 +17,24 @@
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
 		<td colspan="7" align="left">
-			<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapsetopics_<?php echo $context->getVar("forum_id"); ?>', 'topics_<?php echo $context->getVar("forum_id"); ?>')" title="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>"><img id="collapsetopics_<?php echo $context->getVar("forum_id"); ?>" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/collapse_thead.gif" alt="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>" border="0" /></a></div>
+			<?php if ($pager = &$template->getPager("topics_pager")): ?>
+			<div style="float: right;">
+				<table cellpadding="0" cellspacing="1" border="0" class="forum_content">
+					<tr>
+						<td><span class="smalltext"><?php echo $context->getVar("L_PAGE"); ?></span></td>
+						<?php if ($context->push($pager->getFirst())): ?><td class="alt2"><?php if ($pager->page_num != $context->getVar("pagenum")): ?><a href="<?php echo $context->getVar("pagelink"); ?>"><?php else: ?><span><?php endif; ?><span class="smalltext"><?php echo $context->getVar("L_FIRST"); ?></span><?php if ($pager->page_num != $context->getVar("pagenum")): ?></a><?php else: ?></span><?php endif; ?></td></a><?php $context->pop(); endif; ?>
+						<?php if ($context->push($pager->getPrev())): ?><td class="alt2"><?php if ($pager->page_num != $context->getVar("pagenum")): ?><a href="<?php echo $context->getVar("pagelink"); ?>"><?php else: ?><span><?php endif; ?><span class="smalltext"><?php echo $context->getVar("L_PREV"); ?></span><?php if ($pager->page_num != $context->getVar("pagenum")): ?></a><?php else: ?></span><?php endif; ?></td></a><?php $context->pop(); endif; ?>
+						<?php if ($context->addList("topics_pager", $pager->getIterator("3", "3"))): ?>
+						<?php while($context->push($context->listNext("topics_pager"))): ?>
+							<td class="alt1"><?php if ($pager->page_num != $context->getVar("pagenum")): ?><a class="pager_link" href="<?php echo $context->getVar("pagelink"); ?>"><?php else: ?><span class="pager_link"><?php endif; ?><span class="smalltext"><?php echo $context->getVar("pagenum"); ?></span><?php if ($pager->page_num != $context->getVar("pagenum")): ?></a><?php else: ?></span><?php endif; ?></td>
+						<?php $context->pop(); endwhile; ?>
+						<?php endif; ?>
+						<?php if ($context->push($pager->getNext())): ?><td class="alt2"><?php if ($pager->page_num != $context->getVar("pagenum")): ?><a href="<?php echo $context->getVar("pagelink"); ?>"><?php else: ?><span><?php endif; ?><span class="smalltext"><?php echo $context->getVar("L_NEXT"); ?></span><?php if ($pager->page_num != $context->getVar("pagenum")): ?></a><?php else: ?></span><?php endif; ?></td></a><?php $context->pop(); endif; ?>
+						<?php if ($context->push($pager->getLast())): ?><td class="alt2"><?php if ($pager->page_num != $context->getVar("pagenum")): ?><a href="<?php echo $context->getVar("pagelink"); ?>"><?php else: ?><span><?php endif; ?><span class="smalltext"><?php echo $context->getVar("L_LAST"); ?></span><?php if ($pager->page_num != $context->getVar("pagenum")): ?></a><?php else: ?></span><?php endif; ?></td></a><?php $context->pop(); endif; ?>
+					</tr>
+				</table>
+			</div>
+			<?php endif; ?>
 			<?php echo $context->getVar("L_TOPICSINFORUM"); ?>: <span style="font-weight: normal;"><?php echo $context->getVar("name"); ?></span>
 		</td>
 	</tr>
@@ -29,7 +46,6 @@
 		<td align="center" class="minitext" nowrap="nowrap">&nbsp;<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=views&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_VIEWS"); ?>"><?php echo $context->getVar("L_VIEWS");  echo $context->getVar("views_sort"); ?></a>&nbsp;</td>
 		<td align="center" class="minitext" nowrap="nowrap" width="30%">&nbsp;<a href="viewforum.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;sort=last_reply&amp;order=<?php echo $context->getVar("order"); ?>" title="<?php echo $context->getVar("L_LASTPOST"); ?>"><?php echo $context->getVar("L_LASTPOST");  echo $context->getVar("last_reply_sort"); ?></a>&nbsp;</td>
 	</tr>
-	<tbody id="topics_<?php echo $context->getVar("forum_id"); ?>">
 	<?php if ($context->listReset("topics")): ?>
 	<?php if (is_object($list = &$context->getList("topics")) && !$list->hasNext()): ?>
 	<tr class="alt1">
@@ -70,7 +86,6 @@
 	</tr>
 	<?php $context->pop(); endwhile; ?>
 	<?php endif; ?>
-	</tbody>
 </table>
 <div align="left">
 	<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('id')]['topics']['can_add'] <= $context->session['user']->info['perms'])): ?><a href="newtopic.php?id=<?php echo $context->getVar("forum_id"); ?>" title="<?php echo $context->getVar("L_POSTTOPIC"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/post_topic.gif" alt="<?php echo $context->getVar("L_POSTTOPIC"); ?>" /></a><?php endif; ?>

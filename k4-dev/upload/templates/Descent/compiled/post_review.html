@@ -1,14 +1,4 @@
-<!-- Post Preview -->
-<?php if ($context->listReset("topic")): ?>
-<?php while($context->push($context->listNext("topic"))): ?>
-<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
-	<tr class="thead">
-		<td colspan="2"><?php echo $context->getVar("L_PREVIEW"); ?></td>
-	</tr>
-	<tr class="tcat">
-		<td width="20%"><div align="center"><?php echo $context->getVar("L_AUTHOR"); ?></div></td>
-		<td width="80%"><div align="center"><?php echo $context->getVar("L_MESSAGE"); ?></div></td>
-	</tr>
+<!-- Post Review -->
 	<tr class="panel">
 		<td width="20%" class="alt1">
 			<div align="center">
@@ -51,6 +41,7 @@
 		</td>
 		<td width="80%" id="topic<?php echo $context->getVar("id"); ?>" valign="top">
 			<?php echo $context->getVar("body_text"); ?>
+			<textarea name="reverted_body_text" id="body_text<?php echo $context->getVar("id"); ?>" style="display: none;"><?php echo $context->getVar("reverted_body_text"); ?></textarea>
 			<?php if($context->getVar('disable_sig') == 0): ?>
 			<?php if($context->getVar('post_user_signature') != ''): ?>
 			<br />
@@ -60,8 +51,9 @@
 			<?php endif; ?>
 		</td>
 	</tr>
-</table>
-<?php $context->pop(); endwhile; ?>
-<?php endif; ?>
-<br />
-<!-- / Post Preview -->
+	<tr class="panel">
+		<td class="alt1">
+			<div align="right"><a href="javascript:;" onclick="add_review_quote('<?php if($context->getVar('poster_name') == ''):  echo $context->getVar("L_GUEST");  else:  echo $context->getVar("poster_name");  endif; ?>', 'body_text<?php echo $context->getVar("id"); ?>', 'messagecodex')" title="<?php echo $context->getVar("L_QUOTE"); ?>"><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/quote.gif" border="0" alt="<?php echo $context->getVar("L_QUOTE"); ?>" /></a></div>
+		</td>
+	</tr>
+<!-- / Post Review -->

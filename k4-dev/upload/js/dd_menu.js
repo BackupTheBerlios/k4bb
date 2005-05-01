@@ -24,7 +24,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: dd_menu.js,v 1.4 2005/04/24 02:08:26 k4st Exp $
+* @version $Id: dd_menu.js,v 1.5 2005/05/01 17:51:24 k4st Exp $
 * @package k42
 */
 
@@ -197,11 +197,11 @@ function menu_init(link_id, menu_id) {
 	/* Look for tr's with the class 'alt1' */
 	var link_rows		= menu.getElementsByTagName("tr");
 	
-	for(var i = 0; i < link_rows.length; i++) {
+	for(var i = 0; i < sizeof(link_rows); i++) {
 		if(link_rows[i]) {
 			
 			if(link_rows[i].className == 'alt1') {
-				
+				/*
 				try {
 					link_rows[i].style.cursor = 'pointer';
 				} catch(e) {
@@ -210,13 +210,13 @@ function menu_init(link_id, menu_id) {
 
 				link_rows_link		= link_rows[i].getElementsByTagName("a");
 				
-				/* Deal with onclick of the tr's */
+				// Deal with onclick of the tr's
 				if(link_rows_link && link_rows_link[0]) {
 					link_rows[i].onclick = function() {
 						document.location = link_rows_link[0].href;
 					}
 				}
-				
+				*/
 				/* Deal with onmouseover and onmouseout of the tr's */
 				link_rows[i].onmouseover = function() {
 					this.className	= 'alt2';
@@ -254,7 +254,7 @@ function openmenu(menu) {
 
 		/* Loop through all of the <select>'s on a page */
 		selects = document.getElementsByTagName("select");
-		for (var s = 0; s < selects.length; s++) {
+		for (var s = 0; s < sizeof(selects); s++) {
 			
 			/* If the menu overlaps the select menu, hide the select */
 			if (is_in_grid(menu, selects[s])) {

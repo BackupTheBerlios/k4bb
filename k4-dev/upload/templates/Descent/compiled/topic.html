@@ -1,4 +1,3 @@
-<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
 		<td width="20%"><div align="center"><?php echo $context->getVar("L_AUTHOR"); ?></div></td>
 		<td width="80%"><div align="center"><?php echo $context->getVar("L_MESSAGE"); ?></div></td>
@@ -7,7 +6,7 @@
 		<td width="20%" class="alt1">
 			<div align="center">
 				<?php if($context->getVar('poster_id') > 0): ?>
-				<strong style="color: #<?php echo $context->getVar("post_user_color"); ?>"><?php echo $context->getVar("poster_name"); ?></strong>
+				<strong style="color: #<?php echo $context->getVar("post_user_group_color"); ?>;"><?php echo $context->getVar("poster_name"); ?></strong>
 				<?php else: ?>
 				<strong><?php if($context->getVar('poster_name') == ''):  echo $context->getVar("L_GUEST");  else:  echo $context->getVar("poster_name");  endif; ?></strong>
 				<?php endif; ?>
@@ -28,6 +27,12 @@
 			<?php if($context->getVar('poster_id') > 0): ?>
 				<?php if($context->getVar('post_user_avatar') != ''): ?>
 				<img src="images.php?avatar=<?php echo $context->getVar("poster_id"); ?>" alt="" border="" />
+				<br /><br />
+				<?php endif; ?>
+				<?php echo $context->getVar("post_user_group_nicename"); ?><br />
+				<?php if($context->getVar('post_user_group_avatar') != ''): ?>
+				<img src="tmp/upload/group_avatars/<?php echo $context->getVar("post_user_group_avatar"); ?>" border="0" alt="<?php echo $context->getVar("post_user_group_nicename"); ?>" />
+				<br /><br />
 				<?php endif; ?>
 				<strong><?php echo $context->getVar("L_JOINED"); ?>:</strong> <?php ob_start(); $format = "%b %d %y";  echo $context->getVar("post_user_created");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?><br />
 				<strong><?php echo $context->getVar("L_POSTS"); ?>:</strong> <?php echo $context->getVar("post_user_num_posts"); ?>
@@ -39,6 +44,16 @@
 		</td>
 		<td width="80%" id="topic<?php echo $context->getVar("id"); ?>" valign="top">
 			<?php echo $context->getVar("body_text"); ?>
+			<?php if($context->getVar('showeditedby') == 1): ?>
+				<?php if($context->getVar('edited_time') > 0): ?>
+					<br /><br />
+					<div class="smalltext" style="font-style: italic;">
+						<?php echo $context->getVar("L_EDITEDON"); ?> <?php ob_start(); $format = "%b %d %y";  echo $context->getVar("edited_time");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?>&nbsp;<span class="date_color"><?php ob_start(); $format = "%I:%M%p";  echo $context->getVar("edited_time");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?></span>
+						<?php echo $context->getVar("L_BY"); ?> <a href="member.php?id=<?php echo $context->getVar("edited_userid"); ?>" alt="<?php echo $context->getVar("edited_username"); ?>"><?php echo $context->getVar("edited_username"); ?></a>
+					</div>
+					<br />
+				<?php endif; ?>
+			<?php endif; ?>
 			<?php if($context->getVar('disable_sig') == 0): ?>
 			<?php if($context->getVar('post_user_signature') != ''): ?>
 			<br />
@@ -54,27 +69,28 @@
 				<?php if($context->getVar('post_user_id') > 0): ?><a href="member.php?id=<?php echo $context->getVar("post_user_id"); ?>" title="<?php echo $context->getVar("L_PROFILE"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/profile.gif" alt="<?php echo $context->getVar("L_PROFILE"); ?>" /></a><?php endif; ?>
 			</div>
 			<div style="float: right">
-				<a href="newreply.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_POSTREPLY"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/reply.gif" alt="<?php echo $context->getVar("L_POSTREPLY"); ?>" /></a>
-				<a href="newreply.php?id=<?php echo $context->getVar("id"); ?>&amp;quote=1" title="<?php echo $context->getVar("L_QUOTE"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/quote.gif" alt="<?php echo $context->getVar("L_QUOTE"); ?>" /></a>
+				<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['replies']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['replies']['can_add'] <= $context->session['user']->info['perms'])): ?>
+					<a href="newreply.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_POSTREPLY"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/reply.gif" alt="<?php echo $context->getVar("L_POSTREPLY"); ?>" /></a>
+					<a href="newreply.php?id=<?php echo $context->getVar("id"); ?>&amp;quote=1" title="<?php echo $context->getVar("L_QUOTE"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/quote.gif" alt="<?php echo $context->getVar("L_QUOTE"); ?>" /></a>
+				<?php endif; ?>
 				<?php if($context->getVar('poll') == 0): ?>
 					<?php if($context->getVar('post_user_id') == 'user_id'): ?>
-						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_edit']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_edit'] <= $context->session['user']->info['perms'])): ?><a href="newtopic.php?act=edit_topic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_EDIT"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/edit.gif" alt="<?php echo $context->getVar("L_EDIT"); ?>" /></a><?php endif; ?>
-						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_del']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_del'] <= $context->session['user']->info['perms'])): ?><a href="mod.php?act=delete_topic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_DELETE"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/delete.gif" alt="<?php echo $context->getVar("L_DELETE"); ?>" /></a><?php endif; ?>
+						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_edit']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_edit'] <= $context->session['user']->info['perms'])): ?><a href="newtopic.php?act=edittopic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_EDIT"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/edit.gif" alt="<?php echo $context->getVar("L_EDIT"); ?>" /></a><?php endif; ?>
+						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_del']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_del'] <= $context->session['user']->info['perms'])): ?><a href="mod.php?act=deletetopic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_DELETE"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/delete.gif" alt="<?php echo $context->getVar("L_DELETE"); ?>" /></a><?php endif; ?>
 					<?php else: ?>
-						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_topics']['can_edit']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_topics']['can_edit'] <= $context->session['user']->info['perms'])): ?><a href="newtopic.php?act=edit_topic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_EDIT"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/edit.gif" alt="<?php echo $context->getVar("L_EDIT"); ?>" /></a><?php endif; ?>
-						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_topics']['can_del']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_topics']['can_del'] <= $context->session['user']->info['perms'])): ?><a href="mod.php?act=delete_topic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_DELETE"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/delete.gif" alt="<?php echo $context->getVar("L_DELETE"); ?>" /></a><?php endif; ?>
+						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_topics']['can_edit']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_topics']['can_edit'] <= $context->session['user']->info['perms'])): ?><a href="newtopic.php?act=edittopic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_EDIT"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/edit.gif" alt="<?php echo $context->getVar("L_EDIT"); ?>" /></a><?php endif; ?>
+						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_topics']['can_del']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_topics']['can_del'] <= $context->session['user']->info['perms'])): ?><a href="mod.php?act=deletetopic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_DELETE"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/delete.gif" alt="<?php echo $context->getVar("L_DELETE"); ?>" /></a><?php endif; ?>
 					<?php endif; ?>
 				<?php else: ?>
 					<?php if($context->getVar('post_user_id') == 'user_id'): ?>
-						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['polls']['can_edit']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['polls']['can_edit'] <= $context->session['user']->info['perms'])): ?><a href="newtopic.php?act=edit_topic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_EDIT"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/edit.gif" alt="<?php echo $context->getVar("L_EDIT"); ?>" /></a><?php endif; ?>
-						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['polls']['can_del']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['polls']['can_del'] <= $context->session['user']->info['perms'])): ?><a href="mod.php?act=delete_topic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_DELETE"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/delete.gif" alt="<?php echo $context->getVar("L_DELETE"); ?>" /></a><?php endif; ?>
+						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['polls']['can_edit']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['polls']['can_edit'] <= $context->session['user']->info['perms'])): ?><a href="newtopic.php?act=edittopic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_EDIT"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/edit.gif" alt="<?php echo $context->getVar("L_EDIT"); ?>" /></a><?php endif; ?>
+						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['polls']['can_del']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['polls']['can_del'] <= $context->session['user']->info['perms'])): ?><a href="mod.php?act=deletetopic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_DELETE"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/delete.gif" alt="<?php echo $context->getVar("L_DELETE"); ?>" /></a><?php endif; ?>
 					<?php else: ?>
-						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_polls']['can_edit']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_polls']['can_edit'] <= $context->session['user']->info['perms'])): ?><a href="newtopic.php?act=edit_topic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_EDIT"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/edit.gif" alt="<?php echo $context->getVar("L_EDIT"); ?>" /></a><?php endif; ?>
-						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_polls']['can_del']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_polls']['can_del'] <= $context->session['user']->info['perms'])): ?><a href="mod.php?act=delete_topic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_DELETE"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/delete.gif" alt="<?php echo $context->getVar("L_DELETE"); ?>" /></a><?php endif; ?>
+						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_polls']['can_edit']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_polls']['can_edit'] <= $context->session['user']->info['perms'])): ?><a href="newtopic.php?act=edittopic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_EDIT"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/edit.gif" alt="<?php echo $context->getVar("L_EDIT"); ?>" /></a><?php endif; ?>
+						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_polls']['can_del']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['other_polls']['can_del'] <= $context->session['user']->info['perms'])): ?><a href="mod.php?act=deletetopic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_DELETE"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/delete.gif" alt="<?php echo $context->getVar("L_DELETE"); ?>" /></a><?php endif; ?>
 					<?php endif; ?>
 				<?php endif; ?>
 				<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['closed']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['closed']['can_add'] <= $context->session['user']->info['perms'])): ?><a href="mod.php?act=lock_topic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_LOCK"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/lock.gif" alt="<?php echo $context->getVar("L_LOCK"); ?>" /></a><?php endif; ?>
 			</div>
 		</td>
 	</tr>
-</table>

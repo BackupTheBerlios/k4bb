@@ -75,13 +75,13 @@
 			<td class="alt3" nowrap="nowrap" align="center" width="30%">
 				<?php if($context->getVar('post_id') > 0): ?>
 				<div align="left" class="smalltext">
-					<a href="viewtopic.php?id=<?php echo $context->getVar("post_id"); ?>" title="<?php echo $context->getVar("post_name"); ?>"><strong><?php ob_start(); $length = "27"; $append = "...";  echo $context->getVar("post_name");  $string = ob_get_contents(); ob_end_clean(); echo (strlen($string) > $length) ? substr($string, 0, $length).$append : $string; ?></strong></a>
+					<a href="findpost.php?id=<?php echo $context->getVar("post_id"); ?>" title="<?php echo $context->getVar("post_name"); ?>"><strong><?php ob_start(); $length = "27"; $append = "...";  echo $context->getVar("post_name");  $string = ob_get_contents(); ob_end_clean(); echo (strlen($string) > $length) ? substr($string, 0, $length).$append : $string; ?></strong></a>
 					<br />
 					<?php echo $context->getVar("L_BY"); ?> <a href="member.php?id=<?php echo $context->getVar("post_uid"); ?>" title="<?php echo $context->getVar("post_uname"); ?>"><strong><?php echo $context->getVar("post_uname"); ?></strong></a>
 				</div>
 				<div align="right" class="smalltext">
 					<?php ob_start(); $format = "%b %d %y";  echo $context->getVar("post_created");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?>&nbsp;<span class="date_color"><?php ob_start(); $format = "%I:%M%p";  echo $context->getVar("post_created");  $date = ob_get_contents(); ob_end_clean(); echo strftime($format, intval(bbtime($date))); ?></span>
-					<a href="viewtopic.php?id=<?php echo $context->getVar("post_id"); ?>" title="<?php echo $context->getVar("post_name"); ?>"><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/icon_latest_reply.gif" border="0" alt="<?php echo $context->getVar("post_name"); ?>" /></a>
+					<a href="findpost.php?id=<?php echo $context->getVar("post_id"); ?>" title="<?php echo $context->getVar("post_name"); ?>"><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/icon_latest_reply.gif" border="0" alt="<?php echo $context->getVar("post_name"); ?>" /></a>
 				</div>
 				<?php else: ?>
 				--
@@ -92,11 +92,10 @@
 		<?php if($context->getVar('is_link') == 1): ?>
 		<tr class="panel">
 			<td width="5%" align="center"><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_link.gif" alt="<?php echo $context->getVar("forum_alt"); ?>" title="<?php echo $context->getVar("forum_alt"); ?>" height="28" width="28" border="0" /></td>
-			<?php if($context->getVar('link_show_redirects') == 1): ?>
+			<?php if($context->getVar('link_show_redirects') == 0): ?>
 			<td width="60%"><a href="redirect.php?id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("name"); ?>"><strong><?php echo $context->getVar("name"); ?></strong></a><br /><span class="minitext"><?php echo $context->getVar("description"); ?><br /><?php echo $context->getVar("sub_forums"); ?></span></td>
 			<td align="center" class="alt1" colspan="3"><span class="smalltext"><?php echo $context->getVar("L_REDIRECTS"); ?>: <?php echo $context->getVar("link_redirects"); ?></span></td>
-			<?php endif; ?>
-			<?php if($context->getVar('link_show_redirects') == 0): ?>
+			<?php else: ?>
 			<td width="95%" colspan="4"><a href="<?php echo $context->getVar("link_href"); ?>" target="_blank"><strong><?php echo $context->getVar("name"); ?></strong></a><br /><span class="minitext"><?php echo $context->getVar("description"); ?><br /><?php echo $context->getVar("sub_forums"); ?></span></td>
 			<?php endif; ?>
 		</tr>

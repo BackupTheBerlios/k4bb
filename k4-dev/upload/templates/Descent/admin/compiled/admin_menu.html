@@ -1,27 +1,5 @@
 <?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
-<script type="text/javascript">
-	//<![CDATA[ <!--
-	window.onload = function() {
-		var row_links = document.getElementsByTagName("tr");
-		
-		for(var i = 0; i < row_links.length; i++) {
-			row_links[i].onmouseover = function() {
-				if(this.className == 'panel') {
-					this.className = 'alt1';
-				}
-			}
-			row_links[i].onmouseout = function() {
-				if(this.className == 'alt1') {
-					this.className = 'panel';
-				}
-			}
-		}
-	}
-	//]]> -->
-</script>
-<a href="admin.php" target="main"><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/admin_logo.gif" alt="" border="0" /></a><br />
-<table width="100%" cellpadding="0" cellspacing="1" border="0" id="nav_table">
-	
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content" id="nav_table">
 	<thead class="thead"><td><?php echo $context->getVar("L_OPTIONS"); ?></td></thead>
 	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=options"><?php echo $context->getVar("L_OPTIONS"); ?></a></td></tr>
 	
@@ -57,4 +35,24 @@
 	<tr class="panel"><td><a class="smalltext" target="main" href="admin.php?act=faq"><?php echo $context->getVar("L_FAQ"); ?></a></td></tr>
 	-->
 </table>
+<script type="text/javascript">
+	//<![CDATA[ <!--
+	window.onload = function() {
+		var row_links = document.getElementsByTagName("tr");
+		
+		for(var i = 0; i < row_links.length; i++) {
+			row_links[i].onmouseover = function() {
+				if(this.className == 'panel') {
+					this.className = 'alt1';
+				}
+			}
+			row_links[i].onmouseout = function() {
+				if(this.className == 'alt1') {
+					this.className = 'panel';
+				}
+			}
+		}
+	}
+	//]]> -->
+</script>
 <?php endif; ?>

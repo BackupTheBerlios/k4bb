@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: lang.php,v 1.6 2005/04/25 19:53:38 k4st Exp $
+* @version $Id: lang.php,v 1.7 2005/05/01 17:38:02 k4st Exp $
 * @package k42
 */
 
@@ -205,6 +205,7 @@ function return_language() {
 	'L_INVALIDTOPIC'		=> 'You have specified an invalid topic ID.',
 	'L_INVALIDDRAFT'		=> 'You have specified an invalid draft ID.',
 	'L_INVALIDREPLY'		=> 'You have specified an invalid reply ID.',
+	'L_INVALIDPOST'			=> 'You have specified an invalid post ID.',
 	'L_INVALIDTOPICVIEW'	=> 'You have specified an invalid topic.',
 	'L_ADDEDFORUMPERMS'		=> 'Successfuly added the forum permissions for <strong>%s</strong>.',
 	'L_UPDATEDFORUM'		=> 'Successfully updated the forum <strong>%s</strong>.',
@@ -224,6 +225,14 @@ function return_language() {
 	'L_ISPRIVATE'			=> 'Is Private?',
 	'L_FORUMPASSWORD'		=> 'Forum Password',
 	'L_ISDIRECTLINK'		=> 'Is a direct link?',
+	'L_AUTOPRUNING'			=> 'Auto-pruning',
+	'L_AUTOPRUNEFREQUENCY'	=> 'Auto-prune Frequency',
+	'L_AUTOPRUNEPOSTAGE'	=> 'Auto-prune Post Age',
+	'L_AUTOPRUNEPOSTVIEWAGE'=> 'Auto-prune Post Viewed Age',
+	'L_PRUNEOLDPOLLS'		=> 'Prune old Polls',
+	'L_PRUNEANNOUNCEMENTS'	=> 'Prune Announcements',
+	'L_PRUNESTICKIES'		=> 'Prune Stickies',
+	'L_DAYS'				=> 'Days',
 	'L_ISDIRECTLINKEXPLAIN'	=> '<strong>If this forum is a link</strong>, you can choose to have a direct link, or to track the redirects for this link.',
 	'L_TOPICSPERPAGE'		=> 'Topics per Page',
 	'L_INSERTFORUMTPP'		=> 'Please insert the minimum number of topics to be displayed per page for this forum.',
@@ -321,6 +330,7 @@ function return_language() {
 	'L_POSTICONSPOSTCHOOSE'	=> 'You may choose an icon for your message from the following list:',
 	'L_NOPOSTICONS'			=> 'There are currently no Post Icons to display.',
 	'L_NOEMOTICONS'			=> 'There are currently no Emoticons to display.',
+	/* / Admin Icons */
 	
 	'L_TYPED'				=> 'Typed',
 	'L_MODFAQ'				=> 'Add/Edit/Delete FAQ',
@@ -610,10 +620,13 @@ function return_language() {
 	'L_TOPICDISPLAY'		=> 'Topic Display Mode',
 
 	/* Single forum view */
+	'L_TOPICEXPIREEXPLAIN'	=> 'Enter 0 or leave blank for a never ending Sticky/Announcement',
+	'L_STICKTOPICFOR'		=> 'Stick topic for',
+	'L_STICKTOPICFOREXPLAIN'=> 'Sticky/Announcement time limit',
 	'L_SUBFORUMS'			=> 'Sub-Forums',
 	'L_TOPICSINFORUM'		=> 'Topics in Forum',
 	'L_ANNOUNCEMENT'		=> 'Announcement',
-	'L_STICKY'				=> 'Sticky',
+	'L_STICKYTOPIC'			=> 'Sticky',
 	'L_POLL'				=> 'Poll',
 	'L_POSTTOPIC'			=> 'Post Topic',
 	'L_POSTPOLL'			=> 'Post Poll',
@@ -820,6 +833,10 @@ function return_language() {
 	'L_NOTIFYONREPLY'		=> 'Send me an email when a reply is posted',
 	'L_PARSEURLS'			=> 'Do not automatically parse URLs',
 	'L_MISCOPTIONS'			=> 'Miscellaneous Options',
+	'L_TOPICEXPIREEXPLAIN'	=> 'Enter 0 or leave blank for a never ending Sticky/Announcement',
+	'L_POSTTOPICAS'			=> 'Post topic as',
+	'L_GLOBAL'				=> 'Global',
+	'L_NORMAL'				=> 'Normal',
 	'L_EDITPOST'			=> 'Edit Post',
 	'L_EDITTOPIC'			=> 'Edit Topic',
 	'L_DELETETOPIC'			=> 'Delete Topic',
@@ -1183,6 +1200,7 @@ function return_language() {
 	'L_SETTINGSSUCCESS'		=> 'You have successfully updated your user settings.',
 	'L_PROFILESUCCESS'		=> 'You have successfully updated your profile.',
 	'L_ADDEDTOPIC'			=> 'Successfully added the topic <strong>%s</strong> to the forum <strong>%s</strong>.',
+	'L_ADDEDREPLY'			=> 'Successfully added the reply <strong>%s</strong> to the topic <strong>%s</strong>.',
 	'L_REMOVEDDRAFT'		=> 'Successfully removed the draft topic <strong>%s</strong> from the forum <strong>%s</strong>.',
 	'L_SAVEDDRAFTTOPIC'		=> 'Successfully saved the topic <strong>%s</strong> as a draft to post in the forum <strong>%s</strong>.',
 	'L_DELETEDTOPIC'		=> 'Successfully deleted the topic <strong>%s</strong> from the forum <strong>%s</strong>.',
@@ -1232,6 +1250,7 @@ function return_language() {
 	'L_DRAFTDOESNTEXIST'	=> 'The selected Draft does not exist.',
 	'L_TOPICDOESNTEXIST'	=> 'The selected Topic does not exist.',
 	'L_REPLYDOESNTEXIST'	=> 'The selected reply does not exist.',
+	'L_POSTDOESNTEXIST'		=> 'The selected post does not exist.',
 	'L_FORUMDOESNTEXIST'	=> 'The selected Category or Forum does not exist.',
 	'L_USERDOESNTEXIST'		=> 'The selected User does not exist.',
 	'L_GROUPDOESNTEXIST'	=> 'The selected User Group does not exist.',

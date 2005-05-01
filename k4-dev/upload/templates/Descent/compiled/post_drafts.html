@@ -34,7 +34,7 @@
 		<td width="20%">
 			<a href="newtopic.php?id=<?php echo $context->getVar("forum_id"); ?>&amp;draft=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_LOADDRAFT"); ?>"><?php echo $context->getVar("L_LOADDRAFT"); ?></a>
 			<br />
-			<a href="newtopic.php?act=delete_draft&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_DELETEDRAFT"); ?>"><?php echo $context->getVar("L_DELETEDRAFT"); ?></a>
+			<a href="newtopic.php?act=deletedraft&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_DELETEDRAFT"); ?>"><?php echo $context->getVar("L_DELETEDRAFT"); ?></a>
 		</td>
 	</tr>
 	<?php $context->pop(); endwhile; ?>

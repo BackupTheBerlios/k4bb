@@ -1,4 +1,3 @@
-<h1><?php echo $context->getVar("topic_name"); ?></h1>
 <!-- Posting Buttons -->
 <div align="left">
 	<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_add'] <= $context->session['user']->info['perms'])): ?>
@@ -11,6 +10,7 @@
 <!-- / Posting Buttons -->
 
 <?php if ($context->listReset("topic")): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 <?php while($context->push($context->listNext("topic"))): ?>
 
 <!-- Topic: <?php echo $context->getVar("name"); ?> -->
@@ -29,6 +29,7 @@
 <?php endif; ?>
 <?php endif; ?>
 <?php $context->pop(); endwhile; ?>
+</table>
 <?php endif; ?>
 
 <!-- Posting Buttons -->

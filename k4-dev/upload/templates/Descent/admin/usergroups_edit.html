@@ -14,18 +14,26 @@
 		</td>
 	</tr>
 	<tr class="alt2">
-		<td width="30%"><strong>{$L_DESCRIPTION}:</strong></td>
+		<td width="30%"><strong>{$L_NICENAME}:</strong></td>
 		<td>
-			<script type="text/javascript">doHelpButton('usergroup_description');</script>
-			<textarea name="description" id="description" rows="2" style="width: 80%;" class="inputbox" tabindex="2">{$group_description}</textarea>
-			<form:error id="description_error" for="description" setclass="inputfailed" regex="(\n|.)+">{$L_INSERTGROUPDESC}</form:error>
+			<script type="text/javascript">doHelpButton('usergroup_nicename');</script>
+			<input type="text" name="nicename" id="nicename" value="{$group_nicename}" maxlength="255" class="inputbox" tabindex="2" />
+			<form:error id="name_error" for="nicename" setclass="inputfailed" regex=".+">{$L_INSERTGROUPNICENAME}</form:error>
 		</td>
 	</tr>
 	<tr class="alt1">
+		<td width="30%"><strong>{$L_DESCRIPTION}:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('usergroup_description');</script>
+			<textarea name="description" id="description" rows="2" style="width: 80%;" class="inputbox" tabindex="3">{$group_description}</textarea>
+			<form:error id="description_error" for="description" setclass="inputfailed" regex="(\n|.)+">{$L_INSERTGROUPDESC}</form:error>
+		</td>
+	</tr>
+	<tr class="alt2">
 		<td width="30%"><strong>{$L_MINGROUPPERM}:</strong></td>
 		<td>
 			<script type="text/javascript">doHelpButton('usergroup_minperm');</script>
-			<select name="min_perm" id="min_perm" class="minitext" tabindex="3">
+			<select name="min_perm" id="min_perm" class="minitext" tabindex="4">
 				<option value="0">--</option>
 				<option value="1">{$L_GUEST}</option>
 				<option value="4">{$L_PENDINGMEMBER}</option>
@@ -39,11 +47,11 @@
 			<script type="text/javascript">setIndex({$group_min_perm}, 'min_perm');</script>
 		</td>
 	</tr>
-	<tr class="alt2">
+	<tr class="alt1">
 		<td width="30%"><strong>{$L_MAXGROUPPERM}:</strong></td>
 		<td>
 			<script type="text/javascript">doHelpButton('usergroup_maxperm');</script>
-			<select name="max_perm" id="max_perm" class="minitext" tabindex="4">
+			<select name="max_perm" id="max_perm" class="minitext" tabindex="5">
 				<option value="0">--</option>
 				<option value="1">{$L_GUEST}</option>
 				<option value="4">{$L_PENDINGMEMBER}</option>
@@ -57,34 +65,34 @@
 			<script type="text/javascript">setIndex({$group_max_perm}, 'max_perm');</script>
 		</td>
 	</tr>
-	<tr class="alt1">
+	<tr class="alt2">
 		<td width="30%"><strong>{$L_PUBLICDISPLAY}:</strong></td>
 		<td>
 			<script type="text/javascript">doHelpButton('usergroup_publicdisplay');</script>
-			<select name="display_legend" id="display_legend" class="minitext" tabindex="5">
+			<select name="display_legend" id="display_legend" class="minitext" tabindex="6">
 				<option value="0">{$L_NO}</option>
 				<option value="1">{$L_YES}</option>
 			</select>
 			<script type="text/javascript">setIndex({$group_display_legend}, 'display_legend');</script>
 		</td>
 	</tr>
-	<tr class="alt2">
+	<tr class="alt1">
 		<td width="30%"><strong>{$L_MODERATORSNAME}:</strong></td>
 		<td>
 			<script type="text/javascript">doHelpButton('usergroup_modname');</script>
-			<input type="text" name="mod_name" id="mod_name" value="{$group_mod_name}" size="{$maxuserlength}" maxlength="{$maxuserlength}" class="inputbox" tabindex="6" />
+			<input type="text" name="mod_name" id="mod_name" value="{$group_mod_name}" size="{$maxuserlength}" maxlength="{$maxuserlength}" class="inputbox" tabindex="7" />
 			<form:error id="mod_name_error" for="mod_name" setclass="inputfailed" regex=".+">{$L_INSERTMODNAME}</form:error>
 		</td>
 	</tr>
-	<tr class="alt1">
+	<tr class="alt2">
 		<td width="30%"><strong>{$L_COLOR}:</strong></td>
 		<td>
 			<script type="text/javascript">doHelpButton('usergroup_color');</script>
-			#<input type="text" name="color" id="color" size="6" value="{$group_color}" maxlength="6" class="inputbox" tabindex="7" />
+			#<input type="text" name="color" id="color" size="6" value="{$group_color}" maxlength="6" class="inputbox" tabindex="8" />
 			<form:error id="color_error" for="color" setclass="inputfailed" regex=".+">{$L_INSERTGROUPCOLOR}</form:error>
 		</td>
 	</tr>
-	<tr class="alt2">
+	<tr class="alt1">
 		<td width="30%"><strong>{$L_GROUPAVATAR}:</strong></td>
 		<td>
 			{$L_BROWSEFORIMGFILE}:<br />

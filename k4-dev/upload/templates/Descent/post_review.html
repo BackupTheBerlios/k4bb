@@ -1,14 +1,4 @@
-<!-- Post Preview -->
-<list:list id="topic">
-<list:item list="topic">
-<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
-	<tr class="thead">
-		<td colspan="2">{$L_PREVIEW}</td>
-	</tr>
-	<tr class="tcat">
-		<td width="20%"><div align="center">{$L_AUTHOR}</div></td>
-		<td width="80%"><div align="center">{$L_MESSAGE}</div></td>
-	</tr>
+<!-- Post Review -->
 	<tr class="panel">
 		<td width="20%" class="alt1">
 			<div align="center">
@@ -51,6 +41,7 @@
 		</td>
 		<td width="80%" id="topic{$id}" valign="top">
 			{$body_text}
+			<textarea name="reverted_body_text" id="body_text{$id}" style="display: none;">{$reverted_body_text}</textarea>
 			<if:if var="disable_sig" eq="0">
 			<if:if var="post_user_signature" noteq="">
 			<br />
@@ -60,8 +51,9 @@
 			</if:if>
 		</td>
 	</tr>
-</table>
-</list:item>
-</list:list>
-<br />
-<!-- / Post Preview -->
+	<tr class="panel">
+		<td class="alt1">
+			<div align="right"><a href="javascript:;" onclick="add_review_quote('<if:if var="poster_name" eq="">{$L_GUEST}<if:else />{$poster_name}</if:if>', 'body_text{$id}', 'messagecodex')" title="{$L_QUOTE}"><img src="Images/{$IMG_DIR}/Buttons/{$LANG}/quote.gif" border="0" alt="{$L_QUOTE}" /></a></div>
+		</td>
+	</tr>
+<!-- / Post Review -->

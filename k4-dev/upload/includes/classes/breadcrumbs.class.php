@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: breadcrumbs.class.php,v 1.3 2005/04/13 02:52:19 k4st Exp $
+* @version $Id: breadcrumbs.class.php,v 1.4 2005/05/01 17:42:10 k4st Exp $
 * @package k42
 */
 
@@ -67,6 +67,11 @@ function BreadCrumbs(&$template, $location = NULL, $row_left = FALSE, $row_right
 				/* Thread */
 				case 4: {
 					$current['location'] = 'viewthread.php?id='. $current['id'];
+					break;
+				}
+				/* Reply */
+				case 8: {
+					$current['location'] = 'findpost.php?id='. $current['id'];
 					break;
 				}
 				/* Gallery Category */
