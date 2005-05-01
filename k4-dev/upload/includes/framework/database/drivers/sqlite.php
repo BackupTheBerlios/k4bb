@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: sqlite.php,v 1.5 2005/04/20 02:55:12 k4st Exp $
+* @version $Id: sqlite.php,v 1.6 2005/05/01 17:44:25 k4st Exp $
 * @package k42
 */
 
@@ -134,7 +134,8 @@ class SQLiteConnection extends FADBConnection {
 	}
 
 	function executeUpdate($stmt) {
-
+		//echo '<br /><br />'. $stmt .'<br /><br />';
+		
 		$result = sqlite_query($stmt, $this->link);
 
 		if ($result == FALSE)
