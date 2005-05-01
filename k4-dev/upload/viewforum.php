@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.11 2005/04/25 19:50:53 k4st Exp $
+* @version $Id: viewforum.php,v 1.12 2005/05/01 01:12:02 k4st Exp $
 * @package k42
 */
 
@@ -63,7 +63,7 @@ class DefaultEvent extends Event {
 				/* Set the extra SQL query fields to check */
 				$extra				= " AND s.location_file = '". $dba->Quote($_URL->file) ."' AND s.location_id = ". $location_id;	
 
-				$forum_can_view		= $forum['row_type'] & CATEGORY ? $user['maps']['categories'][$forum['id']]['can_view'] : $user['maps']['forums'][$forum['id']]['can_view'];
+				$forum_can_view		= $forum['row_type'] & CATEGORY ? get_map($user, 'categories', 'can_view', array()) : get_map($user, 'forums', 'can_view', array());
 				
 				$expired			= time() - ini_get('session.gc_maxlifetime');
 
@@ -120,7 +120,7 @@ class DefaultEvent extends Event {
 					/* If we are looking at a category */
 					if($forum['row_type'] & CATEGORY) {
 						
-						if($user['maps']['categories'][$forum['id']]['can_view'] > $user['perms']) {
+						if(get_map($user, 'categories', 'can_view', array()) > $user['perms']) {
 							/* set the breadcrumbs bit */
 							$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
 							$template->setInfo('content', $template->getVar('L_PERMCANTVIEW'));
@@ -171,7 +171,7 @@ class DefaultEvent extends Event {
 							$template->setFile('content', 'subforums.html');
 						}
 
-						if($user['maps']['forums'][$forum['id']]['topics']['can_view'] > $user['perms']) {
+						if(get_map($user, 'topics', 'can_view', array('forum_id'=>$forum['id'])) > $user['perms']) {
 							/* set the breadcrumbs bit */
 							$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
 							$template->setInfo('content_extra', $template->getVar('L_CANTVIEWFORUMTOPICS'), FALSE);
@@ -181,15 +181,15 @@ class DefaultEvent extends Event {
 						
 						/* Set what this user can/cannot do in this forum */
 						$template->setVar('forum_user_topic_options', sprintf($template->getVar('L_FORUMUSERTOPICPERMS'),
-						iif(($user['maps']['forums'][$forum['id']]['topics']['can_add'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
-						iif(($user['maps']['forums'][$forum['id']]['topics']['can_edit'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
-						iif(($user['maps']['forums'][$forum['id']]['topics']['can_del'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
-						iif(($user['maps']['forums'][$forum['id']]['attachments']['can_add'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN'))));
+						iif((get_map($user, 'topics', 'can_add', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+						iif((get_map($user, 'topics', 'can_edit', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+						iif((get_map($user, 'topics', 'can_del', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+						iif((get_map($user, 'attachments', 'can_add', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN'))));
 
 						$template->setVar('forum_user_reply_options', sprintf($template->getVar('L_FORUMUSERREPLYPERMS'),
-						iif(($user['maps']['forums'][$forum['id']]['replies']['can_add'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
-						iif(($user['maps']['forums'][$forum['id']]['replies']['can_edit'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
-						iif(($user['maps']['forums'][$forum['id']]['replies']['can_del'] > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN'))));
+						iif((get_map($user, 'replies', 'can_add', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+						iif((get_map($user, 'replies', 'can_edit', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+						iif((get_map($user, 'replies', 'can_del', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN'))));
 						
 						/* Create an array with all of the possible sort orders we can have */						
 						$sort_orders		= array('name', 'reply_time', 'num_replies', 'views', 'reply_uname', 'rating');

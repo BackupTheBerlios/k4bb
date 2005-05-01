@@ -26,7 +26,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.php,v 1.6 2005/04/25 19:51:40 k4st Exp $
+* @version $Id: bbcode.php,v 1.7 2005/05/01 01:14:15 k4st Exp $
 * @package k42
 */
 
@@ -66,7 +66,7 @@ class BBCodex {
 
 		$this->user			= &$user;
 		$this->text			= $text;
-		$this->forum_id		= $forum_id;
+		$this->instance->forum_id		= $forum_id;
 		
 		$this->html			= (bool)$html;
 		$this->bbcode		= (bool)$bbcode;
@@ -82,7 +82,7 @@ class BBCodex {
 		/* Transform unwanted html entities */
 		$this->add_custom('htmlentities', new BBHTMLentities($this));
 
-		if($this->bbcode && ($this->user['perms'] >= $this->user['maps']['forums'][$this->forum_id]['bbcode']['can_add'])) {
+		if($this->bbcode && ($this->user['perms'] >= get_map($this->user, 'bbcode', 'can_add', array('forum_id'=>$this->instance->forum_id)))) {
 			
 			/* Simple bb codes */
 			$this->add_bbcode('b', 'b', 'span style="font-weight: bold;"', 'span');
@@ -106,10 +106,10 @@ class BBCodex {
 			$this->add_custom('code', new BBCode($this));
 		}
 
-		if($this->emoticons && ($this->user['perms'] >= $this->user['maps']['forums'][$this->forum_id]['emoticons']['can_add']))
+		if($this->emoticons && ($this->user['perms'] >= get_map($this->user, 'emoticons', 'can_add', array('forum_id'=>$this->forum_id)) ))
 			$this->add_custom('emoticons', new BBEmoticons($this));
 
-		if($this->html && ($this->user['perms'] >= $this->user['maps']['forums'][$this->forum_id]['html']['can_add']))
+		if($this->html && ($this->user['perms'] >= get_map($this->user, 'html', 'can_add', array('forum_id'=>$this->forum_id))))
 			$this->add_custom('html', new BBHtml($this));
 	}
 
@@ -344,21 +344,21 @@ class BBQuote extends BBCodeTag {
 	}
 	function to_html() {
 		
-		while(preg_match('~\[quote\]([^"]+)\[\/quote\]~iU', $this->instance->text))
-			$this->instance->text = preg_replace('~\[quote\]([^"]+)\[\/quote\]~iU', '<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .': </div><div class="quotecontent" align="left">\\1</div><br /></div>', $this->instance->text);
+		while(preg_match('~\[quote\](.+)\[\/quote\]~isU', $this->instance->text))
+			$this->instance->text = preg_replace('~\[quote\](.+)\[\/quote\]~isU', '<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .': </div><div class="quotecontent" align="left">\\1</div><br /></div>', $this->instance->text);
 		
-		while(preg_match('~\[quote=([^\]]+)\]([^"]+)\[\/quote\]~iU', $this->instance->text))
-			$this->instance->text = preg_replace('~\[quote=([^\]]+)\]([^"]+)\[\/quote\]~iU', '<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .' ( \\1 ): </div><div class="quotecontent" align="left">\\2</div><br /></div>', $this->instance->text);
+		while(preg_match('~\[quote=([^\]]+)\](.+)\[\/quote\]~isU', $this->instance->text))
+			$this->instance->text = preg_replace('~\[quote=([^\]]+)\](.+)\[\/quote\]~isU', '<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .' ( \\1 ): </div><div class="quotecontent" align="left">\\2</div><br /></div>', $this->instance->text);
 		
 		return $this->instance->text;
 	}
 	function to_bbcode() {
 
-		while(preg_match('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\: </div><div class="quotecontent" align="left">([^"]+)</div><br /></div>~iU', $this->instance->text))
-			$this->instance->text = preg_replace('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\: </div><div class="quotecontent" align="left">([^"]+)</div><br /></div>~iU', '[quote]\\1[/quote]', $this->instance->text);
+		while(preg_match('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\: </div><div class="quotecontent" align="left">(.+)</div><br /></div>~isU', $this->instance->text))
+			$this->instance->text = preg_replace('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\: </div><div class="quotecontent" align="left">(.+)</div><br /></div>~isU', '[quote]\\1[/quote]', $this->instance->text);
 		
-		while(preg_match('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\ \( (.*?) \): </div><div class="quotecontent" align="left">([^"]+)</div><br /></div>~iU', $this->instance->text))
-			$this->instance->text = preg_replace('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\ \( ([^"]+?) \): </div><div class="quotecontent" align="left">([^"]+)</div><br /></div>~iU', '[quote=\\1]\\2[/quote]', $this->instance->text);
+		while(preg_match('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\ \( (.*?) \): </div><div class="quotecontent" align="left">(.+)</div><br /></div>~isU', $this->instance->text))
+			$this->instance->text = preg_replace('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\ \( ([^"]+?) \): </div><div class="quotecontent" align="left">(.+)</div><br /></div>~isU', '[quote=\\1]\\2[/quote]', $this->instance->text);
 	
 		return $this->instance->text;
 	}
@@ -382,12 +382,12 @@ function highlight_code($matches) {
 	$matches[1] = str_replace('&lt;', '<', $matches[1]);
 	$matches[1] = str_replace('&gt;', '>', $matches[1]);
 
-	/* Quote */
-	$matches[1] = str_replace('&quot;', '"', $matches[1]);
-
 	/* Ampersands */
 	$matches[1] = str_replace('&amp;', '&', $matches[1]);
 	
+	/* Quotes */
+	$matches[1] = str_replace('&quot;', '"', $matches[1]);
+	$matches[1] = str_replace('&#039;', "'", $matches[1]);
 
 	/**
 	 * Start the output buffer, we could use hgihtlight_string($text, TRUE);,
@@ -411,8 +411,8 @@ function highlight_code($matches) {
 	return $code;
 }
 function htmlcode_to_bbcode($matches) {
-	while(preg_match('~<(span|font|code)(.*?)>(.*?)</(span|font|code)>~is', $matches[1]))
-		$matches[1] = preg_replace('~<(span|font|code)(.*?)>(.*?)</(span|font|code)>~is', '\\3', $matches[1]);
+	while(preg_match('~<(span|font|code)(.*?)>(.*?)</(span|font|code)>~isU', $matches[1]))
+		$matches[1] = preg_replace('~<(span|font|code)(.*?)>(.*?)</(span|font|code)>~isU', '\\3', $matches[1]);
 	
 	$matches[1] = preg_replace('~(<br />|<br>)~i', "\n", $matches[1]);
 
@@ -485,7 +485,7 @@ class BBList extends BBCodeTag {
 			$i++;
 		}
 
-		$str = preg_replace('~\[\*\]([^\r\n\s\b\W]*)~is', '<!-- LIST ITEM --><li>\\1</li><!-- / LIST ITEM -->', $str);
+		$str = preg_replace('~\[\*\]([^\r\n\b]*)~is', '<!-- LIST ITEM --><li>\\1</li><!-- / LIST ITEM -->', $str);
 		
 		return $str;
 	}
@@ -579,9 +579,9 @@ class BBHtml extends BBCodeTag {
 	}
 	function to_html() {
 		
-		if($this->instance->user['maps']['forums'][$this->instance->forum_id]['html']['can_add'] <= $this->instance->user['perms']) {
+		if(get_map($this->instance->user, 'html', 'can_add', array('forum_id'=>$this->instance->forum_id)) <= $this->instance->user['perms']) {
 			
-			$html				= $this->instance->user['maps']['forums'][$this->instance->forum_id]['html']['value'];
+			$html				= get_map($this->instance->user, 'html', 'value', array('forum_id'=>$this->instance->forum_id));
 			$html				= str_replace(' ', '', $html);
 			$tags				= explode(",", $html);
 
@@ -607,9 +607,9 @@ class BBHtml extends BBCodeTag {
 	}
 	function to_bbcode() {
 		
-		if($this->instance->user['maps']['forums'][$this->instance->forum_id]['html']['can_add'] <= $this->instance->user['perms']) {
+		if(get_map($this->instance->user, 'html', 'can_add', array('forum_id'=>$this->instance->forum_id)) <= $this->instance->user['perms']) {
 
-			$html				= $this->instance->user['maps']['forums'][$this->instance->forum_id]['html']['value'];
+			$html				= get_map($this->instance->user, 'html', 'value', array('forum_id'=>$this->instance->forum_id));
 			$html				= str_replace(' ', '', $html);
 			$tags				= explode(",", $html);
 
@@ -655,7 +655,7 @@ class BBHTMLentities extends BBCodeTag {
 		$this->instance->text = str_replace('<', '&lt;', $this->instance->text);
 		$this->instance->text = str_replace('>', '&gt;', $this->instance->text);
 
-		/* Quote */
+		/* Quotes */
 		$this->instance->text = str_replace('"', '&quot;', $this->instance->text);
 		$this->instance->text = str_replace("'", '&#039;', $this->instance->text);
 		
@@ -677,7 +677,7 @@ class BBHTMLentities extends BBCodeTag {
 		$this->instance->text = str_replace('&lt;', '<', $this->instance->text);
 		$this->instance->text = str_replace('&gt;', '>', $this->instance->text);
 
-		/* Quote */
+		/* Quotes */
 		$this->instance->text = str_replace('&quot;', '"', $this->instance->text);
 		$this->instance->text = str_replace('&#039;', "'", $this->instance->text);
 

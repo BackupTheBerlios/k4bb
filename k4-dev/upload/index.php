@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.10 2005/04/25 19:50:53 k4st Exp $
+* @version $Id: index.php,v 1.11 2005/05/01 01:12:02 k4st Exp $
 * @package k42
 */
 
@@ -60,11 +60,10 @@ exit; */
 
 class DefaultEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
-
+		
 		global $_DATASTORE, $_USERGROUPS;
-
+		
 		/*
-		$text = ':(<p>hello world</p><a href="www.google.com">hiiii</a>';
 		
 		//echo str_replace('"','\"', serialize(array('spiderstrings'=>'googlebot|lycos|ask jeeves|scooter|fast-webcrawler|slurp@inktomi|turnitinbot','spidernames'=>array('googlebot' => 'Google','lycos' => 'Lycos','ask jeeves' => 'Ask Jeeves','scooter' => 'Altavista','fast-webcrawler' => 'AllTheWeb','slurp@inktomi' => 'Inktomi','turnitinbot' => 'Turnitin.com'))));
 		

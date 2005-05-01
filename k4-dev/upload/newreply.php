@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: newreply.php,v 1.1 2005/04/25 19:50:53 k4st Exp $
+* @version $Id: newreply.php,v 1.2 2005/05/01 01:12:02 k4st Exp $
 * @package k42
 */
 
@@ -79,7 +79,7 @@ class DefaultEvent extends Event {
 		}
 
 		/* Do we have permission to post to this topic in this forum? */
-		if($user['perms'] < $user['maps']['forums'][$forum['id']]['replies']['can_add']) {
+		if($user['perms'] < get_map($user, 'replies', 'can_add', array('forum_id'=>$forum['id']))) {
 			/* set the breadcrumbs bit */
 			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
 			return $template->setInfo('content', $template->getVar('L_PERMCANTPOST'), FALSE);		
@@ -94,8 +94,14 @@ class DefaultEvent extends Event {
 				$template->setInfo('content', $template->getVar('L_REPLYDOESNTEXIST'), FALSE);
 				
 				return TRUE;
+			} else {
+				
+				$template->show('parent_id');
+				$template->setVar('parent_id', $reply['id']);
 			}
 		}
+
+		$parent			= isset($reply) && is_array($reply) ? $reply : $topic;
 				
 		/**
 		 * Start setting useful template information
@@ -118,18 +124,18 @@ class DefaultEvent extends Event {
 		foreach($forum as $key => $val)
 			$template->setVar('forum_'. $key, $val);
 
-		foreach($topic as $key => $val)
-			$template->setVar('topic_'. $key, $val);
-		
+		/* We set topic information to be reply information */
+		foreach($topic as $key => $val) {
+			
+			/* Omit the body text variable */
+			if($key != 'body_text')
+				$template->setVar('reply_'. $key, $val);
+		}
+
 		/* If this is a quote, put quote tags around the message */
 		if(isset($request['quote']) && intval($request['quote']) == 1) {
-			if(isset($reply)) {
-				$bbcode			= &new BBCodex($user, $reply['body_text'], $forum['id'], TRUE, TRUE, TRUE, TRUE);
-				$template->setVar('reply_body_text', '[quote='. $reply['poster_name'] .']'. $bbcode->revert() .'[/quote]');
-			} else {
-				$bbcode			= &new BBCodex($user, $topic['body_text'], $forum['id'], TRUE, TRUE, TRUE, TRUE);
-				$template->setVar('reply_body_text', '[quote='. $topic['poster_name'] .']'. $bbcode->revert() .'[/quote]');
-			}
+			$bbcode			= &new BBCodex($user, $parent['body_text'], $forum['id'], TRUE, TRUE, TRUE, TRUE);
+			$template->setVar('reply_body_text', '[quote='. $parent['poster_name'] .']'. $bbcode->revert() .'[/quote]');
 		}
 
 		/* Set the title variable */
@@ -141,8 +147,16 @@ class DefaultEvent extends Event {
 		$template->setVar('newtopic_action', 'newreply.php?act=postreply');
 
 		/* set the breadcrumbs bit */
-		$template	= BreadCrumbs($template, $template->getVar('L_POSTREPLY'), $forum['row_left'], $forum['row_right']);
+		$template	= BreadCrumbs($template, $template->getVar('L_POSTREPLY'), $parent['row_left'], $parent['row_right']);
 		
+		foreach($parent as $key => $val)
+			$template->setVar('parent_'. $key, $val);
+
+		/* Get replies that are above this point */
+		$replies	= &$dba->executeQuery("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['reply'] ." FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON i.id = r.reply_id WHERE i.row_left >= ". $parent['row_left'] ." AND i.row_right <= ". $parent['row_right'] ." AND i.row_type = ". REPLY ." ORDER BY i.created DESC LIMIT 10");
+
+		$template->setList('topic_review', new TopicReviewIterator($topic, $replies, $user));
+
 		/* Set the post topic form */
 		$template->setFile('content', 'newreply.html');
 
@@ -153,7 +167,7 @@ class DefaultEvent extends Event {
 
 $app = new Forum_Controller('forum_base.html');
 
-//$app->AddEvent('postreply', new PostTopic);
+$app->AddEvent('postreply', new PostReply);
 //$app->AddEvent('editreply', new EditTopic);
 //$app->AddEvent('updatereply', new UpdateTopic);
 

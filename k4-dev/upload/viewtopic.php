@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewtopic.php,v 1.6 2005/04/25 19:50:53 k4st Exp $
+* @version $Id: viewtopic.php,v 1.7 2005/05/01 01:12:02 k4st Exp $
 * @package k42
 */
 
@@ -77,7 +77,7 @@ class DefaultEvent extends Event {
 			return TRUE;
 		}
 
-		if($user['maps']['forums'][$forum['id']]['can_view'] > $user['perms'] || $user['maps']['forums'][$forum['id']]['topics']['can_view'] > $user['perms']) {
+		if(get_map($user, 'forums', 'can_view', array()) > $user['perms'] || get_map($user, 'topics', 'can_view', array('forum_id'=>$forum['id'])) > $user['perms']) {
 			/* set the breadcrumbs bit */
 			$template		= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
 			$template->setInfo('content', $template->getVar('L_PERMCANTVIEWTOPIC'), FALSE);
@@ -88,7 +88,7 @@ class DefaultEvent extends Event {
 		/**
 		 * Set the new breadcrumbs bit
 		 */
-		$template			= BreadCrumbs($template, $topic['name'], $forum['row_left'], $forum['row_right']);
+		$template			= BreadCrumbs($template, $topic['name'], iif($topic['topic_type'] == TOPIC_GLOBAL, FALSE, $forum['row_left']), iif($topic['topic_type'] == TOPIC_GLOBAL, FALSE, $forum['row_right']));
 
 		/** 
 		 * Get the users Browsing this topic 
@@ -101,7 +101,7 @@ class DefaultEvent extends Event {
 		$expired			= time() - ini_get('session.gc_maxlifetime');
 
 		$num_online_total	= $dba->getValue("SELECT COUNT(s.id) FROM ". SESSIONS ." s WHERE s.seen >= $expired $extra");
-
+		
 		if($num_online_total > 0) {
 
 			$users_browsing		= &new OnlineUsersIterator($extra);
@@ -134,25 +134,36 @@ class DefaultEvent extends Event {
 			$template->setList('usergroups_legend', $groups);
 		}
 		
+		/**
+		 * Is this topic expired?
+		 */
+		$extra						= '';
+		if($topic['topic_type'] > TOPIC_NORMAL && $topic['topic_expire'] > 0) {
+			if(($topic['created'] + (3600 * 24 * $topic['topic_expire']) ) > time()) {
+				
+				$extra				= ",topic_expire=0,topic_type=". TOPIC_NORMAL;
+			}
+		}
+		
 		/* Add the topic info to the template */
 		foreach($topic as $key => $val)
 			$template->setVar('topic_'. $key, $val);
 
 		/* Update the number of views for this topic */
-		$dba->executeUpdate("UPDATE ". TOPICS ." SET views=views+1 WHERE topic_id=". intval($topic['id']));
+		$dba->executeUpdate("UPDATE ". TOPICS ." SET views=views+1 $extra WHERE topic_id=". intval($topic['id']));
 		
 		/* Set query values for when we fetch the replies */
 		$topic['postsperpage']		= isset($request['limit']) && ctype_digit($request['limit']) ? intval($request['limit']) : $forum['postsperpage'];
 		$topic['daysprune']			= isset($request['daysprune']) && ctype_digit($request['daysprune']) ? iif(($request['daysprune'] == -1), 0, intval($request['daysprune'])) : 0;
-		$topic['sortorder']			= isset($request['order']) && ($request['order'] == 'ASC' || $request['order'] == 'DESC') ? $request['order'] : 'DESC';
+		$topic['sortorder']			= isset($request['order']) && ($request['order'] == 'ASC' || $request['order'] == 'DESC') ? $request['order'] : 'ASC';
 		$topic['sortedby']			= isset($request['sort']) && in_array($request['sort'], $sort_orders) ? $request['sort'] : 'created';
 		$topic['start']				= isset($request['start']) && ctype_digit($request['start']) ? intval($_GET['start']) : 0;
 		
 		/* set the topic iterator */
 		$topic						= &new TopicIterator($topic, TRUE);
-
+		
 		$template->setList('topic', $topic);
-
+		
 		$template->setFile('content', 'viewtopic.html');
 
 		return TRUE;

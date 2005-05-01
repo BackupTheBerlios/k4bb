@@ -1,5 +1,6 @@
 TODO:
 
+- ** make globals, stickies and announcements work.
 - ** make it avaiable for a user to lock a topic
 - ** add a moderating note when someone deletes a topic/reply
 - when deleting categories/forums, update users' post count.

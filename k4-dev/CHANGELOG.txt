@@ -1,6 +1,8 @@
 CHANGELOG 
-$Id: CHANGELOG.txt,v 1.3 2005/04/25 19:54:22 k4st Exp $
+$Id: CHANGELOG.txt,v 1.4 2005/05/01 01:11:25 k4st Exp $
 
+30/04/2005 - added reply adding and previewing (replies.class.php)
+30/04/2005 - added reply adding (newreply.php)
 25/04/2005 - added delete topic class (topics.class.php)
 25/04/2005 - added edit topic class (topics.class.php)
 23/04/2005 - added remove draft class (topics.class.php)

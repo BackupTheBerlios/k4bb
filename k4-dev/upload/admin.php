@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: admin.php,v 1.4 2005/04/19 21:50:14 k4st Exp $
+* @version $Id: admin.php,v 1.5 2005/05/01 01:12:01 k4st Exp $
 * @package k42
 */
 
@@ -33,6 +33,7 @@ error_reporting(E_ALL);
 
 require 'forum.inc.php';
 
+@set_time_limit(120);
 
 class DefaultEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {		
@@ -67,6 +68,7 @@ class AdminHead extends Event {
 		
 		if(is_a($session['user'], 'Member') && ($user['perms'] >= ADMIN)) {
 			$template->setFile('content', 'admin/admin_head.html');
+			$template->hide('copyright');
 		} else {
 			$template->setError('content', $template->getVar('L_YOUNEEDPERMS'));
 		}

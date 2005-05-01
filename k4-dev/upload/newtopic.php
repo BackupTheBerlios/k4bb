@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: newtopic.php,v 1.8 2005/04/25 19:50:53 k4st Exp $
+* @version $Id: newtopic.php,v 1.9 2005/05/01 01:12:02 k4st Exp $
 * @package k42
 */
 
@@ -62,7 +62,7 @@ class DefaultEvent extends Event {
 		}
 
 		/* Do we have permission to post to this forum? */
-		if($user['perms'] < $user['maps']['forums'][$forum['id']]['topics']['can_add']) {
+		if($user['perms'] < get_map($user, 'topics', 'can_add', array('forum_id'=>$forum['id']))) {
 			/* set the breadcrumbs bit */
 			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
 			return $template->setInfo('content', $template->getVar('L_PERMCANTPOST'), FALSE);		
