@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: maps.php,v 1.3 2005/05/01 17:37:10 k4st Exp $
+* @version $Id: maps.php,v 1.4 2005/05/02 20:09:07 k4st Exp $
 * @package k42
 */
 
@@ -37,6 +37,8 @@ if(!defined('IN_K4')) {
 
 function get_map(&$user, $varname, $method, $args) {
 	
+	global $_MAPITEMS;
+
 	/* Simple global MAP request */
 	if(is_array($args) && empty($args)) {
 		$perm_needed		= $user['maps'][$varname][$method];
@@ -57,6 +59,10 @@ function get_map(&$user, $varname, $method, $args) {
 		/* Category */
 		} else if(isset($args['category_id']) && intval($args['category_id']) != 0) {
 			$perm_needed	= isset($user['maps']['categories'][$args['category_id']][$varname][$method]) ? $user['maps']['categories'][$args['category_id']][$varname][$method] : 0;
+		
+		/* Blog */
+		} else if(isset($args['blog']) && $args['blog'] == TRUE) {
+			$perm_needed	= isset($_MAPITEMS['blog'][$varname][$method]) ? $_MAPITEMS['blog'][$varname][$method] : 0;
 		
 		/* Global */
 		} else {
