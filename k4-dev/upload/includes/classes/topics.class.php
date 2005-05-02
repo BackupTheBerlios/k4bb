@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topics.class.php,v 1.10 2005/05/01 17:42:10 k4st Exp $
+* @version $Id: topics.class.php,v 1.11 2005/05/02 19:07:35 k4st Exp $
 * @package k42
 */
 
@@ -1119,7 +1119,7 @@ function topic_image($topic, &$user, $img_dir, $lastactive) {
 	$topic_num_replies			= @(($topic['row_right'] - $topic['row_left'] - 1) / 2);
 
 	/* If this topic is a Sticky */
-	if(@$topic['row_status'] == TOPIC_STICKY) {
+	if(@$topic['topic_type'] == TOPIC_STICKY) {
 		
 		/* If the last reply time is greater than the user's last activity */
 		if($topic['reply_time'] >= $lastactive)
@@ -1128,7 +1128,7 @@ function topic_image($topic, &$user, $img_dir, $lastactive) {
 			$image = 'Images/'. $img_dir .'/Icons/Status/sticky.'.$EXT;
 	
 	/* If this topic is an Announcement */
-	} else if(@$topic['row_status'] == TOPIC_ANNOUNCE) {
+	} else if(@$topic['topic_type'] == TOPIC_ANNOUNCE || @$topic['topic_type'] == TOPIC_GLOBAL) {
 
 		/* If the last reply time is greater than the user's last activity */
 		if($topic['reply_time'] >= $lastactive)
@@ -1288,59 +1288,6 @@ class TopicIterator extends FAArrayIterator {
 			
 			$temp['replies']			= &new RepliesIterator($this->result, $this->qp, $this->dba, $this->users, $this->groups);
 
-		}
-
-		return $temp;
-	}
-}
-
-class RepliesIterator extends FAProxyIterator {
-	
-	var $result;
-	var $session;
-	var $img_dir;
-	var $forums;
-
-	function RepliesIterator(&$result, $queryparams, &$dba, $users, $groups) {
-		
-		$this->users			= $users;
-		$this->qp				= $queryparams;
-		$this->dba				= &$_DBA;
-		$this->result			= &$result;
-		$this->groups			= $groups;
-		
-		parent::FAProxyIterator($this->result);
-	}
-
-	function &current() {
-		$temp					= parent::current();
-		
-		$temp['posticon']		= isset($temp['posticon']) && @$temp['posticon'] != '' ? iif(file_exists(FORUM_BASE_DIR .'/tmp/upload/posticons/'. @$temp['posticon']), @$temp['posticon'], 'clear.gif') : 'clear.gif';
-
-		if($temp['poster_id'] > 0) {
-			
-			if(!isset($this->users[$temp['poster_id']])) {
-			
-				$user						= $this->dba->getRow("SELECT ". $this->qp['user'] . $this->qp['userinfo'] ." FROM ". USERS ." u LEFT JOIN ". USERINFO ." ui ON u.id=ui.user_id WHERE u.id=". intval($temp['poster_id']));
-				
-				$group						= get_user_max_group($user, $this->groups);
-				$user['group_color']		= !isset($group['color']) || $group['color'] == '' ? '000000' : $group['color'];
-				$user['group_nicename']		= $group['nicename'];
-				$user['group_avatar']		= $group['avatar'];
-
-				$this->users[$user['id']]	= $user;
-			} else {
-				
-				$user						= $this->users[$temp['poster_id']];
-			}
-
-			foreach($user as $key => $val)
-				$temp['post_user_'. $key] = $val;
-		}
-
-		/* Should we free the result? */
-		if($this->row == $this->size-1) {
-			$this->result->freeResult();
 		}
 
 		return $temp;

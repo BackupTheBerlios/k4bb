@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: replies.class.php,v 1.1 2005/05/01 17:42:10 k4st Exp $
+* @version $Id: replies.class.php,v 1.2 2005/05/02 19:07:35 k4st Exp $
 * @package k42
 */
 
@@ -348,6 +348,59 @@ class PostReply extends Event {
 		}
 
 		return TRUE;
+	}
+}
+
+class RepliesIterator extends FAProxyIterator {
+	
+	var $result;
+	var $session;
+	var $img_dir;
+	var $forums;
+
+	function RepliesIterator(&$result, $queryparams, &$dba, $users, $groups) {
+		
+		$this->users			= $users;
+		$this->qp				= $queryparams;
+		$this->dba				= &$_DBA;
+		$this->result			= &$result;
+		$this->groups			= $groups;
+		
+		parent::FAProxyIterator($this->result);
+	}
+
+	function &current() {
+		$temp					= parent::current();
+		
+		$temp['posticon']		= isset($temp['posticon']) && @$temp['posticon'] != '' ? iif(file_exists(FORUM_BASE_DIR .'/tmp/upload/posticons/'. @$temp['posticon']), @$temp['posticon'], 'clear.gif') : 'clear.gif';
+
+		if($temp['poster_id'] > 0) {
+			
+			if(!isset($this->users[$temp['poster_id']])) {
+			
+				$user						= $this->dba->getRow("SELECT ". $this->qp['user'] . $this->qp['userinfo'] ." FROM ". USERS ." u LEFT JOIN ". USERINFO ." ui ON u.id=ui.user_id WHERE u.id=". intval($temp['poster_id']));
+				
+				$group						= get_user_max_group($user, $this->groups);
+				$user['group_color']		= !isset($group['color']) || $group['color'] == '' ? '000000' : $group['color'];
+				$user['group_nicename']		= $group['nicename'];
+				$user['group_avatar']		= $group['avatar'];
+
+				$this->users[$user['id']]	= $user;
+			} else {
+				
+				$user						= $this->users[$temp['poster_id']];
+			}
+
+			foreach($user as $key => $val)
+				$temp['post_user_'. $key] = $val;
+		}
+
+		/* Should we free the result? */
+		if($this->row == $this->size-1) {
+			$this->result->freeResult();
+		}
+
+		return $temp;
 	}
 }
 
