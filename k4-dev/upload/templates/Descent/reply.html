@@ -16,7 +16,7 @@
 				<core:date format="%b %d %y">{$created}</core:date>&nbsp;<span class="date_color"><core:date format="%I:%M%p">{$created}</core:date></span>
 			</div>
 			<div class="smalltext">
-				<strong>{$L_POSTSUBJECT}:</strong> {$name}&nbsp;<img src="tmp/upload/posticons/{$posticon}" alt="" border="0" />
+				<strong>{$L_POSTSUBJECT}:</strong> {$name}<a name="{$id}" id="{$id}"></a>&nbsp;<img src="tmp/upload/posticons/{$posticon}" alt="" border="0" />
 			</div>
 		</td>
 	</tr>
@@ -41,7 +41,7 @@
 			</if:if>
 			</div>
 		</td>
-		<td width="80%" id="topic{$id}" valign="top">
+		<td width="80%" id="topic{$id}" valign="top" style="height: 100px;">
 			{$body_text}
 			<if:if var="showeditedby" eq="1">
 				<if:if var="edited_time" greater="0">
@@ -72,22 +72,12 @@
 					<a href="newreply.php?id={$topic_id}&amp;r={$id}" title="{$L_POSTREPLY}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/reply.gif" alt="{$L_POSTREPLY}" /></a>
 					<a href="newreply.php?id={$topic_id}&amp;r={$id}&amp;quote=1" title="{$L_QUOTE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/quote.gif" alt="{$L_QUOTE}" /></a>
 				</maps:if>
-				<if:if var="poll" eq="0">
-					<if:if var="post_user_id" eq="user_id">
-						<maps:if var="replies" forum="topic_forum_id" method="can_edit"><a href="newreply.php?act=edittopic&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
-						<maps:if var="replies" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletereply&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
-					<if:else />
-						<maps:if var="other_replies" forum="topic_forum_id" method="can_edit"><a href="newreply.php?act=edittopic&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
-						<maps:if var="other_replies" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletereply&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
-					</if:if>
+				<if:if var="post_user_id" eq="user_id">
+					<maps:if var="replies" forum="topic_forum_id" method="can_edit"><a href="newreply.php?act=editreply&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
+					<maps:if var="replies" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletereply&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
 				<if:else />
-					<if:if var="post_user_id" eq="user_id">
-						<maps:if var="polls" forum="topic_forum_id" method="can_edit"><a href="newreply.php?act=editreply&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
-						<maps:if var="polls" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletereply&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
-					<if:else />
-						<maps:if var="other_polls" forum="topic_forum_id" method="can_edit"><a href="newreply.php?act=editreply&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
-						<maps:if var="other_polls" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletereply&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
-					</if:if>
+					<maps:if var="other_replies" forum="topic_forum_id" method="can_edit"><a href="newreply.php?act=editreply&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>
+					<maps:if var="other_replies" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletereply&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
 				</if:if>
 			</div>
 		</td>

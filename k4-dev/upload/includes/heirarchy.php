@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: heirarchy.php,v 1.4 2005/05/03 20:00:19 k4st Exp $
+* @version $Id: heirarchy.php,v 1.5 2005/05/03 21:37:22 k4st Exp $
 * @package k42
 */
 
@@ -45,8 +45,8 @@ class Heirarchy {
 		$this->dba	= &$_DBA;
 	}
 	function removeNode($info, $table) {
-		$val = (($info['row_right'] - $info['row_left'] - 1) / 2) + 2;
-		$val = $val % 2 == 0 ? $val : $val+1; // Make it an even number
+		$descendants = (($info['row_right'] - $info['row_left'] - 1) / 2) + 2;
+		$descendants = $descendants % 2 == 0 ? $descendants : $descendants+1; // Make it an even number
 		
 		/**
 		 * Create the Queries
@@ -61,12 +61,12 @@ class Heirarchy {
 		$delete->setInt(1, $info['row_left']);
 		$delete->setInt(2, $info['row_right']);
 
-		$update_a->setInt(1, $val);
+		$update_a->setInt(1, $descendants);
 		$update_a->setInt(2, $info['row_left']);
 		$update_a->setInt(3, $info['row_left']);
 
-		$update_b->setInt(1, $val);
-		$update_b->setInt(2, $val);
+		$update_b->setInt(1, $descendants);
+		$update_b->setInt(2, $descendants);
 		$update_b->setInt(3, $info['row_left']);
 		
 		/**

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: init.php,v 1.8 2005/05/01 17:37:10 k4st Exp $
+* @version $Id: init.php,v 1.9 2005/05/03 21:37:22 k4st Exp $
 * @package k42
 */
 
@@ -40,8 +40,8 @@ require FORUM_BASE_DIR. '/includes/framework/pagecraft.php';
 
 /* Functions */
 require FORUM_BASE_DIR. '/includes/cache.php';
-require FORUM_BASE_DIR. '/includes/common.php';
 require FORUM_BASE_DIR. '/includes/maps.php';
+require FORUM_BASE_DIR. '/includes/common.php';
 require FORUM_BASE_DIR. '/includes/heirarchy.php';
 require FORUM_BASE_DIR. '/includes/bbcode.php';
 

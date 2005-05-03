@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: findpost.php,v 1.1 2005/05/01 17:47:03 k4st Exp $
+* @version $Id: findpost.php,v 1.2 2005/05/03 21:35:59 k4st Exp $
 * @package k42
 */
 
@@ -47,7 +47,7 @@ class DefaultEvent extends Event {
 			$template->setInfo('content', $template->getVar('L_POSTDOESNTEXIST'), FALSE);
 		}
 
-		$post	= $dba->getRow("SELECT "> $_QUERYPARAMS['info'] ." FROM ". INFO ." i WHERE i.id = ". intval($request['id']));
+		$post	= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] ." FROM ". INFO ." i WHERE i.id = ". intval($request['id']));
 		
 		if($post['row_type'] != TOPIC && $post['row_type'] != REPLY) {
 			
@@ -59,20 +59,73 @@ class DefaultEvent extends Event {
 		/* If this is a topic */
 		if($post['row_type'] == TOPIC) {
 			
-			$topic				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id = ". intval($post['id']));
+			/**
+			 * We don't error check here because that would just be redundant. There is already
+			 * error checking in viewtopic.php, and it will make sure that this isn't a draft,
+			 * its info exits, etc.
+			 */
 			
-			/* Make sure that this topic isn't a draft */
-			if($topic['is_draft'] == 1) {
-				/* set the breadcrumbs bit */
-				$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPICVIEW'));
-				$template->setInfo('content', $template->getVar('L_CANTVIEWDRAFT'), FALSE);
-				
-				return TRUE;
-			}
+			header("Location: viewtopic.php?id=". $post['id']);
+			exit;
 
 		/* If this is a reply */	
 		} else {
 			
+			$reply				= $dba->getRow("SELECT ". substr($_QUERYPARAMS['reply'], 1) ." FROM ". REPLIES ." r WHERE r.reply_id = ". intval($post['id']));
+			
+			if(!$reply || !is_array($reply) || empty($reply)) {
+				/* set the breadcrumbs bit */
+				$template		= BreadCrumbs($template, $template->getVar('L_INVALIDPOST'));
+				$template->setInfo('content', $template->getVar('L_POSTDOESNTEXIST'), FALSE);
+
+				return TRUE;
+			}
+
+			$topic				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id = ". intval($reply['topic_id']));
+			
+			if(!$topic || !is_array($topic) || empty($topic)) {
+				/* set the breadcrumbs bit */
+				$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
+				$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
+
+				return TRUE;
+			}
+			
+			$forum				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($topic['forum_id']));
+		
+			/* Check the forum data given */
+			if(!$forum || !is_array($forum) || empty($forum)) {
+				/* set the breadcrumbs bit */
+				$template	= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+				$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+				return TRUE;
+			}
+				
+			/* Make sure the we are trying to delete from a forum */
+			if(!($forum['row_type'] & FORUM)) {
+				/* set the breadcrumbs bit */
+				$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+				$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+				return TRUE;
+			}
+			
+
+			$num_replies		= @intval(($topic['row_right'] - $topic['row_left'] - 1) / 2);
+			
+			/* If the number of replies on this topic is greater than the posts per page for this forum */
+			if($num_replies > $forum['postsperpage']) {
+				
+				$whereinline	= $dba->getValue("SELECT COUNT(r.reply_id) FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON i.id = r.reply_id WHERE r.topic_id = ". $reply['topic_id'] ." AND i.created < ". $reply['created']);
+				
+				$page			= ceil($whereinline / $forum['postsperpage']);
+
+				header("Location: viewtopic.php?id=". $topic['id'] ."&start=". ($page * $forum['postsperpage']) ."&limit=". $forum['postsperpage'] ."&order=DESC&sort=created&daysprune=0#". $post['id']);
+				exit;
+
+			} else {
+				header("Location: viewtopic.php?id=". $topic['id'] ."#". $post['id']);
+				exit;
+			}
 		}
 
 		return TRUE;

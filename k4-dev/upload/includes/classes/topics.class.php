@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topics.class.php,v 1.11 2005/05/02 19:07:35 k4st Exp $
+* @version $Id: topics.class.php,v 1.12 2005/05/03 21:37:43 k4st Exp $
 * @package k42
 */
 
@@ -286,8 +286,6 @@ class PostTopic extends Event {
 				$template->setVar('forum_'. $key, $val);
 			
 			$template->setVar('newtopic_action', 'newtopic.php?act=posttopic');
-
-			$template = topic_post_options($template, $user, $forum);
 						
 			$topic_preview	= array(
 								'name' => htmlentities($request['name'], ENT_QUOTES),
@@ -621,10 +619,8 @@ class EditTopic extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
 		global $_QUERYPARAMS, $_DATASTORE;
-
-		$this->dba			= &$dba;
 		
-		/* Get our draft */
+		/* Get our topic */
 		$topic				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id = ". intval($request['id']));
 		
 		if(!$topic || !is_array($topic) || empty($topic)) {
@@ -702,7 +698,7 @@ class EditTopic extends Event {
 		$template->show('edit_post');
 		
 		/* set the breadcrumbs bit */
-		$template	= BreadCrumbs($template, $template->getVar('L_POSTTOPIC'), $forum['row_left'], $forum['row_right']);
+		$template	= BreadCrumbs($template, $template->getVar('L_EDITTOPIC'), $forum['row_left'], $forum['row_right']);
 		
 		/* Set the post topic form */
 		$template->setFile('preview', 'post_preview.html');
@@ -719,8 +715,6 @@ class UpdateTopic extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
 		global $_QUERYPARAMS, $_DATASTORE;
-
-		$this->dba			= &$dba;
 
 		/* Check the request ID */
 		if(!isset($request['forum_id']) || !$request['forum_id'] || intval($request['forum_id']) == 0) {
@@ -777,7 +771,7 @@ class UpdateTopic extends Event {
 
 		/* Does this person have permission to edit this topic? */
 		if($topic['poster_id'] == $user['id']) {
-			if(get_map($user, $type, 'can_edit', array('forum_id'=>$forum['id'])) > $user['perms']) {
+			if(get_map($type, 'can_edit', array('forum_id'=>$forum['id'])) > $user['perms']) {
 				$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
 				return TRUE;
 			}
@@ -957,7 +951,7 @@ class DeleteTopic extends Event {
 
 		/* Does this person have permission to remove this topic? */
 		if($topic['poster_id'] == $user['id']) {
-			if(get_map($user, $type, 'can_del', array('forum_id'=>$forum['id'])) > $user['perms']) {
+			if(get_map($type, 'can_del', array('forum_id'=>$forum['id'])) > $user['perms']) {
 				$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
 				return TRUE;
 			}
@@ -995,7 +989,7 @@ class DeleteTopic extends Event {
 			}
 		}
 				
-		$num_replies		= @(($topic['row_right'] - $topic['row_left'] - 1) / 2);
+		$num_replies		= @intval(($topic['row_right'] - $topic['row_left'] - 1) / 2);
 		
 		/* Get that last topic in this forum that's not this topic */
 		$last_topic			= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id <> ". intval($topic['id']) ." AND t.is_draft=0 ORDER BY i.created DESC LIMIT 1");
@@ -1102,6 +1096,9 @@ class DeleteTopic extends Event {
 	}
 }
 
+/**
+ * Make the topic image for a specified topic
+ */
 function topic_image($topic, &$user, $img_dir, $lastactive) {
 	global $settings;
 
@@ -1199,8 +1196,9 @@ class TopicsIterator extends FAProxyIterator {
 		$temp					= parent::current();
 
 		/* Get this user's last seen time */
-		$last_seen				= is_a($this->session['user'], 'Member') ? iif($this->session['seen'] > $this->session['user']->info['last_seen'], $this->session['seen'], $this->session['user']->info['last_seen']) : $this->session['seen'];
-		
+		//$last_seen				= is_a($this->session['user'], 'Member') ? iif($this->session['seen'] > $this->session['user']->info['last_seen'], $this->session['seen'], $this->session['user']->info['last_seen']) : $this->session['seen'];
+		$last_seen				= time();
+
 		/* Set the topic icons */
 		$temp['posticon']		= $temp['posticon'] != '' ? iif(file_exists(FORUM_BASE_DIR .'/tmp/upload/posticons/'. $temp['posticon']), $temp['posticon'], 'clear.gif') : 'clear.gif';
 		$temp['topicicon']		= topic_image($temp, &$this->user, $this->img_dir, $last_seen);

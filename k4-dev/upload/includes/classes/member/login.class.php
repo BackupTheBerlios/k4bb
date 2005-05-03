@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: login.class.php,v 1.3 2005/04/19 21:51:59 k4st Exp $
+* @version $Id: login.class.php,v 1.4 2005/05/03 21:37:58 k4st Exp $
 * @package k42
 */
 
@@ -39,15 +39,12 @@ if(!defined('IN_K4')) {
 class LogoutEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
-		global $_SESSID;
+		global $_SESS;
 
 		/* Create the ancestors bar (if we run into any trouble */
 		$template = BreadCrumbs($template, $template->getVar('L_LOGOUT'));
 
 		if (is_a($session['user'], 'Member')) {
-			
-			/* Set the last active cookie to expire in 30 days */
-			setcookie("k4_lastactive", time(), time()+(3600*24*60));
 			
 			/* Update the users' last seen time */
 			$dba->executeUpdate("UPDATE ". USERS ." SET last_seen = seen, seen = 0 WHERE id = ". $user['id'] );
@@ -57,29 +54,22 @@ class LogoutEvent extends Event {
 		}
 		
 		/* Persistent method to unset the cookie */
-		setcookie("k4_autolog", "", time()-3600);
+		@setcookie("k4_autolog", "", time()-3600);
 		bb_setcookie_cache('k4_autolog', '', time()-3600);
 
 		/* Make the user into a Guest user rather than a Member */
 		$session['user']		= &new Guest();
-		$session				= session_user_status($session, $_SESSID, TRUE);
-		$session['user']->info['maps'] = get_maps();
-
-		/* Update the database with the new session inforamtion */
-		$update		= &$dba->prepareStatement("UPDATE ". SESSIONS ." SET data=?,name=?,user_id=? WHERE id=?");
-		$update->setString(1, serialize($session));
-		$update->setString(2, '');
-		$update->setInt(3, 0);
-		$update->setString(4, $_SESSID);
-		$update->executeUpdate();
+		//$session				= session_user_status($session, $_SESSID, TRUE);
+		
+		$_SESS->setUserStatus(TRUE);
 
 		/* Redirect the page */
 		$template->setInfo('content', $template->getVar('L_LOGGEDOUTSUCCESS'));
 		$template->setRedirect($_SERVER['HTTP_REFERER'], 3);
 
 		/* Reset the session data */
-		Globals::setGlobal('session', &$session);
-		Globals::setGlobal('user', &$session['user']->info);
+		//Globals::setGlobal('session', &$session);
+		//Globals::setGlobal('user', &$session['user']->info);
 
 		return TRUE;
 	}
@@ -88,7 +78,7 @@ class LogoutEvent extends Event {
 class LoginEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
-		global $_SESSID;
+		global $_SESS;
 
 		/* Create the ancestors bar (if we run into any trouble */
 		$template = BreadCrumbs($template, $template->getVar('L_LOGIN'));
@@ -114,7 +104,10 @@ class LoginEvent extends Event {
 			$session['user']		= &new Member($id);
 			
 			if($session['user']->info['banned'] == 0) {
-
+				
+				/**
+				 * Log our user in 
+				 */
 				$session['user']->Login();
 				$user			= &$session['user']->info;
 				
@@ -128,18 +121,20 @@ class LoginEvent extends Event {
 					/* Create a safe cookie */
 					$userinfo	= $user['name'] . $session['user']->GenerateLoginKey();
 
-					/* Set the auto-logging in cookie */
-					setcookie('k4_autolog', $userinfo, time()+(3600*24*60));
+					/* Set the auto-logging in cookie, be persistent about it */
+					@setcookie('k4_autolog', $userinfo, time()+(3600*24*60));
+					bb_setcookie_cache('k4_autolog', $userinfo, time()+(3600*24*60));
 				}
-				if (isset($user['login_request_uri'])) 
+
+				if (isset($user['login_request_uri'])) {
 					$template->setRedirect($user['login_request_uri'], 3);
-				else
+				} else {
 					$template->setRedirect('index.php', 3);
-				
-				$template->setInfo('content', $template->getVar('L_LOGGEDINSUCCESS'));
+				}
 				
 
-				//header("Location: index.php");
+				$template->setInfo('content', $template->getVar('L_LOGGEDINSUCCESS'));
+				
 			} else {
 				$session['user']							= &new Guest;
 				$session['user']->info['rememberme']		= 'off';
@@ -148,10 +143,9 @@ class LoginEvent extends Event {
 		} else {
 			$template->setInfo('content', $template->getVar('L_CANTBELOGGEDIN'));
 		}
-
-		$session		= session_user_status($session, $_SESSID);
-		$session['user']->info['maps'] = get_maps();
 		
+		//$_SESS->setUserStatus(FALSE);
+		/*
 		if(is_a($session['user'], 'Member')) {
 			
 			$update		= &$dba->prepareStatement("UPDATE ". SESSIONS ." SET data=?,name=?,user_id=? WHERE id=?");
@@ -162,10 +156,10 @@ class LoginEvent extends Event {
 
 			$update->executeUpdate();
 		}
+		*/
 		
-		
-		Globals::setGlobal('session', &$session);
-		Globals::setGlobal('user', &$session['user']->info);
+		//Globals::setGlobal('session', &$session);
+		//Globals::setGlobal('user', &$session['user']->info);
 
 		return TRUE;
 	}

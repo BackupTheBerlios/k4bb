@@ -28,7 +28,7 @@
 	* SOFTWARE.
 	*
 	* @author Peter Goodman
-	* @version $Id: admin.js,v 1.1 2005/04/11 02:23:38 k4st Exp $
+	* @version $Id: admin.js,v 1.2 2005/05/03 21:35:34 k4st Exp $
 	* @package k42
 	*/
 

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: mod.php,v 1.1 2005/04/25 19:50:53 k4st Exp $
+* @version $Id: mod.php,v 1.2 2005/05/03 21:35:59 k4st Exp $
 * @package k42
 */
 
@@ -45,6 +45,7 @@ class DefaultEvent extends Event {
 $app = new Forum_Controller('forum_base.html');
 
 $app->AddEvent('deletetopic', new DeleteTopic);
+$app->AddEvent('deletereply', new DeleteReply);
 
 $app->ExecutePage();
 

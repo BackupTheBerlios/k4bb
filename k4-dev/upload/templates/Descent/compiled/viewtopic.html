@@ -1,8 +1,8 @@
 <!-- Posting Buttons -->
 <div align="left">
-	<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_add'] <= $context->session['user']->info['perms'])): ?>
+	<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('topic_forum_id')]['topics']['can_add']) && $_MAPS['forums'][$context->getVar('topic_forum_id')]['topics']['can_add'] <= $context->session['user']->info['perms'])): ?>
 	<a href="newtopic.php?id=<?php echo $context->getVar("topic_forum_id"); ?>" title="<?php echo $context->getVar("L_POSTTOPIC"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/post_topic.gif" alt="<?php echo $context->getVar("L_POSTTOPIC"); ?>" /></a>
-	<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['replies']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['replies']['can_add'] <= $context->session['user']->info['perms'])): ?>
+	<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('topic_forum_id')]['replies']['can_add']) && $_MAPS['forums'][$context->getVar('topic_forum_id')]['replies']['can_add'] <= $context->session['user']->info['perms'])): ?>
 	<a href="newreply.php?id=<?php echo $context->getVar("topic_id"); ?>" title="<?php echo $context->getVar("L_POSTREPLY"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/post_reply.gif" alt="<?php echo $context->getVar("L_POSTREPLY"); ?>" /></a>
 	<?php endif; ?>
 	<?php endif; ?>
@@ -17,7 +17,7 @@
 <?php if ($file = $template->getFile("topic", "topic.html")):  $template->setFilename($file);  $template->render(); endif; ?>
 <!-- / Topic: <?php echo $context->getVar("name"); ?> -->
 
-<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['replies']['can_view']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['replies']['can_view'] <= $context->session['user']->info['perms'])): ?>
+<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('topic_forum_id')]['replies']['can_view']) && $_MAPS['forums'][$context->getVar('topic_forum_id')]['replies']['can_view'] <= $context->session['user']->info['perms'])): ?>
 <?php if ($context->addList("replies", $context->getVar("replies"))): ?>
 <?php while($context->push($context->listNext("replies"))): ?>
 
@@ -34,9 +34,9 @@
 
 <!-- Posting Buttons -->
 <div align="left">
-	<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['topics']['can_add'] <= $context->session['user']->info['perms'])): ?>
+	<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('topic_forum_id')]['topics']['can_add']) && $_MAPS['forums'][$context->getVar('topic_forum_id')]['topics']['can_add'] <= $context->session['user']->info['perms'])): ?>
 	<a href="newtopic.php?id=<?php echo $context->getVar("topic_forum_id"); ?>" title="<?php echo $context->getVar("L_POSTTOPIC"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/post_topic.gif" alt="<?php echo $context->getVar("L_POSTTOPIC"); ?>" /></a>
-	<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['replies']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('topic_forum_id')]['replies']['can_add'] <= $context->session['user']->info['perms'])): ?>
+	<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('topic_forum_id')]['replies']['can_add']) && $_MAPS['forums'][$context->getVar('topic_forum_id')]['replies']['can_add'] <= $context->session['user']->info['perms'])): ?>
 	<a href="newreply.php?id=<?php echo $context->getVar("topic_id"); ?>" title="<?php echo $context->getVar("L_POSTREPLY"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/post_reply.gif" alt="<?php echo $context->getVar("L_POSTREPLY"); ?>" /></a>
 	<?php endif; ?>
 	<?php endif; ?>

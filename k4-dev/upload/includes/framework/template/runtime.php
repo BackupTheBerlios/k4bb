@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: runtime.php,v 1.2 2005/04/13 02:54:16 k4st Exp $
+* @version $Id: runtime.php,v 1.3 2005/05/03 21:38:54 k4st Exp $
 * @package k42
 */
 
@@ -43,7 +43,7 @@ class TPL_Context {
 	function TPL_Context($context, $lists) {
 		$this->contexts[]	= $context;
 		$this->lists		= $lists;
-		$this->session		= &Globals::getGlobal('session');
+		$this->session		= &$_SESSION;
 	}
 
 	// Context variables

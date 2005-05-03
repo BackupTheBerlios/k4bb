@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: common.php,v 1.10 2005/05/02 20:09:07 k4st Exp $
+* @version $Id: common.php,v 1.11 2005/05/03 21:37:22 k4st Exp $
 * @package k42
 */
 
@@ -221,6 +221,7 @@ $GLOBALS['_SETTINGS']		= get_cached_settings();
 $GLOBALS['_DATASTORE']		= &$datastore;
 $GLOBALS['_QUERYPARAMS']	= &$query_params;
 $GLOBALS['_MAPITEMS']		= &$map_items;
+$GLOBALS['_MAPS']			= get_maps();
 $GLOBALS['_USERGROUPS']		= &$usergroups;
 $GLOBALS['_DEBUGITEMS']		= array();
 

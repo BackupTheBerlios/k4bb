@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: user.inc.php,v 1.4 2005/04/19 21:52:22 k4st Exp $
+* @version $Id: user.inc.php,v 1.5 2005/05/03 21:38:14 k4st Exp $
 * @package k42
 */
 
@@ -165,7 +165,8 @@ class Member extends User {
 		
 		Error::reset();
 
-		setcookie('k4_lastactive', time(), time()+(3600*24*60));
+		@setcookie('k4_lastactive', time(), time()+(3600*24*60));
+		bb_setcookie_cache('k4_lastactive', time(), time()+(3600*24*60));
 		
 		$_DBA->executeUpdate("UPDATE ". USERS ." SET login = $time WHERE id = $this->id");
 		

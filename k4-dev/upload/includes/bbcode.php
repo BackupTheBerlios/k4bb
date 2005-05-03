@@ -26,7 +26,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.php,v 1.8 2005/05/01 17:37:10 k4st Exp $
+* @version $Id: bbcode.php,v 1.9 2005/05/03 21:37:22 k4st Exp $
 * @package k42
 */
 
@@ -320,12 +320,12 @@ class BBColor extends BBCodeTag {
 		$this->instance		= &$instance;
 	}
 	function to_html() {
-		$this->instance->text = preg_replace('~\[color=([a-zA-Z]+?)\]([^"]+?)\[\/color\]~i', '<span style="color: \\1;">\\2</span>', $this->instance->text);
+		$this->instance->text = preg_replace('~\[color=([a-zA-Z]+?)\](.+?)\[\/color\]~is', '<span style="color: \\1;">\\2</span>', $this->instance->text);
 		
 		return $this->instance->text;
 	}
 	function to_bbcode() {
-		$this->instance->text = preg_replace('~<span style="color: ([a-zA-Z]+?);">([^"]+?)</span>~i', '[color=\\1]\\2[/color]', $this->instance->text);
+		$this->instance->text = preg_replace('~<span style="color: ([a-zA-Z]+?);">(.+?)</span>~is', '[color=\\1]\\2[/color]', $this->instance->text);
 	
 		return $this->instance->text;
 	}
@@ -339,8 +339,10 @@ class BBQuote extends BBCodeTag {
 	var $lang;
 
 	function BBQuote(&$instance) {
+		global $lang;
+
 		$this->instance		= &$instance;
-		$this->lang			= return_language();
+		$this->lang			= $lang;
 	}
 	function to_html() {
 		
@@ -350,6 +352,8 @@ class BBQuote extends BBCodeTag {
 		while(preg_match('~\[quote=([^\]]+)\](.+)\[\/quote\]~isU', $this->instance->text))
 			$this->instance->text = preg_replace('~\[quote=([^\]]+)\](.+)\[\/quote\]~isU', '<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .' ( \\1 ): </div><div class="quotecontent" align="left">\\2</div><br /></div>', $this->instance->text);
 		
+		unset($this->lang);
+
 		return $this->instance->text;
 	}
 	function to_bbcode() {
@@ -359,7 +363,9 @@ class BBQuote extends BBCodeTag {
 		
 		while(preg_match('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\ \( (.*?) \): </div><div class="quotecontent" align="left">(.+)</div><br /></div>~isU', $this->instance->text))
 			$this->instance->text = preg_replace('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\ \( ([^"]+?) \): </div><div class="quotecontent" align="left">(.+)</div><br /></div>~isU', '[quote=\\1]\\2[/quote]', $this->instance->text);
-	
+		
+		unset($this->lang);
+
 		return $this->instance->text;
 	}
 }
@@ -368,8 +374,7 @@ class BBQuote extends BBCodeTag {
  * Deal with CODE tags
  */
 function highlight_code($matches) {
-	
-	$lang		= return_language();
+	global $lang;
 
 	/**
 	 * Remove all html formatting
@@ -423,8 +428,10 @@ class BBCode extends BBCodeTag {
 	var $lang;
 
 	function BBCode(&$instance) {
+		global $lang;
+
 		$this->instance		= &$instance;
-		$this->lang			= return_language();
+		$this->lang			= $lang;
 	}
 	function to_html() {
 		
@@ -434,14 +441,14 @@ class BBCode extends BBCodeTag {
 		/* Get rid of new lines after tags */
 		$this->instance->text	= preg_replace("~(code|list|quote)\](\r\n|\n|\r)~i", '\\1]', $this->instance->text);
 
-		$this->instance->text = preg_replace_callback('~\[code\]([^"]+?)\[\/code\]~i', "highlight_code", $this->instance->text);
+		$this->instance->text = preg_replace_callback('~\[code\](.+)\[\/code\]~isU', "highlight_code", $this->instance->text);
 				
 		return $this->instance->text;
 	}
 	function to_bbcode() {
-		$this->instance->text	= preg_replace_callback('~<!-- CODE_HIGHLIGHT -->(.+?)<!-- / CODE_HIGHLIGHT -->~is', "htmlcode_to_bbcode", $this->instance->text);
+		$this->instance->text	= preg_replace_callback('~<!-- CODE_HIGHLIGHT -->(.+)<!-- / CODE_HIGHLIGHT -->~isU', "htmlcode_to_bbcode", $this->instance->text);
 
-		$this->instance->text	= preg_replace('~<div align="center"><br /><div class="codetitle">'. strtoupper($this->lang['L_CODE']) .': </div><div class="codecontent" align="left">([^"]+)</div><br /></div>~iU', '[code]\\1[/code]', $this->instance->text);
+		$this->instance->text	= preg_replace('~<div align="center"><br /><div class="codetitle">'. strtoupper($this->lang['L_CODE']) .': </div><div class="codecontent" align="left">(.+)</div><br /></div>~isU', '[code]\\1[/code]', $this->instance->text);
 		
 		/* Get rid of any new lines infront of tags */
 		$this->instance->text	= preg_replace("~(\r\n|\n|\r)\[/(code|list|quote)~i", '[/\\2', $this->instance->text);
@@ -574,8 +581,10 @@ class BBHtml extends BBCodeTag {
 	var $lang;
 
 	function BBHtml(&$instance) {
+		global $lang;
+
 		$this->instance		= &$instance;
-		$this->lang			= return_language();
+		$this->lang			= $lang;
 	}
 	function to_html() {
 		
@@ -602,7 +611,8 @@ class BBHtml extends BBCodeTag {
 				}
 			}
 		}
-		
+		unset($this->lang);
+
 		return $this->instance->text;
 	}
 	function to_bbcode() {
@@ -629,7 +639,9 @@ class BBHtml extends BBCodeTag {
 				}
 			}
 		}
-			
+		
+		unset($this->lang);			
+
 		return $this->instance->text;
 	}
 }

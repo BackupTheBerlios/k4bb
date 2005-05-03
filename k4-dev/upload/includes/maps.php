@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: maps.php,v 1.4 2005/05/02 20:09:07 k4st Exp $
+* @version $Id: maps.php,v 1.5 2005/05/03 21:37:22 k4st Exp $
 * @package k42
 */
 
@@ -37,28 +37,28 @@ if(!defined('IN_K4')) {
 
 function get_map(&$user, $varname, $method, $args) {
 	
-	global $_MAPITEMS;
+	global $_MAPS, $_MAPITEMS;
 
 	/* Simple global MAP request */
 	if(is_array($args) && empty($args)) {
-		$perm_needed		= $user['maps'][$varname][$method];
+		$perm_needed		= isset($_MAPS[$varname][$method]) ? $_MAPS[$varname][$method] : 0;
 	} else {
 
 		/* Forum */
 		if(isset($args['forum_id']) && intval($args['forum_id']) != 0) {
-			$perm_needed	= isset($user['maps']['forums'][$args['forum_id']][$varname][$method]) ? $user['maps']['forums'][$args['forum_id']][$varname][$method] : 0;
+			$perm_needed	= isset($_MAPS['forums'][$args['forum_id']][$varname][$method]) ? $_MAPS['forums'][$args['forum_id']][$varname][$method] : 0;
 		
 		/* Group */
 		} else if(isset($args['group_id']) && intval($args['group_id']) != 0) {
-			$perm_needed	= isset($user['maps']['groups'][$args['group_id']][$varname][$method]) ? $user['maps']['groups'][$args['group_id']][$varname][$method] : 0;
+			$perm_needed	= isset($_MAPS['groups'][$args['group_id']][$varname][$method]) ? $_MAPS['groups'][$args['group_id']][$varname][$method] : 0;
 		
 		/* User */
 		} else if(isset($args['user_id']) && intval($args['user_id']) != 0) {
-			$perm_needed	= isset($user['maps']['users'][$args['user_id']][$varname][$method]) ? $user['maps']['groups'][$args['group_id']][$varname][$method] : 0;
+			$perm_needed	= isset($_MAPS['users'][$args['user_id']][$varname][$method]) ? $_MAPS['groups'][$args['group_id']][$varname][$method] : 0;
 		
 		/* Category */
 		} else if(isset($args['category_id']) && intval($args['category_id']) != 0) {
-			$perm_needed	= isset($user['maps']['categories'][$args['category_id']][$varname][$method]) ? $user['maps']['categories'][$args['category_id']][$varname][$method] : 0;
+			$perm_needed	= isset($_MAPS['categories'][$args['category_id']][$varname][$method]) ? $_MAPS['categories'][$args['category_id']][$varname][$method] : 0;
 		
 		/* Blog */
 		} else if(isset($args['blog']) && $args['blog'] == TRUE) {
@@ -66,7 +66,7 @@ function get_map(&$user, $varname, $method, $args) {
 		
 		/* Global */
 		} else {
-			$perm_needed	= isset($user['maps'][$varname][$method]) ? $user['maps'][$varname][$method] : 0;
+			$perm_needed	= isset($_MAPS[$varname][$method]) ? $_MAPS[$varname][$method] : 0;
 		}
 	}
 

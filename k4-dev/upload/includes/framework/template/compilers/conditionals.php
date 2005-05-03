@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: conditionals.php,v 1.4 2005/04/24 02:09:41 k4st Exp $
+* @version $Id: conditionals.php,v 1.5 2005/05/03 21:39:04 k4st Exp $
 * @package k42
 */
 
@@ -125,14 +125,14 @@ class Maps_If_Compiler extends TPL_Tag_Compiler {
 						//$method		= is_array($matches) && count($matches) > 0 ? "" : "\$context->getVar('". $element->attribs[$val] ."')";
 
 						/* Make the *query* to check the permissions */
-						$query		.= " && (isset(\$context->session['user']->info['maps']['". $key ."'][\$context->getVar('". $element->attribs[$val] ."')]". $var ."['". $element->attribs['method'] ."'])";
-						$query		.= " && \$context->session['user']->info['maps']['". $key ."'][\$context->getVar('". $element->attribs[$val] ."')]". $var ."['". $element->attribs['method'] ."'] <= \$context->session['user']->info['perms'])";
+						$query		.= " && (isset(\$_MAPS['". $key ."'][\$context->getVar('". $element->attribs[$val] ."')]". $var ."['". $element->attribs['method'] ."'])";
+						$query		.= " && \$_MAPS['". $key ."'][\$context->getVar('". $element->attribs[$val] ."')]". $var ."['". $element->attribs['method'] ."'] <= \$context->session['user']->info['perms'])";
 					}
 				}
 			} else if(isset($element->attribs['var'])) {
-				$query .= " && (isset(\$context->session['user']->info['maps']['". $element->attribs['var'] ."']) && \$context->session['user']->info['maps']['". $element->attribs['var'] ."']['". $element->attribs['method'] ."'] <= \$context->session['user']->info['perms'])";
+				$query .= " && (isset(\$_MAPS['". $element->attribs['var'] ."']) && \$_MAPS['". $element->attribs['var'] ."']['". $element->attribs['method'] ."'] <= \$context->session['user']->info['perms'])";
 			}
-			return "<?php if($query): ?>";
+			return "<?php if(!isset(\$_MAPS)) global \$_MAPS; if($query): ?>";
 		}
 		return "<h1>Missing (VAR, CATEGORY, FORUM, GROUP) or METHOD for conditional MAPS statement.</h1>";
 	}

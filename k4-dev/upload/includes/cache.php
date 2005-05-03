@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: cache.php,v 1.4 2005/04/19 21:51:02 k4st Exp $
+* @version $Id: cache.php,v 1.5 2005/05/03 21:37:22 k4st Exp $
 * @package k42
 */
 
@@ -240,7 +240,8 @@ function bb_execute_topiccache() {
 				
 				$temp = $_SESSION['bbcache']['temp_cookies'][$i];
 
-				setcookie($temp['name'], $temp['value'], $temp['expire']);
+				@setcookie($temp['name'], $temp['value'], $temp['expire']);
+				//bb_setcookie_cache($temp['name'], '', time()-3600);
 			}
 		}
 

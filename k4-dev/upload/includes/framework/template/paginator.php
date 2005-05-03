@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: paginator.php,v 1.3 2005/04/25 19:52:58 k4st Exp $
+* @version $Id: paginator.php,v 1.4 2005/05/03 21:38:54 k4st Exp $
 * @package k42
 */
 
@@ -98,6 +98,9 @@ class TPL_Paginator {
 		$this->count		= $count;
 		$this->page_size	= $page_size;
 		$this->page_num		= $page_num;
+		
+		if ($this->page_num <= 0)
+			$this->page_num = 1;
 	}
 
 	function getPage($page) {

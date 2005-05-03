@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: controller.class.php,v 1.8 2005/04/24 02:10:39 k4st Exp $
+* @version $Id: controller.class.php,v 1.9 2005/05/03 21:38:14 k4st Exp $
 * @package k42
 */
 
@@ -141,8 +141,10 @@ class Controller {
 		$act_var			= 'act';
 
 		/* get the session and user variables */
-		$session			= &Globals::getGlobal('session');
-		$user				= &Globals::getGlobal('user');
+		//$session			= &Globals::getGlobal('session');
+		//$user				= &Globals::getGlobal('user');
+		$session			= &$_SESSION;
+		$user				= &$_SESSION['user']->info;
 		
 		/**
 		 * Member/Guest Settings
@@ -184,19 +186,18 @@ class Controller {
 		if(!file_exists(FORUM_BASE_DIR. '/includes/lang/'. $language .'/lang.php'))
 			exit('Invalid Language file.');
 		
-		/* Require the lnaguage file */
-		require FORUM_BASE_DIR. '/includes/lang/'. $language .'/lang.php';
+		/* Require the language file */
+		include FORUM_BASE_DIR. '/includes/lang/'. $language .'/lang.php';
 		
 		/* Set the language variable to the template */
 		$template->setVar('LANG', $language);
+		
+		global $lang;
 
 		/* Check if the language function exists */
-		if(!function_exists('return_language'))
+		if(!isset($lang) || !is_array($lang) || empty($lang))
 			exit('Invalid Language file.');
 		
-		/* Get the language pack into a variable array */			
-		$lang				= return_language();
-
 		/* Set the locale to which language we are using */
 		setlocale(LC_ALL, $lang['locale']);
 
@@ -223,8 +224,8 @@ class Controller {
 		 */
 
 		/* Clear the session and user variables */
-		$session					= &Globals::getGlobal('session');
-		$user						= &Globals::getGlobal('user');
+		$session			= &$_SESSION;
+		$user				= &$_SESSION['user']->info;
 		
 
 		/**
@@ -250,8 +251,9 @@ class Controller {
 		$template->setVar('load_time', $this->timer->__toString());
 		
 		if(DEBUG_SQL) {
-			$_URL->args['debug']		= 1;
-			$template->setVar('debug_url', $_URL->__toString());
+			$debug_url					= &new Url($_URL->__toString());
+			$debug_url->args['debug']	= 1;
+			$template->setVar('debug_url', $debug_url->__toString());
 			$template->show('sql_debug');
 
 			if(isset($request['debug']) && $request['debug'] == 1) {

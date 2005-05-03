@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topic_review.class.php,v 1.1 2005/05/01 17:42:10 k4st Exp $
+* @version $Id: topic_review.class.php,v 1.2 2005/05/03 21:37:43 k4st Exp $
 * @package k42
 */
 
@@ -38,7 +38,6 @@ if(!defined('IN_K4')) {
 class TopicReviewIterator extends FAArrayIterator {
 	
 	var $dba;
-	var $result;
 	var $users = array();
 	var $qp;
 	var $user;
@@ -87,8 +86,6 @@ class TopicReviewIterator extends FAArrayIterator {
 
 		}
 		
-		$this->result->freeResult();
-
 		$bbcode							= &new BBCodex($this->user, $temp['body_text'], $temp['forum_id'], TRUE, TRUE, TRUE, TRUE);
 		$temp['reverted_body_text']		= $bbcode->revert();
 

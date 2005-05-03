@@ -39,7 +39,7 @@
 			<?php endif; ?>
 			</div>
 		</td>
-		<td width="80%" id="topic<?php echo $context->getVar("id"); ?>" valign="top">
+		<td width="80%" id="topic<?php echo $context->getVar("id"); ?>" valign="top" style="height: 100px;">
 			<?php echo $context->getVar("body_text"); ?>
 			<textarea name="reverted_body_text" id="body_text<?php echo $context->getVar("id"); ?>" style="display: none;"><?php echo $context->getVar("reverted_body_text"); ?></textarea>
 			<?php if($context->getVar('disable_sig') == 0): ?>

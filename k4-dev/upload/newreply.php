@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: newreply.php,v 1.2 2005/05/01 01:12:02 k4st Exp $
+* @version $Id: newreply.php,v 1.3 2005/05/03 21:35:59 k4st Exp $
 * @package k42
 */
 
@@ -151,9 +151,25 @@ class DefaultEvent extends Event {
 		
 		foreach($parent as $key => $val)
 			$template->setVar('parent_'. $key, $val);
+		
+		/* Get the number of replies to this topic */
+		$num_replies		= @intval(($topic['row_right'] - $topic['row_left'] - 1) / 2);
 
 		/* Get replies that are above this point */
-		$replies	= &$dba->executeQuery("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['reply'] ." FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON i.id = r.reply_id WHERE i.row_left >= ". $parent['row_left'] ." AND i.row_right <= ". $parent['row_right'] ." AND i.row_type = ". REPLY ." ORDER BY i.created DESC LIMIT 10");
+		if($num_replies > $forum['postsperpage']) {
+			
+			/* This will get all parent replies */
+			$query	= "SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['reply'] ." FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON i.id = r.reply_id WHERE i.row_left >= ". $parent['row_left'] ." AND i.row_right <= ". $parent['row_right'] ." AND i.row_type = ". REPLY ." ORDER BY i.created DESC LIMIT 10";
+		} else {
+			
+			/* Get generalized replies */
+			$query	= "SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['reply'] ." FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON i.id = r.reply_id WHERE r.topic_id = ". $topic['id'] ." AND i.row_type = ". REPLY ." ORDER BY i.created DESC LIMIT 10";
+		}
+		
+		$replies	= &$dba->executeQuery($query);
+		
+		/* Set the form actiob */
+		$template->setVar('newreply_act', 'newreply.php?act=postreply');
 
 		$template->setList('topic_review', new TopicReviewIterator($topic, $replies, $user));
 
@@ -168,8 +184,8 @@ class DefaultEvent extends Event {
 $app = new Forum_Controller('forum_base.html');
 
 $app->AddEvent('postreply', new PostReply);
-//$app->AddEvent('editreply', new EditTopic);
-//$app->AddEvent('updatereply', new UpdateTopic);
+$app->AddEvent('editreply', new EditReply);
+$app->AddEvent('updatereply', new UpdateReply);
 
 $app->ExecutePage();
 

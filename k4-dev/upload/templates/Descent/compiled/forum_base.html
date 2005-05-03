@@ -98,7 +98,7 @@
 <div class="forum_main" id="forum_main">
 <br />
 <?php if($context->getVar('bbactive') == 1): ?>
-<?php if(TRUE && (isset($context->session['user']->info['maps']['can_see_board']) && $context->session['user']->info['maps']['can_see_board']['can_view'] <= $context->session['user']->info['perms'])): ?>
+<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['can_see_board']) && $_MAPS['can_see_board']['can_view'] <= $context->session['user']->info['perms'])): ?>
 <?php if ($file = $template->getFile("content", "")):  $template->setFilename($file);  $template->render(); endif; ?>
 <?php if ($file = $template->getFile("content_extra", "")):  $template->setFilename($file);  $template->render(); endif; ?>
 <?php if ($file = $template->getFile("users_browsing", "")):  $template->setFilename($file);  $template->render(); endif; ?>
@@ -172,7 +172,7 @@
 	<?php if ($context->listReset("all_forums")): ?>
 	<?php while($context->push($context->listNext("all_forums"))): ?>
 		<?php if($context->getVar('row_type') == 2): ?>
-			<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('id')]['can_view']) && $context->session['user']->info['maps']['forums'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
+			<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('id')]['can_view']) && $_MAPS['forums'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
 				<?php if($context->getVar('is_forum') >= 0): ?>
 					<option value="viewforum.php?id=<?php echo $context->getVar("id"); ?>"><?php echo $context->getVar("indent_level");  echo $context->getVar("name"); ?></option>
 				<?php elseif($context->getVar('is_link') == 1): ?>
@@ -184,7 +184,7 @@
 				<?php endif; ?>
 			<?php endif; ?>
 		<?php else: ?>
-			<?php if(TRUE && (isset($context->session['user']->info['maps']['categories'][$context->getVar('id')]['can_view']) && $context->session['user']->info['maps']['categories'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
+			<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['categories'][$context->getVar('id')]['can_view']) && $_MAPS['categories'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
 				<option value="viewforum.php?id=<?php echo $context->getVar("id"); ?>" class="alt2"><?php echo $context->getVar("indent_level");  echo $context->getVar("name"); ?></option>
 			<?php endif; ?>
 		<?php endif; ?>
@@ -326,7 +326,7 @@ COPYRIGHT NOTICE
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: forum_base.html,v 1.7 2005/05/01 17:49:22 k4st Exp $
+* @version $Id: forum_base.html,v 1.8 2005/05/03 21:34:46 k4st Exp $
 * @package k42
 */
 -->

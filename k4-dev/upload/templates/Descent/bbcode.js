@@ -24,7 +24,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.js,v 1.3 2005/05/01 17:48:28 k4st Exp $
+* @version $Id: bbcode.js,v 1.4 2005/05/03 21:35:11 k4st Exp $
 * @package k42
 */
 
@@ -69,6 +69,7 @@ function get_obj_pos(tag) {
 		if(bbcode_opentags[i]) {
 			if(bbcode_opentags[i][0] == tag) {
 				tmp = i;
+				return i;
 			}
 		}
 	}

@@ -28,7 +28,7 @@
 	</tr>
 	<?php endif; ?>
 	<?php while($context->push($context->listNext("categories"))): ?>
-	<?php if(TRUE && (isset($context->session['user']->info['maps']['categories'][$context->getVar('id')]['can_view']) && $context->session['user']->info['maps']['categories'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
+	<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['categories'][$context->getVar('id')]['can_view']) && $_MAPS['categories'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
 	<tr class="thead">
 		<td colspan="5">
 			<div style="float: right;"><a href="javascript:;" onclick="return collapse_tbody('collapse_<?php echo $context->getVar("id"); ?>', 'forums_<?php echo $context->getVar("id"); ?>')" title="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>"><img id="collapse_<?php echo $context->getVar("id"); ?>" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/collapse_thead.gif" alt="<?php echo $context->getVar("L_EXPANDCOLLAPSE"); ?>" border="0" /></a></div>
@@ -39,7 +39,7 @@
 	<tbody id="forums_<?php echo $context->getVar("id"); ?>">
 		<?php if ($context->addList("forums", $context->getVar("forums"))): ?>
 		<?php while($context->push($context->listNext("forums"))): ?>
-		<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('id')]['can_view']) && $context->session['user']->info['maps']['forums'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
+		<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('id')]['can_view']) && $_MAPS['forums'][$context->getVar('id')]['can_view'] <= $context->session['user']->info['perms'])): ?>
 		<?php if($context->getVar('is_forum') == 1): ?>
 		<tr class="panel">
 			<td width="5%" align="center"><img src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Icons/forum_<?php echo $context->getVar("forum_icon"); ?>.gif" alt="<?php echo $context->getVar("forum_alt"); ?>" height="28" width="28" border="0" /></td>

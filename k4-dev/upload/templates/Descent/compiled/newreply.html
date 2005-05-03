@@ -10,7 +10,7 @@
 <?php endif; ?>
 <?php if ($file = $template->getFile("drafts", "")):  $template->setFilename($file);  $template->render(); endif; ?>
 <?php if ($file = $template->getFile("preview", "")):  $template->setFilename($file);  $template->render(); endif; ?>
-<form name="postreply_form" id="potreply_form" action="newreply.php?act=postreply" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="resetErrors();"><script type="text/javascript">resetErrors();</script>
+<form name="postreply_form" id="potreply_form" action="<?php echo $context->getVar("newreply_act"); ?>" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="resetErrors();"><script type="text/javascript">resetErrors();</script>
 <input type="hidden" name="forum_id" value="<?php echo $context->getVar("reply_forum_id"); ?>" />
 <input type="hidden" name="topic_id" value="<?php echo $context->getVar("reply_topic_id"); ?>" />
 <?php if ($template->isVisible('parent_id', FALSE)): ?><input type="hidden" name="parent_id" value="<?php echo $context->getVar("parent_id"); ?>" /><?php endif; ?>
@@ -41,13 +41,13 @@ function emoticon(typed) {
 	editor.value += ' ' + typed;
 }
 
-<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['bbcode']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['bbcode']['can_add'] <= $context->session['user']->info['perms'])): ?>
+<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('forum_id')]['bbcode']['can_add']) && $_MAPS['forums'][$context->getVar('forum_id')]['bbcode']['can_add'] <= $context->session['user']->info['perms'])): ?>
 <?php if ($file = $template->getFile("bbcode", "bbcode.js")):  $template->setFilename($file);  $template->render(); endif; ?>
 <?php endif; ?>
 // -->
 </script>
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
-	<?php if ($template->isVisible('post_topic', TRUE)): ?>
+	<?php if ($template->isVisible('post_reply', TRUE)): ?>
 	<tr class="thead" colspan="2">
 		<td colspan="2">
 			<div style="float:right;" class="smalltext">
@@ -62,8 +62,8 @@ function emoticon(typed) {
 	<tr class="thead" colspan="2">
 		<td colspan="2">
 			<div style="float:right;" class="smalltext">
-				<strong><?php echo $context->getVar("L_TOPIC"); ?>:</strong>
-				<a href="viewtopic.php?id=<?php echo $context->getVar("reply_id"); ?>" class="smalltext" style="font-weight: normal;" title="<?php echo $context->getVar("reply_name"); ?>"><?php echo $context->getVar("reply_name"); ?></a>
+				<strong><?php echo $context->getVar("L_REPLY"); ?>:</strong>
+				<a href="findpost.php?id=<?php echo $context->getVar("reply_id"); ?>" class="smalltext" style="font-weight: normal;" title="<?php echo $context->getVar("reply_name"); ?>"><?php echo $context->getVar("reply_name"); ?></a>
 			</div>
 			<?php echo $context->getVar("L_EDITPOST"); ?> : <span style="font-weight: normal;"><?php echo $context->getVar("reply_name"); ?></span><input type="hidden" name="post_id" value="<?php echo $context->getVar("post_id"); ?>" />
 		</td>
@@ -114,7 +114,7 @@ function emoticon(typed) {
 							<!-- Post Message -->
 							<label for="messagecodex" class="smalltext"><?php echo $context->getVar("L_POST"); ?></label><br />
 							<?php if($context->getVar('allowbbcode') == 1): ?>
-								<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['bbcode']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['bbcode']['can_add'] <= $context->session['user']->info['perms'])): ?>
+								<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('forum_id')]['bbcode']['can_add']) && $_MAPS['forums'][$context->getVar('forum_id')]['bbcode']['can_add'] <= $context->session['user']->info['perms'])): ?>
 									<script type="text/javascript">
 										try { bbcodex_init('message', 'message', 10, 100, 'bbcode_button'); } catch(e) { alert(e.message); }
 									</script>
@@ -126,7 +126,7 @@ function emoticon(typed) {
 
 						</td>
 						<td valign="bottom">
-							<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['emoticons']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['emoticons']['can_add'] <= $context->session['user']->info['perms'])): ?>
+							<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('forum_id')]['emoticons']['can_add']) && $_MAPS['forums'][$context->getVar('forum_id')]['emoticons']['can_add'] <= $context->session['user']->info['perms'])): ?>
 							<?php if ($context->listReset("emoticons")): ?>
 							
 							<!-- Emoticons -->
@@ -159,7 +159,7 @@ function emoticon(typed) {
 							<?php endif; ?>
 						</td>
 					</tr>
-					<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['posticons']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['posticons']['can_add'] <= $context->session['user']->info['perms'])): ?>
+					<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('forum_id')]['posticons']['can_add']) && $_MAPS['forums'][$context->getVar('forum_id')]['posticons']['can_add'] <= $context->session['user']->info['perms'])): ?>
 					<tr>
 						<td colspan="2">
 							<?php if ($context->listReset("posticons")): ?>
@@ -207,7 +207,7 @@ function emoticon(typed) {
 	<tr class="tcat">
 		<td align="left" colspan="2">
 			<input type="submit" name="submit" class="button" value="<?php echo $context->getVar("L_SUBMIT"); ?>" accesskey="s" />
-			<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['post_preview']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['post_preview']['can_add'] <= $context->session['user']->info['perms'])): ?>
+			<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('forum_id')]['post_preview']['can_add']) && $_MAPS['forums'][$context->getVar('forum_id')]['post_preview']['can_add'] <= $context->session['user']->info['perms'])): ?>
 				<input type="submit" name="submit" class="button" value="<?php echo $context->getVar("L_PREVIEW"); ?>" />
 			<?php endif; ?>
 			<input type="reset" class="button" value="<?php echo $context->getVar("L_RESET"); ?>" />
@@ -230,7 +230,7 @@ function emoticon(typed) {
 				<div class="outset_box">
 					<fieldset>
 						<legend><?php echo $context->getVar("L_MISCOPTIONS"); ?></legend>
-						<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add'] <= $context->session['user']->info['perms'])): ?><input type="checkbox" name="disable_html" id="disable_html" checked="checked" />&nbsp;<label for="disable_html"><?php echo $context->getVar("L_DISABLEHTML"); ?></label><br /><?php endif; ?>
+						<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('forum_id')]['html']['can_add']) && $_MAPS['forums'][$context->getVar('forum_id')]['html']['can_add'] <= $context->session['user']->info['perms'])): ?><input type="checkbox" name="disable_html" id="disable_html" checked="checked" />&nbsp;<label for="disable_html"><?php echo $context->getVar("L_DISABLEHTML"); ?></label><br /><?php endif; ?>
 						<input type="checkbox" name="disable_bbcode" id="disable_bbcode" />&nbsp;<label for="disable_bbcode"><?php echo $context->getVar("L_DISABLEBBCODE"); ?></label><br />
 						<input type="checkbox" name="disable_emoticons" id="disable_emoticons" />&nbsp;<label for="disable_emoticons"><?php echo $context->getVar("L_DISABLEEMOTICONS"); ?></label><br />
 						<input type="checkbox" name="disable_aurls" id="disable_aurls" />&nbsp;<label for="disable_aurls"><?php echo $context->getVar("L_PARSEURLS"); ?></label><br />
@@ -267,7 +267,7 @@ function emoticon(typed) {
 					</tr>
 					<?php while($context->push($context->listNext("topic_review"))): ?>
 
-					<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('reply_forum_id')]['replies']['can_view']) && $context->session['user']->info['maps']['forums'][$context->getVar('reply_forum_id')]['replies']['can_view'] <= $context->session['user']->info['perms'])): ?>
+					<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('reply_forum_id')]['replies']['can_view']) && $_MAPS['forums'][$context->getVar('reply_forum_id')]['replies']['can_view'] <= $context->session['user']->info['perms'])): ?>
 					<?php if ($context->addList("replies", $context->getVar("replies"))): ?>
 					<?php while($context->push($context->listNext("replies"))): ?>
 
@@ -337,14 +337,14 @@ function emoticon(typed) {
 	 */
 	
 	try {
-		<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add'] <= $context->session['user']->info['perms'])): ?>var disable_html			= document.getElementById('disable_html');<?php endif; ?>
+		<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('forum_id')]['html']['can_add']) && $_MAPS['forums'][$context->getVar('forum_id')]['html']['can_add'] <= $context->session['user']->info['perms'])): ?>var disable_html			= document.getElementById('disable_html');<?php endif; ?>
 		var disable_bbcode			= document.getElementById('disable_bbcode');
 		var disable_emoticons		= document.getElementById('disable_emoticons');
 		var disable_aurls			= document.getElementById('disable_aurls');
 		var enable_sig				= document.getElementById('enable_sig');
 		var disable_areply			= document.getElementById('disable_areply');
 		
-		<?php if(TRUE && (isset($context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add']) && $context->session['user']->info['maps']['forums'][$context->getVar('forum_id')]['html']['can_add'] <= $context->session['user']->info['perms'])): ?>disable_html.checked		= (<?php echo $context->getVar("reply_disable_html"); ?> == 1) ? true : false;<?php endif; ?>
+		<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('forum_id')]['html']['can_add']) && $_MAPS['forums'][$context->getVar('forum_id')]['html']['can_add'] <= $context->session['user']->info['perms'])): ?>disable_html.checked		= (<?php echo $context->getVar("reply_disable_html"); ?> == 1) ? true : false;<?php endif; ?>
 		disable_bbcode.checked		= (<?php echo $context->getVar("reply_disable_bbcode"); ?> == 1) ? true : false;
 		disable_emoticons.checked	= (<?php echo $context->getVar("reply_disable_emoticons"); ?> == 1) ? true : false;
 		disable_aurls.checked		= (<?php echo $context->getVar("reply_disable_aurls"); ?> == 1) ? true : false;

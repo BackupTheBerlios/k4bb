@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.13 2005/05/01 17:47:03 k4st Exp $
+* @version $Id: viewforum.php,v 1.14 2005/05/03 21:35:59 k4st Exp $
 * @package k42
 */
 
@@ -203,14 +203,14 @@ class DefaultEvent extends Event {
 						
 						/* Create the Pagination */
 						$num_pages			= ceil($forum['topics'] / $topicsperpage);
-						$page				= @ceil($start / $topicsperpage) + 1;
+						$page				= @ceil($start / $topicsperpage);
 						$pager				= &new TPL_Paginator($_URL, $num_pages, $page, $topicsperpage);
-						if($num_pages > 0) {
+						if($forum['topics'] > $topicsperpage) {
 							$template->setPager('topics_pager', $pager);
 						}
 
 						/* Create the query */
-						$topics				= &$dba->prepareStatement("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.created>=? AND t.is_draft = 0 AND i.row_type = ". TOPIC ." AND ((t.topic_type = ". TOPIC_NORMAL ." AND t.forum_id = ". intval($forum['id']) .") OR t.topic_type = ". TOPIC_GLOBAL .") ORDER BY $sortedby $sortorder LIMIT ?,?");
+						$topics				= &$dba->prepareStatement("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.created>=? AND t.is_draft = 0 AND i.row_type = ". TOPIC ." AND ((t.topic_type = ". TOPIC_NORMAL ." AND t.forum_id = ". intval($forum['id']) .") OR t.topic_type = ". TOPIC_GLOBAL .") ORDER BY t.topic_type DESC, $sortedby $sortorder LIMIT ?,?");
 						
 						/* Set the query values */
 						$topics->setInt(1, $daysprune * (3600 * 24));

@@ -10,7 +10,7 @@
 </if:if>
 <core:import id="drafts" />
 <core:import id="preview" />
-<form:form name="postreply_form" id="potreply_form" action="newreply.php?act=postreply" method="post" enctype="multipart/form-data">
+<form:form name="postreply_form" id="potreply_form" action="{$newreply_act}" method="post" enctype="multipart/form-data">
 <input type="hidden" name="forum_id" value="{$reply_forum_id}" />
 <input type="hidden" name="topic_id" value="{$reply_topic_id}" />
 <core:block id="parent_id" hidden="yes"><input type="hidden" name="parent_id" value="{$parent_id}" /></core:block>
@@ -47,7 +47,7 @@ function emoticon(typed) {
 // -->
 </script>
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
-	<core:block id="post_topic">
+	<core:block id="post_reply">
 	<tr class="thead" colspan="2">
 		<td colspan="2">
 			<div style="float:right;" class="smalltext">
@@ -62,8 +62,8 @@ function emoticon(typed) {
 	<tr class="thead" colspan="2">
 		<td colspan="2">
 			<div style="float:right;" class="smalltext">
-				<strong>{$L_TOPIC}:</strong>
-				<a href="viewtopic.php?id={$reply_id}" class="smalltext" style="font-weight: normal;" title="{$reply_name}">{$reply_name}</a>
+				<strong>{$L_REPLY}:</strong>
+				<a href="findpost.php?id={$reply_id}" class="smalltext" style="font-weight: normal;" title="{$reply_name}">{$reply_name}</a>
 			</div>
 			{$L_EDITPOST} : <span style="font-weight: normal;">{$reply_name}</span><input type="hidden" name="post_id" value="{$post_id}" />
 		</td>
