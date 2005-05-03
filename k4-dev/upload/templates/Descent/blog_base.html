@@ -99,38 +99,24 @@
 <div class="forum_main" id="forum_main">
 <br />
 <if:if var="bbactive" eq="1">
-<maps:if var="can_see_board" method="can_view">
-<core:import id="content" />
-<core:import id="content_extra" />
+<if:if var="enableblogs" eq="1">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<td valign="top" width="75%">
+			<core:import id="content" />
+		</td>
+		<td><div style="width:10px;">&nbsp;</div></td>
+		<td valign="top" width="25%">
+			<core:import id="content_extra" />
+		</td>
+	</tr>
+</table>
 <core:import id="users_browsing" />
-<core:import id="forum_info" />
 <core:import id="quick_login" />
-<core:block id="forum_status_icons" hidden="yes">
 
-<!-- Forum Status Icons -->
-<br />
-<div align="left">
-	<table cellpadding="0" cellspacing="0" border="0">
-		<tr>
-			<td><img src="Images/{$IMG_DIR}/Icons/forum_on.gif" alt="{$L_FORUMNEWPOSTS}" /></td>
-			<td><span class="smalltext">{$L_FORUMNEWPOSTS}</span></td>
-		</tr>
-		<tr>
-			<td><img src="Images/{$IMG_DIR}/Icons/forum_off.gif" alt="{$L_FORUMNONEWPOSTS}" /></td>
-			<td><span class="smalltext">{$L_FORUMNONEWPOSTS}</span></td>
-		</tr>
-		<tr>
-			<td><img src="Images/{$IMG_DIR}/Icons/forum_off_lock.gif" alt="{$L_FORUMLOCKED}" /></td>
-			<td><span class="smalltext">{$L_FORUMLOCKED}</span></td>
-		</tr>
-	</table>
-</div>
-<!-- / Forum Status Icons -->
+<if:else />
 
-</core:block>
-<maps:else />
-
-<!-- You don't have permission to view the forums -->
+<!-- You don't have permission to view the blogs -->
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
 		<td>{$L_INFORMATION}</td>
@@ -143,8 +129,8 @@
 		</td>
 	</tr>
 </table>
-<!-- / You don't have permission to view the forums -->
-</maps:if>
+<!-- / You don't have permission to view the blogs -->
+</if:if>
 <if:else />
 <!-- Board is Closed -->
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
@@ -327,7 +313,7 @@ COPYRIGHT NOTICE
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: forum_base.html,v 1.13 2005/05/03 22:12:43 k4st Exp $
+* @version $Id: blog_base.html,v 1.1 2005/05/03 22:12:43 k4st Exp $
 * @package k42
 */
 -->

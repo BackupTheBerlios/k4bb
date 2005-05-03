@@ -1,6 +1,10 @@
 CHANGELOG 
-$Id: CHANGELOG.txt,v 1.4 2005/05/01 01:11:25 k4st Exp $
+$Id: CHANGELOG.txt,v 1.5 2005/05/03 22:13:14 k4st Exp $
 
+02/05/2005 - ** removed the secondary measure for gc in session.php
+02/05/2005 - made the findpost.php page
+02/05/2005 - added reply deleting and editing
+02/05/2005 - moved language files around
 30/04/2005 - added reply adding and previewing (replies.class.php)
 30/04/2005 - added reply adding (newreply.php)
 25/04/2005 - added delete topic class (topics.class.php)

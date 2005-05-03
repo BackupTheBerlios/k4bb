@@ -228,6 +228,7 @@ INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (18,'calbirthday','1','yesno',2);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (18,'calshowbirthdays','1','yesno',3);
 
+INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (21,'enableblogs','1','yesno',1);
 
 INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (1, 14, 1, 'Global Forum Permisions', '', 1, 0, 0, 0, 0, 1, 0, 0, 0, '');
 INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (2, 3, 2, 'Can Users see the Board?', 'can_see_board', 1, 0, 0, 0, 0, 1, 0, 0, 0, '');
