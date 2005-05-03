@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.14 2005/05/03 21:35:59 k4st Exp $
+* @version $Id: viewforum.php,v 1.15 2005/05/03 23:08:23 k4st Exp $
 * @package k42
 */
 
@@ -77,9 +77,9 @@ class DefaultEvent extends Event {
 					/* Set the users browsing list */
 					$template->setList('users_browsing', $users_browsing);
 
-					$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members'),
+					$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members') + iif(is_a($session['user'], 'Member') && $_SESS->is_first, 1, 0),
 									'num_invisible'		=> Globals::getGlobal('num_online_invisible'),
-									'num_online_total'	=> $num_online_total
+									'num_online_total'	=> $num_online_total + iif(is_a($session['user'], 'Guest') && $_SESS->is_first, 1, 0)
 									);
 					
 					$element	= $forum['row_type'] & CATEGORY ? 'L_USERSBROWSINGCAT' : 'L_USERSBROWSINGFORUM';

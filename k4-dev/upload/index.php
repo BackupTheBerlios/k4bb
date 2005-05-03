@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.11 2005/05/01 01:12:02 k4st Exp $
+* @version $Id: index.php,v 1.12 2005/05/03 23:08:23 k4st Exp $
 * @package k42
 */
 
@@ -61,7 +61,7 @@ exit; */
 class DefaultEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
-		global $_DATASTORE, $_USERGROUPS;
+		global $_DATASTORE, $_USERGROUPS, $_SESS;
 		
 		/*
 		
@@ -113,12 +113,12 @@ class DefaultEvent extends Event {
 		
 		$newest_user						= $dba->getRow("SELECT name, id FROM ". USERS ." ORDER BY id DESC LIMIT 1");
 		
-		$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members'),
+		$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members') + iif(is_a($session['user'], 'Member') && $_SESS->is_new, 1, 0),
 						'num_invisible'		=> Globals::getGlobal('num_online_invisible'),
 						'num_topics'		=> $_DATASTORE['forumstats']['num_topics'],
 						'num_replies'		=> $_DATASTORE['forumstats']['num_replies'],
 						'num_members'		=> $_DATASTORE['forumstats']['num_members'],
-						'num_online_total'	=> $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS),
+						'num_online_total'	=> $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS) + iif(is_a($session['user'], 'Guest') && $_SESS->is_new, 1, 0),
 						'newest_uid'		=> $newest_user['id'],
 						'newest_user'		=> $newest_user['name']
 						);
