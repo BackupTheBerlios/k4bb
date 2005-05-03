@@ -1,6 +1,6 @@
 <?php
 /**
-* k4 Bulletin Board, files.php
+* k4 Bulletin Board, blog.php
 *
 * Copyright (c) 2005, Peter Goodman
 *
@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author James Logsdon
-* @version $Id: lang.php,v 1.8 2005/05/03 21:39:40 k4st Exp $
+* @version $Id: blog.php,v 1.1 2005/05/03 21:39:40 k4st Exp $
 * @package k42
 */
 
@@ -36,9 +36,13 @@ if(!defined('IN_K4')) {
 	exit;
 }
 
-include 'general.php';
-include 'blog.php';
+if (empty($lang) || !is_array($lang)) {
+	$lang = array();
+}
 
-$GLOBALS['lang'] = $lang;
+
+$lang += array(
+	
+);
 
 ?>
