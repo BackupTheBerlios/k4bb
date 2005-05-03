@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.5 2005/05/01 17:43:31 k4st Exp $
+* @version $Id: forums.class.php,v 1.6 2005/05/03 23:07:42 k4st Exp $
 * @package k42
 */
 
@@ -42,7 +42,7 @@ class AdminForums extends Event {
 			global $_QUERYPARAMS;
 
 
-			$categories = &new AdminCategoriesIterator("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'] ." FROM ". INFO ." i LEFT JOIN ". CATEGORIES ." c ON c.category_id = i.id AND i.row_type = ". CATEGORY ." ORDER BY i.row_order ASC");
+			$categories = &new AdminCategoriesIterator("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'] ." FROM ". INFO ." i LEFT JOIN ". CATEGORIES ." c ON c.category_id = i.id WHERE i.row_type = ". CATEGORY ." ORDER BY i.row_order ASC");
 			$template->setList('categories', $categories);
 			
 			$template->setFile('content', 'admin/admin.html');
@@ -64,7 +64,7 @@ class AdminAddForum extends Event {
 
 			/* Error checking */
 			if(!isset($request['category_id']) || intval($request['category_id']) == 0) {
-				return $template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
+				$template->setInfo('content', $template->getVar('L_INVALIDCATEGORY'), FALSE);
 				return TRUE;
 			}
 

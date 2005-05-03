@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: categories.class.php,v 1.5 2005/04/25 19:52:34 k4st Exp $
+* @version $Id: categories.class.php,v 1.6 2005/05/03 23:07:42 k4st Exp $
 * @package k42
 */
 
@@ -42,7 +42,7 @@ class AdminCategories extends Event {
 			global $_QUERYPARAMS;
 
 
-			$categories			= &$dba->executeQuery("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'] ." FROM ". INFO ." i LEFT JOIN ". CATEGORIES ." c ON c.category_id = i.id AND i.row_type = ". CATEGORY ." ORDER BY i.row_order ASC");
+			$categories			= &$dba->executeQuery("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'] ." FROM ". INFO ." i LEFT JOIN ". CATEGORIES ." c ON c.category_id = i.id WHERE i.row_type = ". CATEGORY ." ORDER BY i.row_order ASC");
 
 			$template->setList('categories', $categories);
 			
