@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: general.php,v 1.1 2005/05/03 21:39:40 k4st Exp $
+* @version $Id: general.php,v 1.2 2005/05/03 22:11:39 k4st Exp $
 * @package k42
 */
 
@@ -750,6 +750,7 @@ $lang += array(
 'L_BBFLASHCODE'			=> 'BB Flash Code',
 'L_POST_SAVE'			=> 'Post Saving',
 'L_POST_PREVIEW'		=> 'Post Previewing',
+'L_RSS_FEED'			=> 'RSS Feeds',
 
 /* Date and time stuff */
 'L_JANUARY'				=> 'January',
@@ -1146,6 +1147,7 @@ $lang += array(
 'L_HOWTOWOENABLE'			=> 'Selecting NO will disable Who\'s Online for everyone.',
 'L_WOLGUESTS'				=> 'Enable Guests?',
 'L_HOWTOWOLGUESTS'			=> 'Display Guest activity on Who\'s Online?',
+'L_ENABLEBLOGS'				=> 'Enable Web Logs?',
 
 /* Stuff for MAPS editor */
 'L_LEGEND'				=> 'Legend',

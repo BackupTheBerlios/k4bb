@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author James Logsdon
-* @version $Id: blog.php,v 1.1 2005/05/03 21:39:40 k4st Exp $
+* @version $Id: blog.php,v 1.2 2005/05/03 22:11:39 k4st Exp $
 * @package k42
 */
 
@@ -42,7 +42,13 @@ if (empty($lang) || !is_array($lang)) {
 
 
 $lang += array(
-	
+
+/* Permissions settings */
+'L_BLOGS'					=> 'Blogs',
+'L_OTHER_BLOGS'				=> 'Other Blogs',
+'L_COMMENTS'				=> 'Comments',
+'L_OTHER_COMMENTS'			=> 'Other Comments',
+'L_PRIVATE_BLOG'			=> 'Private Blog',
 );
 
 ?>
