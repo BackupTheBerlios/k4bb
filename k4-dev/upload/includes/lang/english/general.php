@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: general.php,v 1.2 2005/05/03 22:11:39 k4st Exp $
+* @version $Id: general.php,v 1.3 2005/05/05 21:37:34 k4st Exp $
 * @package k42
 */
 
@@ -392,7 +392,7 @@ $lang += array(
 'L_GROUP'				=> 'User Group',
 'L_USER'				=> 'Specific User',
 'L_RANKTO'				=> 'Apply to',
-'L_LOCKTHREAD'			=> 'Lock Single Topic',
+'L_LOCKTOPIC'			=> 'Lock Single Topic',
 
 'L_UPDATEMAPS'			=> 'Update MAP Item',
 'L_MAKEUNINHERIT'		=> 'Uninherit Properties',
@@ -851,6 +851,8 @@ $lang += array(
 'L_EDITREPLY'			=> 'Edit Reply',
 'L_DELETEREPLY'			=> 'Delete Reply',
 'L_DELETETOPIC'			=> 'Delete Topic',
+'L_LOCKTOPIC'			=> 'Lock Topic',
+'L_UNLOCKTOPIC'			=> 'Unlock Topic',
 'L_NEITHER'				=> 'Neither',
 'L_MAKEANNOUNCEMENT'	=> 'Make this post an Announcement',
 'L_MAKEGLOBALANNOUNCEMENT'=> 'Make this post a Global Announcement',
@@ -1156,9 +1158,9 @@ $lang += array(
 'L_ADD'					=> 'Add/Execute',
 
 /* ERRORS and/or nice MESSAGES */
+'L_REDIRECTING'			=> 'Your are being redirected toward the appropriate page.',
 'L_LOGGEDINTOFORUM'		=> 'Successfully logged into the selected forum.',
 'L_INVALIDFORUMPASS'	=> 'You have supplied an invalid Forum password for the selected Private Forum.',
-'L_LOCKEDTHREAD'		=> 'Successfully locked the selected topic.',
 'L_CANTDELETEMESSAGE'	=> 'You are not allowed to remove the selected Private Message. For further information about this, consult the FAQ Section of the forum.',
 'L_DELETEDPMESSAGE'		=> 'Successfully Removed the selected Private Message.',
 'L_NEWMESSAGE'			=> 'You have new message(s) in your Private Messages Inbox. Click here to go to it.',
@@ -1216,6 +1218,8 @@ $lang += array(
 'L_REMOVEDDRAFT'		=> 'Successfully removed the draft topic <strong>%s</strong> from the forum <strong>%s</strong>.',
 'L_SAVEDDRAFTTOPIC'		=> 'Successfully saved the topic <strong>%s</strong> as a draft to post in the forum <strong>%s</strong>.',
 'L_DELETEDTOPIC'		=> 'Successfully deleted the topic <strong>%s</strong> from the forum <strong>%s</strong>.',
+'L_LOCKEDTOPIC'			=> 'Successfully locked the topic <strong>%s</strong>.',
+'L_UNLOCKEDTOPIC'		=> 'Successfully unlocked the topic <strong>%s</strong>.',
 'L_DELETEDREPLY'		=> 'Successfully deleted the reply <strong>%s</strong> from the topic <strong>%s</strong>.',
 'L_TOOMANYPOLLOPTIONS'	=> 'You have put in %s poll options. The maximum number of poll options is %s.',
 'L_ERRORFILESTOOBIG'	=> 'The files that you have tried to upload are too big.',
