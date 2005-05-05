@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.16 2005/05/03 23:08:04 k4st Exp $
+* @version $Id: session.php,v 1.17 2005/05/05 21:35:48 k4st Exp $
 * @package k42
 */
 
@@ -85,11 +85,14 @@ class FADBSession {
 	}
 
 	function read($sessid) {
+		global $_URL;
+
 		$this->read_stmt->setString(1, $sessid);
 		
 		$result = $this->read_stmt->executeQuery();
 		
-		$this->is_new = TRUE;
+		$this->is_new		= TRUE;
+		$this->is_first		= TRUE;
 		$data = '';
 		
 		if ($result->next()) {
@@ -97,6 +100,10 @@ class FADBSession {
 			$this->is_new	= FALSE;
 			
 			$data			= $result->get('data');
+			
+			/* Is this this users first visit to this page? */
+			$this->is_first = ( ($data['location_file'] == $_URL->file) && ($data['location_act'] == @$_URL->args['act']) && ($data['location_id'] == @$_URL->args['id']) ) ? TRUE : FALSE;
+
 		}
 	  
 		return $data;
@@ -110,8 +117,6 @@ class FADBSession {
 			/**
 			 * This is the initial creation of the session
 			 */
-			
-			$this->is_first	= TRUE;
 
 			//(id, seen, name, user_id, user_agent, data, location_file, location_act, location_id)
 			$this->write_stmt->setString(1, $sessid);
@@ -126,10 +131,6 @@ class FADBSession {
 			
 			$this->write_stmt->executeUpdate();
 		} else {
-			
-			/* Is this this users first visit to this page? */
-			$this->is_first = ( ($data['location_file'] == $_URL->file) && ($data['location_act'] == @$_URL->args['act']) && ($data['location_id'] == @$_URL->args['id']) ) ? TRUE : FALSE;
-
 
 			/**
 			 * The session already exists, only update

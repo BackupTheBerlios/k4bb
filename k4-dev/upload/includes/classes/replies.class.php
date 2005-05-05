@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: replies.class.php,v 1.3 2005/05/03 21:37:43 k4st Exp $
+* @version $Id: replies.class.php,v 1.4 2005/05/05 21:36:06 k4st Exp $
 * @package k42
 */
 
@@ -92,6 +92,14 @@ class PostReply extends Event {
 			/* set the breadcrumbs bit */
 			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
 			return $template->setInfo('content', $template->getVar('L_PERMCANTPOST'), FALSE);		
+		}
+
+		/* Does this user have permission to reply to this topic if it is locked? */
+		if($topic['topic_locked'] == 1 && get_map($user, 'closed', 'can_add', array('forum_id' => $forum['id'])) > $user['perms']) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+			return TRUE;
 		}
 
 		if(isset($request['parent_id']) && intval($request['parent_id']) != 0) {
@@ -394,8 +402,16 @@ class EditReply extends Event {
 			return TRUE;
 		}
 		
+		/* Does this user have permission to edit theirreply if the topic is locked? */
+		if($topic['topic_locked'] == 1 && get_map($user, 'closed', 'can_edit', array('forum_id' => $forum['id'])) > $user['perms']) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+			return TRUE;
+		}
+
 		/* set the breadcrumbs bit */
-		$template	= BreadCrumbs($template, $template->getVar('L_EDITTOPIC'), $forum['row_left'], $forum['row_right']);
+		$template	= BreadCrumbs($template, $template->getVar('L_EDITREPLY'), $forum['row_left'], $forum['row_right']);
 		
 		if($reply['poster_id'] == $user['id']) {
 			if(get_map($user, 'replies', 'can_edit', array('forum_id'=>$forum['id'])) > $user['perms']) {
@@ -516,6 +532,14 @@ class UpdateReply extends Event {
 			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
 			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
 
+			return TRUE;
+		}
+		
+		/* Does this user have permission to edit theirreply if the topic is locked? */
+		if($topic['topic_locked'] == 1 && get_map($user, 'closed', 'can_edit', array('forum_id' => $forum['id'])) > $user['perms']) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
 			return TRUE;
 		}
 

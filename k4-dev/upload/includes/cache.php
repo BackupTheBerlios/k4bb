@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: cache.php,v 1.5 2005/05/03 21:37:22 k4st Exp $
+* @version $Id: cache.php,v 1.6 2005/05/05 21:35:48 k4st Exp $
 * @package k42
 */
 
@@ -64,27 +64,20 @@ function get_cached_maps() {
  */
 
 function get_cached_forum($id) {
-	global $_DBA;
+	global $_DBA, $_ALLFORUMS;
 
 	$id														= intval($id);
-
-	if(!isset($_SESSION['bbcache']))
-		$_SESSION['bbcache']								= array();
 	
-	/* If the session is set and the last time it was updated is less than or equal to 10 mins ago */
-	if(isset($_SESSION['bbcache']['forums'][$id]) && ((time() - $_SESSION['bbcache']['forums'][$id]['forum_time']) <= 600)) {
+	/* This should _always_ return the forum */
+	if(isset($_ALLFORUMS[$id])) {
 		
 		/* Return the info */
-		return $_SESSION['bbcache']['forums'][$id];
+		return $_ALLFORUMS[$id];
+
 	} else {
 		
 		/* Get the info */
 		$result												= $_DBA->getRow("SELECT i.* FROM ". INFO ." i WHERE id = ". $id);
-		
-		/* Add this forum/category info to the db */
-		$_SESSION['bbcache']['forums'][$id]					= $result;
-		
-		$_SESSION['bbcache']['forums'][$id]['forum_time']	= time();
 
 		/* Return the info */
 		return $result;
@@ -115,35 +108,6 @@ function set_forum_cache_item($name, $val, $id) {
 
 function isset_forum_cache_item($name, $id) {
 	return isset($_SESSION['bbcache']['forums'][$id][$name]);
-}
-
-/**
- * Global Setting cache
- */
-
-function get_cached_settings() {
-	global $_DBA;
-	
-	if(!isset($_SESSION['bbcache']))
-		$_SESSION['bbcache'] = array();
-
-	if(!isset($_SESSION['bbcache']['settings'])) {
-
-		/* Get the settings */
-		$result							= &$_DBA->executeQuery("SELECT * FROM ". SETTINGS);
-		$settings						= array();
-
-		/* Loop through the settings so that we can add them */
-		while ($result->next()) {
-			$temp						= $result->current();
-			$settings[$temp['varname']] = $temp['value'];
-		}
-		$result->freeResult();
-
-		$_SESSION['bbcache']['settings'] = $settings;
-	}
-
-	return $_SESSION['bbcache']['settings'];
 }
 
 /**
@@ -247,6 +211,49 @@ function bb_execute_topiccache() {
 
 		/* Clear the bbcache session under 'cookies' */
 		$_SESSION['bbcache']['temp_cookies'] = array();
+	}
+}
+
+/**
+ * Cache info from the database in XML-like format,
+ * then compile it to a monstrous PHP array
+ */
+class DBCache {
+	function newArray($array) {
+		if(is_array($array)) {
+			$contents				= "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\tarray(";
+			foreach($array as $column => $val) {
+				if(is_array($val)) {
+					$contents	.= "'". $column ."' => ". DBCache::newArray($val) .", ";
+				} else {
+					$contents	.= "'". $column ."' => '". htmlentities($val, ENT_QUOTES) ."', ";
+				}
+			}
+			$contents				.= ")";
+		} else {
+			$contents				= "'". htmlentities($array, ENT_QUOTES) ."', ";
+		}
+
+		return $contents;
+	}
+	function createCache($allinfo, $serialize = FALSE) {
+		$contents				= "<?php \nerror_reporting(E_ALL); \n\nif(!defined('IN_K4')) { \n\texit; \n}";
+		
+		if(!$serialize) {
+			
+			$contents			.= "\n\n\$cache = " . var_export($allinfo, TRUE) .";";
+			
+
+		} else {
+			$contents			.= "\n\n\$cache = '" . htmlentities(serialize($allinfo), ENT_QUOTES) ."';";
+		}
+		$contents				.= "\n?>";
+		
+		/* Create our file */
+		$handle = @fopen(CACHE_FILE, "w");
+		@chmod(CACHE_FILE, 0777);
+		@fwrite($handle, $contents);
+		@fclose($handle);
 	}
 }
 

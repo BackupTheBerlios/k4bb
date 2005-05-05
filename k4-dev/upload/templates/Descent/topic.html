@@ -90,7 +90,13 @@
 						<maps:if var="other_polls" forum="topic_forum_id" method="can_del"><a href="mod.php?act=deletetopic&amp;id={$id}" title="{$L_DELETE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/delete.gif" alt="{$L_DELETE}" /></a></maps:if>
 					</if:if>
 				</if:if>
-				<maps:if var="closed" forum="topic_forum_id" method="can_add"><a href="mod.php?act=lock_topic&amp;id={$id}" title="{$L_LOCK}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/lock.gif" alt="{$L_LOCK}" /></a></maps:if>
+				<maps:if var="closed" forum="topic_forum_id" method="can_add">
+					<if:if var="topic_locked" eq="0">
+					<a href="mod.php?act=locktopic&amp;id={$id}" title="{$L_LOCK}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/lock.gif" alt="{$L_LOCK}" /></a>
+					<if:else />
+					<a href="mod.php?act=unlocktopic&amp;id={$id}" title="{$L_UNLOCK}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/unlock.gif" alt="{$L_UNLOCK}" /></a>
+					</ifLif>
+				</maps:if>
 			</div>
 		</td>
 	</tr>

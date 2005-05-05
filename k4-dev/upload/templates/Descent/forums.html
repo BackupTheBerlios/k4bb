@@ -92,7 +92,7 @@
 		<if:if var="is_link" eq="1">
 		<tr class="panel">
 			<td width="5%" align="center"><img src="Images/{$IMG_DIR}/Icons/forum_link.gif" alt="{$forum_alt}" title="{$forum_alt}" height="28" width="28" border="0" /></td>
-			<if:if var="link_show_redirects" eq="0">
+			<if:if var="link_show_redirects" eq="1">
 			<td width="60%"><a href="redirect.php?id={$id}" title="{$name}"><strong>{$name}</strong></a><br /><span class="minitext">{$description}<br />{$sub_forums}</span></td>
 			<td align="center" class="alt1" colspan="3"><span class="smalltext">{$L_REDIRECTS}: {$link_redirects}</span></td>
 			<if:else />

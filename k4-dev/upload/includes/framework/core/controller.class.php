@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: controller.class.php,v 1.9 2005/05/03 21:38:14 k4st Exp $
+* @version $Id: controller.class.php,v 1.10 2005/05/05 21:36:33 k4st Exp $
 * @package k42
 */
 
@@ -141,8 +141,6 @@ class Controller {
 		$act_var			= 'act';
 
 		/* get the session and user variables */
-		//$session			= &Globals::getGlobal('session');
-		//$user				= &Globals::getGlobal('user');
 		$session			= &$_SESSION;
 		$user				= &$_SESSION['user']->info;
 		

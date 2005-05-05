@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.6 2005/04/24 02:11:13 k4st Exp $
+* @version $Id: forums.class.php,v 1.7 2005/05/05 21:36:06 k4st Exp $
 * @package k42
 */
 
@@ -211,19 +211,13 @@ class ForumsIterator extends FAProxyIterator {
 	}
 }
 
-class AllForumsIterator extends FAProxyIterator {
+class AllForumsIterator extends FAArrayIterator {
 	
 	var $result;
  
-	function AllForumsIterator() {
-		
-		global $_DBA, $_QUERYPARAMS;
-		
-		$query				= "SELECT ". $_QUERYPARAMS['info'] ." FROM ". INFO ." i WHERE i.row_type = ". FORUM ." OR i.row_type = ". CATEGORY ." ORDER BY i.row_left ASC";		
+	function AllForumsIterator($forums) {
 
-		$this->result		= &$_DBA->executeQuery($query);
-
-		parent::FAProxyIterator($this->result);
+		parent::FAArrayIterator($forums);
 	}
 
 	function &current() {

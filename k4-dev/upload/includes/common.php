@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: common.php,v 1.12 2005/05/03 22:10:45 k4st Exp $
+* @version $Id: common.php,v 1.13 2005/05/05 21:35:48 k4st Exp $
 * @package k42
 */
 
@@ -43,7 +43,7 @@ define('DEBUG_SQL', TRUE);
 
 /**
  * Constants that define what a category/forum/thread/etc is
- * Don't change these
+ * DO NOT CHANGE
  */
 
 define('CATEGORY', 1);
@@ -76,10 +76,12 @@ define('DATASTORE',			'k4_datastore');
 define('POSTICONS',			'k4_posticons');
 define('EMOTICONS',			'k4_emoticons');
 define('USERGROUPS',		'k4_usergroups');
+define('POLLOPTIONS',		'k4_polloptions');
+define('POLLVOTES',			'k4_pollvotes');
 
 
 /**
- * User permission levels
+ * User permission levels, DO NOT CHANGE
  */
 
 define('UNDEFINED',			0);
@@ -100,12 +102,18 @@ define('USER_IP', $_SERVER['REMOTE_ADDR']);
 
 
 /**
- * Topic Types
+ * Topic Types, DO NOT CHANGE
  */
 define('TOPIC_NORMAL',		1);
 define('TOPIC_STICKY',		2);
 define('TOPIC_ANNOUNCE',	3);
 define('TOPIC_GLOBAL',		4);
+
+/**
+ * The interval between cache reloads
+ */
+define('CACHE_INTERVAL',	86400);
+define('CACHE_FILE',		FORUM_BASE_DIR .'/tmp/cache/cache.php');
 
 /**
  * Query Parameters for things such as forums, categories, users, etc
@@ -178,12 +186,9 @@ $map_items['blog'][]		= array('varname' => 'private_blog',	'can_view' => 0, 'can
 /* Get the configuration options */
 global $_CONFIG;
 
-/* Create an array for the datastore and usergroups */
-$datastore					= array();
-$usergroups					= array();
 
 /* Get the database Object */
-$_DBA						= &Database::open($_CONFIG['dba']);
+$_DBA							= &Database::open($_CONFIG['dba']);
 
 /*
 $query = "";
@@ -194,37 +199,97 @@ foreach(explode("\r\n", $query) as $q)
 exit;
 */
 
-/* Get the datastore */
-$result								= &$_DBA->executeQuery("SELECT * FROM ". DATASTORE);
-while ($result->next()) {
-	$temp							= $result->current();
-	$datastore[$temp['varname']]	= @unserialize(stripslashes(str_replace('&quot;', '"', $temp['data'])));
-}
-$result->freeResult();
+if(file_exists(CACHE_FILE) && is_readable(CACHE_FILE) && is_writable(CACHE_FILE)) {
+	
+	if((filemtime(CACHE_FILE) + CACHE_INTERVAL) > time()) {
+		$rewrite_cache = FALSE;
+	} else {
 
-/* Get the usergroups */
-$result								= &$_DBA->executeQuery("SELECT * FROM ". USERGROUPS ." ORDER BY max_perm DESC");
-while ($result->next()) {
-	$temp							= $result->current();
-	$usergroups[$temp['id']]		= $temp;
+		/* Include the $cache array */
+		include CACHE_FILE;
+		
+		if(!is_array($cache)) {
+			$rewrite_cache	= TRUE;
+		} else {
+			$rewrite_cache	= FALSE;
+		}
+	}
+
+} else {
+	$rewrite_cache = TRUE;
 }
-$result->freeResult();
+
+if($rewrite_cache) {
+	
+	$cache									= array();
+
+	/**
+	 * Get the datastore 
+	 */
+	$result									= &$_DBA->executeQuery("SELECT * FROM ". DATASTORE);
+	while ($result->next()) {
+		$temp								= $result->current();
+		$cache[DATASTORE][$temp['varname']] = @unserialize(stripslashes(str_replace('&quot;', '"', $temp['data'])));
+	}
+	$result->freeResult();
+
+	/**
+	 * Get the usergroups 
+	 */
+	$result									= &$_DBA->executeQuery("SELECT * FROM ". USERGROUPS ." ORDER BY max_perm DESC");
+	while ($result->next()) {
+		$temp								= $result->current();
+		$cache[USERGROUPS][$temp['id']]		= $temp;
+	}
+	$result->freeResult();
+	
+	/**
+	 * Get the settings
+	 */
+	$result									= &$_DBA->executeQuery("SELECT * FROM ". SETTINGS);
+	while($result->next()) {
+		$temp								= $result->current();
+		$cache[SETTINGS][$temp['varname']]	= $temp['value'];
+	}
+	$result->freeResult();
+	
+	/**
+	 * Get ALL of the categories/forums
+	 */
+	$result									= &$_DBA->executeQuery("SELECT ". $query_params['info'] ." FROM ". INFO ." i WHERE i.row_type = ". FORUM ." OR i.row_type = ". CATEGORY ." ORDER BY i.row_left ASC");
+	while($result->next()) {
+		$temp								= $result->current();
+		$cache['all_forums'][$temp['id']]	= $temp;
+	}
+	$result->freeResult();
+
+	/* Memory saving */
+	unset($result);
+
+	/* Get the MAP's */
+	$cache[MAPS]							= get_maps();
+
+	DBCache::createCache($cache);
+} else {
+
+	include_once CACHE_FILE;
+}
 
 /**
- * Get the Url instance of this file.. it will be globlized 
+ * Set the super-globals 
  */
-$url						= &new Url('http://'. $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
+$GLOBALS['_DBA']					= &$_DBA;
+$GLOBALS['_URL']					= &new Url('http://'. $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
+$GLOBALS['_SETTINGS']				= $cache[SETTINGS];
+$GLOBALS['_DATASTORE']				= $cache[DATASTORE];
+$GLOBALS['_QUERYPARAMS']			= &$query_params;
+$GLOBALS['_MAPITEMS']				= &$map_items;
+$GLOBALS['_MAPS']					= $cache[MAPS];
+$GLOBALS['_USERGROUPS']				= $cache[USERGROUPS];
+$GLOBALS['_DEBUGITEMS']				= array();
+$GLOBALS['_ALLFORUMS']				= $cache['all_forums'];
 
-
-/* Set the super-globals */
-$GLOBALS['_DBA']			= &$_DBA;
-$GLOBALS['_URL']			= &$url;
-$GLOBALS['_SETTINGS']		= get_cached_settings();
-$GLOBALS['_DATASTORE']		= &$datastore;
-$GLOBALS['_QUERYPARAMS']	= &$query_params;
-$GLOBALS['_MAPITEMS']		= &$map_items;
-$GLOBALS['_MAPS']			= get_maps();
-$GLOBALS['_USERGROUPS']		= &$usergroups;
-$GLOBALS['_DEBUGITEMS']		= array();
+/* Memory Saving */
+unset($cache);
 
 ?>

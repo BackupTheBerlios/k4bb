@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topics.class.php,v 1.12 2005/05/03 21:37:43 k4st Exp $
+* @version $Id: topics.class.php,v 1.13 2005/05/05 21:36:06 k4st Exp $
 * @package k42
 */
 
@@ -663,6 +663,14 @@ class EditTopic extends Event {
 				return TRUE;
 			}
 		}
+
+		/* Does this user have permission to edit this topic if it is locked? */
+		if($topic['topic_locked'] == 1 && get_map($user, 'closed', 'can_edit', array('forum_id' => $forum['id'])) > $user['perms']) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+			return TRUE;
+		}
 		
 		$bbcode				= &new BBCodex($user, $topic['body_text'], $forum['id'], TRUE, TRUE, TRUE, TRUE);
 		
@@ -771,7 +779,7 @@ class UpdateTopic extends Event {
 
 		/* Does this person have permission to edit this topic? */
 		if($topic['poster_id'] == $user['id']) {
-			if(get_map($type, 'can_edit', array('forum_id'=>$forum['id'])) > $user['perms']) {
+			if(get_map($user, $type, 'can_edit', array('forum_id'=>$forum['id'])) > $user['perms']) {
 				$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
 				return TRUE;
 			}
@@ -780,6 +788,14 @@ class UpdateTopic extends Event {
 				$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
 				return TRUE;
 			}
+		}
+		
+		/* Does this user have permission to edit this topic if it is locked? */
+		if($topic['topic_locked'] == 1 && get_map($user, 'closed', 'can_edit', array('forum_id' => $forum['id'])) > $user['perms']) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+			return TRUE;
 		}
 
 		/* set the breadcrumbs bit */
@@ -1097,6 +1113,138 @@ class DeleteTopic extends Event {
 }
 
 /**
+ * Set the topic locking parameters
+ */
+class LockTopic extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_QUERYPARAMS, $_DATASTORE, $_USERGROUPS;
+		
+		if(!isset($request['id']) || !$request['id'] || intval($request['id']) == 0) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
+			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+
+		/* Get our topic */
+		$topic				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id = ". intval($request['id']));
+		
+		if(!$topic || !is_array($topic) || empty($topic)) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
+			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
+
+			return TRUE;
+		}
+			
+		$forum				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($topic['forum_id']));
+		
+		/* Check the forum data given */
+		if(!$forum || !is_array($forum) || empty($forum)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+			
+		/* Make sure the we are trying to delete from a forum */
+		if(!($forum['row_type'] & FORUM)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_CANTDELFROMNONFORUM'), FALSE);
+			return TRUE;
+		}
+
+		if(get_map($user, 'closed', 'can_add', array('forum_id' => $forum['id'])) > $user['perms']) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+			return TRUE;
+		}
+		
+		/* set the breadcrumbs bit */
+		$template	= BreadCrumbs($template, $template->getVar('L_LOCKTOPIC'), $topic['row_left'], $topic['row_right']);
+	
+		/* Lock the topic */
+		$lock		= &$dba->prepareStatement("UPDATE ". TOPICS ." SET topic_locked=1 WHERE topic_id=?");
+		$lock->setInt(1, $topic['id']);
+		$lock->executeUpdate();
+
+		/* Redirect the user */
+		$template->setInfo('content', sprintf($template->getVar('L_LOCKEDTOPIC'), $topic['name']));
+		$template->setRedirect('viewtopic.php?id='. $topic['id'], 3);
+		return TRUE;
+	}
+}
+
+/**
+ * Set the topic locking parameters
+ */
+class UnlockTopic extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_QUERYPARAMS, $_DATASTORE, $_USERGROUPS;
+		
+		if(!isset($request['id']) || !$request['id'] || intval($request['id']) == 0) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
+			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+
+		/* Get our topic */
+		$topic				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id = ". intval($request['id']));
+		
+		if(!$topic || !is_array($topic) || empty($topic)) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
+			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
+
+			return TRUE;
+		}
+			
+		$forum				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($topic['forum_id']));
+		
+		/* Check the forum data given */
+		if(!$forum || !is_array($forum) || empty($forum)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+			
+		/* Make sure the we are trying to delete from a forum */
+		if(!($forum['row_type'] & FORUM)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_CANTDELFROMNONFORUM'), FALSE);
+			return TRUE;
+		}
+
+		if(get_map($user, 'closed', 'can_add', array('forum_id' => $forum['id'])) > $user['perms']) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
+			return TRUE;
+		}
+		
+		/* set the breadcrumbs bit */
+		$template	= BreadCrumbs($template, $template->getVar('L_UNLOCKTOPIC'), $topic['row_left'], $topic['row_right']);
+	
+		/* Lock the topic */
+		$lock		= &$dba->prepareStatement("UPDATE ". TOPICS ." SET topic_locked=0 WHERE topic_id=?");
+		$lock->setInt(1, $topic['id']);
+		$lock->executeUpdate();
+
+		/* Redirect the user */
+		$template->setInfo('content', sprintf($template->getVar('L_UNLOCKEDTOPIC'), $topic['name']));
+		$template->setRedirect('viewtopic.php?id='. $topic['id'], 3);
+		return TRUE;
+	}
+}
+
+/**
  * Make the topic image for a specified topic
  */
 function topic_image($topic, &$user, $img_dir, $lastactive) {
@@ -1110,7 +1258,7 @@ function topic_image($topic, &$user, $img_dir, $lastactive) {
 	
 	$EXT						= 'gif';
 	
-	$lock						= intval(@$topic['row_locked']) == 1 ? 'lock' : NULL;
+	$lock						= intval(@$topic['topic_locked']) == 1 ? 'lock' : NULL;
 		
 	/* Set the number of replies that this topic has */
 	$topic_num_replies			= @(($topic['row_right'] - $topic['row_left'] - 1) / 2);

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: mod.php,v 1.2 2005/05/03 21:35:59 k4st Exp $
+* @version $Id: mod.php,v 1.3 2005/05/05 21:34:30 k4st Exp $
 * @package k42
 */
 
@@ -46,6 +46,8 @@ $app = new Forum_Controller('forum_base.html');
 
 $app->AddEvent('deletetopic', new DeleteTopic);
 $app->AddEvent('deletereply', new DeleteReply);
+$app->AddEvent('locktopic', new LockTopic);
+$app->AddEvent('unlocktopic', new UnlockTopic);
 
 $app->ExecutePage();
 

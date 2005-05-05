@@ -1,5 +1,6 @@
 TODO:
 
+- Add moderator's log to locking/deleting posts
 - Make the Heirarchy::moveUp() work properly
 - ** add moderating log when a user deletes a reply
 - ** make globals, stickies and announcements work.

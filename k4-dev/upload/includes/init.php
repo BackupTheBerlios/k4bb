@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: init.php,v 1.9 2005/05/03 21:37:22 k4st Exp $
+* @version $Id: init.php,v 1.10 2005/05/05 21:35:48 k4st Exp $
 * @package k42
 */
 
@@ -56,6 +56,7 @@ require FORUM_BASE_DIR. '/includes/classes/users.class.php';
 require FORUM_BASE_DIR. '/includes/classes/online_users.class.php';
 require FORUM_BASE_DIR. '/includes/classes/globals.class.php';
 require FORUM_BASE_DIR. '/includes/classes/member/login.class.php';
+require FORUM_BASE_DIR. '/includes/classes/feed.class.php';
 
 /* Admin Classes */
 require FORUM_BASE_DIR. '/includes/classes/admin/maps.class.php';

@@ -26,7 +26,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.php,v 1.9 2005/05/03 21:37:22 k4st Exp $
+* @version $Id: bbcode.php,v 1.10 2005/05/05 21:35:48 k4st Exp $
 * @package k42
 */
 
@@ -53,6 +53,8 @@ class BBCodex {
 
 	var $bbcodes	= array();
 	var $customs	= array();
+
+	var $omits		= array();
 	
 	/**
 	 * Constructor, set some variables
@@ -104,6 +106,7 @@ class BBCodex {
 			$this->add_custom('quote', new BBQuote($this));
 			$this->add_custom('list', new BBList($this));
 			$this->add_custom('code', new BBCode($this));
+			$this->add_custom('php', new PHPBBCode($this));
 		}
 
 		if($this->emoticons && ($this->user['perms'] >= get_map($this->user, 'emoticons', 'can_add', array('forum_id'=>$this->forum_id)) ))
@@ -416,11 +419,20 @@ function highlight_code($matches) {
 	return $code;
 }
 function htmlcode_to_bbcode($matches) {
-	while(preg_match('~<(span|font|code)(.*?)>(.*?)</(span|font|code)>~isU', $matches[1]))
-		$matches[1] = preg_replace('~<(span|font|code)(.*?)>(.*?)</(span|font|code)>~isU', '\\3', $matches[1]);
 	
-	$matches[1] = preg_replace('~(<br />|<br>)~i', "\n", $matches[1]);
+	/* Need to do these tags manually.. ugh */
+	while(preg_match('~<span(.+)>(.+)</span>~isU', $matches[1]))
+		$matches[1] = preg_replace('~<span(.+)>(.+)</span>~isU', '\\2', $matches[1]);
 
+	while(preg_match('~<font(.+)>(.+)</font>~isU', $matches[1]))
+		$matches[1] = preg_replace('~<font(.+)>(.+)</font>~isU', '\\2', $matches[1]);
+
+	while(preg_match('~<code>(.+)</code>~isU', $matches[1]))
+		$matches[1] = preg_replace('~<code>(.+)</code>~isU', '\\1', $matches[1]);
+
+	if(preg_match('~(<br />|<br>)~i', $matches[1]))
+		$matches[1]		= preg_replace('~(<br />|<br>)~i', "\n", $matches[1]);
+	
 	return $matches[1];
 }
 class BBCode extends BBCodeTag {
@@ -436,25 +448,129 @@ class BBCode extends BBCodeTag {
 	function to_html() {
 		
 		/* Get rid of any new lines infront of tags */
-		$this->instance->text	= preg_replace("~(\r\n|\n|\r)\[/(code|list|quote)~i", '[/\\2', $this->instance->text);
+		$this->instance->text	= preg_replace("~(\r\n|\n|\r)\[/(code|list|quote|php)~i", '[/\\2', $this->instance->text);
 		
 		/* Get rid of new lines after tags */
-		$this->instance->text	= preg_replace("~(code|list|quote)\](\r\n|\n|\r)~i", '\\1]', $this->instance->text);
+		$this->instance->text	= preg_replace("~(code|list|quote|php)\](\r\n|\n|\r)~i", '\\1]', $this->instance->text);
 
 		$this->instance->text = preg_replace_callback('~\[code\](.+)\[\/code\]~isU', "highlight_code", $this->instance->text);
 				
 		return $this->instance->text;
 	}
 	function to_bbcode() {
-		$this->instance->text	= preg_replace_callback('~<!-- CODE_HIGHLIGHT -->(.+)<!-- / CODE_HIGHLIGHT -->~isU', "htmlcode_to_bbcode", $this->instance->text);
+		$this->instance->text	= preg_replace_callback('~<!-- CODE_HIGHLIGHT -->(.*?)<!-- / CODE_HIGHLIGHT -->~is', "htmlcode_to_bbcode", $this->instance->text);
 
 		$this->instance->text	= preg_replace('~<div align="center"><br /><div class="codetitle">'. strtoupper($this->lang['L_CODE']) .': </div><div class="codecontent" align="left">(.+)</div><br /></div>~isU', '[code]\\1[/code]', $this->instance->text);
 		
 		/* Get rid of any new lines infront of tags */
-		$this->instance->text	= preg_replace("~(\r\n|\n|\r)\[/(code|list|quote)~i", '[/\\2', $this->instance->text);
+		$this->instance->text	= preg_replace("~(\r\n|\n|\r)\[/(code|list|quote|php)~i", '[/\\2', $this->instance->text);
 		
 		/* Get rid of new lines after tags */
-		$this->instance->text	= preg_replace("~(code|list|quote)\](\r\n|\n|\r)~i", '\\1]', $this->instance->text);
+		$this->instance->text	= preg_replace("~(code|list|quote|php)\](\r\n|\n|\r)~i", '\\1]', $this->instance->text);
+			
+		return $this->instance->text;
+	}
+}
+
+/**
+ * Deal with PHP tags
+ */
+function highlight_phpcode($matches) {
+
+	/**
+	 * Remove all html formatting
+	 */
+
+	/* New Lines */
+	$matches[1] = preg_replace('~<!-- NEWLINE (\r\n|\n|\r) --><br /><!-- / NEWLINE -->~is', "\\1", $matches[1]);
+
+	/* < and > */
+	$matches[1] = str_replace('&lt;', '<', $matches[1]);
+	$matches[1] = str_replace('&gt;', '>', $matches[1]);
+
+	/* Ampersands */
+	$matches[1] = str_replace('&amp;', '&', $matches[1]);
+	
+	/* Quotes */
+	$matches[1] = str_replace('&quot;', '"', $matches[1]);
+	$matches[1] = str_replace('&#039;', "'", $matches[1]);
+	
+	/* Add the PHP tags in */
+	$matches[1] = trim($matches[1]);
+	
+	if (strpos($matches[1], '<?') === false)
+		$matches[1] = "<?php\n". $matches[1];
+	
+	if (strpos($matches[1], '?>') === false)
+		$matches[1] .= "\n?>"; 
+
+	/**
+	 * Start the output buffer, we could use hgihtlight_string($text, TRUE);,
+	 * but the return parameter is unsupported in certain versions of php
+	 */
+	ob_start();
+
+	@highlight_string(stripslashes($matches[1]));
+
+	$new_code	= ob_get_contents();
+
+	/* Clear the output buffer */
+	ob_end_clean();
+
+	$code		= '<div align="center"><br /><div class="codetitle">PHP: </div><div class="codecontent" align="left">';
+	$code		.= '<!-- PHP_HIGHLIGHT -->'. $new_code .'<!-- / PHP_HIGHLIGHT -->';
+	$code		.= '</div><br /></div>';
+	
+	unset($lang);
+
+	return $code;
+}
+function htmlcode_to_phpbbcode($matches) {
+	
+	/* Need to do these tags manually.. ugh */
+	while(preg_match('~<span(.+)>(.+)</span>~isU', $matches[1]))
+		$matches[1] = preg_replace('~<span(.+)>(.+)</span>~isU', '\\2', $matches[1]);
+
+	while(preg_match('~<font(.+)>(.+)</font>~isU', $matches[1]))
+		$matches[1] = preg_replace('~<font(.+)>(.+)</font>~isU', '\\2', $matches[1]);
+
+	while(preg_match('~<code>(.+)</code>~isU', $matches[1]))
+		$matches[1] = preg_replace('~<code>(.+)</code>~isU', '\\1', $matches[1]);
+
+	if(preg_match('~(<br />|<br>)~i', $matches[1]))
+		$matches[1]		= preg_replace('~(<br />|<br>)~i', "\n", $matches[1]);
+	
+	return $matches[1];
+}
+class PHPBBCode extends BBCodeTag {
+	var $instance;
+	var $lang;
+
+	function PHPBBCode(&$instance) {
+		$this->instance		= &$instance;
+	}
+	function to_html() {
+		
+		/* Get rid of any new lines infront of tags */
+		$this->instance->text	= preg_replace("~(\r\n|\n|\r)\[/(code|list|quote|php)~i", '[/\\2', $this->instance->text);
+		
+		/* Get rid of new lines after tags */
+		$this->instance->text	= preg_replace("~(code|list|quote|php)\](\r\n|\n|\r)~i", '\\1]', $this->instance->text);
+
+		$this->instance->text = preg_replace_callback('~\[php\](.+)\[\/php\]~isU', "highlight_phpcode", $this->instance->text);
+				
+		return $this->instance->text;
+	}
+	function to_bbcode() {
+		$this->instance->text	= preg_replace_callback('~<!-- PHP_HIGHLIGHT -->(.*?)<!-- / PHP_HIGHLIGHT -->~is', "htmlcode_to_phpbbcode", $this->instance->text);
+
+		$this->instance->text	= preg_replace('~<div align="center"><br /><div class="codetitle">PHP: </div><div class="codecontent" align="left">(.+)</div><br /></div>~isU', '[code]\\1[/code]', $this->instance->text);
+		
+		/* Get rid of any new lines infront of tags */
+		$this->instance->text	= preg_replace("~(\r\n|\n|\r)\[/(code|list|quote|php)~i", '[/\\2', $this->instance->text);
+		
+		/* Get rid of new lines after tags */
+		$this->instance->text	= preg_replace("~(code|list|quote|php)\](\r\n|\n|\r)~i", '\\1]', $this->instance->text);
 			
 		return $this->instance->text;
 	}

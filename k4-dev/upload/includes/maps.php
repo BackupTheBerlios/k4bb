@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: maps.php,v 1.5 2005/05/03 21:37:22 k4st Exp $
+* @version $Id: maps.php,v 1.6 2005/05/05 21:35:48 k4st Exp $
 * @package k42
 */
 
@@ -80,7 +80,7 @@ function get_maps() {
 	$maps	= array();
 	
 	/* Get everything from the maps table, this is only executed once per session */
-	$query	= "SELECT ". $_QUERYPARAMS['maps'] ." FROM ". MAPS ." m ";
+	$query	= "SELECT * FROM ". MAPS;
 	//LEFT JOIN ". MAPS ." mm ON M.id = mm.id WHERE (M.row_left <= mm.row_left AND M.row_right >= mm.row_right) OR (M.user_id = $user_id) OR (M.is_global = 1 AND mm.varname = '$varname')"
 
 	$result = &$_DBA->executeQuery($query);

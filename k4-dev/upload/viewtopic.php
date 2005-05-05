@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewtopic.php,v 1.8 2005/05/03 23:08:23 k4st Exp $
+* @version $Id: viewtopic.php,v 1.9 2005/05/05 21:34:30 k4st Exp $
 * @package k42
 */
 
@@ -36,7 +36,7 @@ require 'forum.inc.php';
 class DefaultEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
-		global $_URL, $_QUERYPARAMS, $_USERGROUPS;
+		global $_URL, $_QUERYPARAMS, $_USERGROUPS, $_SESS;
 		
 		/**
 		 * Error Checking

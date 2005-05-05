@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: parser.php,v 1.3 2005/04/19 21:52:48 k4st Exp $
+* @version $Id: parser.php,v 1.4 2005/05/05 21:37:07 k4st Exp $
 * @package k42
 */
 
@@ -99,7 +99,7 @@ class TPL_Lexer {
 	function handleTag($buffer) {
 		// Grab the opening slash, group and name of the tag as well as the attribute string and the closing slash
 		preg_match('~<(/)?([a-z]+:[a-z]+)((?:[\s][a-zA-Z]+="[^"]*")*)[\s]?(/)?>~', $buffer, $matches);
-
+		
 		$name		= $matches[2];
 		$attribs	= array();
 		

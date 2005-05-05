@@ -133,7 +133,6 @@ INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (2,'styleset','Descent','',6);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (2,'imageset','Descent','',7);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (2,'templateset','Descent','',8);
-INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (2,'doctype','<!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;>','textarea',9);
 
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (3,'contactuslink','mailto:peter.goodman@gmail.com','',1);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (3,'webmasteremail','peter.goodman@gmail.com','',2);
