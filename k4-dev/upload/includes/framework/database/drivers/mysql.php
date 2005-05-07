@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: mysql.php,v 1.6 2005/04/20 19:38:10 k4st Exp $
+* @version $Id: mysql.php,v 1.7 2005/05/07 15:31:50 k4st Exp $
 * @package k42
 */
 
@@ -214,6 +214,10 @@ class MysqlConnection extends FADBConnection {
 		}
 		return FALSE;
 	}
+
+	function Query($stmt) {
+		@mysql_query($stmt, $this->link);
+	}
 	
 	function getInsertId() {
 		/* Increment the number of queries */
@@ -228,6 +232,9 @@ class MysqlConnection extends FADBConnection {
 
 	function quote($value) {
 		return mysql_escape_string($value);
+	}
+	function alterTable($table, $stmt) {
+		$this->executeUpdate("ALTER TABLE $table $stmt");
 	}
 }
 

@@ -1,0 +1,173 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<form name="add_field" id="add_field" action="admin.php?act=userfields_add2" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="resetErrors();"><script type="text/javascript">resetErrors();</script>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="2"><?php echo $context->getVar("L_ADDPROFILEFIELD"); ?></td>
+	</tr>
+	<tr class="alt1">
+		<td width="50%"><strong><?php echo $context->getVar("L_FIELDTYPE"); ?>:</strong></td>
+		<td width="50%">
+			<script type="text/javascript">doHelpButton('field_type');</script>
+			<select name="inputtype" tabindex="1">
+				<option value="text"><?php echo $context->getVar("L_SINGLELINETEXT"); ?></option>
+				<option value="textarea"><?php echo $context->getVar("L_MULTILINETEXT"); ?></option>
+				<option value="radio"><?php echo $context->getVar("L_SINGLESELECTRADIOS"); ?></option>
+				<option value="select"><?php echo $context->getVar("L_SINGLESELECTMENU"); ?></option>
+				<option value="multiselect"><?php echo $context->getVar("L_MULTISELECTMENU"); ?></option>
+				<option value="checkbox"><?php echo $context->getVar("L_MULTISELECTCHECK"); ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="50%"><strong><?php echo $context->getVar("L_TITLE"); ?>:</strong></td>
+		<td width="50%">
+			<script type="text/javascript">doHelpButton('field_title');</script>
+			<input type="text" name="title" id="title" value="" maxlength="50" class="inputbox" tabindex="2" />
+			<script type="text/javascript">addVerification('title', '.+', 'title_error', 'inputfailed');</script><div id="title_error" style="display: none;"><?php echo $context->getVar("L_INSERTFIELDTITLE"); ?></div>
+		</td>
+	</tr>
+	<tr class="alt1">
+		<td width="30%"><strong><?php echo $context->getVar("L_DESCRIPTION"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('field_description');</script>
+			<input type="text" name="description" id="description" value="" style="width: 80%;" maxlength="255" class="inputbox" tabindex="3" />
+			<script type="text/javascript">addVerification('description', '.+', 'description_error', 'inputfailed');</script><div id="description_error" style="display: none;"><?php echo $context->getVar("L_INSERTFIELDDESC"); ?></div>
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="30%"><strong><?php echo $context->getVar("L_ORDER"); ?>:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('field_order');</script>
+			<input type="text" name="row_order" id="row_order" value="<?php echo $context->getVar("forum_row_order"); ?>" maxlength="5" size="3" class="inputbox" tabindex="4" />
+			<script type="text/javascript">addVerification('row_order', '.+', 'row_order_error', 'inputfailed');</script><div id="row_order_error" style="display: none;"><?php echo $context->getVar("L_INSERTFIELDORDER"); ?></div>
+			<script type="text/javascript">addVerification('row_order', '([0-9])+', 'row_order_num_error', 'inputfailed');</script><div id="row_order_num_error" style="display: none;"><?php echo $context->getVar("L_INSERTFIELDORDERNUM"); ?></div>
+		</td>
+	</tr>
+	<tr class="alt1">
+		<td width="50%"><strong><?php echo $context->getVar("L_FIELDREQUIRED"); ?></strong></td>
+		<td width="50%">
+			<script type="text/javascript">doHelpButton('field_required');</script>
+			<select name="is_required" id="is_required" tabindex="5">
+				<option value="0"><?php echo $context->getVar("L_NO"); ?></option>
+				<option value="1"><?php echo $context->getVar("L_YES"); ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="50%"><strong><?php echo $context->getVar("L_ISEDITABLE"); ?></strong></td>
+		<td width="50%">
+			<script type="text/javascript">doHelpButton('field_editable');</script>
+			<select name="is_required" id="is_editable" tabindex="6">
+				<option value="1"><?php echo $context->getVar("L_YES"); ?></option>
+				<option value="0"><?php echo $context->getVar("L_NO"); ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="alt1">
+		<td width="50%"><strong><?php echo $context->getVar("L_ISPRIVATE"); ?></strong></td>
+		<td width="50%">
+			<script type="text/javascript">doHelpButton('field_private');</script>
+			<select name="is_private" id="is_private" tabindex="7">
+				<option value="0"><?php echo $context->getVar("L_NO"); ?></option>
+				<option value="1"><?php echo $context->getVar("L_YES"); ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="alt2">
+		<td width="50%"><strong><?php echo $context->getVar("L_MINPERMTOUSE"); ?></strong></td>
+		<td width="50%">
+			<script type="text/javascript">doHelpButton('field_min_perm');</script>
+			<select name="min_perm" id="min_perm" tabindex="8">
+				<option value="0">--</option>
+				<option value="1"><?php echo $context->getVar("L_GUEST"); ?></option>
+				<option value="2" selected="selected"><?php echo $context->getVar("L_MEMBER"); ?></option>
+				<option value="7"><?php echo $context->getVar("L_MODERATOR"); ?></option>
+				<option value="8"><?php echo $context->getVar("L_SUPERMODERATOR"); ?></option>
+				<option value="9"><?php echo $context->getVar("L_ADMIN"); ?></option>
+				<option value="10"><?php echo $context->getVar("L_SUPERADMIN"); ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="alt1">
+		<td width="50%"><strong><?php echo $context->getVar("L_DISPLAYPAGES"); ?>:</strong></td>
+		<td width="50%">
+			<script type="text/javascript">doHelpButton('field_pages');</script>
+			<label for="display_memberlist"><input type="checkbox" name="display_memberlist" id="display_memberlist" value="yes" /> <?php echo $context->getVar("L_MEMBERLIST"); ?></label><br />
+			<label for="display_profile"><input type="checkbox" name="display_profile" id="display_profile" value="yes" /> <?php echo $context->getVar("L_PROFILE"); ?></label><br />
+			<label for="display_topic"><input type="checkbox" name="display_topic" id="display_topic" value="yes" /> <?php echo $context->getVar("L_TOPIC"); ?></label><br />
+			<label for="display_post"><input type="checkbox" name="display_post" id="display_post" value="yes" /> <?php echo $context->getVar("L_POST"); ?></label><br />
+			<label for="display_register"><input type="checkbox" name="display_register" id="display_register" value="yes" /> <?php echo $context->getVar("L_REGISTRATION"); ?></label>
+		</td>
+	</tr>
+	<tbody id="text">
+		<tr class="thead">
+			<td colspan="2"><?php echo $context->getVar("L_OPTIONS"); ?></td>
+		</tr>
+		<tr class="alt2">
+			<td width="30%"><strong><?php echo $context->getVar("L_DEFAULTVALUE"); ?>:</strong></td>
+			<td>
+				<script type="text/javascript">doHelpButton('field_defaultval');</script>
+				<input type="text" name="default_value" id="default_value" value="<?php echo $context->getVar("default_value"); ?>" maxlength="255" class="inputbox" tabindex="9" />
+			</td>
+		</tr>
+		<tr class="alt1">
+			<td width="30%"><strong><?php echo $context->getVar("L_CHARSMAXLENGTH"); ?>:</strong></td>
+			<td>
+				<script type="text/javascript">doHelpButton('field_maxlength');</script>
+				<input type="text" name="user_maxlength" id="user_maxlength" value="100" maxlength="3" size="3" class="inputbox" tabindex="10" /> <span class="smalltext"><?php echo $context->getVar("L_MAX255"); ?></span>
+				<script type="text/javascript">addVerification('user_maxlength', '.+', 'maxlength_error', 'inputfailed');</script><div id="maxlength_error" style="display: none;"><?php echo $context->getVar("L_INSERTMAXLENGTH"); ?></div>
+				<script type="text/javascript">addVerification('user_maxlength', '([0-9])+', 'maxlength_num_error', 'inputfailed');</script><div id="maxlength_num_error" style="display: none;"><?php echo $context->getVar("L_INSERTMAXLENGTHNUM"); ?></div>
+			</td>
+		</tr>
+		<tr class="alt2">
+			<td width="30%"><strong><?php echo $context->getVar("L_FIELDSIZE"); ?>:</strong></td>
+			<td>
+				<script type="text/javascript">doHelpButton('field_size');</script>
+				<input type="text" name="display_size" id="display_size" value="30" maxlength="3" size="3" class="inputbox" tabindex="11" />
+			</td>
+		</tr>
+	</tbody>
+	<tbody id="textarea">
+		<tr class="thead">
+			<td colspan="2"><?php echo $context->getVar("L_OPTIONS"); ?></td>
+		</tr>
+		<tr class="alt2">
+			<td width="30%"><strong><?php echo $context->getVar("L_DEFAULTVALUE"); ?>:</strong></td>
+			<td>
+				<script type="text/javascript">doHelpButton('field_defaultval');</script>
+				<textarea name="default_value" id="default_value" value="<?php echo $context->getVar("default_value"); ?>" class="inputbox" rows="5" style="width: 80%;" tabindex="9"></textarea>
+			</td>
+		</tr>
+		<tr class="alt1">
+			<td width="30%"><strong><?php echo $context->getVar("L_CHARSMAXLENGTH"); ?>:</strong></td>
+			<td>
+				<script type="text/javascript">doHelpButton('field_maxlength');</script>
+				<input type="text" name="user_maxlength" id="user_maxlength" value="100" maxlength="3" size="3" class="inputbox" tabindex="4" /> <span class="smalltext"><?php echo $context->getVar("L_MAX255"); ?></span>
+				<script type="text/javascript">addVerification('user_maxlength', '.+', 'maxlength_error', 'inputfailed');</script><div id="maxlength_error" style="display: none;"><?php echo $context->getVar("L_INSERTMAXLENGTH"); ?></div>
+				<script type="text/javascript">addVerification('user_maxlength', '([0-9])+', 'maxlength_num_error', 'inputfailed');</script><div id="maxlength_num_error" style="display: none;"><?php echo $context->getVar("L_INSERTMAXLENGTHNUM"); ?></div>
+			</td>
+		</tr>
+		<tr class="alt2">
+			<td width="30%"><strong><?php echo $context->getVar("L_FIELDSIZE"); ?>:</strong></td>
+			<td>
+				<script type="text/javascript">doHelpButton('field_size');</script>
+				<input type="text" name="display_size" id="display_size" value="30" maxlength="3" size="3" class="inputbox" tabindex="11" />
+			</td>
+		</tr>
+		<tr class="alt1">
+			<td width="30%"><strong><?php echo $context->getVar("L_FIELDNUMROWS"); ?>:</strong></td>
+			<td>
+				<script type="text/javascript">doHelpButton('field_rows');</script>
+				<input type="text" name="display_rows" id="display_rows" value="5" maxlength="2" size="2" class="inputbox" tabindex="11" />
+			</td>
+		</tr>
+	</tbody>
+	<tr class="tcat">
+		<td colspan="2">
+			<input type="submit" value="<?php echo $context->getVar("L_SAVE"); ?>" class="button" />
+			<input type="reset" value="<?php echo $context->getVar("L_RESET"); ?>" class="button" />
+		</td>
+	</tr>
+</table>
+</form>
+<?php endif; ?>

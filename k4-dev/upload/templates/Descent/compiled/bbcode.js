@@ -24,7 +24,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.js,v 1.4 2005/05/03 21:34:46 k4st Exp $
+* @version $Id: bbcode.js,v 1.5 2005/05/07 15:29:56 k4st Exp $
 * @package k42
 */
 

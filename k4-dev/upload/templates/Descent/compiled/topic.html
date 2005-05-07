@@ -90,7 +90,13 @@
 						<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('topic_forum_id')]['other_polls']['can_del']) && $_MAPS['forums'][$context->getVar('topic_forum_id')]['other_polls']['can_del'] <= $context->session['user']->info['perms'])): ?><a href="mod.php?act=deletetopic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_DELETE"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/delete.gif" alt="<?php echo $context->getVar("L_DELETE"); ?>" /></a><?php endif; ?>
 					<?php endif; ?>
 				<?php endif; ?>
-				<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('topic_forum_id')]['closed']['can_add']) && $_MAPS['forums'][$context->getVar('topic_forum_id')]['closed']['can_add'] <= $context->session['user']->info['perms'])): ?><a href="mod.php?act=lock_topic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_LOCK"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/lock.gif" alt="<?php echo $context->getVar("L_LOCK"); ?>" /></a><?php endif; ?>
+				<?php if(!isset($_MAPS)) global $_MAPS; if(TRUE && (isset($_MAPS['forums'][$context->getVar('topic_forum_id')]['closed']['can_add']) && $_MAPS['forums'][$context->getVar('topic_forum_id')]['closed']['can_add'] <= $context->session['user']->info['perms'])): ?>
+					<?php if($context->getVar('topic_locked') == 0): ?>
+					<a href="mod.php?act=locktopic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_LOCK"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/lock.gif" alt="<?php echo $context->getVar("L_LOCK"); ?>" /></a>
+					<?php else: ?>
+					<a href="mod.php?act=unlocktopic&amp;id=<?php echo $context->getVar("id"); ?>" title="<?php echo $context->getVar("L_UNLOCK"); ?>"><img border="0" src="Images/<?php echo $context->getVar("IMG_DIR"); ?>/Buttons/<?php echo $context->getVar("LANG"); ?>/unlock.gif" alt="<?php echo $context->getVar("L_UNLOCK"); ?>" /></a>
+					</ifLif>
+				<?php endif; ?>
 			</div>
 		</td>
-	</tr>
+	</tr><?php endif; ?>

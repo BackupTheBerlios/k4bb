@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: error.class.php,v 1.3 2005/04/13 02:53:33 k4st Exp $
+* @version $Id: error.class.php,v 1.4 2005/05/07 15:31:37 k4st Exp $
 * @package k42
 */
 
@@ -41,9 +41,9 @@ class FAError {
 	var $line;
 
 	function FAError($message, $filename = "", $line = "") {
-		$this->message = $message;
-		$this->filename = $filename;
-		$this->line = $line;
+		$this->message		= $message;
+		$this->filename		= $filename;
+		$this->line			= $line;
 	}
 
 	function getArray() {
@@ -89,6 +89,7 @@ class Error {
 			if (is_a($stack->errors[$i], $type))
 				return $stack->errors[$i];
 		}
+		return FALSE;
 	}
 
 	function pitch(&$error) {

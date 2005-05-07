@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.12 2005/05/03 23:08:23 k4st Exp $
+* @version $Id: index.php,v 1.13 2005/05/07 15:30:31 k4st Exp $
 * @package k42
 */
 
@@ -91,6 +91,9 @@ class DefaultEvent extends Event {
 		$dba->executeQuery("delete from k4_replies");
 		$dba->executeQuery("delete from k4_maps");
 		$dba->executeUpdate("UPDATE ". USERINFO ." SET num_posts = 0");*/
+		
+		//print_r($dba->getRow("SELECT sql, name, type FROM sqlite_master WHERE tbl_name = '". USERINFO ."' ORDER BY type DESC"));
+		//$dba->executeQuery("delete from ". PROFILEFIELDS ." where name = 'field6'");
 		
 		/* Set the globals for num_topics and num_replies here */
 		Globals::setGlobal('num_topics', 0);

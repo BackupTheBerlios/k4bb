@@ -121,7 +121,7 @@ function emoticon(typed) {
 								<maps:else />
 							</if:if>
 							<textarea name="message" id="messagecodex" class="inputbox" rows="10" cols="100" wrap="SOFT" style="width: 500px;">{$reply_body_text}</textarea>
-							<form:error id="messagecodex_error" for="messagecodex" setclass="inputfailed" regex="(\n|.)+">{$L_INSERTTOPICMESSAGE}</form:error>
+							<form:error id="messagecodex_error" for="messagecodex" setclass="inputfailed" regex="(\n|\r\n|\r|.)+">{$L_INSERTTOPICMESSAGE}</form:error>
 							<!-- / Post Message -->
 
 						</td>

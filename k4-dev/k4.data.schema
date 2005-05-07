@@ -252,3 +252,9 @@ INSERT INTO k4_usergroups (name,nicename,description,min_perm,max_perm,color,dis
 INSERT INTO k4_usergroups (name,nicename,description,min_perm,max_perm,color,display_legend,avatar) VALUES ('Administrators', 'Board Admin', 'Administrators of this board.',9,10,'CC0035',1,'administrator.gif');
 INSERT INTO k4_usergroups (name,nicename,description,min_perm,max_perm,color,display_legend,avatar) VALUES ('Super Moderators', 'Super Moderator', 'Super Moderators of this board.',7,8,'0E9A04',1,'moderator.gif');
 INSERT INTO k4_usergroups (name,nicename,description,min_perm,max_perm,color,display_legend) VALUES ('Super Members', 'Super Member', 'Super Members of this board.',5,6,'D58A32',1);
+
+INSERT INTO k4_userprofilefields (name,title,description,inputtype,display_size,display_rows,display_register,display_topic,display_post,display_order) VALUES ('field1','Address','Your home address.','textarea',35,2,0,0,0,1);
+INSERT INTO k4_userprofilefields (name,title,description,inputtype,display_size,display_register,display_topic,display_post,display_order) VALUES ('field2','Occupation','Your occupation.','text',20,0,0,0,2);
+INSERT INTO k4_userprofilefields (name,title,description,inputtype,display_size,display_register,display_topic,display_post,display_order) VALUES ('field3','Interests','A list of your interests.','text',20,0,0,0,3);
+INSERT INTO k4_userprofilefields (name,title,description,inputtype,display_size,display_rows,display_register,display_topic,display_post,user_maxlength,display_order) VALUES ('field4','Biography','A short description of yourself.','textarea',35,2,0,0,0,255,4);
+INSERT INTO k4_userprofilefields (name,title,description,inputtype,display_size,display_register,display_topic,display_post,default_value,display_order) VALUES ('field5','Homepage','Your website homepage.','text',30,0,0,0,'',5);

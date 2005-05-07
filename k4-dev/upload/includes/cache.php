@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: cache.php,v 1.6 2005/05/05 21:35:48 k4st Exp $
+* @version $Id: cache.php,v 1.7 2005/05/07 15:30:48 k4st Exp $
 * @package k42
 */
 
@@ -253,6 +253,7 @@ class DBCache {
 		$handle = @fopen(CACHE_FILE, "w");
 		@chmod(CACHE_FILE, 0777);
 		@fwrite($handle, $contents);
+		@chmod(CACHE_FILE, 0777);
 		@fclose($handle);
 	}
 }

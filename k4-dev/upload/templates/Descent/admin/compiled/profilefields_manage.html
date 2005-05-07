@@ -1,0 +1,55 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="3"><?php echo $context->getVar("L_USERPROFILEFIELDS"); ?></td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="3"><?php echo $context->getVar("L_MANAGEPROFILEFIELDS"); ?></td>
+	</tr>
+	<tr class="panel">
+		<td colspan="3">
+			<div align="center">
+				<input type="button" value="<?php echo $context->getVar("L_ADDPROFILEFIELD"); ?>" onclick="document.location='admin.php?act=userfields_add'" class="minitext" style="font-weight: bold;" />
+			</div>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td><?php echo $context->getVar("L_ORDER"); ?></td>
+		<td colspan="2"><?php echo $context->getVar("L_MANAGEMENT"); ?></td>
+	</tr>
+	<?php if ($context->listReset("fields")): ?>
+	<?php if (is_object($list = &$context->getList("fields")) && !$list->hasNext()): ?>
+	<tr class="panel">
+		<td colspan="3">
+			<div class="outset_box" align="center">
+				<br />
+				<?php echo $context->getVar("L_NOCUSTOMPROFILEFIELDS"); ?>
+				<br /><br />
+			</div>
+		</td>
+	</tr>
+	<?php endif; ?>
+	<?php while($context->push($context->listNext("fields"))): ?>
+	<form action="admin.php?act=userfields_simpleupdate" name="update_userfields" id="update_userfields" method="post" enctype="multipart/form-data">
+	<?php switch($context->listKey("fields") % 2):  case 0: $context->push(array('row_class' => 'alt1')); break;  case 1: $context->push(array('row_class' => 'alt2')); break;  default: $context->push(array()); endswitch; ?>
+	<tr class="<?php echo $context->getVar("row_class"); ?>">
+	<?php $context->pop(); ?>
+		<td width="10%"><input type="text" name="display_order" value="<?php echo $context->getVar("display_order"); ?>" size="3" maxlength="3" /></td>
+		<td width="80%">
+			<strong><?php echo $context->getVar("title"); ?></strong> (<?php echo $context->getVar("name"); ?>)
+			<br />
+			<span class="smalltext"><?php if($context->getVar('inputtype') == 'text'):  echo $context->getVar("L_SINGLELINETEXT");  elseif($context->getVar('inputtype') == 'textarea'):  echo $context->getVar("L_MULTILINETEXT");  elseif($context->getVar('inputtype') == 'radio'):  echo $context->getVar("L_SINGLESELECTRADIOS");  elseif($context->getVar('inputtype') == 'select'):  echo $context->getVar("L_SINGLESELECTMENU");  elseif($context->getVar('inputtype') == 'multiselect'):  echo $context->getVar("L_MULTISELECTMENU");  elseif($context->getVar('inputtype') == 'checkbox'):  echo $context->getVar("L_MULTISELECTCHECK");  endif; ?></span>
+		</td>
+		<td width="10%">
+			<div align="center">
+				<input type="submit" class="minitext" value="<?php echo $context->getVar("L_SAVE"); ?>" /><input type="button" class="minitext" value="<?php echo $context->getVar("L_EDIT"); ?>" onclick="document.location='admin.php?act=userfields_edit&id=<?php echo $context->getVar("id"); ?>'" />
+				<br />
+				<input type="button" class="minitext" style="color: #FF0000;" value="<?php echo $context->getVar("L_DELETE"); ?>" onclick="document.location='admin.php?act=userfields_remove&field=<?php echo $context->getVar("name"); ?>'" />
+			</div>
+		</td>
+	</tr>
+	</form>
+	<?php $context->pop(); endwhile; ?>
+	<?php endif; ?>
+</table>
+<?php endif; ?>

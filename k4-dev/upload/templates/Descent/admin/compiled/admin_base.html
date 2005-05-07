@@ -18,7 +18,7 @@
 <?php if ($file = $template->getFile("content", "")):  $template->setFilename($file);  $template->render(); endif; ?>
 <?php if ($template->isVisible('copyright', TRUE)): ?>
 	<br />
-	<div align="center"><div style="width:400px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">[ <a href="http://www.newmediums.net" alt="k4 Home Page" title="k4 Home Page" target="_blank">Powered By: k4 v.<?php echo $context->getVar("VERSION"); ?></a> ] [ Load time: <?php echo $context->getVar("load_time"); ?> ] [ Num Queries: <?php echo $context->getVar("num_queries"); ?> ]<br /><?php echo $context->getVar("copyrighttext"); ?></div></div>
+	<div align="center"><div style="width:400px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">[ <a href="http://www.k4forums.com" alt="k4 Home Page" title="k4 Home Page" target="_blank">Powered By: k4 v.<?php echo $context->getVar("VERSION"); ?></a> ] [ Load time: <?php echo $context->getVar("load_time"); ?> ] [ Num Queries: <?php echo $context->getVar("num_queries"); ?> ]<br /><?php echo $context->getVar("copyrighttext"); ?></div></div>
 	<a name="bottom" id="bottom"> </a>
 <?php endif; ?>
 <?php else: ?>

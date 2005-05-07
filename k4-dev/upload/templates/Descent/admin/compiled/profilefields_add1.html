@@ -1,0 +1,26 @@
+<?php if (is_a($context->session['user'], 'Member') && $context->session['user']->info['perms'] >= ADMIN): ?>
+<form action="admin.php?act=userfields_add2" method="post" enctype="multipart/form-data">
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td colspan="2"><?php echo $context->getVar("L_ADDPROFILEFIELD"); ?></td>
+	</tr>
+	<tr class="alt1">
+		<td width="50%"><strong><?php echo $context->getVar("L_FIELDTYPE"); ?>:</strong></td>
+		<td width="50%">
+			<script type="text/javascript">doHelpButton('field_type');</script>
+			<select name="inputtype" tabindex="1">
+				<option value="text"><?php echo $context->getVar("L_SINGLELINETEXT"); ?></option>
+				<option value="textarea"><?php echo $context->getVar("L_MULTILINETEXT"); ?></option>
+				<option value="radio"><?php echo $context->getVar("L_SINGLESELECTRADIOS"); ?></option>
+				<option value="select"><?php echo $context->getVar("L_SINGLESELECTMENU"); ?></option>
+				<option value="multiselect"><?php echo $context->getVar("L_MULTISELECTMENU"); ?></option>
+				<option value="checkbox"><?php echo $context->getVar("L_MULTISELECTCHECK"); ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td colspan="2"><input type="submit" value="<?php echo $context->getVar("L_CONTINUE"); ?>" /></td>
+	</tr>
+</table>
+</form>
+<?php endif; ?>
