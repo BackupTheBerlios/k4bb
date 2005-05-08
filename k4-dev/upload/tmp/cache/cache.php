@@ -10,8 +10,8 @@ $cache = array (
   array (
     'maxloggedin' => 
     array (
-      'maxonline' => 1,
-      'maxonlinedate' => 1115479222,
+      'maxonline' => 2,
+      'maxonlinedate' => 1115590686,
     ),
     'forumstats' => 
     array (
@@ -170,7 +170,7 @@ $cache = array (
     'allowsignatures' => '1',
     'newuseremail' => '',
     'requireuniqueemail' => '1',
-    'allowregistration' => '0',
+    'allowregistration' => '1',
     'verifyemail' => '1',
     'moderatenewmembers' => '0',
     'allowchangestyles' => '1',
@@ -278,6 +278,7 @@ $cache = array (
       'is_private' => '0',
       'is_required' => '0',
       'special_pcre' => '',
+      'html' => '<textarea name="field1" id="field1" size="35" rows="2" class="inputbox"></textarea>',
     ),
     'field2' => 
     array (
@@ -302,6 +303,7 @@ $cache = array (
       'is_private' => '0',
       'is_required' => '0',
       'special_pcre' => '',
+      'html' => '<input type="text" class="inputbox" name="field2" id="field2" value="" size="20" maxlength="100" />',
     ),
     'field3' => 
     array (
@@ -326,6 +328,7 @@ $cache = array (
       'is_private' => '0',
       'is_required' => '0',
       'special_pcre' => '',
+      'html' => '<input type="text" class="inputbox" name="field3" id="field3" value="" size="20" maxlength="100" />',
     ),
     'field4' => 
     array (
@@ -350,6 +353,7 @@ $cache = array (
       'is_private' => '0',
       'is_required' => '0',
       'special_pcre' => '',
+      'html' => '<textarea name="field4" id="field4" size="35" rows="2" class="inputbox"></textarea>',
     ),
     'field5' => 
     array (
@@ -374,6 +378,7 @@ $cache = array (
       'is_private' => '0',
       'is_required' => '0',
       'special_pcre' => '',
+      'html' => '<input type="text" class="inputbox" name="field5" id="field5" value="" size="30" maxlength="100" />',
     ),
     'field6' => 
     array (
@@ -386,18 +391,19 @@ $cache = array (
       'inputoptions' => '',
       'min_perm' => '2',
       'display_register' => '0',
-      'display_profile' => '1',
-      'display_topic' => '1',
-      'display_post' => '1',
-      'display_image' => '1',
+      'display_profile' => '0',
+      'display_topic' => '0',
+      'display_post' => '0',
+      'display_image' => '0',
       'display_memberlist' => '',
       'display_size' => '30',
       'display_rows' => '0',
       'display_order' => '6',
       'is_editable' => '0',
       'is_private' => '0',
-      'is_required' => '1',
+      'is_required' => '0',
       'special_pcre' => '',
+      'html' => '<input type="text" class="inputbox" name="field6" id="field6" value="Newbie" size="30" maxlength="50" />',
     ),
   ),
   'k4_maps' => 
