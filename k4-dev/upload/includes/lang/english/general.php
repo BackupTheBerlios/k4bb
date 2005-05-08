@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: general.php,v 1.4 2005/05/07 15:32:20 k4st Exp $
+* @version $Id: general.php,v 1.5 2005/05/08 23:13:04 k4st Exp $
 * @package k42
 */
 
@@ -601,7 +601,7 @@ $lang += array(
 'L_S'					=> 's',
 'L_USERPROFILE'			=> 'User Profile',
 'L_RANK'				=> 'Rank',
-'L_ENTEREMAIL'			=> 'Please enter your E-mail',
+'L_ENTEREMAIL'			=> 'Please enter your Email',
 'L_RESETPW'				=> 'Reset Password',
 'L_PASSWORDSENT'		=> 'Password sent!',
 'L_PWSENTSUBJECT'		=> '%s - Your New Password',
@@ -614,10 +614,12 @@ $lang += array(
 'L_USERNAME'			=> 'Username',
 'L_PASSWORD'			=> 'Password',
 'L_AUTOLOG'				=> 'Automatically log me in.',
-'L_EMAIL'				=> 'E-Mail',
+'L_EMAIL'				=> 'Email',
+'L_EMAILADDRESS'		=> 'Email Address',
 'L_VALIDATEPW'			=> 'Validate Password',
 'L_CREATE'				=> 'Create',
 'L_RESET'				=> 'Reset',
+'L_VALIDATEEMAILADDR'	=> 'Validate Email Address',
 
 /* Search forms */
 'L_SEARCHFORUMS'		=> 'Search Forums',
@@ -850,9 +852,12 @@ $lang += array(
 'L_USERNAMETOOLONG'		=> 'That username is too long. The maximum length is 16 characters.',
 'L_USERNAMETOOSHORT'	=> 'That username is not long enough. The minimum length is 3 characters.',
 'L_PASSESDONTMATCH'		=> 'Your passwords do not match.',
-'L_SUPPLYPASSCHECK'		=> 'Please supply a password check.',
+'L_SUPPLYPASSCHECK'		=> 'Please validate your password.',
 'L_SUPPLYPASS'			=> 'Please supply a password.',
-'L_SUPPLYVALIDEMAIL'	=> 'Please supply a valid E-mail address.',
+'L_SUPPLYEMAIL'			=> 'Please supply an Email address.',
+'L_SUPPLYEMAILCHECK'	=> 'Please validate your Email address.',
+'L_SUPPLYVALIDEMAIL'	=> 'Please supply a valid Email address.',
+'L_EMAILSDONTMATCH'		=> 'Your Email\'s don\'t match.',
 'L_SUPPLYUSERNAME'		=> 'Please supply a Username.',
 'L_EMAILTAKEN'			=> 'Someone has already registered a user with that email address.',
 'L_USERNAMETAKEN'		=> 'That username is already taken.',
@@ -872,7 +877,8 @@ $lang += array(
 'L_YOUNEEDPERMS'		=> 'You do not have permission to use this functionality.',
 'L_USERINGROUP'			=> 'The selected user already belongs to this user group.',
 'L_NEEDLOGGEDIN'		=> 'You need to be logged in to use this feature.',
-'L_CANTREGISTERLOGGEDIN'=> 'You are not aloud to register while logged in.',
+'L_CANTREGISTERLOGGEDIN'=> 'You cannot register while logged in.',
+'L_CANTREGISTERADMIN'	=> 'The Administrator(s) have disabled the user registration feature.',
 'L_YOUARELOGGEDIN'		=> 'You are already logged in.',
 'L_ERRORPOSTING'		=> 'An error occured while trying to post a topic.',
 'L_ERRORREPLYING'		=> 'An error occured while trying to reply to a post.',
@@ -913,6 +919,12 @@ $lang += array(
 'L_NOFORUMPOSTS30DAYS'	=> 'There have been no posts in the last %s days in this forum.',
 'L_TRYFORUMCONTROLS'	=> 'Try using the controls below to search for any older posts that may exist.',
 'L_NOFORUMSEXIST'		=> 'There are currently no active Forums.',
+'L_FILLINTHISFIELD'		=> 'You must insert/select a %s.',
+'L_REGFORUMRULES'		=> 'Registration Forum Rules',
+'L_REGISTRATIONAGREEMENT'=> 'Registration to this forum is free! We do insist that you abide by the rules and policies detailed below. If you agree to the terms, please check the \'I agree\' checkbox and press the \'Register\' button below. If you would like to cancel the registration, click here to return to the forums index.<br /><br />Although the administrators and moderators of this forum will attempt to keep all objectionable messages off of this forum, however it is impossible for us to review all of the messages posted. All messages express the views of their respective author, and neither the owners of this forum, nor the developers of k4 Bulletin Board will be held responsible for the content of any message.<br /><br />By agreeing to these rules, you warrant that you will not post any messages that are obscene, vulgar, sexually-orientated, hateful, threatening, or otherwise violative of any laws.<br /><br />The owners of this forum reserve the right to remove, edit, move or close any topic for any reason.',
+'L_READANDAGREED'		=> 'I have read, and agree to abide by the above forums rules.',
+'L_INORDERTOREGISTER'	=> 'In order to proceed, you must agree with the following rules:',
+'L_INORDERTOPOSTINFORUM'=> 'In order to be able to post messages on the %s forums, you must first register. Please enter your desired user name, your email address and other required details in the form below.',
 
 );
 

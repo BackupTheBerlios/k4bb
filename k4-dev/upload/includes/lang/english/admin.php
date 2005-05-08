@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: admin.php,v 1.1 2005/05/07 15:32:20 k4st Exp $
+* @version $Id: admin.php,v 1.2 2005/05/08 23:13:04 k4st Exp $
 * @package k42
 */
 
@@ -56,6 +56,7 @@ $lang += array(
 'L_USERRANKS'			=> 'User Ranks',
 'L_USERTITLES'			=> 'User Titles',
 'L_USERPROFILEFIELDS'	=> 'User Profile Fields',
+'L_USERREGISTRATION'	=> 'User Registration',
 'L_SQL'					=> 'SQL',
 'L_VIEWFORUM'			=> 'Forum Home Page',
 'L_STYLES'				=> 'Board Styles',
@@ -256,12 +257,16 @@ $lang += array(
 'L_BOXHEIGHT'			=> 'Box Height',
 'L_NEWLINEEXPLAIN'		=> 'Enter the options that the user can choose from. Separate each option with a new-line (carriage return).',
 'L_INSERTFIELDOPTIONS'	=> 'Please insert the options for this field.',
+'L_INSERTDISPLAYSIZE'	=> 'Please insert a display size for this profile field.',
+'L_INSERTDISPLAYSIZENUM'=> 'Please insert a numeric value for the display size of this profile field.',
 'L_NEEDFIELDINPUTTYPE'	=> 'You must specify an input type for your custom profile field.',
 'L_ADDEDPROFILEFIELD'	=> 'Successfully added the profile field <strong>%s</strong>.',
 'L_ERRORADDPROFILEFIELD'=> 'A critical error occured while trying to add the profile field <strong>%s</strong>. The error was as follows:<br /><pre>%s</pre>',
 'L_INVALIDUSERFIELD'	=> 'You have specified an invalid user profile field. Please make sure that you chose the correct one.',
 'L_ERRORDELPROFILEFIELD'=> 'A critical error occured while trying to remove the profile field <strong>%s</stronf>. The error was as follows:<br /><pre>%s</pre>',
 'L_REMOVEDPROFILEFIELD'	=> 'Successfully removed the profile field <strong>%s</strong>.',
+'L_UPDATEDPROFILEFIELD'	=> 'Successfully updated the profile field <strong>%s</strong>.',
+'L_UPDATEDPROFILEFIELDS'=> 'Successfully updated all of the custom user profile fields.',
 /* / Profile Fields */
 
 /**
