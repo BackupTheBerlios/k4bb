@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: template.php,v 1.5 2005/05/01 17:45:23 k4st Exp $
+* @version $Id: template.php,v 1.6 2005/05/08 23:14:39 k4st Exp $
 * @package k42
 */
 
@@ -237,9 +237,10 @@ class Template {
 		}
 	}
 
-	function setError($section, $error, $backbutton = TRUE, $after) {
+	function setError($section, $error, $backbutton = TRUE, $after = FALSE) {
 		$this->setFile($section, 'information.html');
 		$this->setVar('information', $error);
+		
 		if($backbutton)
 			$this->show('info_back_button');
 		else
