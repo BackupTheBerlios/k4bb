@@ -1,4 +1,5 @@
 <is:admin>
+<form action="admin.php?act=userfields_simpleupdate" name="update_userfields" id="update_userfields" method="post" enctype="multipart/form-data">
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
 	<tr class="thead">
 		<td colspan="3">{$L_USERPROFILEFIELDS}</td>
@@ -30,11 +31,12 @@
 	</tr>
 	</list:default>
 	<list:item list="fields">
-	<form action="admin.php?act=userfields_simpleupdate" name="update_userfields" id="update_userfields" method="post" enctype="multipart/form-data">
 	<list:switch list="fields" var="row_class" a="alt1" b="alt2">
 	<tr class="{$row_class}">
 	</list:switch>
-		<td width="10%"><input type="text" name="display_order" value="{$display_order}" size="3" maxlength="3" /></td>
+		<td width="10%">
+			<input type="text" name="display_order_{$name}" value="{$display_order}" size="3" maxlength="3" />
+		</td>
 		<td width="80%">
 			<strong>{$title}</strong> ({$name})
 			<br />
@@ -42,14 +44,17 @@
 		</td>
 		<td width="10%">
 			<div align="center">
-				<input type="submit" class="minitext" value="{$L_SAVE}" /><input type="button" class="minitext" value="{$L_EDIT}" onclick="document.location='admin.php?act=userfields_edit&id={$id}'" />
+				<input type="button" class="minitext" value="{$L_EDIT}" onclick="document.location='admin.php?act=userfields_edit&field={$name}'" />
 				<br />
 				<input type="button" class="minitext" style="color: #FF0000;" value="{$L_DELETE}" onclick="document.location='admin.php?act=userfields_remove&field={$name}'" />
 			</div>
 		</td>
 	</tr>
-	</form>
 	</list:item>
 	</list:list>
+	<tr class="tcat">
+		<td colspan="3"><input type="submit" class="minitext" value="{$L_UPDATE}" /></td>
+	</tr>
 </table>
+</form>
 </is:admin>
