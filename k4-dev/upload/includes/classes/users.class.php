@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: users.class.php,v 1.2 2005/04/25 19:51:54 k4st Exp $
+* @version $Id: users.class.php,v 1.3 2005/05/08 23:13:21 k4st Exp $
 * @package k42
 */
 
@@ -77,6 +77,177 @@ function get_user_max_group($temp, $all_groups) {
 	$group['avatar']		= isset($avatar) ? $avatar : '';
 
 	return $group;
+}
+
+class LogoutEvent extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_SESS;
+
+		/* Create the ancestors bar (if we run into any trouble */
+		$template = BreadCrumbs($template, $template->getVar('L_LOGOUT'));
+
+		if (is_a($session['user'], 'Member')) {
+			
+			/* Update the users' last seen time */
+			$dba->executeUpdate("UPDATE ". USERS ." SET last_seen = seen, seen = 0 WHERE id = ". $user['id'] );
+
+		} else {
+			$template->setInfo('content', $template->getVar('L_NEEDLOGGEDIN'));
+		}
+		
+		/* Persistent method to unset the cookie */
+		@setcookie("k4_autolog", "", time()-3600);
+		bb_setcookie_cache('k4_autolog', '', time()-3600);
+
+		/* Make the user into a Guest user rather than a Member */
+		$session['user']		= &new Guest();
+		
+		$_SESS->setUserStatus(TRUE);
+
+		/* Redirect the page */
+		$template->setInfo('content', $template->getVar('L_LOGGEDOUTSUCCESS'));
+		$template->setRedirect($_SERVER['HTTP_REFERER'], 3);
+
+		return TRUE;
+	}
+}
+
+class LoginEvent extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_SESS;
+
+		/* Create the ancestors bar (if we run into any trouble */
+		$template = BreadCrumbs($template, $template->getVar('L_LOGIN'));
+
+		if (is_a($session['user'], 'Guest')) {
+
+			$id	= $session['user']->Validate($request);
+
+			if ($id === FALSE) {
+				return $template->setInfo('content', $template->getVar('L_INVALIDUSERPASS'));
+			}
+			
+			/* Is this user already logged in ? */
+			$user_is_logged		= &$dba->prepareStatement("SELECT * FROM ". SESSIONS ." WHERE name=? AND seen>=?");
+			$user_is_logged->setString(1, $request['name']);
+			$user_is_logged->setInt(2, time() - ini_get('session.gc_maxlifetime'));
+
+			$result				= &$user_is_logged->executeQuery();
+
+			if($result->numrows() > 0)
+				return $template->setInfo('content', $template->getVar('L_USERALREADYLOGGED'));
+
+			$session['user']		= &new Member($id);
+			
+			if($session['user']->info['banned'] == 0) {
+				
+				/**
+				 * Log our user in 
+				 */
+				$session['user']->Login();
+				$user			= &$session['user']->info;
+				
+				/* Set the rememberme setting to this user */
+				if (isset($request['rememberme']))
+					$session['user']->info['rememberme']	= 'on';
+				
+				/* Set the auto-log cookie */
+				if(isset($user['rememberme']) && $user['rememberme'] == 'on') {
+					
+					/* Create a safe cookie */
+					$userinfo	= $user['name'] . $session['user']->GenerateLoginKey();
+
+					/* Set the auto-logging in cookie, be persistent about it */
+					@setcookie('k4_autolog', $userinfo, time()+(3600*24*60));
+					bb_setcookie_cache('k4_autolog', $userinfo, time()+(3600*24*60));
+				}
+
+				if (isset($user['login_request_uri'])) {
+					$template->setRedirect($user['login_request_uri'], 3);
+				} else {
+					$template->setRedirect('index.php', 3);
+				}
+				
+
+				$template->setInfo('content', $template->getVar('L_LOGGEDINSUCCESS'));
+				
+			} else {
+				$session['user']							= &new Guest;
+				$session['user']->info['rememberme']		= 'off';
+				$template->setInfo('content', $template->getVar('L_THISBANNEDUSER'));
+			}
+		} else {
+			$template->setInfo('content', $template->getVar('L_CANTBELOGGEDIN'));
+		}
+		
+
+		return TRUE;
+	}
+}
+
+class RemindMeEvent extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		/* Create the ancestors bar (if we run into any trouble */
+		$template = BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+
+		if (is_a($session['user'], 'Guest')) {
+			$template->setFile('content', 'remindme_form.html');
+
+			return TRUE;
+		} else {
+			$template->setInfo('content', $template->getVar('L_CANTBELOGGEDIN'), FALSE);
+		}
+
+		return FALSE;
+	}
+}
+
+class ForumRegisterUser extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		/* Create the ancestors bar (if we run into any trouble */
+		$template = BreadCrumbs($template, $template->getVar('L_REGISTER'));
+
+		if (is_a($session['user'], 'Guest')) {
+			
+			global $_USERFIELDS, $_SETTINGS;
+			
+			/* If we are not allowed to register */
+			if(isset($_SETTINGS['allowregistration']) && $_SETTINGS['allowregistration'] == 0) {
+				$template->setInfo('content', $template->getVar('L_CANTREGISTERADMIN'));
+				return TRUE;
+			}
+			
+			/* If this person has yet to agree to the forum terms */
+			if(!isset($request['agreed']) || $request['agreed'] != 'yes') {
+				$template->setFile('content', 'register_agree.html');
+				return TRUE;
+			}
+			
+			/* Collect the custom profile fields to display */
+			$fields = array();
+		
+			foreach($_USERFIELDS as $field) {
+				if($field['display_register'] == 1) {
+					$fields[] = $field;
+				}
+			}
+			
+			$template->setVar('regmessage', sprintf($template->getVar('L_INORDERTOPOSTINFORUM'), $_SETTINGS['bbtitle']));
+
+			$template->setList('profilefields', new FAArrayIterator($fields));
+			$template->setFile('content', 'register.html');
+
+			return TRUE;
+		} else {
+			$template->setInfo('content', $template->getVar('L_CANTREGISTERLOGGEDIN'), FALSE);
+		}
+
+		return FALSE;
+	}
 }
 
 ?>

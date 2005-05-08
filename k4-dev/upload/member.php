@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: member.php,v 1.1 2005/04/05 03:10:22 k4st Exp $
+* @version $Id: member.php,v 1.2 2005/05/08 23:12:17 k4st Exp $
 * @package k42
 */
 
@@ -60,42 +60,15 @@ class ForumLogin extends Event {
 	}
 }
 
-class ForumRegister extends Event {
-	function Execute(&$template, $request, &$dba, &$session, &$user) {
-		
-		/* Create the ancestors bar */
-		$template = BreadCrumbs($template, $template->getVar('L_REGISTER'));
-		
-		if(isset($user['post_vars'])) {
-			$template['name'] = @$user['post_vars']['name'];
-			$template['email'] = @$user['post_vars']['email'];
-			
-			unset($session->info['post_vars']);
-		}
-		
-		/* Check if the person isn't logged in, and then disply the register form */
-		if(!is_a($session['user'], 'Member')) {
-			$template->setFile('content', 'register_form.html');
-		} else {
-			return new Info($template->getVar('L_CANTREGISTERLOGGEDIN'), $template);
-		}
-		
-		return TRUE;
-	}
-}
-
-
 /* Set our wrapper template */
 $app	= new Forum_Controller('forum_base.html');
 
 /* Apply all of the events */
 $app->AddEvent('login', new ForumLogin);
-//$app->AddEvent('register', new ForumRegister);
+$app->AddEvent('register', new ForumRegisterUser);
 $app->AddEvent('login_user', new LoginEvent);
 $app->AddEvent('logout', new LogoutEvent);
 $app->AddEvent('remindme', new RemindMeEvent);
-//$app->AddEvent('forgotpw', new RestorePwEvent);
-//$app->AddEvent('resetpw', new ResetPassword);
 
 $app->ExecutePage();
 

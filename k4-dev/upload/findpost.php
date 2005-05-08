@@ -25,11 +25,13 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: findpost.php,v 1.2 2005/05/03 21:35:59 k4st Exp $
+* @version $Id: findpost.php,v 1.3 2005/05/08 23:12:17 k4st Exp $
 * @package k42
 */
 
 error_reporting(E_ALL);
+
+ob_start();
 
 require 'forum.inc.php';
 
@@ -66,7 +68,6 @@ class DefaultEvent extends Event {
 			 */
 			
 			header("Location: viewtopic.php?id=". $post['id']);
-			exit;
 
 		/* If this is a reply */	
 		} else {
@@ -135,5 +136,7 @@ class DefaultEvent extends Event {
 $app = new Forum_Controller('forum_base.html');
 
 $app->ExecutePage();
+
+ob_flush();
 
 ?>

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: admin.php,v 1.6 2005/05/07 15:30:31 k4st Exp $
+* @version $Id: admin.php,v 1.7 2005/05/08 23:12:17 k4st Exp $
 * @package k42
 */
 
@@ -150,6 +150,9 @@ $app->AddEvent('userfields_add2', new AdminAddUserFieldTwo);
 $app->AddEvent('userfields_insert', new AdminInsertUserField);
 $app->AddEvent('userfields_remove', new AdminRemoveUserField);
 $app->AddEvent('userfields_edit', new AdminEditUserField);
+$app->AddEvent('userfields_update', new AdminUpdateUserField);
+$app->AddEvent('userfields_simpleupdate', new AdminSimpleUpdateUserFields);
+
 
 $app->ExecutePage();
 

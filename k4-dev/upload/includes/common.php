@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: common.php,v 1.14 2005/05/07 15:30:48 k4st Exp $
+* @version $Id: common.php,v 1.15 2005/05/08 23:12:39 k4st Exp $
 * @package k42
 */
 
@@ -282,10 +282,15 @@ if($rewrite_cache) {
 	 * Get ALL of the custom user profile fields
 	 */
 
-	$result									= &$_DBA->executeQuery("SELECT * FROM ". PROFILEFIELDS);
+	$result												= &$_DBA->executeQuery("SELECT * FROM ". PROFILEFIELDS);
 	while($result->next()) {
-		$temp								= $result->current();
-		$cache[PROFILEFIELDS][$temp['name']]= $temp;
+		$temp											= $result->current();
+		
+		$cache[PROFILEFIELDS][$temp['name']]			= $temp;
+		$cache[PROFILEFIELDS][$temp['name']]['html']	= format_profilefield($temp);
+		
+		/* Add the extra values onto the end of the userinfo query params variable */
+		$query_params['userinfo']			.= ', ui.'. $temp['name'] .' AS '. $temp['name'];
 	}
 	$result->freeResult();
 
@@ -304,6 +309,11 @@ if($rewrite_cache) {
 	
 	/* Include the cache file */
 	include_once CACHE_FILE;
+	
+	/* Add the extra values onto the end of the userinfo query params variable */
+	foreach($cache[PROFILEFIELDS] as $field) {
+		$query_params['userinfo']			.= ', ui.'. $field['name'] .' AS '. $field['name'];
+	}
 }
 
 /**

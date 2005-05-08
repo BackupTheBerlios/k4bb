@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: functions.inc.php,v 1.3 2005/04/19 21:52:22 k4st Exp $
+* @version $Id: functions.inc.php,v 1.4 2005/05/08 23:13:51 k4st Exp $
 * @package k42
 */
 
@@ -34,6 +34,101 @@ error_reporting(E_ALL);
 
 if(!defined('IN_K4')) {
 	exit;
+}
+
+/**
+ * Format a custom profile field
+ */
+function format_profilefield($data) {
+	global $lang;
+
+	switch($data['inputtype']) {
+		case 'text': {
+			
+			$input		= '<input type="text" class="inputbox" name="'. $data['name'] .'" id="'. $data['name'] .'" value="'. $data['default_value'] .'" size="'. $data['display_size'] .'" maxlength="'. $data['user_maxlength'] .'" />';
+			
+			if($data['is_required'])
+				$input .= '<script type="text/javascript">addVerification(\''. $data['name'] .'\', \'.+\', \''. $data['name'] .'_error\', \'inputfailed\');</script><div id="'. $data['name'] .'_error" style="display: none;">'. sprintf($lang['L_FILLINTHISFIELD'], $data['title']) .'</div>';
+
+			break;
+		}
+		case 'textarea': {
+			
+			$input		= '<textarea name="'. $data['name'] .'" id="'. $data['name'] .'" size="'. $data['display_size'] .'" rows="'. $data['display_rows'] .'" class="inputbox">'. $data['default_value'] .'</textarea>';
+
+			if($data['is_required'])
+				$input .= '<script type="text/javascript">addVerification(\''. $data['name'] .'\', \'(\n|\r\n|\r|.)+\', \''. $data['name'] .'_error\', \'inputfailed\');</script><div id="'. $data['name'] .'_error" style="display: none;">'. sprintf($lang['L_FILLINTHISFIELD'], $data['title']) .'</div>';
+
+			break;
+		}
+		case 'select': {
+			
+			$input		= '<select name="'. $data['name'] .'" id="'. $data['name'] .'">';
+			
+			$options	= @unserialize($data['inputoptions']);
+
+			if(is_array($options) && !empty($empty)) {
+				foreach($options as $option)
+					$input .= '<option value="'. $option .'">'. $option .'</option>';
+			}
+
+			$input		.= '</select>';
+
+			break;
+		}
+		case 'multiselect': {
+			
+			$input		= '<select name="'. $data['name'] .'[]" id="'. $data['name'] .'" multiple="multiple" '. iif(intval($data['display_rows']) > 0, 'size="'. intval($data['display_rows']) .'"', '') .'>';
+			
+			$options	= @unserialize($data['inputoptions']);
+
+			if(is_array($options) && !empty($empty)) {
+				foreach($options as $option)
+					$input .= '<option value="'. $option .'">'. $option .'</option>';
+			}
+
+			$input		.= '</select>';
+
+			break;
+		}
+		case 'radio': {
+			
+			$options	= @unserialize($data['inputoptions']);
+			
+			$input		= '';
+			
+			if(is_array($options) && !empty($empty)) {
+				
+				$i = 0;
+				foreach($options as $option) {
+					$input .= '<label for="'. $data['name'] . $i .'"><input type="radio" name="'. $data['name'] .'" id="'. $data['name'] . $i .'" value="'. $option .'" />&nbsp;&nbsp;'. $option .'</label>';
+					$i++;
+				}
+			}
+
+			break;
+		}
+		case 'check': {
+			
+			$options	= @unserialize($data['inputoptions']);
+			
+			$input		= '';
+			
+			if(is_array($options) && !empty($empty)) {
+				
+				$i = 0;
+				foreach($options as $option) {
+					$input .= '<label for="'. $data['name'] . $i .'"><input type="checkbox" name="'. $data['name'] .'[]" id="'. $data['name'] . $i .'" value="'. $option .'" />&nbsp;&nbsp;'. $option .'</label>';
+					$i++;
+				}
+			}
+
+			break;
+		}
+	}
+
+	if(isset($input))
+		return $input;
 }
 
 /* A quick way to do a conditional statement */

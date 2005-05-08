@@ -198,6 +198,13 @@
 			<form:error id="options_error" for="inputoptions" setclass="inputfailed" regex="(\n|\r\n|\r|.)+">{$L_INSERTFIELDOPTIONS}</form:error>
 		</td>
 	</tr>
+	<tr class="alt1">
+		<td width="50%"><strong>{$L_FIELDNUMROWS}:</strong></td>
+		<td>
+			<script type="text/javascript">doHelpButton('field_rows');</script>
+			<input type="text" name="display_rows" id="display_rows" value="5" maxlength="2" size="2" class="inputbox" tabindex="12" />
+		</td>
+	</tr>
 	</core:block>
 	<core:block id="checkbox" hidden="yes">
 	<tr class="thead">

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.7 2005/05/05 21:36:06 k4st Exp $
+* @version $Id: forums.class.php,v 1.8 2005/05/08 23:13:21 k4st Exp $
 * @package k42
 */
 
@@ -230,7 +230,7 @@ class AllForumsIterator extends FAArrayIterator {
 		$temp['indent_level']	= @str_repeat('&nbsp;&nbsp;&nbsp;', $temp['row_level']-1);
 
 		/* Should we free the result? */
-		if($this->row == $this->size-1)
+		if($this->key == sizeof($this->data))
 			$this->result->freeResult();
 
 		/* Return the formatted forum info */
