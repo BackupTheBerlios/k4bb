@@ -1,0 +1,77 @@
+<is:unlogged>
+<form:form name="register_form" id="register_form" action="member.php?act=" method="post" enctype="multipart/form-data">
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td>{$L_REGISTER}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">
+				<span class="smalltext">{$regmessage}</span>
+				<br /><br />
+				<label for="username"><strong>{$L_USERNAME}:</strong></label><br />
+				<input type="text" name="name" id="username" class="inputbox" value="" size="{$maxuserlength}" maxlength="{$maxuserlength}" tabindex="1" />
+				<form:error id="username_error" for="username" setclass="inputfailed" regex=".+">{$L_SUPPLYUSERNAME}</form:error>
+				<br /><br />
+				<table width="100%" cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="50%">
+							<label for="password"><strong>{$L_PASSWORD}:</strong></label><br />
+							<input type="password" name="pass" id="password" class="inputbox" value="" size="{$maxuserlength}" maxlength="{$maxuserlength}" tabindex="2" />
+						</td>
+						<td width="50%">
+							<label for="password2"><strong>{$L_VALIDATEPW}:</strong></label><br />
+							<input type="password" name="pass2" id="password2" class="inputbox" value="" size="{$maxuserlength}" maxlength="{$maxuserlength}" tabindex="3" />
+						</td>
+					</tr>
+				</table>
+				<form:error id="password_error" for="password" setclass="inputfailed" regex=".+">{$L_SUPPLYPASS}</form:error>
+				<form:error id="password2_error" for="password2" setclass="inputfailed" regex=".+">{$L_SUPPLYPASSCHECK}</form:error>
+				<form:error id="password_match_error" for="password" setclass="inputfailed" match="password2">{$L_PASSESDONTMATCH}</form:error>
+				<br />
+				<table width="100%" cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="50%">
+							<label for="email"><strong>{$L_EMAILADDRESS}:</strong></label><br />
+							<input type="text" name="email" id="email" class="inputbox" value="" maxlength="100" tabindex="4" />
+						</td>
+						<td width="50%">
+							<label for="email2"><strong>{$L_VALIDATEEMAILADDR}:</strong></label><br />
+							<input type="text" name="email2" id="email2" class="inputbox" value="" maxlength="100" tabindex="5" />
+						</td>
+					</tr>
+				</table>
+				<form:error id="email_error" for="email" setclass="inputfailed" regex=".+">{$L_SUPPLYEMAIL}</form:error>
+				<form:error id="email2_error" for="email2" setclass="inputfailed" regex=".+">{$L_SUPPLYEMAILCHECK}</form:error>
+				<form:error id="email_match_error" for="email" setclass="inputfailed" match="email2">{$L_EMAILSDONTMATCH}</form:error>
+			</div>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td>
+			<input type="submit" value="{$L_REGISTER}" class="button" />
+			<input type="reset" value="{$L_RESET}" class="button" />
+		</td>
+	</tr>
+</table>
+<br />
+<table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<tr class="thead">
+		<td>{$L_ADDITIONALINFO}</td>
+	</tr>
+	<tr class="panel">
+		<td>
+			<div class="outset_box">
+				
+			</div>
+		</td>
+	</tr>
+	<tr class="tcat">
+		<td>
+			<input type="submit" value="{$L_REGISTER}" class="button" />
+			<input type="reset" value="{$L_RESET}" class="button" />
+		</td>
+	</tr>
+</table>
+</form:form>
+</is:unlogged>
