@@ -1,100 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
-<head>
-	<title>{$bbtitle} - {$current_location} - Powered by k4 BB</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
-	<meta http-equiv="Content-Style-Type" content="text/css" />
-	<meta name="generator" content="k4 Bulletin Board {$VERSION}" />
-	<meta name="robots" content="all" />
-	<meta name="revisit-after" content="1 Days" />
-	<meta http-equiv="Expires" content="1" />
-	<meta name="description" content="{$bbsearchdescription}" />
-	<meta name="keywords" content="{$bbkeywords}" />
-	<meta name="author" content="k4 Bulletin Board" />
-	<meta name="distribution" content="GLOBAL" />
-	<meta name="rating" content="general" />
-	<link rel="icon" href="favicon.ico" type="image/x-icon" />
-	<link rel="stylesheet" href="tmp/cache/{$css_styles}.css" type="text/css" media="screen" />
-	<style type="text/css">
-		/* Drop Down menus */
-		.nav_top {
-			padding-right: 15px;
-			background-image:url('Images/{$IMG_DIR}/Icons/menu_open.gif');
-			background-repeat: no-repeat;
-			background-position: right center;
-		}
-		.nav_menu {
-			text-align: left;
-		}
-		/* Required info box */
-		.required_info { border: 1px solid #FF0000;font-size:11px;background-color:#FFEEFF;padding:5px; }
-		.required_info a { font-size:11px; }
-	</style>
-	<script type="text/javascript" src="js/javascript.js"></script>
-	<script type="text/javascript" src="js/form_check.js"></script>
-	<script type="text/javascript" src="js/dd_menu.js"></script>
-</head>
+<core:import id="head" file="head.html" />
 <body>
 <div align="center">
 <div align="left" class="forum_base">
 
-<!-- Header -->
-<table cellpadding="0" cellspacing="0" border="0" width="100%">
-	<tr class="logo_header">
-		<td><a href="index.php" name="top" id="top" title="k4 Bulletin Board - {$bbtitle}"><img src="Images/{$IMG_DIR}/logo.gif" alt="{$bbtitle}" border="0" /></a></td>
-		<td valign="middle" align="center"><h1>{$bbdescription}</h1></td>
-	</tr>
-</table>
-<!-- / Header -->
+<core:import id="header" file="header.html" />
 
-<!-- Header Breadcrumbs Bit -->
-<div class="forum_header" id="forum_header">
-<table cellpadding="0" cellspacing="0" border="0" width="100%">
-	<tr>
-		<td width="90%">
-			<div align="left">
-				<img src="Images/{$IMG_DIR}/Icons/navbits_start.gif" alt="{$bbtitle}" />&nbsp;<a href="index.php" title="{$bbtitle}"><strong>{$bbtitle}</strong></a> 
-				<list:list id="breadcrumbs">
-				<list:item list="breadcrumbs">
-				&gt; <a href="{$location}" title="{$name}"><strong>{$name}</strong></a>
-				</list:item>
-				</list:list>
-				<br />
-				<img src="Images/{$IMG_DIR}/Icons/navbits_finallink.gif" alt="{$current_location}" /> <strong>{$current_location}</strong>
-			</div>
-		</td>
-		<td width="10%" nowrap="nowrap">
-			<span class="minitext">
-			{$date}
-			</span>
-		</td>
-	</tr>
-</table>
-</div>
-<!-- / Header Breadcrumbs Bit -->
+<core:import id="header_breadcrumbs" file="header_breadcrumbs.html" />
 
-<!-- Main Navigation -->
-<div class="alt1" align="right">
-<table width="100%" cellpadding="3" cellspacing="0" border="0" class="nav_table">
-	<tr class="alt3">
-		<td>
-			<div align="right">
-				<a href="index.php" title="{$L_HOME}">{$L_HOME}</a> 
-				<if:if var="enableblogs" eq="1">| <a href="blogs.php" title="{$L_BLOGS}">{$L_BLOGS}</a></if:if>
-				<if:if var="enablememberlist" eq="1">| <a href="member.php?act=list&amp;start=0&amp;limit=30&amp;sort=*" title="{$L_MEMBERLIST}">{$L_MEMBERLIST}</a></if:if>
-				<if:if var="enablesearches" eq="1">| <a href="search.php" title="{$L_SEARCH}">{$L_SEARCH}</a></if:if>
-				| <a href="faq.php" title="{$L_FAQ}">{$L_FAQ}</a>
-				| <a class="nav_top" id="quicklinks_link" title="{$L_QUICKLINKS}">{$L_QUICKLINKS}</a>
-				<is:logged>| <a href="member.php?act=logout" title="{$L_LOGOUT}">{$L_LOGOUT} [<strong>{$user_name}</strong>]</a></is:logged>
-				<is:unlogged>| <a href="member.php?act=register" title="{$L_REGISTER}">{$L_REGISTER}</a>
-				| <a href="member.php?act=login" title="{$L_LOGIN}">{$L_LOGIN}</a></is:unlogged>
-				<is:admin>| <a href="admin_index.php" id="admin_link" target="_blank" title="{$L_ADMINPANEL}"><strong>{$L_ADMINPANEL}</strong></a></is:admin>
-			</div>
-		</td>
-	</tr>
-</table>
-</div>
-<!-- / Main Navigation -->
+<core:import id="menu_global" file="menu_global.html" />
 
 <div class="forum_main" id="forum_main">
 <br />
@@ -150,133 +65,24 @@
 
 <br />
 
-<!-- Quick Nav Menu -->
-<div align="right" class="smalltext">
-	{$L_JUMPTO}:
-	<select name="quick_nav" id="quick_nav" onchange="jump_to('quick_nav')">
-		<option value="-1">{$L_SELECTAFORUM}</option>
-		<option value="-1">-----------------</option>
-	<list:list id="all_forums">
-	<list:item list="all_forums">
-		<if:if var="row_type" eq="2">
-			<maps:if list="all_forums" forum="id" method="can_view">
-				<if:if var="is_forum" geq="0">
-					<option value="viewforum.php?id={$id}">{$indent_level}{$name}</option>
-				<else:if var="is_link" eq="1" />
-					<if:if var="link_show_redirects" eq="1">
-						<option value="redirect.php?id={$id}">{$indent_level}{$name}</option>
-						<if:else />
-						<option value="{$link_href}">{$indent_level}{$name}</option>
-					</if:if>
-				</if:if>
-			</maps:if>
-		<if:else />
-			<maps:if list="all_forums" category="id" method="can_view">
-				<option value="viewforum.php?id={$id}" class="alt2">{$indent_level}{$name}</option>
-			</maps:if>
-		</if:if>
-	</list:item>
-	</list:list>
-	</select>
-	<input type="button" class="button" value="{$L_GO}" onclick="jump_to('quick_nav')" />
-</div>
-<!-- / Quick Nav Menu -->
+<core:import id="quick_nav" file="quick_nav.html" />
 
 <br />
 
-<!-- Footer Breadcrumbs Bit -->
-<table cellpadding="0" cellspacing="1" border="0" width="100%">
-	<tr>
-		<td width="100%">
-			<div align="left">
-				<img src="Images/{$IMG_DIR}/Icons/navbits_start.gif" alt="{$bbtitle}" />&nbsp;<a href="index.php" title="{$bbtitle}"><strong>{$bbtitle}</strong></a>
-				<list:list id="breadcrumbs">
-				<list:item list="breadcrumbs">
-				&gt; <a href="{$location}" title="{$name}"><strong>{$name}</strong></a>
-				</list:item>
-				</list:list>
-				&gt;&nbsp;<strong>{$current_location}</strong>
-			</div>
-		</td>
-	</tr>
-</table>
-<!-- / Footer Breadcrumbs Bit -->
+<core:import id="footer_breadcrumbs" file="footer_breadcrumbs.html" />
 
 <br />
 </div>
 
-<!-- Footer -->
-<div class="alt1" align="right">
-	<table width="100%" cellpadding="3" cellspacing="0" border="0" class="alt1">
-		<tr class="alt3">
-			<td align="right">
-				<a href="{$contactuslink}" title="{$L_CONTACTUS}">{$L_CONTACTUS}</a> - <a href="#top" title="{$L_TOP}">{$L_TOP}</a>
-			</td>
-		</tr>
-	</table>
-</div>
-<!-- / Footer -->
+<core:import id="footer" file="footer.html" />
 
 </div>
 </div>
 <br />
 
-<!-- Benchmarking -->
-<div align="center">
-	<span style="width:450px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">
-		[ <a href="http://www.k4forums.com" title="k4 BB Home Page" target="_blank">Powered By: k4 v.{$VERSION}</a> ]
-		[ Load time: {$load_time} ]
-		[ Num Queries: {$num_queries} ]
-		<core:block id="sql_debug" hidden="yes">
-		[ <a href="{$debug_url}">Debug</a> ]
-		</core:block>
-		<br />
-		{$copyrighttext}
-	</span>
-	<br />
-</div>
-<!-- / Benchmarking -->
+<core:import id="benchmarking" file="benchmarking.html" />
 
-<!-- Quick Links Drop Down Menu -->
-<div id="quicklinks_menu" class="nav_menu" style="">
-	<table cellpadding="0" cellspacing="1" border="0" class="forum_content">
-		<tr class="tcat">
-			<td>{$L_QUICKLINKS}</td>
-		</tr>
-		<if:if var="calendarenabled" eq="1">
-		<tr class="alt1">
-			<td><a href="calendar.php" title="{$L_CALENDAR}" class="smalltext">{$L_CALENDAR}</a></td>
-		</tr>
-		</if:if>
-		<tr class="alt1">
-			<td><a href="member.php?act=usergroups" title="{$L_USERGROUPS}" class="smalltext">{$L_USERGROUPS}</a></td>
-		</tr>
-		<tr class="alt1">
-			<td><a href="search.php?act=new_posts" title="{$L_NEWPOSTS}" class="smalltext">{$L_NEWPOSTS}</a></td>
-		</tr>
-		<tr class="alt1">
-			<td><a href="search.php?act=my_posts" title="{$L_MYPOSTS}" class="smalltext">{$L_MYPOSTS}</a></td>
-		</tr>
-		<is:logged>
-		<tr class="tcat">
-			<td nowrap="nowrap">{$L_USERCONTROLPANEL}</td>
-		</tr>
-		<tr class="alt1">
-			<td><a href="member.php?act=profile" title="{$L_PROFILE}" class="smalltext">{$L_PROFILE}</a></td>
-		</tr>
-		</is:logged>
-		<tr class="tcat">
-			<td>{$L_MISCELLANEOUS}</td>
-		</tr>
-		<tr class="alt1">
-			<td nowrap="nowrap"><a href="index.php?act=markforums" title="{$L_MARKFORUMSREAD}" class="smalltext">{$L_MARKFORUMSREAD}</a></td>
-		</tr>
-	</table>
-</div>
-<script type="text/javascript">
-	menu_init('quicklinks_link', 'quicklinks_menu');
-</script>
-<!-- / Quick Links Drop Down Menu -->
+<core:import id="quicklinks_menu" file="quicklinks_menu.html" />
 
 <a name="bottom" id="bottom"></a>
 
@@ -313,7 +119,7 @@ COPYRIGHT NOTICE
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: blog_base.html,v 1.2 2005/05/05 21:38:39 k4st Exp $
+* @version $Id: blog_base.html,v 1.3 2005/05/08 14:21:02 k4st Exp $
 * @package k42
 */
 -->

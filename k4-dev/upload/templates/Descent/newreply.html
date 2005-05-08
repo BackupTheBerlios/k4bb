@@ -359,17 +359,7 @@ function emoticon(typed) {
 	/**
 	 * Get the post icons
 	 */
-	var inputs		= document.getElementsByTagName("input");
-	
-	for (var x = 0; x < sizeof(inputs); x++) {
-		if(inputs[x].name == 'posticon') {
-			if(inputs[x].value == '{$reply_posticon}') {
-				inputs[x].checked = true;
-			} else {
-				inputs[x].checked = false;
-			}
-		}
-	}
+	setRadio('{$reply_posticon}', 'posticon');
 
 	var pi_image	= document.getElementById('display_posticon');
 	pi_image.src	= 'tmp/upload/posticons/{$reply_posticon}';
