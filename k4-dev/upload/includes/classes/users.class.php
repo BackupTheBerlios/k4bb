@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: users.class.php,v 1.3 2005/05/08 23:13:21 k4st Exp $
+* @version $Id: users.class.php,v 1.4 2005/05/09 21:17:02 k4st Exp $
 * @package k42
 */
 
@@ -240,6 +240,107 @@ class ForumRegisterUser extends Event {
 
 			$template->setList('profilefields', new FAArrayIterator($fields));
 			$template->setFile('content', 'register.html');
+
+			return TRUE;
+		} else {
+			$template->setInfo('content', $template->getVar('L_CANTREGISTERLOGGEDIN'), FALSE);
+		}
+
+		return FALSE;
+	}
+}
+
+/**
+ * Insert a user into the database
+ */
+class ForumInsertUser extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		/* Create the ancestors bar (if we run into any trouble */
+		$template = BreadCrumbs($template, $template->getVar('L_REGISTER'));
+
+		if (is_a($session['user'], 'Guest')) {
+			
+			global $_USERFIELDS, $_SETTINGS;
+			
+			/* If we are not allowed to register */
+			if(isset($_SETTINGS['allowregistration']) && $_SETTINGS['allowregistration'] == 0) {
+				$template->setInfo('content', $template->getVar('L_CANTREGISTERADMIN'));
+				return TRUE;
+			}
+			
+			/* Collect the custom profile fields to display */
+			$fields = array();
+		
+			foreach($_USERFIELDS as $field) {
+				if($field['display_register'] == 1) {
+					$fields[$field['name']] = $field;
+				}
+			}
+			
+			/**
+			 * Error checking
+			 */
+
+			/* Username checks */
+			if(!isset($request['name']) || !$request['name'] || $request['name'] == '') {
+				$template->setInfo('content', $template->getVar('L_SUPPLYUSERNAME'), TRUE);
+				return TRUE;
+			}
+			
+			if(strlen($request['name']) < intval($_SETTINGS['minuserlength'])) {
+				$template->setInfo('content', sprintf($template->getVar('L_USERNAMETOOSHORT'), intval($_SETTINGS['minuserlength']), intval($_SETTINGS['maxuserlength'])), TRUE);
+				return TRUE;
+			}
+
+			if(strlen($request['name']) > intval($_SETTINGS['maxuserlength'])) {
+				$template->setInfo('content', sprintf($template->getVar('L_USERNAMETOOLONG'), intval($_SETTINGS['maxuserlength'])), TRUE);
+				return TRUE;
+			}
+
+			if($dba->getValue("SELECT COUNT(*) FROM ". USERS ." WHERE name = '". $dba->quote($request['name']) ."'") > 0) {
+				$template->setInfo('content', $template->getVar('L_USERNAMETAKEN'), TRUE);
+				return TRUE;
+			}
+			
+			if($dba->getValue("SELECT COUNT(*) FROM ". BADUSERNAMES ." WHERE name = '". $dba->quote($request['name']) ."'") > 0) {
+				$template->setInfo('content', $template->getVar('L_USERNAMENOTGOOD'), TRUE);
+				return TRUE;
+			}
+			
+			/* Password checks */
+			if(!isset($request['pass']) || !$request['pass'] || $request['pass'] == '') {
+				$template->setInfo('content', $template->getVar('L_SUPPLYPASSWORD'), TRUE);
+				return TRUE;
+			}
+
+			if(!isset($request['pass2']) || !$request['pass2'] || $request['pass2'] == '') {
+				$template->setInfo('content', $template->getVar('L_SUPPLYPASSCHECK'), TRUE);
+				return TRUE;
+			}
+
+			if($request['pass'] != $request['pass2']) {
+				$template->setInfo('content', $template->getVar('L_PASSESDONTMATCH'), TRUE);
+				return TRUE;
+			}
+			
+			/* Email checks */
+			if(!isset($request['email']) || !$request['email'] || $request['email'] == '') {
+				$template->setInfo('content', $template->getVar('L_SUPPLYEMAIL'), TRUE);
+				return TRUE;
+			}
+
+			if(!isset($request['email2']) || !$request['email2'] || $request['email2'] == '') {
+				$template->setInfo('content', $template->getVar('L_SUPPLYEMAILCHECK'), TRUE);
+				return TRUE;
+			}
+
+			if($request['email'] != $request['email2']) {
+				$template->setInfo('content', $template->getVar('L_EMAILSDONTMATCH'), TRUE);
+				return TRUE;
+			}
+			
+			
 
 			return TRUE;
 		} else {
