@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: common.php,v 1.15 2005/05/08 23:12:39 k4st Exp $
+* @version $Id: common.php,v 1.16 2005/05/09 21:16:41 k4st Exp $
 * @package k42
 */
 
@@ -79,6 +79,7 @@ define('USERGROUPS',		'k4_usergroups');
 define('POLLOPTIONS',		'k4_polloptions');
 define('POLLVOTES',			'k4_pollvotes');
 define('PROFILEFIELDS',		'k4_userprofilefields');
+define('BADUSERNAMES',		'k4_badusernames');	
 
 
 /**

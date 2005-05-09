@@ -1,6 +1,10 @@
 CHANGELOG 
-$Id: CHANGELOG.txt,v 1.5 2005/05/03 22:13:14 k4st Exp $
+$Id: CHANGELOG.txt,v 1.6 2005/05/09 21:20:21 k4st Exp $
 
+09/05/2005 - added disallowed usernames management (admin/users.class.php)
+09/05/2005 - added full registration template(s)
+07/05/2005 - finished the Admin Profile fields section
+07/05/2005 - added the Database::Query and Database::alterTable functions (sqlite.php/mysql.php)
 02/05/2005 - ** removed the secondary measure for gc in session.php
 02/05/2005 - made the findpost.php page
 02/05/2005 - added reply deleting and editing

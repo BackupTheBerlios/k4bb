@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: member.php,v 1.2 2005/05/08 23:12:17 k4st Exp $
+* @version $Id: member.php,v 1.3 2005/05/09 21:16:21 k4st Exp $
 * @package k42
 */
 
@@ -66,6 +66,7 @@ $app	= new Forum_Controller('forum_base.html');
 /* Apply all of the events */
 $app->AddEvent('login', new ForumLogin);
 $app->AddEvent('register', new ForumRegisterUser);
+$app->AddEvent('register_user', new ForumInsertUser);
 $app->AddEvent('login_user', new LoginEvent);
 $app->AddEvent('logout', new LogoutEvent);
 $app->AddEvent('remindme', new RemindMeEvent);

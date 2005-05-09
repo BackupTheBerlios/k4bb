@@ -42,6 +42,7 @@ CREATE TABLE k4_userinfo (
 	imgset			VARCHAR(100) NOT NULL DEFAULT 'Descent',
 	tplset			VARCHAR(100) NOT NULL DEFAULT 'Descent',
 	banned			INTEGER UNSIGNED NOT NULL DEFAULT 0,
+	ban_time		INTEGER UNSIGNED NOT NULL DEFAULT 0,
 	topic_display		INTEGER UNSIGNED NOT NULL DEFAULT 0,
 	lastpage		VARCHAR(100) NOT NULL DEFAULT '',
 	notify_pm		INTEGER DEFAULT 1 NOT NULL,
@@ -51,6 +52,7 @@ CREATE TABLE k4_userinfo (
 	viewsigs		INTEGER DEFAULT 1 NOT NULL,
 	viewavatars		INTEGER DEFAULT 1 NOT NULL,
 	viewcensors		INTEGER DEFAULT 1 NOT NULL,
+	vcard_download		INTEGER UNSIGNED NOT NULL DEFAULT 5,
 	attachsig		INTEGER DEFAULT 1 NOT NULL
 );
 CREATE INDEX user_id ON k4_userinfo (user_id);
@@ -386,3 +388,11 @@ CREATE TABLE k4_userprofilefields (
 	special_pcre		VARCHAR(255) NOT NULL DEFAULT ''
 );
 CREATE INDEX name3 ON k4_userprofilefields(name);
+
+CREATE TABLE k4_badusernames (
+	id		INTEGER UNSIGNED,
+	name		VARCHAR(30) NOT NULL DEFAULT '',
+	
+	PRIMARY KEY(id)
+);
+CREATE INDEX name4 ON k4_badusernames(name);

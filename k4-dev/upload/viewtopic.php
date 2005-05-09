@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewtopic.php,v 1.9 2005/05/05 21:34:30 k4st Exp $
+* @version $Id: viewtopic.php,v 1.10 2005/05/09 21:16:21 k4st Exp $
 * @package k42
 */
 
@@ -45,6 +45,7 @@ class DefaultEvent extends Event {
 			/* set the breadcrumbs bit */
 			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
 			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
+			return TRUE;
 		}
 		
 		/* Get our topic */

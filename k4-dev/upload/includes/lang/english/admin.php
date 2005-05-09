@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: admin.php,v 1.2 2005/05/08 23:13:04 k4st Exp $
+* @version $Id: admin.php,v 1.3 2005/05/09 21:17:45 k4st Exp $
 * @package k42
 */
 
@@ -268,6 +268,24 @@ $lang += array(
 'L_UPDATEDPROFILEFIELD'	=> 'Successfully updated the profile field <strong>%s</strong>.',
 'L_UPDATEDPROFILEFIELDS'=> 'Successfully updated all of the custom user profile fields.',
 /* / Profile Fields */
+
+/**
+ * Bad Names Management 
+ */
+'L_DISALLOWNAME'		=> 'Disallow User Name',
+'L_DISALLOWNAMES'		=> 'Disallow User Names',
+'L_DISALLOWEDNAMES'		=> 'Disallowed User Names',
+'L_MANAGEDISALLOWEDNAMES'=> 'Manage Disallowed User Names',
+'L_SUPPLYBADUSERNAME'	=> 'Please supply a user name that you would like to disallow.',
+'L_NOACTIVEBADNAMES'	=> 'There are currently no active disallowed user names.',
+'L_ADDBADUSERNAME'		=> 'Add Bad User Name',
+'L_BADNAMEEXISTS'		=> 'The selected disallowed user name already exists.',
+'L_ADDEDBADUSERNAME'	=> 'Successfully added the user name <strong>%s</strong> to the disallowed user names list.',
+'L_INVALIDBADNAME'		=> 'The selected disallowed user name does not exist.',
+'L_UPDATEDBADUSERNAME'	=> 'Successfully updated the selected bad username by changing it from <strong>%s</strong> to <strong>%s</strong>.',
+'L_REMOVE'				=> 'Remove',
+'L_REMOVEDBADUSERNAME'	=> 'Successfully removed the user name <strong>%s</strong> from the list of disallowed user names.',
+/* / Bad Names Management */
 
 /**
  * Admin General Settings 

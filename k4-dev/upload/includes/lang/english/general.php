@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: general.php,v 1.5 2005/05/08 23:13:04 k4st Exp $
+* @version $Id: general.php,v 1.6 2005/05/09 21:17:45 k4st Exp $
 * @package k42
 */
 
@@ -205,8 +205,7 @@ $lang += array(
 'L_DAYS'				=> 'Days',
 'L_PRUNESUCCESS'		=> 'Successfully pruned topics.',
 'L_EDITUSER'			=> 'Edit User',
-'L_DISALLOWNAME'		=> 'Disallow User Name',
-'L_DISALLOWEDNAMES'		=> 'Disallowed User Names',
+
 'L_DISALLOW'			=> 'Disallow',
 'L_BANUSER'				=> 'Ban User',
 'L_BANNEDUSERS'			=> 'Banned Users',
@@ -613,6 +612,7 @@ $lang += array(
 'L_REGISTER'			=> 'Register Now',
 'L_USERNAME'			=> 'Username',
 'L_PASSWORD'			=> 'Password',
+'L_FILLINPASSWORD'		=> 'Please enter a password for your user account. Note that passwords are case-sensitive.',
 'L_AUTOLOG'				=> 'Automatically log me in.',
 'L_EMAIL'				=> 'Email',
 'L_EMAILADDRESS'		=> 'Email Address',
@@ -620,6 +620,7 @@ $lang += array(
 'L_CREATE'				=> 'Create',
 'L_RESET'				=> 'Reset',
 'L_VALIDATEEMAILADDR'	=> 'Validate Email Address',
+'L_FILLINEMAIL'			=> 'Please enter a valid email address for yourself.',
 
 /* Search forms */
 'L_SEARCHFORUMS'		=> 'Search Forums',
@@ -777,6 +778,41 @@ $lang += array(
 'L_DOESNTINHERITPERMS'	=> 'Doesn\'t Inherit Permissions',
 'L_ADD'					=> 'Add/Execute',
 
+/* TIME ZONES */
+'L_TIMEZONE'			=> 'Time Zone',
+'L_TIMEZONEEXPLAIN'		=> 'All timestamps displayed on the forums can be automatically corrected to show the correct time for your location in the world. Simply select the appropriate time zone from the list below.',
+'L_TIMEZONE1'			=> '(GMT -12:00) Eniwetok, Kwajalein',
+'L_TIMEZONE2'			=> '(GMT -11:00) Midway Island, Samoa',
+'L_TIMEZONE3'			=> '(GMT -10:00) Hawaii',
+'L_TIMEZONE4'			=> '(GMT -9:00) Alaska',
+'L_TIMEZONE5'			=> '(GMT -8:00) Pacific Time (US & Canada)',
+'L_TIMEZONE6'			=> '(GMT -7:00) Mountain Time (US & Canada)',
+'L_TIMEZONE7'			=> '(GMT -6:00) Central Time (US & Canada), Mexico City',
+'L_TIMEZONE8'			=> '(GMT -5:00) Eastern Time (US & Canada), Bogota, Lima',
+'L_TIMEZONE9'			=> '(GMT -4:00) Atlantic Time (Canada), Caracas, La Paz',
+'L_TIMEZONE10'			=> '(GMT -3:30) Newfoundland',
+'L_TIMEZONE11'			=> '(GMT -3:00) Brazil, Buenos Aires, Georgetown',
+'L_TIMEZONE12'			=> '(GMT -2:00) Mid-Atlantic',
+'L_TIMEZONE13'			=> '(GMT -1:00 hour) Azores, Cape Verde Islands',
+'L_TIMEZONE14'			=> '(GMT) Western Europe Time, London, Lisbon, Casablanca',
+'L_TIMEZONE15'			=> '(GMT +1:00 hour) Brussels, Copenhagen, Madrid, Paris',
+'L_TIMEZONE16'			=> '(GMT +2:00) Kaliningrad, South Africa',
+'L_TIMEZONE17'			=> '(GMT +3:00) Baghdad, Riyadh, Moscow, St. Petersburg',
+'L_TIMEZONE18'			=> '(GMT +3:30) Tehran',
+'L_TIMEZONE19'			=> '(GMT +4:00) Abu Dhabi, Muscat, Baku, Tbilisi',
+'L_TIMEZONE20'			=> '(GMT +4:30) Kabul',
+'L_TIMEZONE21'			=> '(GMT +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent',
+'L_TIMEZONE22'			=> '(GMT +5:30) Bombay, Calcutta, Madras, New Delhi',
+'L_TIMEZONE23'			=> '(GMT +6:00) Almaty, Dhaka, Colombo',
+'L_TIMEZONE24'			=> '(GMT +7:00) Bangkok, Hanoi, Jakarta',
+'L_TIMEZONE25'			=> '(GMT +8:00) Beijing, Perth, Singapore, Hong Kong',
+'L_TIMEZONE26'			=> '(GMT +9:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk',
+'L_TIMEZONE27'			=> '(GMT +9:30) Adelaide, Darwin',
+'L_TIMEZONE28'			=> '(GMT +10:00) Eastern Australia, Guam, Vladivostok',
+'L_TIMEZONE29'			=> '(GMT +11:00) Magadan, Solomon Islands, New Caledonia',
+'L_TIMEZONE30'			=> '(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka',
+/* / TIME ZONES */
+
 /* ERRORS and/or nice MESSAGES */
 'L_REDIRECTING'			=> 'Your are being redirected toward the appropriate page.',
 'L_LOGGEDINTOFORUM'		=> 'Successfully logged into the selected forum.',
@@ -849,8 +885,8 @@ $lang += array(
 'L_THISBANNEDUSER'		=> 'The user that you are trying to log in as has been banned.',
 'L_USERNAMENOTGOOD'		=> 'The username you have inputed has been disallowed.',
 'L_ERRORRESETPW'		=> 'There was an error while trying to reset your password. Please contact the forum administrator.',
-'L_USERNAMETOOLONG'		=> 'That username is too long. The maximum length is 16 characters.',
-'L_USERNAMETOOSHORT'	=> 'That username is not long enough. The minimum length is 3 characters.',
+'L_USERNAMETOOLONG'		=> 'That username is too long. The maximum length is %s characters.',
+'L_USERNAMETOOSHORT'	=> 'That username is not long enough. The minimum length is %s characters and the maximum length is %s.',
 'L_PASSESDONTMATCH'		=> 'Your passwords do not match.',
 'L_SUPPLYPASSCHECK'		=> 'Please validate your password.',
 'L_SUPPLYPASS'			=> 'Please supply a password.',

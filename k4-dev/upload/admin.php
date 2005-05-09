@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: admin.php,v 1.7 2005/05/08 23:12:17 k4st Exp $
+* @version $Id: admin.php,v 1.8 2005/05/09 21:16:21 k4st Exp $
 * @package k42
 */
 
@@ -153,6 +153,11 @@ $app->AddEvent('userfields_edit', new AdminEditUserField);
 $app->AddEvent('userfields_update', new AdminUpdateUserField);
 $app->AddEvent('userfields_simpleupdate', new AdminSimpleUpdateUserFields);
 
+/* Disallowed User Names */
+$app->AddEvent('usernames', new AdminBadUserNames);
+$app->AddEvent('usernames_insert', new AdminInsertBadUserName);
+$app->AddEvent('usernames_update', new AdminUpdateBadUserName);
+$app->AddEvent('usernames_remove', new AdminRemoveBadUserName);
 
 $app->ExecutePage();
 

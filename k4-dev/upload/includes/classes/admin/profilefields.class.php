@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: profilefields.class.php,v 1.2 2005/05/08 23:13:33 k4st Exp $
+* @version $Id: profilefields.class.php,v 1.3 2005/05/09 21:17:27 k4st Exp $
 * @package k42
 */
 
@@ -316,7 +316,7 @@ class AdminUpdateUserField extends Event {
 				return TRUE;
 			}
 
-			$update			= &$dba->prepareStatement("UPDATE ". PROFILEFIELDS ." SET title=?, description=?, default_value=?, inputtype=?, user_maxlength=?, inputoptions=?, min_perm=?, display_register=?, display_profile=?, display_topic=?, display_post=?, display_image=?, display_memberlist=?, display_size=?, display_rows=?, display_order=?, is_editable=?, is_private=?, is_required=?, special_pcre=? WHERE name=?");
+			$update			= &$dba->prepareStatement("UPDATE ". PROFILEFIELDS ." SET title=?, description=?, default_value=?, inputtype=?, user_maxlength=?, inputoptions=?, min_perm=?, display_register=?, display_profile=?, display_topic=?, display_post=?, display_memberlist=?, display_image=?, display_size=?, display_rows=?, display_order=?, is_editable=?, is_private=?, is_required=?, special_pcre=? WHERE name=?");
 
 			$update->setString(1, @$request['title']);
 			$update->setString(2, @$request['description']);
