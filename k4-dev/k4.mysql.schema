@@ -4,12 +4,12 @@ CREATE TABLE k4_users (
 	email			VARCHAR(255) NOT NULL DEFAULT '',
 	pass			VARCHAR(32) NOT NULL DEFAULT '',
 	priv_key		VARCHAR(32) NOT NULL DEFAULT '',
-	created			INT NOT NULL DEFAULT 0,
-	login			INT NOT NULL DEFAULT 0,
-	seen			INT NOT NULL DEFAULT 0,
-	last_seen		INT NOT NULL DEFAULT 0,
-	perms			INT NOT NULL DEFAULT 2,
-	invisible		INT NOT NULL DEFAULT 0,
+	created			INT UNSIGNED NOT NULL DEFAULT 0,
+	login			INT UNSIGNED NOT NULL DEFAULT 0,
+	seen			INT UNSIGNED NOT NULL DEFAULT 0,
+	last_seen		INT UNSIGNED NOT NULL DEFAULT 0,
+	perms			INT UNSIGNED NOT NULL DEFAULT 2,
+	invisible		INT UNSIGNED NOT NULL DEFAULT 0,
 	usergroups		VARCHAR(255) NOT NULL DEFAULT '',
 	ip			VARCHAR(40) NOT NULL DEFAULT '',
 
@@ -18,14 +18,17 @@ CREATE TABLE k4_users (
 CREATE INDEX name ON k4_users (name);
 
 CREATE TABLE k4_userinfo (
-	user_id			INT NOT NULL DEFAULT 0,
+	user_id			INT UNSIGNED NOT NULL DEFAULT 0,
 	fullname		VARCHAR(100) NOT NULL DEFAULT '',
-	num_posts		INT NOT NULL DEFAULT 0,
-	timezone		decimal(5,2) NOT NULL DEFAULT 0,
-	address			VARCHAR(255) NOT NULL DEFAULT '',
-	occupation		VARCHAR(100) NOT NULL DEFAULT '',
-	interests		VARCHAR(100) NOT NULL DEFAULT '',
-	biography		VARCHAR(255) NOT NULL DEFAULT '',
+	num_posts		INT UNSIGNED NOT NULL DEFAULT 0,
+	timezone		INT UNSIGNED NOT NULL DEFAULT 0,
+	
+	field1			VARCHAR(255) NOT NULL DEFAULT '',
+	field2			VARCHAR(100) NOT NULL DEFAULT '',
+	field3			VARCHAR(100) NOT NULL DEFAULT '',
+	field4			VARCHAR(255) NOT NULL DEFAULT '',
+	field5			VARCHAR(255) NOT NULL DEFAULT '',
+	
 	icq			VARCHAR(255) NOT NULL DEFAULT '',
 	aim			VARCHAR(255) NOT NULL DEFAULT '',
 	msn			VARCHAR(255) NOT NULL DEFAULT '',
@@ -34,36 +37,37 @@ CREATE TABLE k4_userinfo (
 	avatar			BLOB,
 	signature		VARCHAR(255) NOT NULL DEFAULT '',
 	birthday		VARCHAR(10) NOT NULL DEFAULT '',
-	homepage		VARCHAR(255) NOT NULL DEFAULT '',
 	language		VARCHAR(20) NOT NULL DEFAULT 'english',
 	styleset		VARCHAR(100) NOT NULL DEFAULT 'Descent',
 	imgset			VARCHAR(100) NOT NULL DEFAULT 'Descent',
 	tplset			VARCHAR(100) NOT NULL DEFAULT 'Descent',
-	banned			INT NOT NULL DEFAULT 0,
-	topic_display		INT NOT NULL DEFAULT 0,
+	banned			INT UNSIGNED NOT NULL DEFAULT 0,
+	ban_time		INT UNSIGNED NOT NULL DEFAULT 0,
+	topic_display		INT UNSIGNED NOT NULL DEFAULT 0,
 	lastpage		VARCHAR(100) NOT NULL DEFAULT '',
-	notify_pm		INTEGER DEFAULT 1 NOT NULL,
-	popup_pm		INTEGER DEFAULT 0 NOT NULL,
-	viewflash		INTEGER DEFAULT 1 NOT NULL,
-	viewemoticons		INTEGER DEFAULT 1 NOT NULL,
-	viewsigs		INTEGER DEFAULT 1 NOT NULL,
-	viewavatars		INTEGER DEFAULT 1 NOT NULL,
-	viewcensors		INTEGER DEFAULT 1 NOT NULL,
-	attachsig		INTEGER DEFAULT 1 NOT NULL
+	notify_pm		INT DEFAULT 1 NOT NULL,
+	popup_pm		INT DEFAULT 0 NOT NULL,
+	viewflash		INT DEFAULT 1 NOT NULL,
+	viewemoticons		INT DEFAULT 1 NOT NULL,
+	viewsigs		INT DEFAULT 1 NOT NULL,
+	viewavatars		INT DEFAULT 1 NOT NULL,
+	viewcensors		INT DEFAULT 1 NOT NULL,
+	vcard_download		INT UNSIGNED NOT NULL DEFAULT 5,
+	attachsig		INT DEFAULT 1 NOT NULL
 );
 CREATE INDEX user_id ON k4_userinfo (user_id);
 
 CREATE TABLE k4_sessions (
 	id			VARCHAR(32) NOT NULL DEFAULT '',
-	seen			INT NOT NULL DEFAULT 0,
+	seen			INT UNSIGNED NOT NULL DEFAULT 0,
 	name			VARCHAR(30) NOT NULL DEFAULT '',
-	user_id			INT NOT NULL DEFAULT 0,
+	user_id			INT UNSIGNED NOT NULL DEFAULT 0,
 	user_agent		VARCHAR(100) NOT NULL DEFAULT '',
 	data			TEXT,
 
 	location_file		VARCHAR(25) NOT NULL DEFAULT '',
 	location_act		VARCHAR(25) NOT NULL DEFAULT '',
-	location_id		INT NOT NULL DEFAULT 0,
+	location_id		INT UNSIGNED NOT NULL DEFAULT 0,
 
 	PRIMARY KEY(id)
 );
@@ -71,17 +75,17 @@ CREATE TABLE k4_sessions (
 CREATE TABLE k4_settinggroup (
 	id			INT NOT NULL AUTO_INCREMENT,
 	title			VARCHAR(100) NOT NULL,
-	displayorder		INT NOT NULL DEFAULT 0,
+	displayorder		INT UNSIGNED NOT NULL DEFAULT 0,
 
 	PRIMARY KEY (id)
 );
 CREATE TABLE k4_setting (
 	id			INT NOT NULL AUTO_INCREMENT,
-	settinggroupid		INT NOT NULL DEFAULT 0,
+	settinggroupid		INT UNSIGNED NOT NULL DEFAULT 0,
 	varname			VARCHAR(100) NOT NULL,
 	value			MEDIUMTEXT NOT NULL,
 	optioncode		CHAR(20) NOT NULL DEFAULT 'text',
-	displayorder		INT NOT NULL DEFAULT 0,
+	displayorder		INT UNSIGNED NOT NULL DEFAULT 0,
 
 	PRIMARY KEY (id)
 );
@@ -96,7 +100,7 @@ CREATE TABLE k4_styles (
 );
 CREATE TABLE k4_css (
 	id			INT NOT NULL AUTO_INCREMENT,
-	style_id		INT NOT NULL DEFAULT 1,
+	style_id		INT UNSIGNED NOT NULL DEFAULT 1,
 	name			VARCHAR(100) NOT NULL DEFAULT '',
 	properties		TEXT,
 	description		VARCHAR(255) NOT NULL DEFAULT '',
@@ -107,14 +111,14 @@ CREATE TABLE k4_css (
 );
 CREATE TABLE k4_information (
 	id			INT NOT NULL AUTO_INCREMENT,
-	parent_id		INT NOT NULL DEFAULT 0,
-	row_left		INT NOT NULL DEFAULT 1,
-	row_right		INT NOT NULL DEFAULT 2,
-	row_type		INT NOT NULL DEFAULT 1,
-	row_level		INT NOT NULL DEFAULT 1,
-	row_order		INT NOT NULL DEFAULT 1,
+	parent_id		INT UNSIGNED NOT NULL DEFAULT 0,
+	row_left		INT UNSIGNED NOT NULL DEFAULT 1,
+	row_right		INT UNSIGNED NOT NULL DEFAULT 2,
+	row_type		INT UNSIGNED NOT NULL DEFAULT 1,
+	row_level		INT UNSIGNED NOT NULL DEFAULT 1,
+	row_order		INT UNSIGNED NOT NULL DEFAULT 1,
 	name			VARCHAR(255) NOT NULL DEFAULT '',
-	created			INT NOT NULL DEFAULT 0,
+	created			INT UNSIGNED NOT NULL DEFAULT 0,
 
 	PRIMARY KEY(id)
 );
@@ -122,27 +126,27 @@ CREATE INDEX row_left ON k4_information (row_left);
 CREATE INDEX row_right ON k4_information (row_right);
 
 CREATE TABLE k4_categories (
-	category_id		INT NOT NULL DEFAULT 0,
+	category_id		INT UNSIGNED NOT NULL DEFAULT 0,
 	description		TEXT,
-	suspended		INT NOT NULL DEFAULT 0,
-	archive			INT NOT NULL DEFAULT 0,
+	suspended		INT UNSIGNED NOT NULL DEFAULT 0,
+	archive			INT UNSIGNED NOT NULL DEFAULT 0,
 	moderating_groups	TEXT,
 	moderating_users	TEXT
 );
 CREATE INDEX category_id ON k4_categories (category_id);
 
 CREATE TABLE k4_forums (
-	forum_id		INT NOT NULL DEFAULT 0,
-	category_id		INT NOT NULL DEFAULT 0,
+	forum_id		INT UNSIGNED NOT NULL DEFAULT 0,
+	category_id		INT UNSIGNED NOT NULL DEFAULT 0,
 	description		TEXT,
-	archive			INT NOT NULL DEFAULT 0,
-	subforums		INT NOT NULL DEFAULT 0,
+	archive			INT UNSIGNED NOT NULL DEFAULT 0,
+	subforums		INT UNSIGNED NOT NULL DEFAULT 0,
 	
-	is_forum		INT NOT NULL DEFAULT 1,
-	is_tracker		INT NOT NULL DEFAULT 0,
-	is_link			INT NOT NULL DEFAULT 0,
-	link_redirects		INT NOT NULL DEFAULT 0,
-	link_show_redirects	INT NOT NULL DEFAULT 1,
+	is_forum		INT UNSIGNED NOT NULL DEFAULT 1,
+	is_tracker		INT UNSIGNED NOT NULL DEFAULT 0,
+	is_link			INT UNSIGNED NOT NULL DEFAULT 0,
+	link_redirects		INT UNSIGNED NOT NULL DEFAULT 0,
+	link_show_redirects	INT UNSIGNED NOT NULL DEFAULT 1,
 	link_href		VARCHAR(255) NOT NULL DEFAULT '',
 	
 	moderating_groups	VARCHAR(255) NOT NULL DEFAULT '',
@@ -150,115 +154,116 @@ CREATE TABLE k4_forums (
 
 	pass			VARCHAR(32) NOT NULL DEFAULT '',
 	
-	topics			INT NOT NULL DEFAULT 0,
-	replies			INT NOT NULL DEFAULT 0,
-	posts			INT NOT NULL DEFAULT 0,
+	topics			INT UNSIGNED NOT NULL DEFAULT 0,
+	replies			INT UNSIGNED NOT NULL DEFAULT 0,
+	posts			INT UNSIGNED NOT NULL DEFAULT 0,
 	
 	topic_posticon		VARCHAR(100) NOT NULL DEFAULT '',
-	topic_created		INT NOT NULL DEFAULT 0,
+	topic_created		INT UNSIGNED NOT NULL DEFAULT 0,
 	topic_name		VARCHAR(32) NOT NULL DEFAULT '',
-	topic_uname		VARCHAR(16) NOT NULL DEFAULT '',
-	topic_id		INT NOT NULL DEFAULT 0,
-	topic_uid		INT NOT NULL DEFAULT 0,
+	topic_uname		VARCHAR(30) NOT NULL DEFAULT '',
+	topic_id		INT UNSIGNED NOT NULL DEFAULT 0,
+	topic_uid		INT UNSIGNED NOT NULL DEFAULT 0,
 
 	post_posticon		VARCHAR(100) NOT NULL DEFAULT '',
-	post_created		INT NOT NULL DEFAULT 0,
+	post_created		INT UNSIGNED NOT NULL DEFAULT 0,
 	post_name		VARCHAR(32) NOT NULL DEFAULT '',
-	post_uname		VARCHAR(16) NOT NULL DEFAULT '',
-	post_id			INT NOT NULL DEFAULT 0,
-	post_uid		INT NOT NULL DEFAULT 0,
+	post_uname		VARCHAR(30) NOT NULL DEFAULT '',
+	post_id			INT UNSIGNED NOT NULL DEFAULT 0,
+	post_uid		INT UNSIGNED NOT NULL DEFAULT 0,
 
-	topicsperpage		INT NOT NULL DEFAULT 30,
-	postsperpage		INT NOT NULL DEFAULT 9,
-	maxpolloptions		INT NOT NULL DEFAULT 10,
+	topicsperpage		INT UNSIGNED NOT NULL DEFAULT 30,
+	postsperpage		INT UNSIGNED NOT NULL DEFAULT 9,
+	maxpolloptions		INT UNSIGNED NOT NULL DEFAULT 10,
 	defaultlang		VARCHAR(100) NOT NULL DEFAULT 'english',
 	defaultstyle		VARCHAR(100) NOT NULL DEFAULT 'Descent',
 
-	prune_auto		INT NOT NULL DEFAULT 0,
-	prune_frequency		INT NOT NULL DEFAULT 0,
-	prune_post_age		INT NOT NULL DEFAULT 0,
-	prune_post_viewed_age	INT NOT NULL DEFAULT 0,
-	prune_old_polls		INT NOT NULL DEFAULT 0,
-	prune_announcements	INT NOT NULL DEFAULT 0,
-	prune_stickies		INT NOT NULL DEFAULT 0,
+	prune_auto		INT UNSIGNED NOT NULL DEFAULT 0,
+	prune_frequency		INT UNSIGNED NOT NULL DEFAULT 0,
+	prune_post_age		INT UNSIGNED NOT NULL DEFAULT 0,
+	prune_post_viewed_age	INT UNSIGNED NOT NULL DEFAULT 0,
+	prune_old_polls		INT UNSIGNED NOT NULL DEFAULT 0,
+	prune_announcements	INT UNSIGNED NOT NULL DEFAULT 0,
+	prune_stickies		INT UNSIGNED NOT NULL DEFAULT 0,
 
-	num_viewing		INT NOT NULL DEFAULT 0,
+	num_viewing		INT UNSIGNED NOT NULL DEFAULT 0,
 
 	forum_rules		TEXT
 );
 CREATE INDEX forum_id ON k4_forums (forum_id);
 
 CREATE TABLE k4_topics (
-	topic_id		INT NOT NULL DEFAULT 0,
-	forum_id		INT NOT NULL DEFAULT 0,
-	category_id		INT NOT NULL DEFAULT 0,
+	topic_id		INT UNSIGNED NOT NULL DEFAULT 0,
+	forum_id		INT UNSIGNED NOT NULL DEFAULT 0,
+	category_id		INT UNSIGNED NOT NULL DEFAULT 0,
 
-	is_draft		INT NOT NULL DEFAULT 0,
+	is_draft		INT UNSIGNED NOT NULL DEFAULT 0,
 
-	edited_time		INT NOT NULL DEFAULT 0,
-	edited_username		VARCHAR(16) NOT NULL DEFAULT '',
-	edited_userid		INT NOT NULL DEFAULT 0,
+	edited_time		INT UNSIGNED NOT NULL DEFAULT 0,
+	edited_username		VARCHAR(30) NOT NULL DEFAULT '',
+	edited_userid		INT UNSIGNED NOT NULL DEFAULT 0,
 
-	ratings_sum		INT NOT NULL DEFAULT 0,
-	ratings_num		INT NOT NULL DEFAULT 0,
-	rating			INT NOT NULL DEFAULT 0,
+	ratings_sum		INT UNSIGNED NOT NULL DEFAULT 0,
+	ratings_num		INT UNSIGNED NOT NULL DEFAULT 0,
+	rating			INT UNSIGNED NOT NULL DEFAULT 0,
 
-	disable_html		INT NOT NULL DEFAULT 1,
-	disable_bbcode		INT NOT NULL DEFAULT 0,
-	disable_emoticons	INT NOT NULL DEFAULT 0,
-	disable_sig		INT NOT NULL DEFAULT 0,
-	disable_areply		INT NOT NULL DEFAULT 1,
-	disable_aurls		INT NOT NULL DEFAULT 0,
+	disable_html		INT UNSIGNED NOT NULL DEFAULT 1,
+	disable_bbcode		INT UNSIGNED NOT NULL DEFAULT 0,
+	disable_emoticons	INT UNSIGNED NOT NULL DEFAULT 0,
+	disable_sig		INT UNSIGNED NOT NULL DEFAULT 0,
+	disable_areply		INT UNSIGNED NOT NULL DEFAULT 1,
+	disable_aurls		INT UNSIGNED NOT NULL DEFAULT 0,
 	
 	description		VARCHAR(255) NOT NULL DEFAULT '',
 	body_text		TEXT,
 	posticon		VARCHAR(100) NOT NULL DEFAULT '',
-	topic_type		INT NOT NULL DEFAULT 1,
-	topic_expire		INT NOT NULL DEFAULT 0,
-	topic_locked		INT NOT NULL DEFAULT 0,
+	topic_type		INT UNSIGNED NOT NULL DEFAULT 1,
+	topic_expire		INT UNSIGNED NOT NULL DEFAULT 0,
+	topic_locked		INT UNSIGNED NOT NULL DEFAULT 0,
 	
-	poster_name		VARCHAR(16) NOT NULL DEFAULT '',
-	poster_id		INT NOT NULL DEFAULT 0,
+	poster_name		VARCHAR(30) NOT NULL DEFAULT '',
+	poster_id		INT UNSIGNED NOT NULL DEFAULT 0,
 	poster_ip		VARCHAR(40) NOT NULL DEFAULT '',
 	
-	reply_time		INT NOT NULL DEFAULT 0,
-	reply_uname		VARCHAR(16) NOT NULL DEFAULT '',
-	reply_id		INT NOT NULL DEFAULT 0,
-	reply_uid		INT NOT NULL DEFAULT 0,
+	reply_time		INT UNSIGNED NOT NULL DEFAULT 0,
+	reply_uname		VARCHAR(30) NOT NULL DEFAULT '',
+	reply_id		INT UNSIGNED NOT NULL DEFAULT 0,
+	reply_uid		INT UNSIGNED NOT NULL DEFAULT 0,
 	
-	poll			INT NOT NULL DEFAULT 0,
+	poll			INT UNSIGNED NOT NULL DEFAULT 0,
 	poll_question		VARCHAR(255) NOT NULL DEFAULT '',
-	poll_id			INT NOT NULL DEFAULT 0,
-	poll_votes		INT NOT NULL DEFAULT 0,
+	poll_multiplevotes	INT UNSIGNED NOT NULL DEFAULT 0,
+	poll_id			INT UNSIGNED NOT NULL DEFAULT 0,
+	poll_votes		INT UNSIGNED NOT NULL DEFAULT 0,
 	
-	views			INT NOT NULL DEFAULT 0,
-	last_viewed		INT NOT NULL DEFAULT 0
+	views			INT UNSIGNED NOT NULL DEFAULT 0,
+	last_viewed		INT UNSIGNED NOT NULL DEFAULT 0
 );
 CREATE INDEX topic_id ON k4_topics (topic_id);
 
 CREATE TABLE k4_replies (
-	reply_id		INT NOT NULL DEFAULT 0,
-	topic_id		INT NOT NULL DEFAULT 0,
-	forum_id		INT NOT NULL DEFAULT 0,
-	category_id		INT NOT NULL DEFAULT 0,
+	reply_id		INT UNSIGNED NOT NULL DEFAULT 0,
+	topic_id		INT UNSIGNED NOT NULL DEFAULT 0,
+	forum_id		INT UNSIGNED NOT NULL DEFAULT 0,
+	category_id		INT UNSIGNED NOT NULL DEFAULT 0,
 	
-	is_draft		INT NOT NULL DEFAULT 0,
+	is_draft		INT UNSIGNED NOT NULL DEFAULT 0,
 
 	body_text		TEXT,
-	poster_name		VARCHAR(16) NOT NULL DEFAULT '',
-	poster_id		INT NOT NULL DEFAULT 0,
+	poster_name		VARCHAR(30) NOT NULL DEFAULT '',
+	poster_id		INT UNSIGNED NOT NULL DEFAULT 0,
 	poster_ip		VARCHAR(40) NOT NULL DEFAULT '',
 
-	edited_time		INT NOT NULL DEFAULT 0,
-	edited_username		VARCHAR(16) NOT NULL DEFAULT '',
-	edited_userid		INT NOT NULL DEFAULT 0,
+	edited_time		INT UNSIGNED NOT NULL DEFAULT 0,
+	edited_username		VARCHAR(30) NOT NULL DEFAULT '',
+	edited_userid		INT UNSIGNED NOT NULL DEFAULT 0,
 
-	disable_html		INT NOT NULL DEFAULT 1,
-	disable_bbcode		INT NOT NULL DEFAULT 0,
-	disable_emoticons	INT NOT NULL DEFAULT 0,
-	disable_sig		INT NOT NULL DEFAULT 0,
-	disable_areply		INT NOT NULL DEFAULT 1,
-	disable_aurls		INT NOT NULL DEFAULT 0,
+	disable_html		INT UNSIGNED NOT NULL DEFAULT 1,
+	disable_bbcode		INT UNSIGNED NOT NULL DEFAULT 0,
+	disable_emoticons	INT UNSIGNED NOT NULL DEFAULT 0,
+	disable_sig		INT UNSIGNED NOT NULL DEFAULT 0,
+	disable_areply		INT UNSIGNED NOT NULL DEFAULT 1,
+	disable_aurls		INT UNSIGNED NOT NULL DEFAULT 0,
 
 	posticon		VARCHAR(100) NOT NULL DEFAULT ''
 );
@@ -266,7 +271,7 @@ CREATE INDEX reply_id ON k4_replies (reply_id);
 
 CREATE TABLE k4_polloptions (
 	id			INT NOT NULL AUTO_INCREMENT,
-	topic_id		INT NOT NULL DEFAULT 0,
+	topic_id		INT UNSIGNED NOT NULL DEFAULT 0,
 	name			VARCHAR(255) NOT NULL DEFAULT '',
 	color	 		VARCHAR(24) NOT NULL DEFAULT '',
 	
@@ -274,39 +279,39 @@ CREATE TABLE k4_polloptions (
 );
 CREATE TABLE k4_pollvotes (
 	id			INT NOT NULL AUTO_INCREMENT,
-	topic_id		INT NOT NULL DEFAULT 0,
-	option_id 		INT NOT NULL DEFAULT 0,
-	user_id 		INT NOT NULL DEFAULT 0,
-	user_name		VARCHAR(16) NOT NULL DEFAULT '',
+	topic_id		INT UNSIGNED NOT NULL DEFAULT 0,
+	option_id 		INT UNSIGNED NOT NULL DEFAULT 0,
+	user_id 		INT UNSIGNED NOT NULL DEFAULT 0,
+	user_name		VARCHAR(30) NOT NULL DEFAULT '',
 	
 	PRIMARY KEY(id)	
 );
 CREATE TABLE k4_ratings (
-	user_id			INT NOT NULL DEFAULT 0,
-	topic_id		INT NOT NULL DEFAULT 0,
-	rating			INT NOT NULL DEFAULT 0
+	user_id			INT UNSIGNED NOT NULL DEFAULT 0,
+	topic_id		INT UNSIGNED NOT NULL DEFAULT 0,
+	rating			INT UNSIGNED NOT NULL DEFAULT 0
 );
 CREATE TABLE k4_maps (
 	id			INT NOT NULL AUTO_INCREMENT,
-	row_left		INT NOT NULL DEFAULT 0,
-	row_right		INT NOT NULL DEFAULT 0,
-	row_level		INT NOT NULL DEFAULT 1,
+	row_left		INT UNSIGNED NOT NULL DEFAULT 0,
+	row_right		INT UNSIGNED NOT NULL DEFAULT 0,
+	row_level		INT UNSIGNED NOT NULL DEFAULT 1,
 	name			VARCHAR(255) NOT NULL DEFAULT '',
 	varname			CHAR(30) NOT NULL DEFAULT '',
 	value			VARCHAR(255) NOT NULL DEFAULT '',
 	
-	is_global		INT NOT NULL DEFAULT 0,
-	category_id		INT NOT NULL DEFAULT 0,
-	forum_id		INT NOT NULL DEFAULT 0,
-	user_id			INT NOT NULL DEFAULT 0,
-	group_id		INT NOT NULL DEFAULT 0,
+	is_global		INT UNSIGNED NOT NULL DEFAULT 0,
+	category_id		INT UNSIGNED NOT NULL DEFAULT 0,
+	forum_id		INT UNSIGNED NOT NULL DEFAULT 0,
+	user_id			INT UNSIGNED NOT NULL DEFAULT 0,
+	group_id		INT UNSIGNED NOT NULL DEFAULT 0,
 	
-	can_view		INT NOT NULL DEFAULT 1,
-	can_add			INT NOT NULL DEFAULT 2,
-	can_edit		INT NOT NULL DEFAULT 2,
-	can_del			INT NOT NULL DEFAULT 7,
+	can_view		INT UNSIGNED NOT NULL DEFAULT 1,
+	can_add			INT UNSIGNED NOT NULL DEFAULT 2,
+	can_edit		INT UNSIGNED NOT NULL DEFAULT 2,
+	can_del			INT UNSIGNED NOT NULL DEFAULT 7,
 	
-	inherit			INT NOT NULL DEFAULT 1,
+	inherit			INT UNSIGNED NOT NULL DEFAULT 1,
 
 	PRIMARY KEY(id)
 );
@@ -333,7 +338,7 @@ CREATE TABLE k4_emoticons (
 	typed 			VARCHAR(32) NOT NULL DEFAULT '',
 	description		VARCHAR(50) NOT NULL DEFAULT '',
 	image 			VARCHAR(128) NOT NULL DEFAULT '',
-	clickable 		INT NOT NULL DEFAULT 0,
+	clickable 		INT UNSIGNED NOT NULL DEFAULT 0,
 	
 	PRIMARY KEY(id)
 );
@@ -343,14 +348,14 @@ CREATE TABLE k4_usergroups (
 	name			VARCHAR(255) NOT NULL DEFAULT '',
 	nicename		VARCHAR(255) NOT NULL DEFAULT '',
 	description		VARCHAR(255) NOT NULL DEFAULT '',
-	mod_name		VARCHAR(16) NOT NULL DEFAULT '',
-	mod_id			INT NOT NULL DEFAULT 0,
-	created			INT NOT NULL DEFAULT 0,
-	min_perm		INT NOT NULL DEFAULT 3,
-	max_perm		INT NOT NULL DEFAULT 3,
-	display_legend		INT NOT NULL DEFAULT 1,
+	mod_name		VARCHAR(30) NOT NULL DEFAULT '',
+	mod_id			INT UNSIGNED NOT NULL DEFAULT 0,
+	created			INT UNSIGNED NOT NULL DEFAULT 0,
+	min_perm		INT UNSIGNED NOT NULL DEFAULT 3,
+	max_perm		INT UNSIGNED NOT NULL DEFAULT 3,
+	display_legend		INT UNSIGNED NOT NULL DEFAULT 1,
 
-	custom_map_set		INT NOT NULL DEFAULT 0,
+	custom_map_set		INT UNSIGNED NOT NULL DEFAULT 0,
 
 	color			VARCHAR(6) NOT NULL DEFAULT '',
 	avatar			VARCHAR(100) NOT NULL DEFAULT '',
@@ -358,3 +363,36 @@ CREATE TABLE k4_usergroups (
 	PRIMARY KEY(id)
 );
 CREATE INDEX name2 ON k4_usergroups(name);
+
+CREATE TABLE k4_userprofilefields (
+	name			VARCHAR(30) NOT NULL DEFAULT '',
+	title			VARCHAR(50) NOT NULL DEFAULT '',
+	description		VARCHAR(255) NOT NULL DEFAULT '',
+	default_value		TEXT,
+	inputtype		CHAR(20) NOT NULL DEFAULT 'text',
+	user_maxlength		INT UNSIGNED NOT NULL DEFAULT 100,
+	inputoptions		TEXT,
+	min_perm		INT UNSIGNED NOT NULL DEFAULT 2,
+	display_register	INT UNSIGNED NOT NULL DEFAULT 1,
+	display_profile		INT UNSIGNED NOT NULL DEFAULT 1,
+	display_topic		INT UNSIGNED NOT NULL DEFAULT 1,
+	display_post		INT UNSIGNED NOT NULL DEFAULT 1,
+	display_image		VARCHAR(255) NOT NULL DEFAULT '',
+	display_memberlist	INT UNSIGNED NOT NULL DEFAULT 0,
+	display_size		INT UNSIGNED NOT NULL DEFAULT 25,
+	display_rows		INT UNSIGNED NOT NULL DEFAULT 0,
+	display_order		INT UNSIGNED NOT NULL DEFAULT 0,
+	is_editable		INT UNSIGNED NOT NULL DEFAULT 1,
+	is_private		INT UNSIGNED NOT NULL DEFAULT 0,
+	is_required		INT UNSIGNED NOT NULL DEFAULT 0,
+	special_pcre		VARCHAR(255) NOT NULL DEFAULT ''
+);
+CREATE INDEX name3 ON k4_userprofilefields(name);
+
+CREATE TABLE k4_badusernames (
+	id		INT NOT NULL AUTO_INCREMENT,
+	name		VARCHAR(30) NOT NULL DEFAULT '',
+	
+	PRIMARY KEY(id)
+);
+CREATE INDEX name4 ON k4_badusernames(name);
