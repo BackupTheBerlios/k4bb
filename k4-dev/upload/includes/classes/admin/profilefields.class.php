@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: profilefields.class.php,v 1.4 2005/05/11 17:41:37 k4st Exp $
+* @version $Id: profilefields.class.php,v 1.5 2005/05/11 18:30:15 k4st Exp $
 * @package k42
 */
 
@@ -163,7 +163,7 @@ class AdminInsertUserField extends Event {
 			$insert->executeUpdate();
 			
 			/* Remove our cache file so it may be recreated */
-			if(!unlink(CACHE_FILE)) {
+			if(!@unlink(CACHE_FILE)) {
 				@touch(CACHE_FILE, time()-86400);
 			}
 
@@ -217,7 +217,7 @@ class AdminRemoveUserField extends Event {
 			$dba->executeUpdate("DELETE FROM ". PROFILEFIELDS ." WHERE name = '". $dba->quote($field['name']) ."'");
 			
 			/* Remove the cache file so it may be remade */
-			if(!unlink(CACHE_FILE)) {
+			if(!@unlink(CACHE_FILE)) {
 				@touch(CACHE_FILE, time()-86400);
 			}	
 
@@ -347,7 +347,7 @@ class AdminUpdateUserField extends Event {
 			$update->executeUpdate();
 			
 			/* Remove our cache file so it may be recreated */
-			if(!unlink(CACHE_FILE)) {
+			if(!@unlink(CACHE_FILE)) {
 				@touch(CACHE_FILE, time()-86400);
 			}
 

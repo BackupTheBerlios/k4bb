@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: categories.class.php,v 1.8 2005/05/11 17:41:36 k4st Exp $
+* @version $Id: categories.class.php,v 1.9 2005/05/11 18:30:15 k4st Exp $
 * @package k42
 */
 
@@ -127,6 +127,10 @@ class AdminInsertCategory extends Event {
 			/* Insert the extra category info */
 			$insert_b->executeUpdate();
 			
+			if(!@unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
+
 			$template->setInfo('content', sprintf($template->getVar('L_ADDEDCATEGORY'), $request['name']), FALSE);
 			$template->setRedirect('admin.php?act=categories_insertmaps&id='. $category_id, 3);
 
@@ -208,7 +212,7 @@ class AdminInsertCategoryMaps extends Event {
 			$template->setInfo('content', sprintf($template->getVar('L_ADDEDCATEGORYPERMS'), $category['name']), FALSE);
 			$template->setRedirect('admin.php?act=categories', 3);
 			
-			if(!unlink(CACHE_FILE)) {
+			if(!@unlink(CACHE_FILE)) {
 				@touch(CACHE_FILE, time()-86400);
 			}
 
@@ -252,6 +256,10 @@ class AdminSimpleCategoryUpdate extends Event {
 			$update->setInt(2, $category['id']);
 
 			$update->executeUpdate();
+			
+			if(!@unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDCATEGORY'), $category['name']), FALSE);
 			$template->setRedirect('admin.php?act=categories', 3);
@@ -359,6 +367,10 @@ class AdminUpdateCategory extends Event {
 			$update_b->executeUpdate();
 			$update_c->executeUpdate();
 			
+			if(!@unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
+
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDCATEGORY'), $category['name']), FALSE);
 			$template->setRedirect('admin.php?act=categories', 3);
 
@@ -414,7 +426,7 @@ class AdminRemoveCategory extends Event {
 
 			$heirarchy->removeNode($category_maps, MAPS);
 			
-			if(!unlink(CACHE_FILE)) {
+			if(!@unlink(CACHE_FILE)) {
 				@touch(CACHE_FILE, time()-86400);
 			}
 
@@ -512,7 +524,7 @@ class AdminUpdateCategoryPermissions extends Event {
 				}
 			}
 			
-			if(!unlink(CACHE_FILE)) {
+			if(!@unlink(CACHE_FILE)) {
 				@touch(CACHE_FILE, time()-86400);
 			}
 

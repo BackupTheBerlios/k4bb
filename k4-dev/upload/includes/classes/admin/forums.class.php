@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.8 2005/05/11 17:41:36 k4st Exp $
+* @version $Id: forums.class.php,v 1.9 2005/05/11 18:30:15 k4st Exp $
 * @package k42
 */
 
@@ -330,7 +330,7 @@ class AdminInsertForumMaps extends Event {
 				}
 			}
 
-			if(!unlink(CACHE_FILE)) {
+			if(!@unlink(CACHE_FILE)) {
 				@touch(CACHE_FILE, time()-86400);
 			}
 
@@ -382,6 +382,10 @@ class AdminSimpleForumUpdate extends Event {
 			$update->setInt(2, $forum['id']);
 
 			$update->executeUpdate();
+			
+			if(!@unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDFORUM'), $forum['name']), FALSE);
 			$template->setRedirect('admin.php?act=forums', 3);
@@ -445,7 +449,7 @@ class AdminEditForum extends Event {
 			$languages					= &new FAArrayIterator($languages);
 
 			$template->setList('languages', $languages);
-
+			
 			$template->setFile('content', 'admin/admin.html');
 			$template->setFile('admin_panel', 'admin/forums_edit.html');
 		} else {
@@ -539,6 +543,10 @@ class AdminUpdateForum extends Event {
 			$update_b->executeUpdate();
 			$update_c->executeUpdate();
 			
+			if(!@unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
+
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDFORUM'), $forum['name']), FALSE);
 			$template->setRedirect('admin.php?act=forums', 3);
 
@@ -585,7 +593,7 @@ class AdminRemoveForum extends Event {
 			/* This will take care of everything in the INFO table */
 			$heirarchy->removeNode($forum, INFO);
 			
-			if(!unlink(CACHE_FILE)) {
+			if(!@unlink(CACHE_FILE)) {
 				@touch(CACHE_FILE, time()-86400);
 			}
 
@@ -686,7 +694,7 @@ class AdminUpdateForumPermissions extends Event {
 				}
 			}
 			
-			if(!unlink(CACHE_FILE)) {
+			if(!@unlink(CACHE_FILE)) {
 				@touch(CACHE_FILE, time()-86400);
 			}
 
