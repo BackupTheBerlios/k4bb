@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: maps.class.php,v 1.5 2005/05/07 15:31:21 k4st Exp $
+* @version $Id: maps.class.php,v 1.6 2005/05/11 17:41:36 k4st Exp $
 * @package k42
 */
 
@@ -91,7 +91,9 @@ class AdminMapsInherit extends Event {
 			$template->setError('content', $template->getVar('L_YOUNEEDPERMS'));
 		}
 
-		unlink(CACHE_FILE);
+		if(!unlink(CACHE_FILE)) {
+			@touch(CACHE_FILE, time()-86400);
+		}
 
 		return TRUE;
 	}
@@ -128,7 +130,9 @@ class AdminMapsUpdate extends Event {
 			$template->setError('content', $template->getVar('L_YOUNEEDPERMS'));
 		}
 
-		unlink(CACHE_FILE);
+		if(!unlink(CACHE_FILE)) {
+			@touch(CACHE_FILE, time()-86400);
+		}
 
 		return TRUE;
 	}
@@ -276,7 +280,9 @@ class AdminInsertMap {
 		$update_b->executeUpdate();
 		$insert->executeUpdate();
 		
-		unlink(CACHE_FILE);
+		if(!unlink(CACHE_FILE)) {
+			@touch(CACHE_FILE, time()-86400);
+		}
 
 	}
 }
@@ -306,7 +312,9 @@ class AdminMapsInsertNode extends Event {
 			$template->setInfo('content', $template->getVar('L_ADDEDMAPSITEM'), FALSE);
 			$template->setRedirect('admin.php?act=permissions_gui', 3);
 			
-			unlink(CACHE_FILE);
+			if(!unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
 
 		} else {
 			$template->setError('content', $template->getVar('L_YOUNEEDPERMS'));
@@ -338,7 +346,9 @@ class AdminMapsRemoveNode extends Event {
 			$template->setInfo('content', $template->getVar('L_REMOVEDMAPSITEM'), FALSE);
 			$template->setRedirect('admin.php?act=permissions_gui', 3);
 			
-			unlink(CACHE_FILE);
+			if(!unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
 
 		} else {
 			$template->setError('content', $template->getVar('L_YOUNEEDPERMS'));

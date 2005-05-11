@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: controller.class.php,v 1.10 2005/05/05 21:36:33 k4st Exp $
+* @version $Id: controller.class.php,v 1.11 2005/05/11 17:41:55 k4st Exp $
 * @package k42
 */
 
@@ -116,7 +116,7 @@ class Controller {
 	 */
 	function Execute(&$template) {
 		
-		global $_DBA, $_URL;
+		global $_DBA, $_URL, $_SETTINGS;
 
 		/**
 		 * General Variable Setting
@@ -208,14 +208,28 @@ class Controller {
 		/**
 		 * Event Execution
 		 */
-
-		/* get the result of our event call */
-		if (isset($request[$act_var]) && isset($this->events[$request[$act_var]]))
-			$result	= $this->events[$request[$act_var]]->Execute(&$template, $request, &$_DBA, &$session, &$user);
 		
-		/* If the result is false, execute our defaultevent class */
-		if ($result	== FALSE)
-			$this->default->Execute(&$template, $request, &$_DBA, &$session, &$user);
+		if(get_map($user, 'can_see_board', 'can_view', array()) > $user['perms']) {
+			
+			/* This user doesn't have permission to see the bb */
+			$template		= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'));
+		} else if(intval($_SETTINGS['bbactive']) == 0 && $user['perms'] < SUPERMODERATOR) {
+			
+			/* The board is closed */
+			$template		= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $_SETTINGS['bbclosedreason']);
+		} else {
+
+			/* get the result of our event call */
+			if (isset($request[$act_var]) && isset($this->events[$request[$act_var]]))
+				$result	= $this->events[$request[$act_var]]->Execute(&$template, $request, &$_DBA, &$session, &$user);
+		
+			/* If the result is false, execute our defaultevent class */
+			if ($result	== FALSE)
+				$this->default->Execute(&$template, $request, &$_DBA, &$session, &$user);
+		
+		}
 		
 		/**
 		 * User Information

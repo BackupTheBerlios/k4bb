@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: functions.inc.php,v 1.4 2005/05/08 23:13:51 k4st Exp $
+* @version $Id: functions.inc.php,v 1.5 2005/05/11 17:41:55 k4st Exp $
 * @package k42
 */
 
@@ -47,16 +47,16 @@ function format_profilefield($data) {
 			
 			$input		= '<input type="text" class="inputbox" name="'. $data['name'] .'" id="'. $data['name'] .'" value="'. $data['default_value'] .'" size="'. $data['display_size'] .'" maxlength="'. $data['user_maxlength'] .'" />';
 			
-			if($data['is_required'])
+			if($data['is_required'] == 1)
 				$input .= '<script type="text/javascript">addVerification(\''. $data['name'] .'\', \'.+\', \''. $data['name'] .'_error\', \'inputfailed\');</script><div id="'. $data['name'] .'_error" style="display: none;">'. sprintf($lang['L_FILLINTHISFIELD'], $data['title']) .'</div>';
 
 			break;
 		}
 		case 'textarea': {
 			
-			$input		= '<textarea name="'. $data['name'] .'" id="'. $data['name'] .'" size="'. $data['display_size'] .'" rows="'. $data['display_rows'] .'" class="inputbox">'. $data['default_value'] .'</textarea>';
+			$input		= '<textarea name="'. $data['name'] .'" id="'. $data['name'] .'" cols="'. $data['display_size'] .'" rows="'. $data['display_rows'] .'" class="inputbox">'. $data['default_value'] .'</textarea>';
 
-			if($data['is_required'])
+			if($data['is_required'] == 1)
 				$input .= '<script type="text/javascript">addVerification(\''. $data['name'] .'\', \'(\n|\r\n|\r|.)+\', \''. $data['name'] .'_error\', \'inputfailed\');</script><div id="'. $data['name'] .'_error" style="display: none;">'. sprintf($lang['L_FILLINTHISFIELD'], $data['title']) .'</div>';
 
 			break;
@@ -146,11 +146,8 @@ function bbtime($timestamp = FALSE) {
 	if(!$timestamp)
 		$timestamp = time();
 
-	$session		= &Globals::getGlobal('session');
-	$user			= &Globals::getGlobal('user');
-
-	if(is_a($session['user'], 'Member'))
-		return $timestamp + ($user['timezone'] * 3600);
+	if(is_a($_SESSION['user'], 'Member'))
+		return $timestamp + ($_SESSION['user']->info['timezone'] * 3600);
 	else
 		return $timestamp;
 }
@@ -186,45 +183,49 @@ function ereg_words($car, $data){
 
 /* A function to _really_ validate an email */
 function check_mail($mail){
+	
+	$mail	= strtolower($mail);
 
-   // $car -> list acceptable words
-   $car = "0123456789.abcdefghijklmnopqrstuvwxyz_@-";
-   // $ext -> list extension domain words
-   $ext = "abcdefghijklmnopqrstuvwxyz";
+	// $car -> list acceptable words
+	$car = "0123456789.abcdefghijklmnopqrstuvwxyz_@-";
+	// $ext -> list extension domain words
+	$ext = "abcdefghijklmnopqrstuvwxyz";
 
-   /**
-   * if you not use return(), is necesary to put elseif()
-   */
+	/**
+	* if you not use return(), is necesary to put elseif()
+	*/
 
 	if(ereg_words($car, $mail)) 
-		return "01"; // contain invalid caracter(s)
+		return FALSE; // contain invalid caracter(s)
 	
 	$expMail = explode("@", $mail);
 	
 	if(count($expMail)==1) 
-		return "02"; // invalid format
+		return FALSE; // invalid format
 	
 	if(count($expMail)>2) {
-		return "03"; // contain multi @ caracters
+		return FALSE; // contain multi @ caracters
 	} else {
 		if(empty($expMail[0])) 
-			return "04"; // begin at @ is empty
+			return FALSE; // begin at @ is empty
 		if(strlen($expMail[1])< 3) 
-			return "05"; // after @ invalid format
+			return FALSE; // after @ invalid format
+		
 		$expSep = explode(".", $expMail[1]);
+		
 		if(count($expSep)==1) {
-			return "06"; // invalid format domain host
+			return FALSE; // invalid format domain host
 		} else {
 			if(empty($expSep[count($expSep)-2])) 
-				return "07"; // domain name is empty
+				return FALSE; // domain name is empty
 			if(strlen($expSep[count($expSep)-1])<2 || strlen($expSep[count($expSep)-1])>4) 
-				return "08"; // invalid extension domain
+				return FALSE; // invalid extension domain
 			if(ereg_words($ext, $expSep[count($expSep)-1])) 
-				return "09"; // extension domain contain invalid caracter(s)
+				return FALSE; // extension domain contain invalid caracter(s)
 		}
 	}
 
-	return $mail;
+	return TRUE;
 
 }
 

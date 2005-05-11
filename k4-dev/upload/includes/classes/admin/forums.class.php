@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.7 2005/05/07 15:31:21 k4st Exp $
+* @version $Id: forums.class.php,v 1.8 2005/05/11 17:41:36 k4st Exp $
 * @package k42
 */
 
@@ -330,7 +330,9 @@ class AdminInsertForumMaps extends Event {
 				}
 			}
 
-			unlink(CACHE_FILE);
+			if(!unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
 
 			/**
 			 * If we've gotten to this point.. redirect
@@ -583,7 +585,9 @@ class AdminRemoveForum extends Event {
 			/* This will take care of everything in the INFO table */
 			$heirarchy->removeNode($forum, INFO);
 			
-			unlink(CACHE_FILE);
+			if(!unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_REMOVEDFORUM'), $forum['name']), FALSE);
 			$template->setRedirect('admin.php?act=forums', 3);
@@ -682,7 +686,9 @@ class AdminUpdateForumPermissions extends Event {
 				}
 			}
 			
-			unlink(CACHE_FILE);
+			if(!unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDFORUMPERMS'), $forum['name']), FALSE);
 			$template->setRedirect('admin.php?act=forums', 3);

@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: user.inc.php,v 1.5 2005/05/03 21:38:14 k4st Exp $
+* @version $Id: user.inc.php,v 1.6 2005/05/11 17:41:55 k4st Exp $
 * @package k42
 */
 
@@ -221,25 +221,6 @@ class Guest extends User {
 		
 		$this->info	= array('name' => '', 'email' => '', 'id' => 0, 'perms' => 1, 'styleset' => '');
 	}
-	function Register($info) {
-		
-		$name		= $this->dba->Quote($info['name']);
-		$email		= $this->dba->Quote($info['email']);
-		
-		$pass		= md5($info['pass']);
-		$time		= time();
-		
-		$sql		= "INSERT INTO ". USERS ." (name,email,pass,created) VALUES ('$name','$email','$pass',$time)";
-
-		$this->dba->executeUpdate($sql);
-		$ug			= new Usergroup($info);
-
-		$user_id	= $this->dba->GetValue("SELECT id FROM ". USERS ." WHERE name = '$name'");
-
-		$ug->AddUserToUsergroup(3, $user_id, $name, FALSE);
-
-		return new Member($user_id);
-	}
 
 	function Validate($info) {
 		
@@ -250,13 +231,13 @@ class Guest extends User {
 
 		$name	= $_DBA->Quote($info['name']);
 		$pass	= md5($info['pass']);
-		
+
 		Error::reset();
-		$result = $_DBA->GetValue("SELECT id FROM ". USERS ." WHERE name='$name' AND pass='$pass'");
+		$result = $_DBA->getRow("SELECT * FROM ". USERS ." WHERE name = '$name' AND pass = '$pass'");
 		
 		if(Error::grab())
-			return trigger_error("Unable to select the user ID.", E_USER_ERROR);
-
+			return trigger_error("Unable to select the user info.", E_USER_ERROR);
+		
 		return $result;
 	}
 
@@ -282,7 +263,7 @@ class Guest extends User {
 		$name	= $_DBA->Quote($name);
 		$key	= $_DBA->Quote($key);
 		
-		$result = $_DBA->getValue("SELECT id FROM ". USERS ." WHERE name = '$name' AND priv_key = '$key'");
+		$result = $_DBA->GetValue("SELECT id FROM ". USERS ." WHERE name='$name' AND priv_key='$key'");
 		
 		if(Error::grab())
 			return trigger_error("Unable to select the user ID.", E_USER_ERROR);

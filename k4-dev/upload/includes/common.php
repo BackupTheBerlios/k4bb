@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: common.php,v 1.16 2005/05/09 21:16:41 k4st Exp $
+* @version $Id: common.php,v 1.17 2005/05/11 17:41:10 k4st Exp $
 * @package k42
 */
 
@@ -190,8 +190,9 @@ $map_items['blog'][]		= array('varname' => 'private_blog',	'can_view' => 0, 'can
 global $_CONFIG;
 
 
-/* Get the database Object */
+/* Get the database Object and set it to a global */
 $_DBA							= &Database::open($_CONFIG['dba']);
+$GLOBALS['_DBA']				= &$_DBA;
 
 /*
 $query = "";
@@ -229,12 +230,12 @@ if(file_exists(CACHE_FILE) && is_readable(CACHE_FILE) && is_writable(CACHE_FILE)
 if($rewrite_cache) {
 	
 	$cache									= array();
-	
 
 	/**
 	 * Get the datastore 
 	 */
-
+	
+	$cache[DATASTORE]						= array();
 	$result									= &$_DBA->executeQuery("SELECT * FROM ". DATASTORE);
 	while($result->next()) {
 		$temp								= $result->current();
@@ -246,7 +247,8 @@ if($rewrite_cache) {
 	/**
 	 * Get the usergroups 
 	 */
-
+	
+	$cache[USERGROUPS]						= array();
 	$result									= &$_DBA->executeQuery("SELECT * FROM ". USERGROUPS ." ORDER BY max_perm DESC");
 	while($result->next()) {
 		$temp								= $result->current();
@@ -258,7 +260,8 @@ if($rewrite_cache) {
 	/**
 	 * Get the settings
 	 */
-
+	
+	$cache[SETTINGS]						= array();
 	$result									= &$_DBA->executeQuery("SELECT * FROM ". SETTINGS);
 	while($result->next()) {
 		$temp								= $result->current();
@@ -270,8 +273,9 @@ if($rewrite_cache) {
 	/**
 	 * Get ALL of the categories/forums
 	 */
-
-	$result									= &$_DBA->executeQuery("SELECT ". $query_params['info'] ." FROM ". INFO ." i WHERE i.row_type = ". FORUM ." OR i.row_type = ". CATEGORY ." ORDER BY i.row_left ASC");
+	
+	$cache['all_forums']					= array();
+	$result									= &$_DBA->executeQuery("SELECT * FROM ". INFO ." WHERE row_type = ". FORUM ." OR row_type = ". CATEGORY ." ORDER BY row_left ASC");
 	while($result->next()) {
 		$temp								= $result->current();
 		$cache['all_forums'][$temp['id']]	= $temp;
@@ -282,13 +286,14 @@ if($rewrite_cache) {
 	/**
 	 * Get ALL of the custom user profile fields
 	 */
-
-	$result												= &$_DBA->executeQuery("SELECT * FROM ". PROFILEFIELDS);
+	
+	$cache[PROFILEFIELDS]					= array();
+	$result									= &$_DBA->executeQuery("SELECT * FROM ". PROFILEFIELDS);
 	while($result->next()) {
-		$temp											= $result->current();
+		$temp								= $result->current();
 		
-		$cache[PROFILEFIELDS][$temp['name']]			= $temp;
-		$cache[PROFILEFIELDS][$temp['name']]['html']	= format_profilefield($temp);
+		$cache[PROFILEFIELDS][$temp['name']]= $temp;
+		$cache[PROFILEFIELDS][$temp['name']]['html']= format_profilefield($temp);
 		
 		/* Add the extra values onto the end of the userinfo query params variable */
 		$query_params['userinfo']			.= ', ui.'. $temp['name'] .' AS '. $temp['name'];
@@ -320,7 +325,6 @@ if($rewrite_cache) {
 /**
  * Set the super-globals 
  */
-$GLOBALS['_DBA']					= &$_DBA;
 $GLOBALS['_URL']					= &new Url('http://'. $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
 $GLOBALS['_SETTINGS']				= $cache[SETTINGS];
 $GLOBALS['_DATASTORE']				= $cache[DATASTORE];

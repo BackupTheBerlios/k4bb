@@ -11,7 +11,7 @@ $cache = array (
     'maxloggedin' => 
     array (
       'maxonline' => 2,
-      'maxonlinedate' => 1115590686,
+      'maxonlinedate' => 1115665205,
     ),
     'forumstats' => 
     array (
@@ -262,23 +262,23 @@ $cache = array (
       'description' => 'Your home address.',
       'default_value' => '',
       'inputtype' => 'textarea',
-      'user_maxlength' => '100',
-      'inputoptions' => NULL,
+      'user_maxlength' => '255',
+      'inputoptions' => '',
       'min_perm' => '2',
-      'display_register' => '0',
+      'display_register' => '1',
       'display_profile' => '1',
       'display_topic' => '0',
       'display_post' => '0',
       'display_image' => '',
       'display_memberlist' => '0',
       'display_size' => '35',
-      'display_rows' => '2',
+      'display_rows' => '3',
       'display_order' => '1',
-      'is_editable' => '1',
+      'is_editable' => '0',
       'is_private' => '0',
       'is_required' => '0',
       'special_pcre' => '',
-      'html' => '<textarea name="field1" id="field1" size="35" rows="2" class="inputbox"></textarea>',
+      'html' => '<textarea name="field1" id="field1" cols="35" rows="3" class="inputbox"></textarea>',
     ),
     'field2' => 
     array (
@@ -288,9 +288,9 @@ $cache = array (
       'default_value' => '',
       'inputtype' => 'text',
       'user_maxlength' => '100',
-      'inputoptions' => NULL,
+      'inputoptions' => '',
       'min_perm' => '2',
-      'display_register' => '0',
+      'display_register' => '1',
       'display_profile' => '1',
       'display_topic' => '0',
       'display_post' => '0',
@@ -299,7 +299,7 @@ $cache = array (
       'display_size' => '20',
       'display_rows' => '0',
       'display_order' => '2',
-      'is_editable' => '1',
+      'is_editable' => '0',
       'is_private' => '0',
       'is_required' => '0',
       'special_pcre' => '',
@@ -353,7 +353,7 @@ $cache = array (
       'is_private' => '0',
       'is_required' => '0',
       'special_pcre' => '',
-      'html' => '<textarea name="field4" id="field4" size="35" rows="2" class="inputbox"></textarea>',
+      'html' => '<textarea name="field4" id="field4" cols="35" rows="2" class="inputbox"></textarea>',
     ),
     'field5' => 
     array (

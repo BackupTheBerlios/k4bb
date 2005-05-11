@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: profilefields.class.php,v 1.3 2005/05/09 21:17:27 k4st Exp $
+* @version $Id: profilefields.class.php,v 1.4 2005/05/11 17:41:37 k4st Exp $
 * @package k42
 */
 
@@ -163,7 +163,9 @@ class AdminInsertUserField extends Event {
 			$insert->executeUpdate();
 			
 			/* Remove our cache file so it may be recreated */
-			unlink(CACHE_FILE);
+			if(!unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_ADDEDPROFILEFIELD'), $request['title']), FALSE);
 			$template->setRedirect('admin.php?act=userfields', 3);
@@ -215,7 +217,9 @@ class AdminRemoveUserField extends Event {
 			$dba->executeUpdate("DELETE FROM ". PROFILEFIELDS ." WHERE name = '". $dba->quote($field['name']) ."'");
 			
 			/* Remove the cache file so it may be remade */
-			unlink(CACHE_FILE);	
+			if(!unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}	
 
 			$template->setInfo('content', sprintf($template->getVar('L_REMOVEDPROFILEFIELD'), $field['title']), FALSE);
 			$template->setRedirect('admin.php?act=userfields', 3);
@@ -343,7 +347,9 @@ class AdminUpdateUserField extends Event {
 			$update->executeUpdate();
 			
 			/* Remove our cache file so it may be recreated */
-			unlink(CACHE_FILE);
+			if(!unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDPROFILEFIELD'), $request['title']), FALSE);
 			$template->setRedirect('admin.php?act=userfields', 3);

@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.17 2005/05/05 21:35:48 k4st Exp $
+* @version $Id: session.php,v 1.18 2005/05/11 17:41:10 k4st Exp $
 * @package k42
 */
 
@@ -184,7 +184,7 @@ class FADBSession {
 				$id                                            = &$_SESSION['user']->ValidateLoginKey($_COOKIE);
 				
 				/* If this session exists, log the user in */
-				if ($id    !== FALSE) {
+				if ($id !== FALSE) {
 
 					/* Log the user in */
 					$_SESSION['user']                        = &new Member($id);
@@ -198,8 +198,8 @@ class FADBSession {
 			preg_match("~(". $_DATASTORE['search_spiders']['spiderstrings'] .")~is", USER_AGENT, $matches);
 			
 			if(count($matches) >= 2) {
-				$_SESSION['user']->info['id']    = -1;
-				$_SESSION['user']->info['name']    = $_DATASTORE['search_spiders']['spidernames'][$matches[1]];
+				$_SESSION['user']->info['id']		= -1;
+				$_SESSION['user']->info['name']		= $_DATASTORE['search_spiders']['spidernames'][$matches[1]];
 			}
 		}
 	}

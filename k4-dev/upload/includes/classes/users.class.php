@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: users.class.php,v 1.4 2005/05/09 21:17:02 k4st Exp $
+* @version $Id: users.class.php,v 1.5 2005/05/11 17:41:22 k4st Exp $
 * @package k42
 */
 
@@ -79,40 +79,6 @@ function get_user_max_group($temp, $all_groups) {
 	return $group;
 }
 
-class LogoutEvent extends Event {
-	function Execute(&$template, $request, &$dba, &$session, &$user) {
-		
-		global $_SESS;
-
-		/* Create the ancestors bar (if we run into any trouble */
-		$template = BreadCrumbs($template, $template->getVar('L_LOGOUT'));
-
-		if (is_a($session['user'], 'Member')) {
-			
-			/* Update the users' last seen time */
-			$dba->executeUpdate("UPDATE ". USERS ." SET last_seen = seen, seen = 0 WHERE id = ". $user['id'] );
-
-		} else {
-			$template->setInfo('content', $template->getVar('L_NEEDLOGGEDIN'));
-		}
-		
-		/* Persistent method to unset the cookie */
-		@setcookie("k4_autolog", "", time()-3600);
-		bb_setcookie_cache('k4_autolog', '', time()-3600);
-
-		/* Make the user into a Guest user rather than a Member */
-		$session['user']		= &new Guest();
-		
-		$_SESS->setUserStatus(TRUE);
-
-		/* Redirect the page */
-		$template->setInfo('content', $template->getVar('L_LOGGEDOUTSUCCESS'));
-		$template->setRedirect($_SERVER['HTTP_REFERER'], 3);
-
-		return TRUE;
-	}
-}
-
 class LoginEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
@@ -122,11 +88,21 @@ class LoginEvent extends Event {
 		$template = BreadCrumbs($template, $template->getVar('L_LOGIN'));
 
 		if (is_a($session['user'], 'Guest')) {
+			
+			global $_SETTINGS;
 
-			$id	= $session['user']->Validate($request);
-
-			if ($id === FALSE) {
-				return $template->setInfo('content', $template->getVar('L_INVALIDUSERPASS'));
+			$u					= $session['user']->Validate($request);
+			
+			if ($u === FALSE) {
+				$template->setInfo('content', $template->getVar('L_INVALIDUSERPASS'));
+				return TRUE;
+			}
+			
+			/* Did this user just register? */
+			if($u['perms'] <= 0 && $u['priv_key'] != '' && intval($_SETTINGS['verifyemail']) == 1) {
+				
+				$template->setInfo('content', $template->getVar('L_NEEDVERIFYEMAIL'), TRUE);
+				return TRUE;
 			}
 			
 			/* Is this user already logged in ? */
@@ -136,10 +112,12 @@ class LoginEvent extends Event {
 
 			$result				= &$user_is_logged->executeQuery();
 
-			if($result->numrows() > 0)
-				return $template->setInfo('content', $template->getVar('L_USERALREADYLOGGED'));
+			if($result->numrows() > 0) {
+				$template->setInfo('content', $template->getVar('L_USERALREADYLOGGED'));
+				return TRUE;
+			}
 
-			$session['user']		= &new Member($id);
+			$session['user']		= &new Member($u['id']);
 			
 			if($session['user']->info['banned'] == 0) {
 				
@@ -177,11 +155,83 @@ class LoginEvent extends Event {
 				$session['user']							= &new Guest;
 				$session['user']->info['rememberme']		= 'off';
 				$template->setInfo('content', $template->getVar('L_THISBANNEDUSER'));
+				return TRUE;
 			}
 		} else {
 			$template->setInfo('content', $template->getVar('L_CANTBELOGGEDIN'));
+			return TRUE;
+		}
+
+		return TRUE;
+	}
+}
+
+class LogoutEvent extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_SESS;
+
+		/* Create the ancestors bar (if we run into any trouble */
+		$template = BreadCrumbs($template, $template->getVar('L_LOGOUT'));
+
+		if (is_a($session['user'], 'Member')) {
+			
+			/* Update the users' last seen time */
+			$dba->executeUpdate("UPDATE ". USERS ." SET last_seen = seen, seen = 0 WHERE id = ". $user['id'] );
+
+		} else {
+			$template->setInfo('content', $template->getVar('L_NEEDLOGGEDIN'));
 		}
 		
+		/* Persistent method to unset the cookie */
+		@setcookie("k4_autolog", "", time()-3600);
+		bb_setcookie_cache('k4_autolog', '', time()-3600);
+
+		/* Make the user into a Guest user rather than a Member */
+		$session['user']		= &new Guest();
+		
+		$_SESS->setUserStatus(TRUE);
+
+		/* Redirect the page */
+		$template->setInfo('content', $template->getVar('L_LOGGEDOUTSUCCESS'));
+		$template->setRedirect($_SERVER['HTTP_REFERER'], 3);
+
+		return TRUE;
+	}
+}
+
+class ValidateUserByEmail extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		/* Create the ancestors bar (if we run into any trouble */
+		$template = BreadCrumbs($template, $template->getVar('L_VALIDATEMEMBERSHIP'));
+
+		if (is_a($session['user'], 'Guest')) {
+			
+			global $_SETTINGS;
+			
+			if(!isset($request['key']) || strlen($request['key']) != 32) {
+				$template->setInfo('content', $template->getVar('L_INVALIDREGID'));
+				return TRUE;
+			}
+
+			$u			= $dba->getRow("SELECT * FROM ". USERS ." WHERE priv_key = '". $dba->quote($request['key']) ."' AND perms <= 0");
+
+			if(!is_array($u) || empty($u)) {
+				$template->setInfo('content', $template->getVar('L_INVALIDREGID'));
+				return TRUE;
+			}
+			
+			$dba->executeUpdate("UPDATE ". USERS ." SET priv_key = '', perms = ". MEMBER ." WHERE id = ". intval($u['id']));
+			
+			$template->setInfo('content', $template->getVar('L_REGVALIDATEDEMAIL'));
+			$template->setRedirect('index.php', 3);
+
+			return TRUE;
+		} else {
+			$template->setInfo('content', $template->getVar('L_CANTBELOGGEDIN'), FALSE);
+			return TRUE;
+		}
 
 		return TRUE;
 	}
@@ -201,7 +251,7 @@ class RemindMeEvent extends Event {
 			$template->setInfo('content', $template->getVar('L_CANTBELOGGEDIN'), FALSE);
 		}
 
-		return FALSE;
+		return TRUE;
 	}
 }
 
@@ -261,7 +311,7 @@ class ForumInsertUser extends Event {
 
 		if (is_a($session['user'], 'Guest')) {
 			
-			global $_USERFIELDS, $_SETTINGS;
+			global $_USERFIELDS, $_SETTINGS, $_URL, $_DATASTORE;
 			
 			/* If we are not allowed to register */
 			if(isset($_SETTINGS['allowregistration']) && $_SETTINGS['allowregistration'] == 0) {
@@ -270,11 +320,37 @@ class ForumInsertUser extends Event {
 			}
 			
 			/* Collect the custom profile fields to display */
-			$fields = array();
+			$query_fields	= '';
+			$query_params	= '';
 		
 			foreach($_USERFIELDS as $field) {
 				if($field['display_register'] == 1) {
-					$fields[$field['name']] = $field;
+					
+					/* This insures that we only put in what we need to */
+					if(isset($request[$field['name']])) {
+						
+						switch($field['inputtype']) {
+							default:
+							case 'text':
+							case 'textarea':
+							case 'select': {
+								if($request[$field['name']] != '') {
+									$query_fields	.= ', '. $field['name'];
+									$query_params	.= ", '". $dba->quote(htmlentities($request[$field['name']], ENT_QUOTES)) ."'";
+								}
+								break;
+							}
+							case 'multiselect':
+							case 'radio':
+							case 'check': {
+								if(is_array($request[$field['name']]) && !empty($request[$field['name']])) {
+									$query_fields	.= ', '. $field['name'];
+									$query_params	.= ", '". $dba->quote(serialize($request[$field['name']])) ."'";
+								}
+								break;
+							}
+						}						
+					}
 				}
 			}
 			
@@ -340,7 +416,85 @@ class ForumInsertUser extends Event {
 				return TRUE;
 			}
 			
+			if(!check_mail($request['email'])) {
+				$template->setInfo('content', $template->getVar('L_NEEDVALIDEMAIL'), TRUE);
+				return TRUE;
+			}
+
+			if($_SETTINGS['requireuniqueemail'] == 1) {
+				if($dba->getValue("SELECT COUNT(*) FROM ". USERS ." WHERE email = '". $dba->quote($request['email']) ."'") > 0) {
+					$template->setInfo('content', $template->getVar('L_EMAILTAKEN'), TRUE);
+					return TRUE;
+				}
+			}
 			
+			/**
+			 * Do the database inserting
+			 */
+			
+			$name						= htmlentities($request['name'], ENT_QUOTES);
+			$priv_key					= md5(microtime() + rand());
+
+			$insert_a					= &$dba->prepareStatement("INSERT INTO ". USERS ." (name,email,pass,perms,priv_key) VALUES (?,?,?,?,?)");
+			
+			$insert_a->setString(1, $name);
+			$insert_a->setString(2, $request['email']);
+			$insert_a->setString(3, md5($request['pass']));
+			$insert_a->setInt(4, -1);
+			$insert_a->setString(5, $priv_key);
+			
+			$insert_a->executeUpdate();
+			
+			$user_id					= $dba->getInsertId();
+
+			$insert_b					= &$dba->prepareStatement("INSERT INTO ". USERINFO ." (user_id,timezone". $query_fields .") VALUES (?,?". $query_params .")");
+			$insert_b->setInt(1, $user_id);
+			$insert_b->setInt(2, intval(@$request['timezone']));
+
+			$insert_b->executeUpdate();
+
+			/* Set the datastore values */
+			$datastore					= $_DATASTORE['forumstats'];
+			$datastore['num_members']	+= 1;
+			
+			$datastore_update			= &$dba->prepareStatement("UPDATE ". DATASTORE ." SET data=? WHERE varname=?");
+			$datastore_update->setString(1, serialize($datastore));
+			$datastore_update->setString(2, 'forumstats');
+			$datastore_update->executeUpdate();
+
+			if(!unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
+			
+			/* Do we need to validate their email by having them follow a url? */
+			if(intval($_SETTINGS['verifyemail']) == 1) {
+				
+				$verify_url				= $_URL;
+				$verify_url->args		= array('act' => 'activate_accnt', 'key' => $priv_key);
+				$verify_url->file		= 'member.php';
+				$url					= $verify_url->__toString();
+
+				$email					= sprintf($template->getVar('L_REGISTEREMAILRMSG'), $request['name'], $_SETTINGS['bbtitle'], $url, $_SETTINGS['bbtitle']);
+
+				$template->setInfo('content', sprintf($template->getVar('L_SUCCESSREGISTEREMAIL'), $_SETTINGS['bbtitle'], $request['email']), FALSE);
+				$template->setRedirect('index.php', 5);
+			} else {
+				$dba->executeUpdate("UPDATE ". USERS ." SET perms = 5, priv_key = '' WHERE id = ". intval($user_id));
+				$template->setInfo('content', sprintf($template->getVar('L_SUCCESSREGISTER'), $_SETTINGS['bbtitle']), FALSE);
+				$template->setRedirect('index.php', 5);
+
+				$email					= sprintf($template->getVar('L_REGISTEREMAILMSG'), $request['name'], $_SETTINGS['bbtitle'], $_SETTINGS['bbtitle']);
+			}
+
+			/* Send our email, make the url email looking ;) */
+			$verify_url->args			= array();
+			$verify_url->file			= FALSE;
+			$verify_url->anchor			= FALSE;
+			$verify_url->scheme			= FALSE;
+			$verify_url->user			= FALSE;
+			
+			/* Finally, mail our user */
+			@mail($request['email'], sprintf($template->getVar('L_REGISTEREMAILTITLE'), $_SETTINGS['bbtitle']), $email, "From: \"". $_SETTINGS['bbtitle'] ." Forums\" <noreply@". $verify_url->__toString() .">");
 
 			return TRUE;
 		} else {

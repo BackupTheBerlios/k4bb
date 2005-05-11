@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: categories.class.php,v 1.7 2005/05/07 15:31:21 k4st Exp $
+* @version $Id: categories.class.php,v 1.8 2005/05/11 17:41:36 k4st Exp $
 * @package k42
 */
 
@@ -208,7 +208,9 @@ class AdminInsertCategoryMaps extends Event {
 			$template->setInfo('content', sprintf($template->getVar('L_ADDEDCATEGORYPERMS'), $category['name']), FALSE);
 			$template->setRedirect('admin.php?act=categories', 3);
 			
-			unlink(CACHE_FILE);
+			if(!unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
 
 		} else {
 			$template->setError('content', $template->getVar('L_YOUNEEDPERMS'));
@@ -412,7 +414,9 @@ class AdminRemoveCategory extends Event {
 
 			$heirarchy->removeNode($category_maps, MAPS);
 			
-			unlink(CACHE_FILE);
+			if(!unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_REMOVEDCATEGORY'), $category['name']), FALSE);
 			$template->setRedirect('admin.php?act=categories', 3);
@@ -508,7 +512,9 @@ class AdminUpdateCategoryPermissions extends Event {
 				}
 			}
 			
-			unlink(CACHE_FILE);
+			if(!unlink(CACHE_FILE)) {
+				@touch(CACHE_FILE, time()-86400);
+			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDCATEGORYPERMS'), $category['name']), FALSE);
 			$template->setRedirect('admin.php?act=categories', 3);

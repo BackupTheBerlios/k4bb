@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: general.php,v 1.6 2005/05/09 21:17:45 k4st Exp $
+* @version $Id: general.php,v 1.7 2005/05/11 17:42:24 k4st Exp $
 * @package k42
 */
 
@@ -620,7 +620,18 @@ $lang += array(
 'L_CREATE'				=> 'Create',
 'L_RESET'				=> 'Reset',
 'L_VALIDATEEMAILADDR'	=> 'Validate Email Address',
+'L_NEEDVALIDEMAIL'		=> 'You must insert a valid email address to register.',
+'L_SUCCESSREGISTER'		=> 'You have successfully been registered as a member at the <strong>%s forums</strong>. You will now be redirected to the board index where you can choose to log in.',
+'L_SUCCESSREGISTEREMAIL'=> 'You have successfully been registered as a member at the <strong>%s forums</strong>, however you must first validate your membership. An email has been sent to <strong>%s</strong>, please follow the instructions written therein.',
+'L_REGISTEREMAILTITLE'	=> 'Welcome to the %s forums!',
+'L_REGISTEREMAILMSG'	=> "%s,\n\nThanks for registering at the %s forums! We are glad you have chosen to be a part of our community and we hope you enjoy your stay.\n\nThanks again,\n%s team",
+'L_REGISTEREMAILRMSG'	=> "%s,\n\nThanks for registering at the %s forums! We are glad you have chosen to be a part of our community and we hope you enjoy your stay.\n\nIn order to complete your registration, please go to the following website address to confirm your registration:\n\n%s\n\n\n\nThanks again,\n%s team",
+'L_NEEDVERIFYEMAIL'		=> 'In order to log in you must verify your email address. An email was sent to the address that you specified when you registered. If this email was not sent, or you did not recieve it, please consult the FAQ section under User Registration or contact the administrator directly. Thank you.',
+'L_VALIDATEMEMBERSHIP'	=> 'Validate Membership',
+'L_INVALIDREGID'		=> 'You have specified an invalid registration confirmation key. Please consult the FAQ section under User Registration or contact the administrator directly. Thank you.',
+'L_REGVALIDATEDEMAIL'	=> 'You have now validated your email address. Thank you for completing your registration. You are now being redirected to the board index.',
 'L_FILLINEMAIL'			=> 'Please enter a valid email address for yourself.',
+/* / Stuff on the login & register forms */
 
 /* Search forms */
 'L_SEARCHFORUMS'		=> 'Search Forums',

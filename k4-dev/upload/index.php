@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.13 2005/05/07 15:30:31 k4st Exp $
+* @version $Id: index.php,v 1.14 2005/05/11 17:40:34 k4st Exp $
 * @package k42
 */
 
@@ -115,13 +115,14 @@ class DefaultEvent extends Event {
 		$template->setList('online_users', $online_users);
 		
 		$newest_user						= $dba->getRow("SELECT name, id FROM ". USERS ." ORDER BY id DESC LIMIT 1");
-		
+		$expired							= time() - ini_get('session.gc_maxlifetime');
+
 		$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members') + iif(is_a($session['user'], 'Member') && $_SESS->is_new, 1, 0),
 						'num_invisible'		=> Globals::getGlobal('num_online_invisible'),
 						'num_topics'		=> $_DATASTORE['forumstats']['num_topics'],
 						'num_replies'		=> $_DATASTORE['forumstats']['num_replies'],
 						'num_members'		=> $_DATASTORE['forumstats']['num_members'],
-						'num_online_total'	=> $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS) + iif(is_a($session['user'], 'Guest') && $_SESS->is_new, 1, 0),
+						'num_online_total'	=> $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS ." WHERE seen >= $expired") + iif(is_a($session['user'], 'Guest') && $_SESS->is_new, 1, 0),
 						'newest_uid'		=> $newest_user['id'],
 						'newest_user'		=> $newest_user['name']
 						);
