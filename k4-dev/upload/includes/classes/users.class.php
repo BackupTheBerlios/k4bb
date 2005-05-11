@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: users.class.php,v 1.5 2005/05/11 17:41:22 k4st Exp $
+* @version $Id: users.class.php,v 1.6 2005/05/11 18:29:56 k4st Exp $
 * @package k42
 */
 
@@ -435,13 +435,14 @@ class ForumInsertUser extends Event {
 			$name						= htmlentities($request['name'], ENT_QUOTES);
 			$priv_key					= md5(microtime() + rand());
 
-			$insert_a					= &$dba->prepareStatement("INSERT INTO ". USERS ." (name,email,pass,perms,priv_key) VALUES (?,?,?,?,?)");
+			$insert_a					= &$dba->prepareStatement("INSERT INTO ". USERS ." (name,email,pass,perms,priv_key,usergroups) VALUES (?,?,?,?,?,?)");
 			
 			$insert_a->setString(1, $name);
 			$insert_a->setString(2, $request['email']);
 			$insert_a->setString(3, md5($request['pass']));
 			$insert_a->setInt(4, -1);
 			$insert_a->setString(5, $priv_key);
+			$insert_a->setString(6, 'a:1:{i:0;i:1;}'); // Registered Users
 			
 			$insert_a->executeUpdate();
 			
@@ -462,7 +463,7 @@ class ForumInsertUser extends Event {
 			$datastore_update->setString(2, 'forumstats');
 			$datastore_update->executeUpdate();
 
-			if(!unlink(CACHE_FILE)) {
+			if(!@unlink(CACHE_FILE)) {
 				@touch(CACHE_FILE, time()-86400);
 			}
 			
