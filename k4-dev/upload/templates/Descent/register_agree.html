@@ -23,20 +23,25 @@
 		</td>
 	</tr>
 	<tr class="tcat">
-		<td><input type="submit" id="reg_button" value="{$L_REGISTER}" disabled="disabled" class="button" /></td>
+		<td><input type="submit" id="reg_button" value="{$L_REGISTER}" class="button" /></td>
 	</tr>
 </table>
 </form>
 <script type="text/javascript">
 // <!--
-var agree				= document.getElementById('agree');
-var reg_button			= document.getElementById('reg_button');
-agree.onclick			= function() {
-	if(agree.checked == true) {
-		reg_button.disabled = false;
-	} else {
-		reg_button.disabled = true;
+try {
+	var agree				= document.getElementById('agree');
+	var reg_button			= document.getElementById('reg_button');
+	reg_button.disabled		= true;
+	agree.onclick			= function() {
+		if(agree.checked == true) {
+			reg_button.disabled = false;
+		} else {
+			reg_button.disabled = true;
+		}
 	}
+} catch(e) {
+
 }
 // -->
 </script>
