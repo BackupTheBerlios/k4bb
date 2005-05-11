@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: template.php,v 1.6 2005/05/08 23:14:39 k4st Exp $
+* @version $Id: template.php,v 1.7 2005/05/11 17:57:24 k4st Exp $
 * @package k42
 */
 
@@ -92,8 +92,10 @@ class TPL_Source {
 		}
 
 		if ($fp = @fopen($filename, 'w')) {
+			@chmod($filename, 0755);
 			fwrite($fp, $this->compile());
 			fclose($fp);
+			@chmod($filename, 0755);
 		}
 		else {
 			exit("Unable to open the compiled template file for writing: $filename");
