@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: sqlite.php,v 1.7 2005/05/07 15:31:50 k4st Exp $
+* @version $Id: sqlite.php,v 1.8 2005/05/12 01:37:42 k4st Exp $
 * @package k42
 */
 
@@ -138,9 +138,9 @@ class SQLiteConnection extends FADBConnection {
 		
 		$result = sqlite_query($stmt, $this->link);
 
-		if ($result == FALSE)
-			return trigger_error("Invalid query: ".sqlite_error_string(sqlite_last_error($this->link)), E_USER_ERROR);
-		
+		if ($result == FALSE) {
+			return compile_error("Invalid query: ". sqlite_error_string(sqlite_last_error($this->link)), __FILE__, __LINE__);
+		}
 		if(DEBUG_SQL)
 			set_debug_item($stmt, $result);
 
@@ -155,10 +155,11 @@ class SQLiteConnection extends FADBConnection {
 		$result = sqlite_query($stmt, $this->link);
 
 		if (!is_resource($result)) {
-			if (sqlite_last_error($this->link) == 0)
-				return trigger_error("Invalid query: Called executeQuery on an update", E_USER_WARNING);
+			if (sqlite_last_error($this->link) == 0) {
+				return compile_error("Invalid query: Called executeQuery on an update", __FILE__, __LINE__);
+			}
 				
-			return trigger_error("Invalid query: ".sqlite_error_string(sqlite_last_error($this->link)), E_USER_ERROR);
+			return compile_error("Invalid query: ". sqlite_error_string(sqlite_last_error($this->link)), __FILE__, __LINE__);
 		}
 		
 		/* Increment the number of queries */
@@ -177,7 +178,7 @@ class SQLiteConnection extends FADBConnection {
 		$result			= sqlite_query($query, $this->link);
 
 		if (!is_resource($result)) {
-			return trigger_error("Invalid query: ".sqlite_error_string(sqlite_last_error($this->link)), E_USER_ERROR);
+			return compile_error("Invalid query: ". sqlite_error_string(sqlite_last_error($this->link)), __FILE__, __LINE__);
 		}
 		
 		/* Increment the number of queries */
@@ -215,7 +216,7 @@ class SQLiteConnection extends FADBConnection {
 				return $value;
 			}
 		} else {
-			return trigger_error("Invalid query: ".sqlite_error_string(sqlite_last_error($this->link)), E_USER_ERROR);
+			return compile_error("Invalid query: ".sqlite_error_string(sqlite_last_error($this->link)), __FILE__, __LINE__);
 		}
 		return FALSE;
 	}

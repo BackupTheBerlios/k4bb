@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: mysql.php,v 1.7 2005/05/07 15:31:50 k4st Exp $
+* @version $Id: mysql.php,v 1.8 2005/05/12 01:37:35 k4st Exp $
 * @package k42
 */
 
@@ -137,7 +137,7 @@ class MysqlConnection extends FADBConnection {
 		$result = mysql_query($stmt, $this->link);
 
 		if ($result == FALSE)
-			return trigger_error("Invalid query: ".mysql_error($this->link), E_USER_ERROR);
+			return compile_error("Invalid query: ". mysql_error($this->link), __FILE__, __LINE__);
 		
 		if(DEBUG_SQL)
 			set_debug_item($stmt, $result);
@@ -153,9 +153,9 @@ class MysqlConnection extends FADBConnection {
 
 		if (!is_resource($result)) {
 			if (mysql_errno() == 0)
-				return trigger_error("Invalid query: Called executeQuery on an update", E_USER_WARNING);
+				return compile_error("Invalid query: Called executeQuery on an update", __FILE__, __LINE__);
 				
-			return trigger_error("Invalid query: ".mysql_error($this->link), E_USER_ERROR);
+			return compile_error("Invalid query: ".mysql_error($this->link), __FILE__, __LINE__);
 		}
 		
 		/* Increment the number of queries */
@@ -174,7 +174,7 @@ class MysqlConnection extends FADBConnection {
 		$result			= mysql_query($query, $this->link);
 
 		if (!is_resource($result)) {
-			return trigger_error("Invalid query: ".mysql_error($this->link), E_USER_ERROR);
+			return compile_error("Invalid query: ".mysql_error($this->link), __FILE__, __LINE__);
 		}
 		
 		/* Increment the number of queries */
@@ -210,7 +210,7 @@ class MysqlConnection extends FADBConnection {
 				return $row[0];
 			}
 		} else {
-			return trigger_error("Invalid query: ".mysql_error($this->link), E_USER_ERROR);
+			return compile_error("Invalid query: ".mysql_error($this->link), __FILE__, __LINE__);
 		}
 		return FALSE;
 	}
