@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: javascript.js,v 1.5 2005/05/07 15:33:06 k4st Exp $
+* @version $Id: javascript.js,v 1.6 2005/05/12 19:49:47 k4st Exp $
 * @package k42
 */
 
@@ -227,6 +227,33 @@ function setIndices(values_array, select) {
 		}
 	} else {
 		setIndex(values_array[0], select);
+	}
+}
+
+/* Set a radio button */
+function setRadio(value, name) {
+	var inputs		= document.getElementsByTagName("input");
+	
+	for (var x = 0; x < sizeof(inputs); x++) {
+		if(inputs[x].name == name) {
+			if(inputs[x].value == value) {
+				inputs[x].checked = true;
+			} else {
+				inputs[x].checked = false;
+			}
+		}
+	}
+
+	return true;
+}
+
+/* Set a checkbox */
+function setCheckbox(value, id) {
+	var input		= document.getElementById(id);
+	if(value || value == 1) {	
+		input.checked = true;
+	} else {
+		input.checked = false;
 	}
 }
 
