@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: mysql.php,v 1.8 2005/05/12 01:37:35 k4st Exp $
+* @version $Id: mysql.php,v 1.9 2005/05/12 23:40:49 k4st Exp $
 * @package k42
 */
 
@@ -216,7 +216,7 @@ class MysqlConnection extends FADBConnection {
 	}
 
 	function Query($stmt) {
-		@mysql_query($stmt, $this->link);
+		return @mysql_query($stmt, $this->link);
 	}
 	
 	function getInsertId() {
