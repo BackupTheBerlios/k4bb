@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: common.php,v 1.17 2005/05/11 17:41:10 k4st Exp $
+* @version $Id: common.php,v 1.18 2005/05/12 01:33:49 k4st Exp $
 * @package k42
 */
 
@@ -112,10 +112,11 @@ define('TOPIC_ANNOUNCE',	3);
 define('TOPIC_GLOBAL',		4);
 
 /**
- * The interval between cache reloads
+ * The interval between cache reloads, and post impulse limit
  */
 define('CACHE_INTERVAL',	86400);
 define('CACHE_FILE',		FORUM_BASE_DIR .'/tmp/cache/cache.php');
+define('POST_IMPULSE_LIMIT',15);
 
 /**
  * Query Parameters for things such as forums, categories, users, etc
@@ -191,7 +192,11 @@ global $_CONFIG;
 
 
 /* Get the database Object and set it to a global */
+error::reset();
 $_DBA							= &Database::open($_CONFIG['dba']);
+if(error::grab())
+	return critical_error();
+
 $GLOBALS['_DBA']				= &$_DBA;
 
 /*
@@ -214,8 +219,8 @@ if(file_exists(CACHE_FILE) && is_readable(CACHE_FILE) && is_writable(CACHE_FILE)
 
 		/* Include the $cache array */
 		include_once CACHE_FILE;
-		
-		if(!is_array($cache)) {
+
+		if(!isset($cache) || !is_array($cache)) {
 			$rewrite_cache	= TRUE;
 		} else {
 			$rewrite_cache	= FALSE;
@@ -309,13 +314,22 @@ if($rewrite_cache) {
 	$cache[MAPS]							= get_maps();
 	
 	/* Create the cache file */
+	error::reset();
+
 	DBCache::createCache($cache);
+
+	if(error::grab())
+		critical_error();
 
 } else {
 	
 	/* Include the cache file */
 	include_once CACHE_FILE;
 	
+	if(!isset($cache) || !is_array($cache) || empty($cache)) {
+		compile_error('The cache array does not exist or it is empty.', __FILE__, __LINE__);
+	}
+
 	/* Add the extra values onto the end of the userinfo query params variable */
 	foreach($cache[PROFILEFIELDS] as $field) {
 		$query_params['userinfo']			.= ', ui.'. $field['name'] .' AS '. $field['name'];

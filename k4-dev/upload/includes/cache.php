@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: cache.php,v 1.7 2005/05/07 15:30:48 k4st Exp $
+* @version $Id: cache.php,v 1.8 2005/05/12 01:33:49 k4st Exp $
 * @package k42
 */
 
@@ -250,11 +250,23 @@ class DBCache {
 		$contents				.= "\n?>";
 		
 		/* Create our file */
+		error::reset();
+
 		$handle = @fopen(CACHE_FILE, "w");
 		@chmod(CACHE_FILE, 0777);
 		@fwrite($handle, $contents);
 		@chmod(CACHE_FILE, 0777);
 		@fclose($handle);
+
+		if(!file_exists(CACHE_FILE) || !is_readable(CACHE_FILE) || !is_writeable(CACHE_FILE)) {
+			error::pitch(new FAError('An error occured while trying to create the forum cache file.', __FILE__, __LINE__));
+		} else {
+			$lines = file(CACHE_FILE);
+
+			if(count($lines) <= 1 || empty($lines)) {
+				error::pitch(new FAError('An error occured while trying to create the forum cache file. It appears to be empty.', __FILE__, __LINE__));
+			}
+		}
 	}
 }
 

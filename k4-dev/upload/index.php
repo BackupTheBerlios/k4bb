@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.14 2005/05/11 17:40:34 k4st Exp $
+* @version $Id: index.php,v 1.15 2005/05/12 01:33:21 k4st Exp $
 * @package k42
 */
 
@@ -142,6 +142,10 @@ class DefaultEvent extends Event {
 			$query->setString(1, serialize($maxloggedin));
 			$query->setString(2, 'maxloggedin');
 			$query->executeUpdate();
+
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
+			}
 		}
 		
 		/* Show the forum status icons */

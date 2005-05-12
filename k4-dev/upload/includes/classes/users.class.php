@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: users.class.php,v 1.6 2005/05/11 18:29:56 k4st Exp $
+* @version $Id: users.class.php,v 1.7 2005/05/12 01:34:08 k4st Exp $
 * @package k42
 */
 
@@ -99,7 +99,7 @@ class LoginEvent extends Event {
 			}
 			
 			/* Did this user just register? */
-			if($u['perms'] <= 0 && $u['priv_key'] != '' && intval($_SETTINGS['verifyemail']) == 1) {
+			if($u['perms'] == PENDING_MEMBER && $u['priv_key'] != '' && intval($_SETTINGS['verifyemail']) == 1) {
 				
 				$template->setInfo('content', $template->getVar('L_NEEDVERIFYEMAIL'), TRUE);
 				return TRUE;
@@ -215,7 +215,7 @@ class ValidateUserByEmail extends Event {
 				return TRUE;
 			}
 
-			$u			= $dba->getRow("SELECT * FROM ". USERS ." WHERE priv_key = '". $dba->quote($request['key']) ."' AND perms <= 0");
+			$u			= $dba->getRow("SELECT * FROM ". USERS ." WHERE priv_key = '". $dba->quote($request['key']) ."' AND perms = ". intval(PENDING_MEMBER));
 
 			if(!is_array($u) || empty($u)) {
 				$template->setInfo('content', $template->getVar('L_INVALIDREGID'));
@@ -440,7 +440,7 @@ class ForumInsertUser extends Event {
 			$insert_a->setString(1, $name);
 			$insert_a->setString(2, $request['email']);
 			$insert_a->setString(3, md5($request['pass']));
-			$insert_a->setInt(4, -1);
+			$insert_a->setInt(4, PENDING_MEMBER);
 			$insert_a->setString(5, $priv_key);
 			$insert_a->setString(6, 'a:1:{i:0;i:1;}'); // Registered Users
 			
@@ -463,8 +463,8 @@ class ForumInsertUser extends Event {
 			$datastore_update->setString(2, 'forumstats');
 			$datastore_update->executeUpdate();
 
-			if(!@unlink(CACHE_FILE)) {
-				@touch(CACHE_FILE, time()-86400);
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 			
 			/* Do we need to validate their email by having them follow a url? */

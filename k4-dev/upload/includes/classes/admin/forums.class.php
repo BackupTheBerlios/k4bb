@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.9 2005/05/11 18:30:15 k4st Exp $
+* @version $Id: forums.class.php,v 1.10 2005/05/12 01:34:26 k4st Exp $
 * @package k42
 */
 
@@ -231,7 +231,7 @@ class AdminInsertForum extends Event {
 			$insert_b->setString(3, $request['description']);
 			$insert_b->setString(4, $request['pass']);
 			$insert_b->setInt(5, iif(intval($request['is_link']) == 1, 0, 1));
-			$insert_b->setInt(6, $request['is_link']);
+			$insert_b->setInt(6, $request['is_link']); 
 			$insert_b->setString(7, $request['link_href']);
 			$insert_b->setInt(8, $request['link_show_redirects']);
 			$insert_b->setString(9, $forum_rules->parse());
@@ -253,6 +253,10 @@ class AdminInsertForum extends Event {
 
 			if(!($forum['row_type'] & CATEGORY)) {
 				$dba->executeUpdate("UPDATE ". FORUMS ." SET subforums = 1 WHERE forum_id = ". $forum['id']);
+			}
+
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 			
 			$template->setInfo('content', sprintf($template->getVar('L_ADDEDFORUM'), $request['name']), FALSE);
@@ -330,8 +334,8 @@ class AdminInsertForumMaps extends Event {
 				}
 			}
 
-			if(!@unlink(CACHE_FILE)) {
-				@touch(CACHE_FILE, time()-86400);
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 
 			/**
@@ -383,8 +387,8 @@ class AdminSimpleForumUpdate extends Event {
 
 			$update->executeUpdate();
 			
-			if(!@unlink(CACHE_FILE)) {
-				@touch(CACHE_FILE, time()-86400);
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDFORUM'), $forum['name']), FALSE);
@@ -543,8 +547,8 @@ class AdminUpdateForum extends Event {
 			$update_b->executeUpdate();
 			$update_c->executeUpdate();
 			
-			if(!@unlink(CACHE_FILE)) {
-				@touch(CACHE_FILE, time()-86400);
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDFORUM'), $forum['name']), FALSE);
@@ -593,8 +597,8 @@ class AdminRemoveForum extends Event {
 			/* This will take care of everything in the INFO table */
 			$heirarchy->removeNode($forum, INFO);
 			
-			if(!@unlink(CACHE_FILE)) {
-				@touch(CACHE_FILE, time()-86400);
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_REMOVEDFORUM'), $forum['name']), FALSE);
@@ -694,8 +698,8 @@ class AdminUpdateForumPermissions extends Event {
 				}
 			}
 			
-			if(!@unlink(CACHE_FILE)) {
-				@touch(CACHE_FILE, time()-86400);
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDFORUMPERMS'), $forum['name']), FALSE);

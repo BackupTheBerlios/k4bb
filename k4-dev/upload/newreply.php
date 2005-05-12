@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: newreply.php,v 1.3 2005/05/03 21:35:59 k4st Exp $
+* @version $Id: newreply.php,v 1.4 2005/05/12 01:33:21 k4st Exp $
 * @package k42
 */
 
@@ -98,6 +98,28 @@ class DefaultEvent extends Event {
 				
 				$template->show('parent_id');
 				$template->setVar('parent_id', $reply['id']);
+			}
+		}
+		
+		/* Prevent post flooding */
+		$last_topic		= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE t.poster_ip = '". USER_IP ."' ORDER BY i.created DESC LIMIT 1");
+		$last_reply		= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['reply'] ." FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON r.reply_id = i.id WHERE r.poster_ip = '". USER_IP ."' ORDER BY i.created DESC LIMIT 1");
+		
+		if(is_array($last_topic) && !empty($last_topic)) {
+			if(intval($last_topic['created']) + POST_IMPULSE_LIMIT > time()) {
+				/* set the breadcrumbs bit */
+				$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+				$template->setInfo('content', $template->getVar('L_MUSTWAITSECSTOPOST'), TRUE);
+				return TRUE;
+			}
+		}
+
+		if(is_array($last_reply) && !empty($last_reply)) {
+			if(intval($last_reply['created']) + POST_IMPULSE_LIMIT > time()) {
+				/* set the breadcrumbs bit */
+				$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+				$template->setInfo('content', $template->getVar('L_MUSTWAITSECSTOPOST'), TRUE);
+				return TRUE;
 			}
 		}
 

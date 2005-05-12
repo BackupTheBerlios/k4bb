@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: newtopic.php,v 1.9 2005/05/01 01:12:02 k4st Exp $
+* @version $Id: newtopic.php,v 1.10 2005/05/12 01:33:21 k4st Exp $
 * @package k42
 */
 
@@ -51,23 +51,48 @@ class DefaultEvent extends Event {
 		if(!$forum || !is_array($forum) || empty($forum)) {
 			/* set the breadcrumbs bit */
 			$template	= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
-			return $template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+			return TRUE;
 		}
 			
 		/* Make sure the we are trying to post into a forum */
 		if(!($forum['row_type'] & FORUM)) {
 			/* set the breadcrumbs bit */
 			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
-			return $template->setInfo('content', $template->getVar('L_CANTPOSTTOCATEGORY'), FALSE);		
+			$template->setInfo('content', $template->getVar('L_CANTPOSTTOCATEGORY'), FALSE);
+			return TRUE;
 		}
 
 		/* Do we have permission to post to this forum? */
 		if($user['perms'] < get_map($user, 'topics', 'can_add', array('forum_id'=>$forum['id']))) {
 			/* set the breadcrumbs bit */
 			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
-			return $template->setInfo('content', $template->getVar('L_PERMCANTPOST'), FALSE);		
+			$template->setInfo('content', $template->getVar('L_PERMCANTPOST'), FALSE);
+			return TRUE;
 		}
-				
+		
+		/* Prevent post flooding */
+		$last_topic		= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE t.poster_ip = '". USER_IP ."' ORDER BY i.created DESC LIMIT 1");
+		$last_reply		= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['reply'] ." FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON r.reply_id = i.id WHERE r.poster_ip = '". USER_IP ."' ORDER BY i.created DESC LIMIT 1");
+		
+		if(is_array($last_topic) && !empty($last_topic)) {
+			if(intval($last_topic['created']) + POST_IMPULSE_LIMIT > time()) {
+				/* set the breadcrumbs bit */
+				$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+				$template->setInfo('content', $template->getVar('L_MUSTWAITSECSTOPOST'), TRUE);
+				return TRUE;
+			}
+		}
+
+		if(is_array($last_reply) && !empty($last_reply)) {
+			if(intval($last_reply['created']) + POST_IMPULSE_LIMIT > time()) {
+				/* set the breadcrumbs bit */
+				$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+				$template->setInfo('content', $template->getVar('L_MUSTWAITSECSTOPOST'), TRUE);
+				return TRUE;
+			}
+		}
+
 		/**
 		 * Start setting useful template information
 		 */

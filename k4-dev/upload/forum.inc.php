@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forum.inc.php,v 1.4 2005/05/05 21:34:30 k4st Exp $
+* @version $Id: forum.inc.php,v 1.5 2005/05/12 01:33:21 k4st Exp $
 * @package k42
 */
 
@@ -82,7 +82,11 @@ class Forum_Controller extends Controller {
 		parent::Controller(new DefaultEvent);
 
 		/* Create a new instance of Template */
+		error::reset();
 		$this->template		= &new Template($template);
+		
+		if(error::grab())
+			critical_error();
 
 		/* Set all of the setting values to the template */
 		$this->template->setVarArray($_SETTINGS);

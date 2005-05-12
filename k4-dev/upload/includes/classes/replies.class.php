@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: replies.class.php,v 1.4 2005/05/05 21:36:06 k4st Exp $
+* @version $Id: replies.class.php,v 1.5 2005/05/12 01:34:08 k4st Exp $
 * @package k42
 */
 
@@ -50,6 +50,28 @@ class PostReply extends Event {
 
 		$this->dba			= &$dba;
 		
+		/* Prevent post flooding */
+		$last_topic		= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE t.poster_ip = '". USER_IP ."' ORDER BY i.created DESC LIMIT 1");
+		$last_reply		= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['reply'] ." FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON r.reply_id = i.id WHERE r.poster_ip = '". USER_IP ."' ORDER BY i.created DESC LIMIT 1");
+		
+		if(is_array($last_topic) && !empty($last_topic)) {
+			if(intval($last_topic['created']) + POST_IMPULSE_LIMIT > time()) {
+				/* set the breadcrumbs bit */
+				$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+				$template->setInfo('content', $template->getVar('L_MUSTWAITSECSTOPOST'), TRUE);
+				return TRUE;
+			}
+		}
+
+		if(is_array($last_reply) && !empty($last_reply)) {
+			if(intval($last_reply['created']) + POST_IMPULSE_LIMIT > time()) {
+				/* set the breadcrumbs bit */
+				$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+				$template->setInfo('content', $template->getVar('L_MUSTWAITSECSTOPOST'), TRUE);
+				return TRUE;
+			}
+		}
+
 		/* Check the request ID */
 		if(!isset($request['topic_id']) || !$request['topic_id'] || intval($request['topic_id']) == 0) {
 			/* set the breadcrumbs bit */
@@ -212,7 +234,7 @@ class PostReply extends Event {
 			$insert_b->setInt(4, $forum['category_id']);
 			$insert_b->setString(5, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
 			$insert_b->setInt(6, $user['id']);
-			$insert_b->setInt(7, USER_IP);
+			$insert_b->setString(7, USER_IP);
 			$insert_b->setString(8, $body_text);
 			$insert_b->setString(9, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'));
 			$insert_b->setInt(10, iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0));

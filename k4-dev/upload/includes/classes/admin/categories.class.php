@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: categories.class.php,v 1.9 2005/05/11 18:30:15 k4st Exp $
+* @version $Id: categories.class.php,v 1.10 2005/05/12 01:34:26 k4st Exp $
 * @package k42
 */
 
@@ -127,8 +127,8 @@ class AdminInsertCategory extends Event {
 			/* Insert the extra category info */
 			$insert_b->executeUpdate();
 			
-			if(!@unlink(CACHE_FILE)) {
-				@touch(CACHE_FILE, time()-86400);
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_ADDEDCATEGORY'), $request['name']), FALSE);
@@ -212,8 +212,8 @@ class AdminInsertCategoryMaps extends Event {
 			$template->setInfo('content', sprintf($template->getVar('L_ADDEDCATEGORYPERMS'), $category['name']), FALSE);
 			$template->setRedirect('admin.php?act=categories', 3);
 			
-			if(!@unlink(CACHE_FILE)) {
-				@touch(CACHE_FILE, time()-86400);
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 
 		} else {
@@ -257,8 +257,8 @@ class AdminSimpleCategoryUpdate extends Event {
 
 			$update->executeUpdate();
 			
-			if(!@unlink(CACHE_FILE)) {
-				@touch(CACHE_FILE, time()-86400);
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDCATEGORY'), $category['name']), FALSE);
@@ -367,8 +367,8 @@ class AdminUpdateCategory extends Event {
 			$update_b->executeUpdate();
 			$update_c->executeUpdate();
 			
-			if(!@unlink(CACHE_FILE)) {
-				@touch(CACHE_FILE, time()-86400);
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDCATEGORY'), $category['name']), FALSE);
@@ -426,8 +426,8 @@ class AdminRemoveCategory extends Event {
 
 			$heirarchy->removeNode($category_maps, MAPS);
 			
-			if(!@unlink(CACHE_FILE)) {
-				@touch(CACHE_FILE, time()-86400);
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_REMOVEDCATEGORY'), $category['name']), FALSE);
@@ -524,8 +524,8 @@ class AdminUpdateCategoryPermissions extends Event {
 				}
 			}
 			
-			if(!@unlink(CACHE_FILE)) {
-				@touch(CACHE_FILE, time()-86400);
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDCATEGORYPERMS'), $category['name']), FALSE);
