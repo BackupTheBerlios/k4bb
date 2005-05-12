@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: controller.class.php,v 1.11 2005/05/11 17:41:55 k4st Exp $
+* @version $Id: controller.class.php,v 1.12 2005/05/12 01:35:33 k4st Exp $
 * @package k42
 */
 
@@ -214,7 +214,7 @@ class Controller {
 			/* This user doesn't have permission to see the bb */
 			$template		= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
 			$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'));
-		} else if(intval($_SETTINGS['bbactive']) == 0 && $user['perms'] < SUPERMODERATOR) {
+		} else if(intval($_SETTINGS['bbactive']) == 0 && $user['perms'] < SUPERMOD) {
 			
 			/* The board is closed */
 			$template		= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
@@ -276,7 +276,12 @@ class Controller {
 		}
 
 		/* Render the template */
+
+		error::reset();
 		$template->Render();
+		
+		if(error::grab())
+			critical_error();
 	}
 }
 

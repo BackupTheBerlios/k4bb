@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: functions.inc.php,v 1.5 2005/05/11 17:41:55 k4st Exp $
+* @version $Id: functions.inc.php,v 1.6 2005/05/12 01:35:33 k4st Exp $
 * @package k42
 */
 
@@ -313,6 +313,102 @@ function relative_time($timestamp, $format = 'g:iA') {
 function require_class($class) {
 	if (!class_exists($class) && class_defined($class))
 		require $GLOBALS['lazy_load'][strtolower($class)];
+}
+
+function compile_error($message, $file, $line) {
+	error::reset();
+	error::pitch(new FAError($message, $file, $line));
+	critical_error();
+}
+
+function critical_error() {
+	$error	= &error::grab();
+
+	$logo	= file_exists(FORUM_BASE_DIR .'/Images/k4.gif') ? 'Images/k4.gif' : '';
+
+	?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+<head>
+	<title>k4 v2.0 - Critical Error - Powered by k4 BB</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<meta name="generator" content="k4 Bulletin Board 2.0" />
+	<meta name="robots" content="all" />
+	<meta name="revisit-after" content="1 Days" />
+
+	<meta http-equiv="Expires" content="1" />
+	<meta name="description" content="k4 v2.0 - Powered by k4 Bulletin Board" />
+	<meta name="keywords" content="k4, bb, bulletin, board, bulletin board, forum, k4st, forums, message, board, message board" />
+	<meta name="author" content="k4 Bulletin Board" />
+	<meta name="distribution" content="GLOBAL" />
+	<meta name="rating" content="general" />
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+	<style type="text/css">
+	body {
+		background-color: #FFFFFF;
+		padding: 0px;
+		margin: 0px;
+	}
+	a {
+		font-family: Geneva, Arial, Helvetica, Sans-Serif;
+		font-size: 12px;
+		color: #000000;
+		text-decoration: none;
+	}
+	h2 {
+		font-family: Geneva, Arial, Helvetica, Sans-Serif;
+		color: #045975;
+	}
+	.error_box {
+		text-align: left;
+		border: 1px solid #666666;
+		background-color: #f7f7f7;
+		color: #000000;
+		font-family: Geneva, Arial, Helvetica, Sans-Serif;
+		font-size: 12px;
+		width: 500px;
+		padding: 10px;
+	}
+	.redtext {
+		color: #FF0000;
+	}
+	.greentext {
+		color: #009900;
+		font-weight: bold;
+	}
+	</style>
+</head>
+<body>
+<div align="center">
+	<?php
+	if($logo != '')
+		echo '<img src="'. $logo .'" alt="k4 Bulletin Board" border="0" />';
+	else
+		echo '<h2>k4 Bulletin Board</h2>';
+	?>
+	<div class="error_box">
+		<span class="redtext">The following critical error occured:</span>
+		<br /><br />
+		<span class="greentext"><?php echo $error->message; ?></span>
+		<br /><br />
+		Line: <strong><?php echo $error->line; ?></strong><br />
+		File: <strong><?php echo $error->filename; ?></strong>
+	</div>
+</div>
+<br /><br />
+<div align="center">
+	<span style="width:150px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">
+		[ <a href="http://www.k4bb.org" title="k4 Bulletin Board" target="_blank">Powered By: k4 Bulletin Board</a> ]
+	</span>
+	<br />
+</div>
+</body>
+</html>
+</div>
+	<?php
+	
+	exit;
 }
 
 ?>

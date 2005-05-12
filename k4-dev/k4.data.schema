@@ -4,7 +4,7 @@ INSERT INTO k4_users (name, email, pass, perms, usergroups) VALUES ('peter', 'pe
 INSERT INTO k4_userinfo (user_id) VALUES (2);
 
 INSERT INTO k4_datastore (varname, data) VALUES ('maxloggedin', 'a:2:{s:9:&quot;maxonline&quot;;i:0;s:13:&quot;maxonlinedate&quot;;i:0;}');
-INSERT INTO k4_datastore (varname, data) VALUES ('forumstats', 'a:3:{s:10:&quot;num_topics&quot;;i:0;s:11:&quot;num_replies&quot;;i:0;s:11:&quot;num_members&quot;;i:2;}');
+INSERT INTO k4_datastore (varname, data) VALUES ('forumstats', 'a:3:{s:10:&quot;num_topics&quot;;i:0;s:11:&quot;num_replies&quot;;i:0;s:11:&quot;num_members&quot;;i:0;}');
 INSERT INTO k4_datastore (varname, data) VALUES ('search_spiders', 'a:2:{s:13:&quot;spiderstrings&quot;;s:76:&quot;googlebot|lycos|ask jeeves|scooter|fast-webcrawler|slurp@inktomi|turnitinbot&quot;;s:11:&quot;spidernames&quot;;a:7:{s:9:&quot;googlebot&quot;;s:6:&quot;Google&quot;;s:5:&quot;lycos&quot;;s:5:&quot;Lycos&quot;;s:10:&quot;ask jeeves&quot;;s:10:&quot;Ask Jeeves&quot;;s:7:&quot;scooter&quot;;s:9:&quot;Altavista&quot;;s:15:&quot;fast-webcrawler&quot;;s:9:&quot;AllTheWeb&quot;;s:13:&quot;slurp@inktomi&quot;;s:7:&quot;Inktomi&quot;;s:11:&quot;turnitinbot&quot;;s:12:&quot;Turnitin.com&quot;;}}');
 
 
@@ -128,7 +128,7 @@ INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (2,'bbtitle','k4 v2.0','',1);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (2,'bbdescription','2.0 Development Board','',2);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (2,'bbsearchdescription','k4 v2.0 - Powered by k4 Bulletin Board','textarea',3);
-INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (2,'bbkeywords','k4, bb, bulletin, board, bulletin board, forum, k4st, forums, message, board, message board','textarea',4);
+INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (2,'bbkeywords','k4, k4bb, bb, bulletin, board, bulletin board, forum, forums, message, board, message board, software, php, php5, mit, open, source, free','textarea',4);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (2,'copyrighttext','','',5);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (2,'styleset','Descent','',6);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (2,'imageset','Descent','',7);

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: general.php,v 1.7 2005/05/11 17:42:24 k4st Exp $
+* @version $Id: general.php,v 1.8 2005/05/12 01:39:14 k4st Exp $
 * @package k42
 */
 
@@ -972,6 +972,7 @@ $lang += array(
 'L_READANDAGREED'		=> 'I have read, and agree to abide by the above forums rules.',
 'L_INORDERTOREGISTER'	=> 'In order to proceed, you must agree with the following rules:',
 'L_INORDERTOPOSTINFORUM'=> 'In order to be able to post messages on the %s forums, you must first register. Please enter your desired user name, your email address and other required details in the form below.',
+'L_MUSTWAITSECSTOPOST'=> 'In order to prevent impulse posting, you must wait at least '. POST_IMPULSE_LIMIT .' seconds between posting.',
 
 );
 

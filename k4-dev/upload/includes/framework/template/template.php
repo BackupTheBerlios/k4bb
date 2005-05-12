@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: template.php,v 1.7 2005/05/11 17:57:24 k4st Exp $
+* @version $Id: template.php,v 1.8 2005/05/12 01:38:46 k4st Exp $
 * @package k42
 */
 
@@ -84,8 +84,10 @@ class TPL_Source {
 		$dirname = dirname($filename);
 
 		if (!is_dir($dirname)) {
-			assert(is_writable(dirname($dirname)) || exit("Unable to create the compiled template directory: ".dirname($dirname)));
-
+			if(!is_writable(dirname($dirname))) {
+				error::pitch(new FAError("Unable to create the compiled template directory: ". dirname($dirname), __FILE__, __LINE__));
+				return FALSE;
+			}
 			$umask = umask(0);
 			mkdir($dirname, 0755);
 			umask($umask);
@@ -98,7 +100,8 @@ class TPL_Source {
 			@chmod($filename, 0755);
 		}
 		else {
-			exit("Unable to open the compiled template file for writing: $filename");
+			error::pitch(new FAError("Unable to open the compiled template file for writing: $filename", __FILE__, __LINE__));
+			return FALSE;
 		}
 	}
 }
@@ -184,8 +187,14 @@ class Template {
 		$filename = $this->getFilename(TPL_SOURCE);
 		$compiled = $this->getFilename(TPL_COMPILED);
 
-		assert($filename != $compiled || exit("The source and compiled templates are the same: $filename"));
-		assert(is_readable($filename) && file_exists($filename) || exit("Cannot read template file or file does not exist: $filename"));
+		if($filename == $compiled) {
+			error::pitch(new FAError("The source and compiled templates are the same: $filename", __FILE__, __LINE__));
+			return FALSE;
+		}
+		if(!is_readable($filename) || !file_exists($filename)) {
+			error::pitch(new FAError("Cannot read template file or file does not exist: $filename", __FILE__, __LINE__));
+			return FALSE;
+		}
 
 		require_once TPL_BASE_DIR.'/runtime.php' ;
 
@@ -205,6 +214,11 @@ class Template {
 			if ($this->getForce() || !file_exists($compiled) || filemtime($filename) > filemtime($compiled)) {
 				$source = &new TPL_Source($filename);
 				$source->compileTo($compiled);
+			}
+			
+			if(!file_exists($compiled)) {
+				error::pitch(new FAError("The compiled template does not exist or could not be created: ". $compiled, __FILE__, __LINE__));
+				return FALSE;
 			}
 
 			include $compiled;
