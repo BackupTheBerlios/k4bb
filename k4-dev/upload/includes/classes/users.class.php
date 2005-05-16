@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: users.class.php,v 1.8 2005/05/16 02:11:55 k4st Exp $
+* @version $Id: users.class.php,v 1.9 2005/05/16 12:19:33 k4st Exp $
 * @package k42
 */
 
@@ -433,7 +433,7 @@ class ForumInsertUser extends Event {
 			$name						= htmlentities($request['name'], ENT_QUOTES);
 			$priv_key					= md5(microtime() + rand());
 
-			$insert_a					= &$dba->prepareStatement("INSERT INTO ". USERS ." (name,email,pass,perms,priv_key,usergroups) VALUES (?,?,?,?,?,?)");
+			$insert_a					= &$dba->prepareStatement("INSERT INTO ". USERS ." (name,email,pass,perms,priv_key,usergroups,created) VALUES (?,?,?,?,?,?,?)");
 			
 			$insert_a->setString(1, $name);
 			$insert_a->setString(2, $request['email']);
@@ -441,6 +441,7 @@ class ForumInsertUser extends Event {
 			$insert_a->setInt(4, PENDING_MEMBER);
 			$insert_a->setString(5, $priv_key);
 			$insert_a->setString(6, 'a:1:{i:0;i:1;}'); // Registered Users
+			$insert_a->setInt(7, time());
 			
 			$insert_a->executeUpdate();
 			
