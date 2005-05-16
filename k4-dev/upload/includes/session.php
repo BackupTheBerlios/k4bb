@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.19 2005/05/16 02:11:04 k4st Exp $
+* @version $Id: session.php,v 1.20 2005/05/16 23:33:38 k4st Exp $
 * @package k42
 */
 
@@ -105,6 +105,15 @@ class FADBSession {
 			$this->is_first = ( ($data['location_file'] == $_URL->file) && ($data['location_act'] == @$_URL->args['act']) && ($data['location_id'] == @$_URL->args['id']) ) ? TRUE : FALSE;
 
 		}
+
+		/* Update our user if this person is logged in */
+		if(is_a($data['user'], 'Member')) {
+			$this->user_stmt->setInt(1, time());
+			$this->user_stmt->setString(2, USER_IP);
+			$this->user_stmt->setInt(3, $data['user']->info['id']);
+
+			$this->user_stmt->executeUpdate();
+		}
 	  
 		return $data;
 	}
@@ -148,15 +157,6 @@ class FADBSession {
 			$this->update_stmt->setString(9,	$sessid);
 			
 			$this->update_stmt->executeUpdate();
-		}
-
-		/* Update our user if this person is logged in */
-		if(is_a($_SESSION['user'], 'Member')) {
-			$this->user_stmt->setInt(1, time());
-			$this->user_stmt->setString(2, USER_IP);
-			$this->user_stmt->setInt(3, $_SESSION['user']->info['id']);
-
-			$this->user_stmt->executeUpdate();
 		}
 					
 		return TRUE;
