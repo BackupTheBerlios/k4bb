@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: replies.class.php,v 1.6 2005/05/16 02:11:55 k4st Exp $
+* @version $Id: replies.class.php,v 1.7 2005/05/16 02:51:28 k4st Exp $
 * @package k42
 */
 
@@ -254,7 +254,7 @@ class PostReply extends Event {
 			$forum_update		= &$dba->prepareStatement("UPDATE ". FORUMS ." SET replies=replies+1,posts=posts+1,post_created=?,post_name=?,post_uname=?,post_id=?,post_uid=?,post_posticon=? WHERE forum_id=?");
 			$topic_update		= &$dba->prepareStatement("UPDATE ". TOPICS ." SET reply_time=?,reply_uname=?,reply_id=?,reply_uid=? WHERE topic_id=?");
 			$datastore_update	= &$dba->prepareStatement("UPDATE ". DATASTORE ." SET data=? WHERE varname=?");
-			$user_update		= $dba->executeUpdate("UPDATE ". USERINFO ." SET num_posts=num_posts+1 WHERE user_id=". intval($user['id']));
+			$dba->executeUpdate("UPDATE ". USERINFO ." SET num_posts=num_posts+1 WHERE user_id=". intval($user['id']));
 			
 			/* Update the forums and datastore tables */
 

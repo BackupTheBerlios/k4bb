@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topics.class.php,v 1.15 2005/05/16 02:11:55 k4st Exp $
+* @version $Id: topics.class.php,v 1.16 2005/05/16 02:51:28 k4st Exp $
 * @package k42
 */
 
@@ -243,11 +243,10 @@ class PostTopic extends Event {
 			$where				= $topic_type != TOPIC_GLOBAL ? "WHERE forum_id=?" : "WHERE forum_id=? OR forum_id<>0";
 			$forum_update		= &$dba->prepareStatement("UPDATE ". FORUMS ." SET topics=topics+1,posts=posts+1,topic_created=?,topic_name=?,topic_uname=?,topic_id=?,topic_uid=?,topic_posticon=?,post_created=?,post_name=?,post_uname=?,post_id=?,post_uid=?,post_posticon=? $where");
 			$datastore_update	= &$dba->prepareStatement("UPDATE ". DATASTORE ." SET data=? WHERE varname=?");
-			$user_update		= $dba->executeUpdate("UPDATE ". USERINFO ." SET num_posts=num_posts+1 WHERE user_id=". intval($user['id']));
 			
 			/* If this isn't a draft, update the forums and datastore tables */
 			if($request['submit'] != $template->getVar('L_SAVEDRAFT')) {
-
+				
 				/* Set the forum values */
 				$forum_update->setInt(1, $created);
 				$forum_update->setString(2, htmlentities($request['name'], ENT_QUOTES));
@@ -282,6 +281,9 @@ class PostTopic extends Event {
 				$datastore_update->setString(1, serialize($datastore));
 				$datastore_update->setString(2, 'forumstats');
 				$datastore_update->executeUpdate();
+				
+				/* Update the user post count */
+				$dba->executeUpdate("UPDATE ". USERINFO ." SET num_posts=num_posts+1 WHERE user_id=". intval($user['id']));
 
 				if(!@touch(CACHE_FILE, time()-86460)) {
 					@unlink(CACHE_FILE);
@@ -487,7 +489,9 @@ class PostDraft extends Event {
 
 			$forum_update		= &$dba->prepareStatement("UPDATE ". FORUMS ." SET topics=topics+1,posts=posts+1,topic_created=?,topic_name=?,topic_uname=?,topic_id=?,topic_uid=?,topic_posticon=?,post_created=?,post_name=?,post_uname=?,post_id=?,post_uid=?,post_posticon=? WHERE forum_id=?");
 			$datastore_update	= &$dba->prepareStatement("UPDATE ". DATASTORE ." SET data=? WHERE varname=?");
-			$user_update		= $dba->executeUpdate("UPDATE ". USERINFO ." SET num_posts=num_posts+1 WHERE user_id=". intval($user['id']));	
+			
+			if($request['submit'] == $template->getVar('L_SUBMIT'))
+				$dba->executeUpdate("UPDATE ". USERINFO ." SET num_posts=num_posts+1 WHERE user_id=". intval($user['id']));	
 				
 			/* Set the forum values */
 			$forum_update->setInt(1, $created);
