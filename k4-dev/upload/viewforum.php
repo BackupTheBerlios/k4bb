@@ -25,11 +25,13 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.16 2005/05/05 21:34:30 k4st Exp $
+* @version $Id: viewforum.php,v 1.17 2005/05/16 02:10:03 k4st Exp $
 * @package k42
 */
 
 error_reporting(E_ALL);
+
+ob_start();
 
 require 'forum.inc.php';
 
@@ -84,7 +86,7 @@ class DefaultEvent extends Event {
 		/* If there are more than 0 people browsing the forum, display the stats */
 		if($num_online_total > 0 && $forum_can_view <= $user['perms'] && ($forum['row_type'] & CATEGORY || $forum['row_type'] & FORUM)) {
 
-			$users_browsing		= &new OnlineUsersIterator($extra);
+			$users_browsing			= &new OnlineUsersIterator($extra);
 		
 			/* Set the users browsing list */
 			$template->setList('users_browsing', $users_browsing);
@@ -94,11 +96,13 @@ class DefaultEvent extends Event {
 							'num_online_total'	=> $num_online_total + iif(is_a($session['user'], 'Guest') && $_SESS->is_first, 1, 0)
 							);
 			
-			$element	= $forum['row_type'] & CATEGORY ? 'L_USERSBROWSINGCAT' : 'L_USERSBROWSINGFORUM';
+			$stats['num_guests']	= ($stats['num_online_total'] - $stats['num_online_members'] - $stats['num_invisible']);
+
+			$element				= $forum['row_type'] & CATEGORY ? 'L_USERSBROWSINGCAT' : 'L_USERSBROWSINGFORUM';
 					
 			$template->setVar('num_online_members', $stats['num_online_members']);
 			$template->setVar('users_browsing',		$template->getVar($element));
-			$template->setVar('online_stats',		sprintf($template->getVar('L_USERSBROWSINGSTATS'), $stats['num_online_total'], $stats['num_online_members'], ($stats['num_online_total'] - $stats['num_online_members'] - $stats['num_invisible']), $stats['num_invisible']));
+			$template->setVar('online_stats',		sprintf($template->getVar('L_USERSBROWSINGSTATS'), $stats['num_online_total'], $stats['num_online_members'], $stats['num_guests'], $stats['num_invisible']));
 		
 			/* Set the User's Browsing file */
 			$template->setFile('users_browsing', 'users_browsing.html');
@@ -190,6 +194,9 @@ class DefaultEvent extends Event {
 				
 					return TRUE;
 				}
+
+				/* Set the topics template to the content variable */
+				$template->setFile('content_extra', 'topics.html');
 				
 				/* Set what this user can/cannot do in this forum */
 				$template->setVar('forum_user_topic_options', sprintf($template->getVar('L_FORUMUSERTOPICPERMS'),
@@ -206,44 +213,53 @@ class DefaultEvent extends Event {
 				/* Create an array with all of the possible sort orders we can have */						
 				$sort_orders		= array('name', 'reply_time', 'num_replies', 'views', 'reply_uname', 'rating');
 				
-				/* Get the topics for this forum */
-				$topicsperpage		= isset($request['limit']) && ctype_digit($request['limit']) ? intval($request['limit']) : $forum['topicsperpage'];
-				$daysprune			= isset($request['daysprune']) && ctype_digit($request['daysprune']) ? iif(($request['daysprune'] == -1), 0, intval($request['daysprune'])) : 30;
-				$sortorder			= isset($request['order']) && ($request['order'] == 'ASC' || $request['order'] == 'DESC') ? $request['order'] : 'DESC';
-				$sortedby			= isset($request['sort']) && in_array($request['sort'], $sort_orders) ? $request['sort'] : 'created';
-				$start				= isset($request['start']) && ctype_digit($request['start']) ? intval($_GET['start']) : 0;
-				
 				/* Create the Pagination */
-				$num_pages			= ceil($forum['topics'] / $topicsperpage);
-				$page				= @ceil($start / $topicsperpage);
-				$pager				= &new TPL_Paginator($_URL, $num_pages, $page, $topicsperpage);
-				if($forum['topics'] > $topicsperpage) {
+				$resultsperpage		= $forum['topicsperpage'];
+				$num_results		= $forum['topics'];
+
+				$perpage			= isset($request['limit']) && ctype_digit($request['limit']) && intval($request['limit']) > 0 ? intval($request['limit']) : $resultsperpage;
+				$num_pages			= ceil($num_results / $perpage);
+				$page				= isset($request['page']) && ctype_digit($request['page']) && intval($request['page']) > 0 ? intval($request['page']) : 1;
+				$pager				= &new TPL_Paginator($_URL, $num_results, $page, $perpage);
+				
+				if($num_results > $perpage) {
 					$template->setPager('topics_pager', $pager);
 				}
 
+				/* Get the topics for this forum */
+				$daysprune			= isset($request['daysprune']) && ctype_digit($request['daysprune']) ? iif(($request['daysprune'] == -1), 0, intval($request['daysprune'])) : 30;
+				$sortorder			= isset($request['order']) && ($request['order'] == 'ASC' || $request['order'] == 'DESC') ? $request['order'] : 'DESC';
+				$sortedby			= isset($request['sort']) && in_array($request['sort'], $sort_orders) ? $request['sort'] : 'created';
+				$start				= ($page - 1) * $perpage;
+				
 				/* Create the query */
 				$topics				= &$dba->prepareStatement("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.created>=? AND t.is_draft = 0 AND i.row_type = ". TOPIC ." AND ((t.topic_type = ". TOPIC_NORMAL ." AND t.forum_id = ". intval($forum['id']) .") OR t.topic_type = ". TOPIC_GLOBAL .") ORDER BY t.topic_type DESC, $sortedby $sortorder LIMIT ?,?");
 				
 				/* Set the query values */
 				$topics->setInt(1, $daysprune * (3600 * 24));
 				$topics->setInt(2, $start);
-				$topics->setInt(3, $topicsperpage);
+				$topics->setInt(3, $perpage);
 				
 				/* Execute the query */
 				$result				= &$topics->executeQuery();
 				
+				/* Apply the topics iterator */
+				$it					= &new TopicsIterator($result, &$session, $template->getVar('IMG_DIR'));
+				$template->setList('topics', $it);
+				
+
+				/* Outside valid page range, redirect */
+				if(!$pager->hasPage($page) && $num_results > $resultsperpage) {
+					$template->setVar('topics_message', $template->getVar('L_PASTPAGELIMIT'));
+					$template->setRedirect('viewforum.php?id='. $forum['id'] .'&limit='. $perpage .'&page='. $num_pages, 3);
+					return TRUE;
+				}
+
 				/* If there are no topics, set the right messageto display */
 				if($result->numrows() == 0) {
 					$template->setVar('topics_message', iif($daysprune == 0, $template->getVar('L_NOPOSTSINFORUM'), sprintf($template->getVar('L_FORUMNOPOSTSSINCE'), $daysprune)));
+					return TRUE;
 				}
-				
-				/* Apply the topics iterator */
-				$it					= &new TopicsIterator($result, &$session, $template->getVar('IMG_DIR'));
-
-				$template->setList('topics', $it);
-
-				/* Set the topics template to the content variable */
-				$template->setFile('content_extra', 'topics.html');
 
 			} else {
 				/* set the breadcrumbs bit */
@@ -266,5 +282,7 @@ $app = new Forum_Controller('forum_base.html');
 $app->AddEvent('markforums', new MarkCategoryForumsRead);
 
 $app->ExecutePage();
+
+ob_flush();
 
 ?>

@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: controller.class.php,v 1.12 2005/05/12 01:35:33 k4st Exp $
+* @version $Id: controller.class.php,v 1.13 2005/05/16 02:12:34 k4st Exp $
 * @package k42
 */
 
@@ -236,9 +236,8 @@ class Controller {
 		 */
 
 		/* Clear the session and user variables */
-		$session			= &$_SESSION;
-		$user				= &$_SESSION['user']->info;
-		
+		$session					= &$_SESSION;
+		$user						= &$_SESSION['user']->info;
 
 		/**
 		 * Filters

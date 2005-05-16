@@ -36,6 +36,7 @@
 			</list:sublist>
 			</if:if>
 			<if:if var="subforums" greater="0">
+			<if:if var="showsubforums" eq="1">
 			<br />
 			<strong>{$L_SUBFORUMS}:</strong>
 			<list:sublist list="forums" id="subforums" column="subforums">
@@ -44,6 +45,7 @@
 				<a href="viewforum.php?id={$id}" title="{$description}">{$name}</a><list:separator list="subforums">,</list:separator>
 				</list:item>
 			</list:sublist>
+			</if:if>
 			</if:if>
 			</span>
 		</td>

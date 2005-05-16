@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: general.php,v 1.8 2005/05/12 01:39:14 k4st Exp $
+* @version $Id: general.php,v 1.9 2005/05/16 02:14:03 k4st Exp $
 * @package k42
 */
 
@@ -412,7 +412,7 @@ $lang += array(
 'L_ADDUSER'				=> 'Add User to Group',
 
 /* Single topic & replies view */
-'L_SIMILARTHREADS'		=> 'Similar Topics',
+'L_SIMILARTOPICS'		=> 'Similar Topics',
 'L_EDITEDON'			=> 'Edited on',
 'L_JOINED'				=> 'Joined',
 'L_TOPICTOOLS'			=> 'Topic Tools',
@@ -605,6 +605,18 @@ $lang += array(
 'L_PASSWORDSENT'		=> 'Password sent!',
 'L_PWSENTSUBJECT'		=> '%s - Your New Password',
 'L_PWSENTMESSAGE'		=> "Your %s member password has successfully been reset. Your user information is as follows:\r\n\r\nUsername: %s\r\nPassword: %s\r\n\r\nBest Regards,\r\n%s",
+'L_POSTINGSTATS'		=> 'Posting Statistics',
+'L_POSTSPERDAY'			=> '%s posts per day.',
+'L_OFTOTALPOSTS'		=> '%s of all posts.',
+'L_COMMUNICATE'			=> 'Communicate',
+'L_INSERTMAILSUBJECT'	=> 'You must insert a subject for your email.',
+'L_INSERTMAILMESSAGE'	=> 'You must insert a message for your email.',
+'L_INSERTUSERNAME'		=> 'Please insert a user name.',
+'L_USERGROUPTITLE'		=> 'User group user title',
+'L_USERGROUPAVATAR'		=> 'User group avatar',
+'L_YOUAREMODERATOR'		=> 'You are currently the moderator of this forum.',
+'L_BELONGSTOGROUP'		=> 'That user is already a part of this usergroup.',
+'L_ADDEDUSERTOGROUP'	=> 'Successfully added <strong>%s</strong> to the group <strong>%s</strong>.',
 
 /* Stuff on the login & register forms */
 'L_REMEMBERME'			=> 'Remember Me?',
@@ -642,9 +654,10 @@ $lang += array(
 'L_SEARCHENTIREPOSTS'	=> 'Search Entire Posts',
 'L_SEARCHTITLES'		=> 'Search Titles Only',
 'L_EXACTNAME'			=> 'Exact Name',
-'L_FINDPOSTSBYUSER'		=> 'Find Posts by User',
-'L_FINDTHREADSBYUSER'	=> 'Find Topics Started by User',
-'L_FINDTHREADSWITH'		=> 'Find Topics with',
+'L_FINDPOSTSBYUSER'		=> 'Find posts by this user',
+'L_FINDPOSTS'			=> 'Find Posts',
+'L_FINDTHREADSBYUSER'	=> 'Find topics started by user',
+'L_FINDTHREADSWITH'		=> 'Find topics with',
 'L_ATLEAST'				=> 'At Least',
 'L_ATMOST'				=> 'At Most',
 'L_SEARCHPARAMS'		=> 'Search Parameters',
@@ -672,10 +685,12 @@ $lang += array(
 'L_NOTIFYONREPLY'		=> 'Send me an email when a reply is posted',
 'L_PARSEURLS'			=> 'Do not automatically parse URLs',
 'L_MISCOPTIONS'			=> 'Miscellaneous Options',
-'L_TOPICEXPIREEXPLAIN'	=> 'Enter 0 or leave blank for a never ending Sticky/Announcement',
+'L_TOPICEXPIREEXPLAIN'	=> 'Enter 0 or leave blank for a never ending Sticky/Announcement/Feature',
 'L_POSTTOPICAS'			=> 'Post topic as',
 'L_GLOBAL'				=> 'Global',
 'L_NORMAL'				=> 'Normal',
+'L_FEATURE'				=> 'Featured Topics',
+'L_FEATURETOPIC'		=> 'Feature topic',
 'L_EDITPOST'			=> 'Edit Post',
 'L_EDITTOPIC'			=> 'Edit Topic',
 'L_EDITREPLY'			=> 'Edit Reply',
@@ -850,7 +865,7 @@ $lang += array(
 'L_DELETEDPOSTTHREAD'	=> 'Successfully deleted the selected topic/post and all of its children posts.',
 'L_DELETEDUSER'			=> 'Successfully deleted the user from the database.',
 'L_CANNOTDELETEADMIN'	=> 'You are not allowed to remove this boards Administrator from the database.',
-'L_ERROREMAILING'		=> 'An error occured while trying to email the specified user. Make sure that the server that is running k4 supports email mailing.',
+'L_ERROREMAILING'		=> 'An error occured while trying to email <strong>%s</strong>. Make sure that the server that is running k4 supports email mailing.',
 'L_FEATUREDENIED'		=> 'This feature of k4 Bulletin board has been denied to you by the Administrator.',
 'L_EMAILSENT'			=> 'Successfully sent the Email to <strong>%s</strong>.',
 'L_OPTIONSUPDATED'		=> 'Successfully updated Board Settings.',
@@ -921,7 +936,7 @@ $lang += array(
 'L_CHOOSEPOLLOPTION'	=> 'You must choose a poll option to vote on.',
 'L_USERHASVOTED'		=> 'You have already voted on this poll. Or, if you are a guest user, another guest has voted on this poll already.',
 'L_ERRORDELUFGROUP'		=> 'An error occured while trying to remove the selected user from this group.',
-'L_YOUNEEDPERMS'		=> 'You do not have permission to use this functionality.',
+'L_YOUNEEDPERMS'		=> 'You do not have permission to use this feature. This could be because:<ul><li>You need to be logged in to use this feature.</li><li>You lack the necessary permissions to use this function<li>The Administrator has disabled this feature</li></li></ul>',
 'L_USERINGROUP'			=> 'The selected user already belongs to this user group.',
 'L_NEEDLOGGEDIN'		=> 'You need to be logged in to use this feature.',
 'L_CANTREGISTERLOGGEDIN'=> 'You cannot register while logged in.',
@@ -940,8 +955,8 @@ $lang += array(
 'L_REPLYDOESNTEXIST'	=> 'The selected reply does not exist.',
 'L_POSTDOESNTEXIST'		=> 'The selected post does not exist.',
 'L_FORUMDOESNTEXIST'	=> 'The selected Category or Forum does not exist.',
-'L_USERDOESNTEXIST'		=> 'The selected User does not exist.',
-'L_GROUPDOESNTEXIST'	=> 'The selected User Group does not exist.',
+'L_USERDOESNTEXIST'		=> 'The selected user does not exist.',
+'L_GROUPDOESNTEXIST'	=> 'The selected user group does not exist.',
 'L_LOGGEDINSUCCESS'		=> 'Successfully Logged In!',
 'L_LOGGEDOUTSUCCESS'	=> 'Successfully Logged Out!',
 'L_MARKEDFORUMSREAD'	=> 'All forums have now been marked as having been read by you.',
@@ -972,7 +987,9 @@ $lang += array(
 'L_READANDAGREED'		=> 'I have read, and agree to abide by the above forums rules.',
 'L_INORDERTOREGISTER'	=> 'In order to proceed, you must agree with the following rules:',
 'L_INORDERTOPOSTINFORUM'=> 'In order to be able to post messages on the %s forums, you must first register. Please enter your desired user name, your email address and other required details in the form below.',
-'L_MUSTWAITSECSTOPOST'=> 'In order to prevent impulse posting, you must wait at least '. POST_IMPULSE_LIMIT .' seconds between posting.',
+'L_MUSTWAITSECSTOPOST'	=> 'In order to prevent impulse posting, you must wait at least '. POST_IMPULSE_LIMIT .' seconds between posting.',
+'L_INVALIDLINKFORUM'	=> 'The selected forum is an invalid link forum. Please contact the administrator concerning this issue.',
+'L_PASTPAGELIMIT'		=> 'You have past the page limit for the selected result set. You are now being redirected to the last page.',
 
 );
 

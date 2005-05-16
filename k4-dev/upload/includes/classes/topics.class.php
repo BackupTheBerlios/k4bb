@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topics.class.php,v 1.14 2005/05/12 01:34:08 k4st Exp $
+* @version $Id: topics.class.php,v 1.15 2005/05/16 02:11:55 k4st Exp $
 * @package k42
 */
 
@@ -173,7 +173,13 @@ class PostTopic extends Event {
 			} else if($topic_type == TOPIC_GLOBAL && $user['perms'] < get_map($user, 'global', 'can_add', array('forum_id'=>$forum['id']))) {
 				$topic_type		= TOPIC_NORMAL;
 			}
+
+			$is_feature			= isset($request['is_feature']) && $request['is_feature'] == 'yes' ? 1 : 0;
 			
+			if($is_feature == 1 && $user['perms'] < get_map($user, 'feature', 'can_add', array('forum_id'=>$forum['id']))) {
+				$is_feature		= 0;
+			}
+
 			/**
 			 * Build the queries
 			 */
@@ -182,7 +188,7 @@ class PostTopic extends Event {
 			$update_a			= &$dba->prepareStatement("UPDATE ". INFO ." SET row_right = row_right+2 WHERE row_left < ? AND row_right >= ?");
 			$update_b			= &$dba->prepareStatement("UPDATE ". INFO ." SET row_left = row_left+2, row_right=row_right+2 WHERE row_left >= ?");
 			$insert_a			= &$dba->prepareStatement("INSERT INTO ". INFO ." (name,parent_id,row_left,row_right,row_type,row_level,created) VALUES (?,?,?,?,?,?,?)");
-			$insert_b			= &$dba->prepareStatement("INSERT INTO ". TOPICS ." (topic_id,forum_id,category_id,poster_name,poster_id,poster_ip,body_text,posticon,disable_html,disable_bbcode,disable_emoticons,disable_sig,disable_areply,disable_aurls,is_draft,topic_type,topic_expire) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			$insert_b			= &$dba->prepareStatement("INSERT INTO ". TOPICS ." (topic_id,forum_id,category_id,poster_name,poster_id,poster_ip,body_text,posticon,disable_html,disable_bbcode,disable_emoticons,disable_sig,disable_areply,disable_aurls,is_draft,topic_type,topic_expire,is_feature) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
 			/* Set the insert variables needed */
 			$update_a->setInt(1, $left);
@@ -211,11 +217,11 @@ class PostTopic extends Event {
 			$insert_b->setInt(1, $topic_id);
 			$insert_b->setInt(2, $forum['id']);
 			$insert_b->setInt(3, $forum['category_id']);
-			$insert_b->setString(4, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
+			$insert_b->setString(4, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
 			$insert_b->setInt(5, $user['id']);
 			$insert_b->setString(6, USER_IP);
 			$insert_b->setString(7, $body_text);
-			$insert_b->setString(8, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'));
+			$insert_b->setString(8, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
 			$insert_b->setInt(9, iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0));
 			$insert_b->setInt(10, iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0));
 			$insert_b->setInt(11, iif((isset($request['disable_emoticons']) && $request['disable_emoticons'] == 'on'), 1, 0));
@@ -225,8 +231,8 @@ class PostTopic extends Event {
 			$insert_b->setInt(15, iif($request['submit'] == $template->getVar('L_SAVEDRAFT'), 1, 0));
 			// DO THIS 16 -> topic_type, 17 -> topic_expire
 			$insert_b->setInt(16, $topic_type);
-			$insert_b->setInt(17, iif($topic_type > TOPIC_NORMAL, intval($request['topic_expire']), 0) );
-
+			$insert_b->setInt(17, iif($topic_type > TOPIC_NORMAL, intval((isset($request['topic_expire']) ? $request['topic_expire'] : 0)), 0) );
+			$insert_b->setInt(18, $is_feature);
 			$insert_b->executeUpdate();
 			
 			/** 
@@ -245,30 +251,22 @@ class PostTopic extends Event {
 				/* Set the forum values */
 				$forum_update->setInt(1, $created);
 				$forum_update->setString(2, htmlentities($request['name'], ENT_QUOTES));
-				$forum_update->setString(3, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
+				$forum_update->setString(3, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
 				$forum_update->setInt(4, $topic_id);
 				$forum_update->setInt(5, $user['id']);
-				$forum_update->setString(6, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'));
+				$forum_update->setString(6, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
 				$forum_update->setInt(7, $created);
 				$forum_update->setString(8, htmlentities($request['name'], ENT_QUOTES));
-				$forum_update->setString(9, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
+				$forum_update->setString(9, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
 				$forum_update->setInt(10, $topic_id);
 				$forum_update->setInt(11, $user['id']);
-				$forum_update->setString(12, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'));
+				$forum_update->setString(12, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
 				$forum_update->setInt(13, $forum['id']);
-				
-				/* Set the datastore values */
-				$datastore					= $_DATASTORE['forumstats'];
-				$datastore['num_topics']	+= 1;
-				
-				$datastore_update->setString(1, serialize($datastore));
-				$datastore_update->setString(2, 'forumstats');
 				
 				/**
 				 * Update the forums table and datastore table
 				 */
 				$forum_update->executeUpdate();
-				$datastore_update->executeUpdate();
 			}
 
 			/* set the breadcrumbs bit */
@@ -277,6 +275,18 @@ class PostTopic extends Event {
 			/* Added the topic */
 			if($request['submit'] == $template->getVar('L_SUBMIT')) {
 				
+				/* Set the datastore values */
+				$datastore					= $_DATASTORE['forumstats'];
+				$datastore['num_topics']	= $dba->getValue("SELECT COUNT(*) FROM ". TOPICS ." WHERE is_draft = 0");
+				
+				$datastore_update->setString(1, serialize($datastore));
+				$datastore_update->setString(2, 'forumstats');
+				$datastore_update->executeUpdate();
+
+				if(!@touch(CACHE_FILE, time()-86460)) {
+					@unlink(CACHE_FILE);
+				}
+
 				/* Redirect the user */
 				$template->setInfo('content', sprintf($template->getVar('L_ADDEDTOPIC'), htmlentities($request['name'], ENT_QUOTES), $forum['name']));
 				$template->setRedirect('viewtopic.php?id='. $topic_id, 3);
@@ -314,7 +324,9 @@ class PostTopic extends Event {
 								'body_text' => $body_text,
 								'poster_name' => $user['name'],
 								'poster_id' => $user['id'],
-								'posticon' => iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'),
+								'row_left' => 0,
+								'row_right' => 0,
+								'posticon' => iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'),
 								'disable_html' => iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0),
 								'disable_sig' => iif((isset($request['enable_sig']) && $request['enable_sig'] == 'on'), 0, 1),
 								'disable_bbcode' => iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0),
@@ -457,7 +469,7 @@ class PostDraft extends Event {
 			$update_a->setInt(3, $draft['id']);
 			
 			$update_b->setString(1, $body_text);
-			$update_b->setString(2, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'));
+			$update_b->setString(2, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
 			$update_b->setInt(3, iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0));
 			$update_b->setInt(4, iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0));
 			$update_b->setInt(5, iif((isset($request['disable_emoticons']) && $request['disable_emoticons'] == 'on'), 1, 0));
@@ -480,21 +492,21 @@ class PostDraft extends Event {
 			/* Set the forum values */
 			$forum_update->setInt(1, $created);
 			$forum_update->setString(2, htmlentities($request['name'], ENT_QUOTES));
-			$forum_update->setString(3, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
+			$forum_update->setString(3, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
 			$forum_update->setInt(4, $draft['id']);
 			$forum_update->setInt(5, $user['id']);
-			$forum_update->setString(6, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'));
+			$forum_update->setString(6, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
 			$forum_update->setInt(7, $created);
 			$forum_update->setString(8, htmlentities($request['name'], ENT_QUOTES));
-			$forum_update->setString(9, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
+			$forum_update->setString(9, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
 			$forum_update->setInt(10, $draft['id']);
 			$forum_update->setInt(11, $user['id']);
-			$forum_update->setString(12, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'));
+			$forum_update->setString(12, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
 			$forum_update->setInt(13, $forum['id']);
 			
 			/* Set the datastore values */
 			$datastore					= $_DATASTORE['forumstats'];
-			$datastore['num_topics']	+= 1;
+			$datastore['num_topics']	= $dba->getValue("SELECT COUNT(*) FROM ". TOPICS ." WHERE is_draft = 0");
 			
 			$datastore_update->setString(1, serialize($datastore));
 			$datastore_update->setString(2, 'forumstats');
@@ -504,6 +516,10 @@ class PostDraft extends Event {
 			 */
 			$forum_update->executeUpdate();
 			$datastore_update->executeUpdate();
+			
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
+			}
 
 			/* Redirect the user */
 			$template->setInfo('content', sprintf($template->getVar('L_ADDEDTOPIC'), htmlentities($request['name'], ENT_QUOTES), $forum['name']));
@@ -532,11 +548,13 @@ class PostDraft extends Event {
 			$topic_preview	= array(
 								'id' => @$draft['id'],
 								'name' => htmlentities($request['name'], ENT_QUOTES),
-								'posticon' => @$request['posticon'],
+								'posticon' => (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'),
 								'body_text' => $body_text,
 								'poster_name' => html_entity_decode($draft['poster_name'], ENT_QUOTES),
 								'poster_id' => $user['id'],
-								'posticon' => iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'),
+								'row_left' => 0,
+								'row_right' => 0,
+								'posticon' => iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'),
 								'disable_html' => iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0),
 								'disable_sig' => iif((isset($request['enable_sig']) && $request['enable_sig'] == 'on'), 0, 1),
 								'disable_bbcode' => iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0),
@@ -834,21 +852,37 @@ class UpdateTopic extends Event {
 		$body_text = $bbcode->parse();
 		
 		$template->setVar('newtopic_action', 'newtopic.php?act=updatetopic');
-
+		
 		if($request['submit'] == $template->getVar('L_SUBMIT')) {
+			
+			$topic_type			= isset($request['topic_type']) && intval($request['topic_type']) != 0 ? $request['topic_type'] : TOPIC_NORMAL;
+
+			if($topic_type == TOPIC_STICKY && $user['perms'] < get_map($user, 'sticky', 'can_add', array('forum_id'=>$forum['id']))) {
+				$topic_type		= TOPIC_NORMAL;
+			} else if($topic_type == TOPIC_ANNOUNCE && $user['perms'] < get_map($user, 'announce', 'can_add', array('forum_id'=>$forum['id']))) {
+				$topic_type		= TOPIC_NORMAL;
+			} else if($topic_type == TOPIC_GLOBAL && $user['perms'] < get_map($user, 'global', 'can_add', array('forum_id'=>$forum['id']))) {
+				$topic_type		= TOPIC_NORMAL;
+			}
+
+			$is_feature			= isset($request['is_feature']) && $request['is_feature'] == 'yes' ? 1 : 0;
+			
+			if($is_feature == 1 && $user['perms'] < get_map($user, 'feature', 'can_add', array('forum_id'=>$forum['id']))) {
+				$is_feature		= 0;
+			}
 
 			/**
 			 * Build the queries to add the draft
 			 */
 			
 			$update_a			= $dba->prepareStatement("UPDATE ". INFO ." SET name=? WHERE id=?");
-			$update_b			= $dba->prepareStatement("UPDATE ". TOPICS ." SET body_text=?,posticon=?,disable_html=?,disable_bbcode=?,disable_emoticons=?,disable_sig=?,disable_areply=?,disable_aurls=?,is_draft=?,edited_time=?,edited_username=?,edited_userid=? WHERE topic_id=?");
+			$update_b			= $dba->prepareStatement("UPDATE ". TOPICS ." SET body_text=?,posticon=?,disable_html=?,disable_bbcode=?,disable_emoticons=?,disable_sig=?,disable_areply=?,disable_aurls=?,is_draft=?,edited_time=?,edited_username=?,edited_userid=?,is_feature=?,topic_type=?,topic_expire=? WHERE topic_id=?");
 			
 			$update_a->setString(1, htmlentities($request['name'], ENT_QUOTES));
 			$update_a->setInt(2, $topic['id']);
 			
 			$update_b->setString(1, $body_text);
-			$update_b->setString(2, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'));
+			$update_b->setString(2, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
 			$update_b->setInt(3, iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0));
 			$update_b->setInt(4, iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0));
 			$update_b->setInt(5, iif((isset($request['disable_emoticons']) && $request['disable_emoticons'] == 'on'), 1, 0));
@@ -857,9 +891,12 @@ class UpdateTopic extends Event {
 			$update_b->setInt(8, iif((isset($request['disable_aurls']) && $request['disable_aurls'] == 'on'), 1, 0));
 			$update_b->setInt(9, 0);
 			$update_b->setInt(10, time());
-			$update_b->setString(11, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
+			$update_b->setString(11, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
 			$update_b->setInt(12, $user['id']);
-			$update_b->setInt(13, $topic['id']);
+			$update_b->setInt(13, $is_feature);
+			$update_b->setInt(14, $topic_type);
+			$update_b->setInt(15, iif($topic_type > TOPIC_NORMAL, intval((isset($request['topic_expire']) ? $request['topic_expire'] : 0)), 0) );
+			$update_b->setInt(16, $topic['id']);
 			
 			/**
 			 * Do the queries
@@ -892,10 +929,12 @@ class UpdateTopic extends Event {
 			$topic_preview	= array(
 								'id' => @$topic['id'],
 								'name' => htmlentities($request['name'], ENT_QUOTES),
-								'posticon' => @$request['posticon'],
+								'posticon' => (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'),
 								'body_text' => $body_text,
 								'poster_name' => html_entity_decode($topic['poster_name'], ENT_QUOTES),
 								'poster_id' => $user['id'],
+								'row_left' => 0,
+								'row_right' => 0,
 								'disable_html' => iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0),
 								'disable_sig' => iif((isset($request['enable_sig']) && $request['enable_sig'] == 'on'), 0, 1),
 								'disable_bbcode' => iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0),
@@ -1000,8 +1039,8 @@ class DeleteTopic extends Event {
 			}
 		}
 		
-		$user_usergroups	= @unserialize($user['usergroups']);
-		$forum_usergroups	= @unserialize($forum['moderating_groups']);
+		$user_usergroups	= $user['usergroups'] != '' ? iif(!unserialize($user['usergroups']), array(), unserialize($user['usergroups'])) : array();
+		$forum_usergroups	= $forum['moderating_groups'] != '' ? iif(!unserialize($forum['moderating_groups']), array(), unserialize($forum['moderating_groups'])) : array();
 		
 		/* Check if this user belongs to one of this forums moderatign groups, if any exist */
 		if(is_array($forum_usergroups) && !empty($forum_usergroups)) {
@@ -1063,8 +1102,8 @@ class DeleteTopic extends Event {
 		
 		/* Set the datastore values */
 		$datastore					= $_DATASTORE['forumstats'];
-		$datastore['num_topics']	= $datastore['num_topics'] - 1;
-		$datastore['num_replies']	= $datastore['num_replies'] - intval($num_replies);
+		$datastore['num_topics']	= $dba->getValue("SELECT COUNT(*) FROM ". TOPICS ." WHERE is_draft = 0") - 1;
+		$datastore['num_replies']	= $dba->getValue("SELECT COUNT(*) FROM ". REPLIES ." WHERE is_draft = 0") - intval($num_replies);
 		
 		$datastore_update->setString(1, serialize($datastore));
 		$datastore_update->setString(2, 'forumstats');
@@ -1126,6 +1165,10 @@ class DeleteTopic extends Event {
 		/* Now remove the information stored in the topics and replies table */
 		$dba->executeUpdate("DELETE FROM ". TOPICS ." WHERE topic_id = ". intval($topic['id']));
 		$dba->executeUpdate("DELETE FROM ". REPLIES ." WHERE topic_id = ". intval($topic['id']));
+		
+		if(!@touch(CACHE_FILE, time()-86460)) {
+			@unlink(CACHE_FILE);
+		}
 
 		/* Redirect the user */
 		$template->setInfo('content', sprintf($template->getVar('L_DELETEDTOPIC'), $topic['name'], $forum['name']));
@@ -1357,7 +1400,7 @@ class TopicsIterator extends FAProxyIterator {
 		$this->img_dir			= $img_dir;
 		$this->dba				= $_DBA;
 
-		$this->forums			= isset($_COOKIE['forums']) && $_COOKIE['forums'] != NULL && $_COOKIE['forums'] != '' ? @unserialize($_COOKIE['forums']) : array();
+		//$this->forums			= isset($_COOKIE['forums']) && $_COOKIE['forums'] != NULL && $_COOKIE['forums'] != '' ? iif(!unserialize($_COOKIE['forums']), array(), unserialize($_COOKIE['forums'])) : array();
 
 		parent::FAProxyIterator($this->result);
 	}
@@ -1377,14 +1420,14 @@ class TopicsIterator extends FAProxyIterator {
 		$temp['num_replies']	= @(($temp['row_right'] - $temp['row_left'] - 1) / 2);
 		
 		/* Check if this topic has been read or not */
-		if(($temp['created'] > $last_seen && $temp['poster_id'] != $this->session['user']->info['id'])
-		|| (isset($this->forums[$temp['forum_id']][$temp['id']]) && $this->forums[$temp['forum_id']][$temp['id']])
-			) {
-			
-			$this->forums[$temp['forum_id']][$temp['id']]	= TRUE;
-			
-			$temp['name']									= '<strong>'. $temp['name'] .'</strong>';
-		}
+		//if(($temp['created'] > $last_seen && $temp['poster_id'] != $this->session['user']->info['id'])
+		//|| (isset($this->forums[$temp['forum_id']][$temp['id']]) && $this->forums[$temp['forum_id']][$temp['id']])
+		//	) {
+		//	
+		//	$this->forums[$temp['forum_id']][$temp['id']]	= TRUE;
+		//	
+		//	$temp['name']									= '<strong>'. $temp['name'] .'</strong>';
+		//}
 		
 		/* Is this a sticky or an announcement and is it expired? */
 		if($temp['topic_type'] > TOPIC_NORMAL && $temp['topic_expire'] > 0) {
@@ -1399,7 +1442,7 @@ class TopicsIterator extends FAProxyIterator {
 			$this->result->freeResult();
 			
 			/* Reset the forums cookie if we're at the end of the iteration */
-			bb_settopic_cache_item('forums', serialize($this->forums), time() + 3600 * 25 * 5);
+			//bb_settopic_cache_item('forums', serialize($this->forums), time() + 3600 * 25 * 5);
 		}
 
 		return $temp;
@@ -1416,12 +1459,13 @@ class TopicIterator extends FAArrayIterator {
 
 	function TopicIterator($topic, $show_replies = TRUE) {
 		
-		global $_DBA, $_QUERYPARAMS, $_USERGROUPS;
+		global $_DBA, $_QUERYPARAMS, $_USERGROUPS, $_USERFIELDS;
 		
 		$this->qp						= $_QUERYPARAMS;
 		$this->sr						= (bool)$show_replies;
 		$this->dba						= &$_DBA;
 		$this->groups					= $_USERGROUPS;
+		$this->fields					= $_USERFIELDS;
 
 		parent::FAArrayIterator(array($topic));
 	}
@@ -1438,23 +1482,53 @@ class TopicIterator extends FAArrayIterator {
 			$user['group_color']		= !isset($group['color']) || $group['color'] == '' ? '000000' : $group['color'];
 			$user['group_nicename']		= $group['nicename'];
 			$user['group_avatar']		= $group['avatar'];
+			$user['online']				= (time() - ini_get('session.gc_maxlifetime')) > $user['seen'] ? 'offline' : 'online';
 			
 			foreach($user as $key => $val)
 				$temp['post_user_'. $key] = $val;
 			
+			$fields						= array();
+			
+			foreach($this->fields as $field) {
+				
+				if($field['display_topic'] == 1) {
+
+					if(isset($temp['post_user_'. $field['name']]) && $temp['post_user_'. $field['name']] != '') {
+						switch($field['inputtype']) {
+							default:
+							case 'text':
+							case 'textarea':
+							case 'select': {
+								$field['value']		= $temp['post_user_'. $field['name']];
+								break;
+							}
+							case 'multiselect':
+							case 'radio':
+							case 'check': {
+								$field['value']		= implode(", ", iif(!unserialize($temp['post_user_'. $field['name']]), array(), unserialize($temp['post_user_'. $field['name']])));
+								break;
+							}
+						}
+						$fields[] = $field;
+					}
+				}
+			}
+			
+			$temp['profilefields'] = &new FAArrayIterator($fields);
+
 			/* This array holds all of the userinfo for users that post to this topic */
 			$this->users[$user['id']]	= $user;
 			
 		}
 	
-	
+		
 		/* Do we have any replies? */
 		$num_replies					= @(($temp['row_right'] - $temp['row_left'] - 1) / 2);
 
 		if($this->sr && $num_replies > 0) {
 			$this->result				= &$this->dba->executeQuery("SELECT ". $this->qp['info'] . $this->qp['reply'] ." FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON i.id=r.reply_id WHERE r.topic_id = ". intval($temp['id']) ." AND i.created >= ". (3600 * 24 * intval($temp['daysprune'])) ." ORDER BY i.". $temp['sortedby'] ." ". $temp['sortorder'] ." LIMIT ". intval($temp['start']) .", ". intval($temp['postsperpage']));
 			
-			$temp['replies']			= &new RepliesIterator($this->result, $this->qp, $this->dba, $this->users, $this->groups);
+			$temp['replies']			= &new RepliesIterator($this->result, $this->qp, $this->dba, $this->users, $this->groups, $this->fields);
 
 		}
 

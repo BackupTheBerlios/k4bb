@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: paginator.php,v 1.4 2005/05/03 21:38:54 k4st Exp $
+* @version $Id: paginator.php,v 1.5 2005/05/16 02:13:44 k4st Exp $
 * @package k42
 */
 
@@ -107,7 +107,7 @@ class TPL_Paginator {
 		if ($this->hasPage($page)) {
 			$url = $this->base_url;
 			$url->args['page'] = $page;
-			$url->args['size'] = $this->page_size;
+			$url->args['limit'] = $this->page_size;
 
 			return $url->__toString();
 		}

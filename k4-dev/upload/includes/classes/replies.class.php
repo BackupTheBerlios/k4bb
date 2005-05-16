@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: replies.class.php,v 1.5 2005/05/12 01:34:08 k4st Exp $
+* @version $Id: replies.class.php,v 1.6 2005/05/16 02:11:55 k4st Exp $
 * @package k42
 */
 
@@ -232,11 +232,11 @@ class PostReply extends Event {
 			$insert_b->setInt(2, $topic['id']);
 			$insert_b->setInt(3, $forum['id']);
 			$insert_b->setInt(4, $forum['category_id']);
-			$insert_b->setString(5, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
+			$insert_b->setString(5, iif($user['id'] <= 0, htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
 			$insert_b->setInt(6, $user['id']);
 			$insert_b->setString(7, USER_IP);
 			$insert_b->setString(8, $body_text);
-			$insert_b->setString(9, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'));
+			$insert_b->setString(9, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
 			$insert_b->setInt(10, iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0));
 			$insert_b->setInt(11, iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0));
 			$insert_b->setInt(12, iif((isset($request['disable_emoticons']) && $request['disable_emoticons'] == 'on'), 1, 0));
@@ -261,22 +261,22 @@ class PostReply extends Event {
 			/* Set the forum values */
 			$forum_update->setInt(1, $created);
 			$forum_update->setString(2, htmlentities($request['name'], ENT_QUOTES));
-			$forum_update->setString(3, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
+			$forum_update->setString(3, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
 			$forum_update->setInt(4, $reply_id);
 			$forum_update->setInt(5, $user['id']);
-			$forum_update->setString(6, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'));
+			$forum_update->setString(6, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
 			$forum_update->setInt(7, $forum['id']);
 
 			/* Set the topic values */
 			$topic_update->setInt(1, $created);
-			$topic_update->setString(2, iif($user['id'] <= 0, htmlentities(@$request['poster_name'], ENT_QUOTES), $user['name']));
+			$topic_update->setString(2, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
 			$topic_update->setInt(3, $reply_id);
 			$topic_update->setInt(4, $user['id']);
 			$topic_update->setInt(5, $topic['id']);
 			
 			/* Set the datastore values */
 			$datastore					= $_DATASTORE['forumstats'];
-			$datastore['num_replies']	+= 1;
+			$datastore['num_replies']	= $dba->getValue("SELECT COUNT(*) FROM ". REPLIES ." WHERE is_draft = 0");
 			
 			$datastore_update->setString(1, serialize($datastore));
 			$datastore_update->setString(2, 'forumstats');
@@ -292,7 +292,10 @@ class PostReply extends Event {
 			$template	= BreadCrumbs($template, $template->getVar('L_POSTREPLY'), $parent['row_left'], $parent['row_right']);
 			
 			/* Added the reply */
-				
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
+			}
+			
 			/* Redirect the user */
 			$template->setInfo('content', sprintf($template->getVar('L_ADDEDREPLY'), htmlentities($request['name'], ENT_QUOTES), $topic['name']));
 			$template->setRedirect('findpost.php?id='. $reply_id, 3);
@@ -326,7 +329,9 @@ class PostReply extends Event {
 								'poster_id' => $user['id'],
 								'forum_id' => $forum['id'],
 								'topic_id' => $topic['id'],
-								'posticon' => iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'),
+								'row_left' => 0,
+								'row_right' => 0,
+								'posticon' => iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'),
 								'disable_html' => iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0),
 								'disable_sig' => iif((isset($request['enable_sig']) && $request['enable_sig'] == 'on'), 0, 1),
 								'disable_bbcode' => iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0),
@@ -614,7 +619,7 @@ class UpdateReply extends Event {
 			$update_a->setInt(2, $reply['id']);
 			
 			$update_b->setString(1, $body_text);
-			$update_b->setString(2, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'));
+			$update_b->setString(2, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
 			$update_b->setInt(3, iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0));
 			$update_b->setInt(4, iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0));
 			$update_b->setInt(5, iif((isset($request['disable_emoticons']) && $request['disable_emoticons'] == 'on'), 1, 0));
@@ -666,7 +671,9 @@ class UpdateReply extends Event {
 								'poster_id' => $user['id'],
 								'forum_id' => $forum['id'],
 								'topic_id' => $topic['id'],
-								'posticon' => iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), @$request['posticon'], 'clear.gif'),
+								'row_left' => 0,
+								'row_right' => 0,
+								'posticon' => iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'),
 								'disable_html' => iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0),
 								'disable_sig' => iif((isset($request['enable_sig']) && $request['enable_sig'] == 'on'), 0, 1),
 								'disable_bbcode' => iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0),
@@ -788,8 +795,8 @@ class DeleteReply extends Event {
 			}
 		}
 		
-		$user_usergroups	= @unserialize($user['usergroups']);
-		$forum_usergroups	= @unserialize($forum['moderating_groups']);
+		$user_usergroups	= $user['usergroups'] != '' ? iif(!unserialize($user['usergroups']), array(), unserialize($user['usergroups'])) : array();
+		$forum_usergroups	= $forum['moderating_groups'] != '' ? iif(!unserialize($forum['moderating_groups']), array(), unserialize($forum['moderating_groups'])) : array();
 		
 		/* Check if this user belongs to one of this forums moderatign groups, if any exist */
 		if(is_array($forum_usergroups) && !empty($forum_usergroups)) {
@@ -848,7 +855,7 @@ class DeleteReply extends Event {
 		
 		/* Set the datastore values */
 		$datastore					= $_DATASTORE['forumstats'];
-		$datastore['num_replies']	= $datastore['num_replies'] - 1;
+		$datastore['num_replies']	= $dba->getValue("SELECT COUNT(*) FROM ". REPLIES ." WHERE is_draft = 0") - 1;
 		
 		$datastore_update->setString(1, serialize($datastore));
 		$datastore_update->setString(2, 'forumstats');
@@ -875,6 +882,10 @@ class DeleteReply extends Event {
 		
 		/* Now remove the information stored in the topics and replies table */
 		$dba->executeUpdate("DELETE FROM ". REPLIES ." WHERE reply_id = ". intval($reply['id']));
+		
+		if(!@touch(CACHE_FILE, time()-86460)) {
+			@unlink(CACHE_FILE);
+		}
 
 		/* Redirect the user */
 		$template->setInfo('content', sprintf($template->getVar('L_DELETEDREPLY'), $reply['name'], $topic['name']));
@@ -890,13 +901,14 @@ class RepliesIterator extends FAProxyIterator {
 	var $img_dir;
 	var $forums;
 
-	function RepliesIterator(&$result, $queryparams, &$dba, $users, $groups) {
+	function RepliesIterator(&$result, $queryparams, &$dba, $users, $groups, $fields) {
 		
 		$this->users			= $users;
 		$this->qp				= $queryparams;
-		$this->dba				= &$_DBA;
+		$this->dba				= &$dba;
 		$this->result			= &$result;
 		$this->groups			= $groups;
+		$this->fields			= $fields;
 		
 		parent::FAProxyIterator($this->result);
 	}
@@ -916,15 +928,44 @@ class RepliesIterator extends FAProxyIterator {
 				$user['group_color']		= !isset($group['color']) || $group['color'] == '' ? '000000' : $group['color'];
 				$user['group_nicename']		= $group['nicename'];
 				$user['group_avatar']		= $group['avatar'];
+				$user['online']				= (time() - ini_get('session.gc_maxlifetime')) > $user['seen'] ? 'offline' : 'online';
 
 				$this->users[$user['id']]	= $user;
 			} else {
 				
 				$user						= $this->users[$temp['poster_id']];
 			}
-
+			
 			foreach($user as $key => $val)
 				$temp['post_user_'. $key] = $val;
+
+			$fields						= array();
+			foreach($this->fields as $field) {
+				
+				if($field['display_post'] == 1) {
+
+					if(isset($temp['post_user_'. $field['name']]) && $temp['post_user_'. $field['name']] != '') {
+						switch($field['inputtype']) {
+							default:
+							case 'text':
+							case 'textarea':
+							case 'select': {
+								$field['value']		= $temp['post_user_'. $field['name']];
+								break;
+							}
+							case 'multiselect':
+							case 'radio':
+							case 'check': {
+								$field['value']		= implode(", ", iif(!unserialize($temp['post_user_'. $field['name']]), array(), unserialize($temp['post_user_'. $field['name']])));
+								break;
+							}
+						}
+						$fields[] = $field;
+					}
+				}
+			}
+			
+			$temp['profilefields'] = &new FAArrayIterator($fields);
 		}
 
 		/* Should we free the result? */

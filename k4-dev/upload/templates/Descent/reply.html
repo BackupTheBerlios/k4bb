@@ -38,6 +38,12 @@
 				<if:if var="user_location" noteq="">
 				<br /><strong>{$L_LOCATION}:</strong> {$post_user_location}
 				</if:if>
+				<list:sublist list="replies" id="profilefields" column="profilefields">
+				<list:item list="profilefields">
+				<br /><strong>{$title}:</strong></label>
+				{$value}
+				</list:item>
+				</list:sublist>
 			</if:if>
 			</div>
 		</td>
@@ -65,12 +71,15 @@
 	<tr class="alt1">
 		<td width="80%">
 			<div style="float: left">
-				<if:if var="post_user_id" greater="0"><a href="member.php?id={$post_user_id}" title="{$L_PROFILE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/profile.gif" alt="{$L_PROFILE}" /></a></if:if>
+				<if:if var="post_user_id" greater="0">
+					<img src="Images/{$IMG_DIR}/Buttons/{$LANG}/{$post_user_online}.gif" border="0" />
+					<a href="member.php?id={$post_user_id}" title="{$L_PROFILE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/profile.gif" alt="{$L_PROFILE}" /></a>
+				</if:if>
 			</div>
 			<div style="float: right">
 				<maps:if var="replies" forum="topic_forum_id" method="can_add">
 					<a href="newreply.php?id={$topic_id}&amp;r={$id}" title="{$L_POSTREPLY}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/reply.gif" alt="{$L_POSTREPLY}" /></a>
-					<a href="newreply.php?id={$topic_id}&amp;r={$id}&amp;quote=1" title="{$L_QUOTE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/quote.gif" alt="{$L_QUOTE}" /></a>
+					<maps:if forum="forum_id" var="bbcode" method="can_add"><a href="newreply.php?id={$topic_id}&amp;r={$id}&amp;quote=1" title="{$L_QUOTE}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/quote.gif" alt="{$L_QUOTE}" /></a></maps:if>
 				</maps:if>
 				<if:if var="post_user_id" eq="user_id">
 					<maps:if var="replies" forum="topic_forum_id" method="can_edit"><a href="newreply.php?act=editreply&amp;id={$id}" title="{$L_EDIT}"><img border="0" src="Images/{$IMG_DIR}/Buttons/{$LANG}/edit.gif" alt="{$L_EDIT}" /></a></maps:if>

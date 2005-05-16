@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: debug.php,v 1.9 2005/04/20 21:00:10 k4st Exp $
+* @version $Id: debug.php,v 1.10 2005/05/16 02:11:04 k4st Exp $
 * @package k42
 */
 
@@ -133,7 +133,7 @@ function debug_footer() {
 	<div align="center">
 	<br />
 		<div style="width:300px;color:#666666;border-top:1px dashed #666666;padding-top:2px;margin:4px;" class="smalltext">
-			[ <a href="http://www.k4forums.com" title="k4 BB Home Page" target="_blank">Powered By: k4 Bulletin Board</a> ]
+			[ <a href="http://www.k4bb.org" title="k4 BB Home Page" target="_blank">Powered By: k4 Bulletin Board</a> ]
 		</div>
 	</div>
 	</body>

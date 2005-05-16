@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.10 2005/05/12 01:34:26 k4st Exp $
+* @version $Id: forums.class.php,v 1.11 2005/05/16 02:12:15 k4st Exp $
 * @package k42
 */
 
@@ -437,7 +437,7 @@ class AdminEditForum extends Event {
 				}
 			}
 
-			$groups		= @unserialize($forum['moderating_groups']);
+			$groups		= $forum['moderating_groups'] != '' ? iif(!unserialize($forum['moderating_groups']), array(), unserialize($forum['moderating_groups'])) : array();
 			$groups_str	= '';
 
 			if(is_array($groups)) {

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewtopic.php,v 1.10 2005/05/09 21:16:21 k4st Exp $
+* @version $Id: viewtopic.php,v 1.11 2005/05/16 02:10:03 k4st Exp $
 * @package k42
 */
 
@@ -115,10 +115,11 @@ class DefaultEvent extends Event {
 							'num_online_total'	=> $num_online_total + iif(is_a($session['user'], 'Guest') && $_SESS->is_first, 1, 0)
 							);
 		
+			$stats['num_guests'] = ($stats['num_online_total'] - $stats['num_online_members'] - $stats['num_invisible']);
 
 			$template->setVar('num_online_members', $stats['num_online_members']);
 			$template->setVar('users_browsing',		$template->getVar('L_USERSBROWSINGTOPIC'));
-			$template->setVar('online_stats',		sprintf($template->getVar('L_USERSBROWSINGSTATS'), $stats['num_online_total'], $stats['num_online_members'], ($stats['num_online_total'] - $stats['num_online_members'] - $stats['num_invisible']), $stats['num_invisible']));
+			$template->setVar('online_stats',		sprintf($template->getVar('L_USERSBROWSINGSTATS'), $stats['num_online_total'], $stats['num_online_members'], $stats['num_guests'], $stats['num_invisible']));
 		
 			/* Set the User's Browsing file */
 			$template->setFile('users_browsing', 'users_browsing.html');
@@ -153,17 +154,44 @@ class DefaultEvent extends Event {
 		/* Update the number of views for this topic */
 		$dba->executeUpdate("UPDATE ". TOPICS ." SET views=views+1 $extra WHERE topic_id=". intval($topic['id']));
 		
-		/* Set query values for when we fetch the replies */
-		$topic['postsperpage']		= isset($request['limit']) && ctype_digit($request['limit']) ? intval($request['limit']) : $forum['postsperpage'];
+		$resultsperpage		= $forum['postsperpage'];
+		$num_results		= @(($topic['row_right'] - $topic['row_left'] - 1) / 2);
+
+		$perpage			= isset($request['limit']) && ctype_digit($request['limit']) && intval($request['limit']) > 0 ? intval($request['limit']) : $resultsperpage;
+		$num_pages			= ceil($num_results / $perpage);
+		$page				= isset($request['page']) && ctype_digit($request['page']) && intval($request['page']) > 0 ? intval($request['page']) : 1;
+		$pager				= &new TPL_Paginator($_URL, $num_results, $page, $perpage);
+		
+		if($num_results > $perpage) {
+			$template->setPager('replies_pager', $pager);
+		}
+		
+		/* Outside valid page range, redirect */
+		if(!$pager->hasPage($page) && $num_results > $resultsperpage) {
+			$template->setInfo('content', $template->getVar('L_PASTPAGELIMIT'));
+			$template->setRedirect('viewtopic.php?id='. $topic['id'] .'&limit='. $perpage .'&page='. $num_pages, 3);
+		}
+		
+		/* Get the replies for this topic */
 		$topic['daysprune']			= isset($request['daysprune']) && ctype_digit($request['daysprune']) ? iif(($request['daysprune'] == -1), 0, intval($request['daysprune'])) : 0;
-		$topic['sortorder']			= isset($request['order']) && ($request['order'] == 'ASC' || $request['order'] == 'DESC') ? $request['order'] : 'ASC';
+		$topic['sortorder']			= isset($request['order']) && ($request['order'] == 'ASC' || $request['order'] == 'DESC') ? $request['order'] : 'DESC';
 		$topic['sortedby']			= isset($request['sort']) && in_array($request['sort'], $sort_orders) ? $request['sort'] : 'created';
-		$topic['start']				= isset($request['start']) && ctype_digit($request['start']) ? intval($_GET['start']) : 0;
+		$topic['start']				= ($page - 1) * $perpage;
+		$topic['postsperpage']		= $perpage;
 		
+		/* Do we set the similar topics? */
+		$result						= &$dba->executeQuery("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE ((lower(i.name) LIKE lower('%". $dba->quote($topic['name']) ."%') OR lower(i.name) LIKE lower('%". $dba->quote($topic['body_text']) ."%')) OR (lower(t.body_text) LIKE lower('%". $dba->quote($topic['name']) ."%') OR lower(t.body_text) LIKE lower('%". $dba->quote($topic['body_text']) ."%'))) AND t.is_draft = 0 AND i.id <> ". intval($topic['id']));
+		
+		if($result->numrows() > 0) {
+			$it							= &new TopicsIterator($result, &$session, $template->getVar('IMG_DIR'));
+			$template->setList('similar_topics', $it);
+			$template->setFile('similar_topics', 'similar_topics.html');
+		}
+
 		/* set the topic iterator */
-		$topic						= &new TopicIterator($topic, TRUE);
+		$topic_list					= &new TopicIterator($topic, TRUE);
 		
-		$template->setList('topic', $topic);
+		$template->setList('topic', $topic_list);
 		
 		$template->setFile('content', 'viewtopic.html');
 

@@ -1,4 +1,4 @@
-INSERT INTO k4_users (name, email, pass, perms, usergroups) VALUES ('test', 'peter.goodman@gmail.com', '098f6bcd4621d373cade4e832627b4f6', 11, 'a:4:{i:0;i:1;i:1;i:3;i:2;i:4;i:3;i:5;}');
+INSERT INTO k4_users (name, email, pass, perms, usergroups) VALUES ('test', 'peter.goodman@gmail.com', '098f6bcd4621d373cade4e832627b4f6', 11, 'a:5:{i:0;i:2;i:1;i:3;i:2;i:4;i:3;i:5;i:4;i:6;}');
 INSERT INTO k4_userinfo (user_id) VALUES (1);
 INSERT INTO k4_users (name, email, pass, perms, usergroups) VALUES ('peter', 'peter.goodman@gmail.com', '098f6bcd4621d373cade4e832627b4f6', 5, 'a:1:{i:0;i:1;}');
 INSERT INTO k4_userinfo (user_id) VALUES (2);
@@ -99,6 +99,7 @@ INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.codetitle
 INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.codecontent', 'text-align:left;width: 90%;font-size: 11px;color: #000000;background-color: #FFFFFF; border: 1px solid #A9B8C2;padding: 3px;', 1, 'The content part of a Code field.');
 INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.forumrules', 'text-align:left;padding: 5px;font-size: 11px;background-color: #E4E7F5; border: 1px solid #045975;', 1, 'Forum rules box.');
 INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.forummessage', 'padding: 5px;font-size: 11px;background-color: #E4E7F5; border: 1px solid #045975;', 1, 'Forum special message box.');
+INSERT INTO k4_css (name, properties, style_id, description) VALUES ('.header_text', 'padding: 5px;border-bottom: 1px dashed #CCCCCC;margin-bottom: 10px;width: 95%;', 1, 'Used in the member profile area.');
 
 INSERT INTO k4_settinggroup VALUES (1,'L_KFOURONOFF',1);
 INSERT INTO k4_settinggroup VALUES (2,'L_GENERALSETTINGS',2);
@@ -159,7 +160,6 @@ INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (6,'displayemails','0','yesno',1);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (6,'secureemail','1','yesno',2);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (6,'allowsignatures','1','yesno',3);
-INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (6,'newuseremail','','',4);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (6,'requireuniqueemail','1','yesno',5);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (6,'allowregistration','1','yesno',6);
 INSERT INTO k4_setting (settinggroupid, varname, value, optioncode, displayorder) VALUES (6,'verifyemail','1','yesno',7);
@@ -246,12 +246,12 @@ INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, c
 INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (29, 30, 1, 'Forums', 'forums', 1, 0, 0, 0, 0, 1, 9, 9, 9, '');
 INSERT INTO k4_maps (row_left, row_right, row_level, name, varname, is_global, category_id, forum_id, group_id, user_id, can_view, can_add, can_edit, can_del, value) VALUES (31, 32, 1, 'Groups', 'groups', 0, 0, 0, 0, 0, 0, 10, 0, 10, '');
 
-INSERT INTO k4_usergroups (name,nicename,description,min_perm,max_perm,color,display_legend) VALUES ('Registered Users', 'Member', 'Registered users of this board.',5,5,'000000',0);
 INSERT INTO k4_usergroups (name,nicename,description,min_perm,max_perm,color,display_legend) VALUES ('Pending Users', 'Wannabe', 'Users pending registration on this board.',4,4,'999999',0);
+INSERT INTO k4_usergroups (name,nicename,description,min_perm,max_perm,color,display_legend) VALUES ('Registered Users', 'Member', 'Registered users of this board.',5,5,'000000',0);
+INSERT INTO k4_usergroups (name,nicename,description,min_perm,max_perm,color,display_legend) VALUES ('Super Members', 'Super Member', 'Super Members of this board.',5,6,'D58A32',1);
 INSERT INTO k4_usergroups (name,nicename,description,min_perm,max_perm,color,display_legend,avatar) VALUES ('Moderators', 'Moderator', 'Moderators of this board.',6,7,'3500CC',1,'moderator.gif');
 INSERT INTO k4_usergroups (name,nicename,description,min_perm,max_perm,color,display_legend,avatar) VALUES ('Administrators', 'Board Admin', 'Administrators of this board.',9,10,'CC0035',1,'administrator.gif');
 INSERT INTO k4_usergroups (name,nicename,description,min_perm,max_perm,color,display_legend,avatar) VALUES ('Super Moderators', 'Super Moderator', 'Super Moderators of this board.',7,8,'0E9A04',1,'moderator.gif');
-INSERT INTO k4_usergroups (name,nicename,description,min_perm,max_perm,color,display_legend) VALUES ('Super Members', 'Super Member', 'Super Members of this board.',5,6,'D58A32',1);
 
 INSERT INTO k4_userprofilefields (name,title,description,inputtype,display_size,display_rows,display_register,display_topic,display_post,user_maxlength,display_order) VALUES ('field1','Address','Your home address.','textarea',35,3,1,0,0,255,1);
 INSERT INTO k4_userprofilefields (name,title,description,inputtype,display_size,display_register,display_topic,display_post,user_maxlength,display_order) VALUES ('field2','Occupation','Your occupation.','text',50,0,0,0,100,2);

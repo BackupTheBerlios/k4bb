@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: functions.inc.php,v 1.6 2005/05/12 01:35:33 k4st Exp $
+* @version $Id: functions.inc.php,v 1.7 2005/05/16 02:12:34 k4st Exp $
 * @package k42
 */
 
@@ -34,6 +34,58 @@ error_reporting(E_ALL);
 
 if(!defined('IN_K4')) {
 	exit;
+}
+
+/**
+ * Function to force the usergroups out of a malformed serialized array
+ */
+function force_usergroups($user) {
+	/* Auto-set our groups array so we can default back on it */
+	$groups = array();
+	
+	/* If the usergroups variable is not equal to nothing */
+	if($user['usergroups'] != '') {
+		
+		/* Look for something that identifies the scope of this serialized array */
+		preg_match("~\{(.*?)\}~ise", $user['usergroups'], $matches);
+
+		/* Check the results of our search */
+		if(is_array($matches) && isset($matches[1])) {
+			
+			/* Explode the matched value into its parts */
+			$parts	= explode(";", $matches[1]);
+			
+			if(count($parts) > 0) {
+				for($i = 0; $i < count($parts); $i++) {
+					preg_match("~i\:([0-9])\;i\:([0-9])~is", $parts[$i], $_matches);
+					
+					/** 
+					 * If the number of matches is greater than 3, means that there is 1 key and 1 val 
+					 * at least 
+					 */
+					if(count($_matches) > 3) {
+
+						/* loop through the matches, skip [0] because it represents the pattern */
+						for($i = 1; $i < count($_matches); $i++) {
+							
+							/**
+							 * This will remove this usergroup, and any ninexistant ones from this 
+							 * user's array 
+							 */
+							if($_matches[$i+1] != $group['id'] && $_matches[$i+1] != 0) {
+								$groups[$_matches[$i]] = $_matches[$i+1];
+							}
+
+							/* Increment, (+1) so that we always increment by odd numbers */
+							$i++;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return $groups;
 }
 
 /**
@@ -65,7 +117,7 @@ function format_profilefield($data) {
 			
 			$input		= '<select name="'. $data['name'] .'" id="'. $data['name'] .'">';
 			
-			$options	= @unserialize($data['inputoptions']);
+			$options	= $data['inputoptions'] != '' ? iif(!unserialize($data['inputoptions']), array(), unserialize($data['inputoptions'])) : array();
 
 			if(is_array($options) && !empty($empty)) {
 				foreach($options as $option)
@@ -80,7 +132,7 @@ function format_profilefield($data) {
 			
 			$input		= '<select name="'. $data['name'] .'[]" id="'. $data['name'] .'" multiple="multiple" '. iif(intval($data['display_rows']) > 0, 'size="'. intval($data['display_rows']) .'"', '') .'>';
 			
-			$options	= @unserialize($data['inputoptions']);
+			$options	= $data['inputoptions'] != '' ? iif(!unserialize($data['inputoptions']), array(), unserialize($data['inputoptions'])) : array();
 
 			if(is_array($options) && !empty($empty)) {
 				foreach($options as $option)
@@ -93,7 +145,7 @@ function format_profilefield($data) {
 		}
 		case 'radio': {
 			
-			$options	= @unserialize($data['inputoptions']);
+			$options	= $data['inputoptions'] != '' ? iif(!unserialize($data['inputoptions']), array(), unserialize($data['inputoptions'])) : array();
 			
 			$input		= '';
 			
@@ -110,7 +162,7 @@ function format_profilefield($data) {
 		}
 		case 'check': {
 			
-			$options	= @unserialize($data['inputoptions']);
+			$options	= $data['inputoptions'] != '' ? iif(!unserialize($data['inputoptions']), array(), unserialize($data['inputoptions'])) : array();
 			
 			$input		= '';
 			
@@ -308,11 +360,6 @@ function relative_time($timestamp, $format = 'g:iA') {
 		$string .= $delta . " seconds ";
 
 	return "$string ago";
-}
-
-function require_class($class) {
-	if (!class_exists($class) && class_defined($class))
-		require $GLOBALS['lazy_load'][strtolower($class)];
 }
 
 function compile_error($message, $file, $line) {

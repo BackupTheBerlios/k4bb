@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: parser.php,v 1.4 2005/05/05 21:37:07 k4st Exp $
+* @version $Id: parser.php,v 1.5 2005/05/16 02:13:44 k4st Exp $
 * @package k42
 */
 
@@ -111,7 +111,7 @@ class TPL_Lexer {
 
 		if ($matches[1] == '/') {
 			$this->handleCloseTag($name);
-		} else if(@$matches[4] == '/' || @$matches[5] == '/') {
+		} else if((isset($matches[4]) && $matches[4] == '/') || (isset($matches[5]) && $matches[5] == '/')) {
 			$this->handleOpenTag($name, $attribs);
 			$this->handleCloseTag($name);
 		} else {

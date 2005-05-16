@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.8 2005/05/08 23:13:21 k4st Exp $
+* @version $Id: forums.class.php,v 1.9 2005/05/16 02:11:55 k4st Exp $
 * @package k42
 */
 
@@ -43,8 +43,9 @@ function forum_icon($instance, $temp) {
 	/* Set the forum Icon */
 	if(isset($_COOKIE['forums'])) {
 		
-		$forums				= $_COOKIE['forums'] != NULL && $_COOKIE['forums'] != '' ? @unserialize($_COOKIE['forums']) : array();
-		
+		//$forums				= $_COOKIE['forums'] != NULL && $_COOKIE['forums'] != '' ? (!unserialize($_COOKIE['forums']) ? array() : unserialize($_COOKIE['forums'])) : array();
+		$forums					= array();
+
 		if(isset($forums[$temp['id']])) {
 			
 			/* Get the value of the forum cookie */
@@ -147,7 +148,7 @@ class ForumsIterator extends FAProxyIterator {
 		$this->do_recurse	= $do_recurse;
 		$this->result		= &$this->dba->executeQuery($query);
 
-		$this->forums		= isset($_COOKIE['forums']) && $_COOKIE['forums'] != NULL && $_COOKIE['forums'] != '' ? @unserialize($_COOKIE['forums']) : array();
+		//$this->forums		= isset($_COOKIE['forums']) && $_COOKIE['forums'] != NULL && $_COOKIE['forums'] != '' ? iif(!unserialize($_COOKIE['forums']), array(), unserialize($_COOKIE['forums'])) : array();
 
 		parent::FAProxyIterator($this->result);
 	}
@@ -164,9 +165,9 @@ class ForumsIterator extends FAProxyIterator {
 		$temp['forum_icon']	= $return[0];
 		
 		/* Set a default cookie with the unread topic id in it */
-		if(ctype_digit($return[1])) {
-			$this->forums[$temp['id']][$return[1]] = TRUE;
-		}
+		//if(ctype_digit($return[1])) {
+		//	$this->forums[$temp['id']][$return[1]] = TRUE;
+		//}
 
 		/* Set a nice representation of what level we're on */
 		$temp['level']		= @str_repeat('&nbsp;&nbsp;&nbsp;', $temp['row_level']-2);
@@ -182,7 +183,7 @@ class ForumsIterator extends FAProxyIterator {
 
 		if($temp['moderating_groups'] != '') {
 			
-			$groups					= @unserialize($temp['moderating_groups']);
+			$groups					= !unserialize($temp['moderating_groups']) ? array() : unserialize($temp['moderating_groups']);
 			$temp['moderators']		= array();
 
 			if(is_array($groups)) {
@@ -203,7 +204,7 @@ class ForumsIterator extends FAProxyIterator {
 			$this->result->freeResult();
 			
 			/* Set cookies for all of the topics */
-			bb_settopic_cache_item('forums', serialize($this->forums), time() + 3600 * 25 * 5);
+		//	bb_settopic_cache_item('forums', serialize($this->forums), time() + 3600 * 25 * 5);
 		}
 		
 		/* Return the formatted forum info */

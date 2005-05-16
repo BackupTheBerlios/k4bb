@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: usergroups.class.php,v 1.2 2005/04/25 19:52:34 k4st Exp $
+* @version $Id: usergroups.class.php,v 1.3 2005/05/16 02:12:15 k4st Exp $
 * @package k42
 */
 
@@ -159,7 +159,7 @@ class AdminInsertUserGroup extends Event {
 			
 			$group_id			= $dba->getInsertId();
 			
-			$usergroups			= $moderator['usergroups'] != '' ? @unserialize($moderator['usergroups']) : array();
+			$usergroups			= $moderator['usergroups'] != '' ? iif(!unserialize($moderator['usergroups']), array(), unserialize($moderator['usergroups'])) : array();
 			
 			if(is_array($usergroups)) {
 				$usergroups[]	= $group_id;
@@ -179,6 +179,10 @@ class AdminInsertUserGroup extends Event {
 				
 				@chmod($dir, 0777);
 				@move_uploaded_file($_FILES['avatar_upload']['tmp_name'], $dir .'/'. $filename);
+			}
+			
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_ADDEDUSERGROUP'), $request['name']), FALSE);
@@ -214,7 +218,7 @@ class AdminRemoveUserGroup extends Event {
 			
 			while($users->next()) {
 				$user	= $users->current();
-				$groups	= @unserialize($user['usergroups']);
+				$groups	= $user['usergroups'] != '' ? iif(!unserialize($user['usergroups']), force_usergroups($user), unserialize($user['usergroups'])) : array();
 				
 				/* Are we dealing with an array? */
 				if(is_array($groups)) {
@@ -233,64 +237,17 @@ class AdminRemoveUserGroup extends Event {
 					
 					/* Reset the groups variable */
 					$groups = $new_groups;
-				
-				/**
-				 * Attempt to break down a malformed basic numeric serialized array 
-				 * into its parts and remake it
-				 */
-				} else {
-
-					/* Auto-set our groups array so we can default back on it */
-					$groups = array();
-					
-					/* If the usergroups variable is not equal to nothing */
-					if($user['usergroups'] != '') {
-						
-						/* Look for something that identifies the scope of this serialized array */
-						preg_match("~\{(.*?)\}~ise", $user['usergroups'], $matches);
-
-						/* Check the results of our search */
-						if(is_array($matches) && isset($matches[1])) {
-							
-							/* Explode the matched value into its parts */
-							$parts	= explode(";", $matches[1]);
-							
-							if(count($parts) > 0) {
-								preg_match("~i\:([0-9])\;i\:([0-9])~is", $parts, $_matches);
-								
-								/** 
-								 * If the number of matches is greater than 3, means that there is 1 key and 1 val 
-								 * at least 
-								 */
-								if(count($_matches) > 3) {
-
-									/* loop through the matches, skip [0] because it represents the pattern */
-									for($i = 1; $i < count($_matches); $i++) {
-										
-										/**
-										 * This will remove this usergroup, and any ninexistant ones from this 
-										 * user's array 
-										 */
-										if($_matches[$i+1] != $group['id'] && $_matches[$i+1] != 0) {
-											$groups[$_matches[$i]] = $_matches[$i+1];
-										}
-
-										/* Increment, (+1) so that we always increment by odd numbers */
-										$i++;
-									}
-								}
-							}
-						}
-					}
 				}
-				
-				$groups		= serialize($groups);
 				
 				$dba->executeUpdate("UPDATE ". USERS ." SET usergroups = '". $dba->quote($groups) ."' WHERE id = ". $user['id']);
 			}
 			
 			/* Remove the usergroup */
 			$dba->executeUpdate("DELETE FROM ". USERGROUPS ." WHERE id = ". intval($group['id']));
+			
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
+			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_REMOVEDUSERGROUP'), $group['name']), FALSE);
 			$template->setRedirect('admin.php?act=usergroups', 3);
@@ -453,7 +410,7 @@ class AdminUpdateUserGroup extends Event {
 
 			$group_id			= $dba->getInsertId();
 			
-			$usergroups			= $moderator['usergroups'] != '' ? @unserialize($moderator['usergroups']) : array();
+			$usergroups			= $moderator['usergroups'] != '' ? iif(!unserialize($moderator['usergroups']), array(), unserialize($moderator['usergroups'])) : array();
 
 			if(is_array($usergroups)) {
 				$usergroups[]	= $group_id;
@@ -476,6 +433,10 @@ class AdminUpdateUserGroup extends Event {
 				
 				@chmod($dir, 0777);
 				@move_uploaded_file($_FILES['avatar_upload']['tmp_name'], $dir .'/'. $filename);
+			}
+			
+			if(!@touch(CACHE_FILE, time()-86460)) {
+				@unlink(CACHE_FILE);
 			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDUSERGROUP'), $request['name']), FALSE);

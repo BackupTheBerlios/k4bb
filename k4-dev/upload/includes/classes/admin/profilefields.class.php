@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: profilefields.class.php,v 1.6 2005/05/12 01:34:26 k4st Exp $
+* @version $Id: profilefields.class.php,v 1.7 2005/05/16 02:12:15 k4st Exp $
 * @package k42
 */
 
@@ -262,7 +262,7 @@ class AdminEditUserField extends Event {
 				
 				/* If these are options, format them */
 				if($key == 'inputoptions') {
-					$val = @unserialize($val);
+					$val = $val != '' ? iif(!unserialize($val), array(), unserialize($val)) : array();
 					if(is_array($val) && !empty($val)) {
 						
 						$new_val = "";
@@ -279,7 +279,7 @@ class AdminEditUserField extends Event {
 						$val = "";
 					}
 				}
-				
+				 
 				$template->setVar('field_'. $key, $val);
 			}
 			$template->show($field['inputtype']);

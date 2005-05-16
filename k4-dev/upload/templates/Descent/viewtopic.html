@@ -1,3 +1,22 @@
+<page:navigator id="replies_pager">
+<div style="float: right;">
+	<table cellpadding="0" cellspacing="1" border="0" class="forum_content">
+		<tr>
+			<td><span class="smalltext">{$L_PAGE}</span></td>
+			<page:first><td class="alt2"><page:link><span class="smalltext">{$L_FIRST}</span></page:link></td></page:first>
+			<page:prev><td class="alt2"><page:link><span class="smalltext">{$L_PREV}</span></page:link></td></page:prev>
+			<page:list id="replies_pager" before="3" after="3">
+			<list:item list="replies_pager">
+				<td class="alt1"><page:link class="pager_link"><span class="smalltext">{$pagenum}</span></page:link></td>
+			</list:item>
+			</page:list>
+			<page:next><td class="alt2"><page:link><span class="smalltext">{$L_NEXT}</span></page:link></td></page:next>
+			<page:last><td class="alt2"><page:link><span class="smalltext">{$L_LAST}</span></page:link></td></page:last>
+		</tr>
+	</table>
+</div>
+</page:navigator>
+
 <!-- Posting Buttons -->
 <div align="left">
 	<maps:if var="topics" forum="topic_forum_id" method="can_add">
@@ -32,6 +51,25 @@
 </table>
 </list:list>
 
+<page:navigator id="replies_pager">
+<div style="float: right;">
+	<table cellpadding="0" cellspacing="1" border="0" class="forum_content">
+		<tr>
+			<td><span class="smalltext">{$L_PAGE}</span></td>
+			<page:first><td class="alt2"><page:link><span class="smalltext">{$L_FIRST}</span></page:link></td></page:first>
+			<page:prev><td class="alt2"><page:link><span class="smalltext">{$L_PREV}</span></page:link></td></page:prev>
+			<page:list id="replies_pager" before="3" after="3">
+			<list:item list="replies_pager">
+				<td class="alt1"><page:link class="pager_link"><span class="smalltext">{$pagenum}</span></page:link></td>
+			</list:item>
+			</page:list>
+			<page:next><td class="alt2"><page:link><span class="smalltext">{$L_NEXT}</span></page:link></td></page:next>
+			<page:last><td class="alt2"><page:link><span class="smalltext">{$L_LAST}</span></page:link></td></page:last>
+		</tr>
+	</table>
+</div>
+</page:navigator>
+
 <!-- Posting Buttons -->
 <div align="left">
 	<maps:if var="topics" forum="topic_forum_id" method="can_add">
@@ -42,6 +80,8 @@
 	</maps:if>
 </div>
 <!-- / Posting Buttons -->
+
+<core:import id="similar_topics" />
 
 <!-- Image Resizer -->
 <table width="100%" cellpadding="0" cellspacing="1" border="0">

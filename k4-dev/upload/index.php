@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.15 2005/05/12 01:33:21 k4st Exp $
+* @version $Id: index.php,v 1.16 2005/05/16 02:10:03 k4st Exp $
 * @package k42
 */
 
@@ -60,7 +60,7 @@ exit; */
 
 class DefaultEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
-		
+		//$dba->executeUpdate("UPDATE ". USERINFO ." SET msn = 'peter.goodman@gmail.com' WHERE user_id = 1");
 		global $_DATASTORE, $_USERGROUPS, $_SESS;
 		
 		/*
@@ -94,11 +94,7 @@ class DefaultEvent extends Event {
 		
 		//print_r($dba->getRow("SELECT sql, name, type FROM sqlite_master WHERE tbl_name = '". USERINFO ."' ORDER BY type DESC"));
 		//$dba->executeQuery("delete from ". PROFILEFIELDS ." where name = 'field6'");
-		
-		/* Set the globals for num_topics and num_replies here */
-		Globals::setGlobal('num_topics', 0);
-		Globals::setGlobal('num_replies', 0);
-		
+				
 		/* Set the Categories list */
 		$categories = &new CategoriesIterator(NULL);
 		$template->setList('categories', $categories);
@@ -119,20 +115,21 @@ class DefaultEvent extends Event {
 
 		$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members') + iif(is_a($session['user'], 'Member') && $_SESS->is_new, 1, 0),
 						'num_invisible'		=> Globals::getGlobal('num_online_invisible'),
-						'num_topics'		=> $_DATASTORE['forumstats']['num_topics'],
-						'num_replies'		=> $_DATASTORE['forumstats']['num_replies'],
-						'num_members'		=> $_DATASTORE['forumstats']['num_members'],
+						'num_topics'		=> intval($_DATASTORE['forumstats']['num_topics']),
+						'num_replies'		=> intval($_DATASTORE['forumstats']['num_replies']),
+						'num_members'		=> intval($_DATASTORE['forumstats']['num_members']),
 						'num_online_total'	=> $dba->getValue("SELECT COUNT(*) FROM ". SESSIONS ." WHERE seen >= $expired") + iif(is_a($session['user'], 'Guest') && $_SESS->is_new, 1, 0),
 						'newest_uid'		=> $newest_user['id'],
-						'newest_user'		=> $newest_user['name']
+						'newest_user'		=> $newest_user['name'],
 						);
-		
+		$stats['num_guests'] = ($stats['num_online_total'] - $stats['num_online_members'] - $stats['num_invisible']);
+
 		$template->setVar('num_online_members', $stats['num_online_members']);
 		
 		$template->setVar('newest_member',	sprintf($template->getVar('L_NEWESTMEMBER'),		$stats['newest_uid'], $stats['newest_user']));
 		$template->setVar('total_users',	sprintf($template->getVar('L_TOTALUSERS'),			$stats['num_members']));
 		$template->setVar('total_posts',	sprintf($template->getVar('L_TOTALPOSTS'),			($stats['num_topics'] + $stats['num_replies']), $stats['num_topics'], $stats['num_replies']));
-		$template->setVar('online_stats',	sprintf($template->getVar('L_ONLINEUSERSTATS'),		$stats['num_online_total'], $stats['num_online_members'], ($stats['num_online_total'] - $stats['num_online_members'] - $stats['num_invisible']), $stats['num_invisible']));
+		$template->setVar('online_stats',	sprintf($template->getVar('L_ONLINEUSERSTATS'),		$stats['num_online_total'], $stats['num_online_members'], $stats['num_guests'], $stats['num_invisible']));
 		$template->setVar('most_users_ever',sprintf($template->getVar('L_MOSTUSERSEVERONLINE'),	$_DATASTORE['maxloggedin']['maxonline'], date("n/j/Y", bbtime($_DATASTORE['maxloggedin']['maxonlinedate'])), date("g:ia", bbtime($_DATASTORE['maxloggedin']['maxonlinedate']))));
 		
 		if($stats['num_online_total'] >= $_DATASTORE['maxloggedin']['maxonline']) {

@@ -25,11 +25,13 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: admin.php,v 1.8 2005/05/09 21:16:21 k4st Exp $
+* @version $Id: admin.php,v 1.9 2005/05/16 02:10:03 k4st Exp $
 * @package k42
 */
 
 error_reporting(E_ALL);
+
+ob_start();
 
 require 'forum.inc.php';
 
@@ -40,9 +42,13 @@ class DefaultEvent extends Event {
 		
 		if(is_a($session['user'], 'Member') && ($user['perms'] >= ADMIN)) {
 			$template->setFile('content', 'admin/admin.html');
-			//$template->setFile('admin_panel', 'admin/default.html');
+			
+			
 		} else {
-			$template->setError('content', $template->getVar('L_YOUNEEDPERMS'));
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setFile('content', 'login_form.html');
+			$template->show('no_perms');
+			return TRUE;
 		}
 
 		return TRUE;
@@ -56,7 +62,10 @@ class AdminMenu extends Event {
 			$template->setFile('content', 'admin/admin_menu.html');
 			$template->hide('copyright');
 		} else {
-			$template->setError('content', $template->getVar('L_YOUNEEDPERMS'));
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setFile('content', 'login_form.html');
+			$template->show('no_perms');
+			return TRUE;
 		}
 
 		return TRUE;
@@ -70,7 +79,10 @@ class AdminHead extends Event {
 			$template->setFile('content', 'admin/admin_head.html');
 			$template->hide('copyright');
 		} else {
-			$template->setError('content', $template->getVar('L_YOUNEEDPERMS'));
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setFile('content', 'login_form.html');
+			$template->show('no_perms');
+			return TRUE;
 		}
 
 		return TRUE;
@@ -160,5 +172,7 @@ $app->AddEvent('usernames_update', new AdminUpdateBadUserName);
 $app->AddEvent('usernames_remove', new AdminRemoveBadUserName);
 
 $app->ExecutePage();
+
+ob_flush();
 
 ?>

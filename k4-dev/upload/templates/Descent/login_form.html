@@ -1,7 +1,17 @@
-<is:unlogged>
 <!-- Login Form -->
-<form:form id="login_form" name="login_form" action="member.php?act=login_user" method="post" enctype="multipart/form-data">
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="forum_content">
+	<core:block id="no_perms" hidden="yes">
+	<tr class="thead">
+		<td colspan="2">{$L_INFORMATION}</td>
+	</tr>
+	<tr class="panel">
+		<td colspan="2">
+			<span class="smalltext">{$L_YOUNEEDPERMS}</span>
+		</td>
+	</tr>
+	</core:block>
+	<is:unlogged>
+	<form:form id="login_form" name="login_form" action="member.php?act=login_user" method="post" enctype="multipart/form-data">
 	<tr class="thead">
 		<td colspan="2">{$L_LOGIN}</td>
 	</tr>
@@ -22,7 +32,7 @@
 					<td width="50%"><input type="password" name="pass" id="password" class="inputbox" maxlength="{$maxuserlength}" value="" tabindex="2" /></td>
 				</tr>
 				<tr>
-					<td width="50%"><input type="submit" class="button" value="{$L_LOGIN}" tabindex="3" /><input type="reset" class="button" value="{$L_RESET}" /></td>
+					<td width="50%"><input type="submit" class="button" value="{$L_LOGIN}" tabindex="3" />&nbsp;<input type="reset" class="button" value="{$L_RESET}" /></td>
 					<td width="50%"><input type="checkbox" class="checkbox" name="rememberme" id="rememberme" checked="checked" value="" /><label for="rememberme">&nbsp;{$L_REMEMBERME}</label></td>
 				</tr>
 				<tr>
@@ -34,7 +44,7 @@
 			</table>
 		</td>
 	</tr>
+	</form:form>
+	</is:unlogged>
 </table>
-</form:form>
 <!-- / Login Form -->
-</is:unlogged>

@@ -21,7 +21,7 @@
 .forum_main { padding-left: 10px;padding-right: 10px;background-color: #FFFFFF; }
 .forummessage { padding: 5px;font-size: 11px;background-color: #E4E7F5; border: 1px solid #045975; }
 .forumrules { text-align:left;padding: 5px;font-size: 11px;background-color: #E4E7F5; border: 1px solid #045975; }
-.hidden { display: none; }
+.header_text { padding: 5px;border-bottom: 1px dashed #CCCCCC;margin-bottom: 10px;width: 95%; }
 .hidden { display: none; }
 .inputbox {  border : 1px solid #999999;font-size:11px; }
 .inputbox:focus { border : 1px solid #666666;font-size:11px; }
@@ -51,7 +51,6 @@
 .thead a, .thead div { font-size: 12px;color: #FFFFFF; }
 .threaded_off td { background-color: #FEFEFE;padding: 0px;margin:0px;color: #000000; }
 .threaded_on, .threaded_on td { background-color: #CCCCCC;padding: 0px;margin:0px;height: 20px; }
-.visible {  }
 .visible { display: block;border: 1px solid #BDD786;padding: 3px;width: 95%; }
 a { color: #000000;text-decoration: none; }
 a:hover { text-decoration: underline; }

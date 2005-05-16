@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: users.class.php,v 1.7 2005/05/12 01:34:08 k4st Exp $
+* @version $Id: users.class.php,v 1.8 2005/05/16 02:11:55 k4st Exp $
 * @package k42
 */
 
@@ -39,7 +39,7 @@ if(!defined('IN_K4')) {
  * Get the highest permissioned group that a user belongs to
  */
 function get_user_max_group($temp, $all_groups) {
-	$groups				= @unserialize($temp['usergroups']);
+	$groups				= $temp['usergroups'] != '' ? iif(!unserialize($temp['usergroups']), array(), unserialize($temp['usergroups'])) : array();
 			
 	if(is_array($groups)) {
 		
@@ -64,7 +64,7 @@ function get_user_max_group($temp, $all_groups) {
 			 * If the perms of this group are greater than that of the $group 'prev group', 
 			 * set is as this users group 
 			 */
-			if(@$all_groups[$g]['max_perm'] > @$group['max_perm']) {
+			if(isset($all_groups[$g]['max_perm']) && isset($group['max_perm']) && ($all_groups[$g]['max_perm'] > $group['max_perm'])) {
 				$group	= $all_groups[$g];
 				
 				/* Give this user an appropriate group avatar */
@@ -141,18 +141,14 @@ class LoginEvent extends Event {
 					@setcookie('k4_autolog', $userinfo, time()+(3600*24*60));
 					bb_setcookie_cache('k4_autolog', $userinfo, time()+(3600*24*60));
 				}
-
-				if (isset($user['login_request_uri'])) {
-					$template->setRedirect($user['login_request_uri'], 3);
-				} else {
-					$template->setRedirect('index.php', 3);
-				}
 				
-
+				$dba->executeUpdate("UPDATE ". USERS ." SET last_seen = ". time() ." WHERE id = ". intval($u['id']));
+				
+				$template->setRedirect('index.php', 3);
 				$template->setInfo('content', $template->getVar('L_LOGGEDINSUCCESS'));
 				
 			} else {
-				$session['user']							= &new Guest;
+				$session['user']							= &new Guest();
 				$session['user']->info['rememberme']		= 'off';
 				$template->setInfo('content', $template->getVar('L_THISBANNEDUSER'));
 				return TRUE;
@@ -192,9 +188,11 @@ class LogoutEvent extends Event {
 		
 		$_SESS->setUserStatus(TRUE);
 
+		$referer = !$_SERVER['HTTP_REFERER'] || $_SERVER['HTTP_REFERER'] == '' ? 'index.php' : $_SERVER['HTTP_REFERER'];
+
 		/* Redirect the page */
 		$template->setInfo('content', $template->getVar('L_LOGGEDOUTSUCCESS'));
-		$template->setRedirect($_SERVER['HTTP_REFERER'], 3);
+		$template->setRedirect($referer, 3);
 
 		return TRUE;
 	}
@@ -453,14 +451,16 @@ class ForumInsertUser extends Event {
 			$insert_b->setInt(2, intval(@$request['timezone']));
 
 			$insert_b->executeUpdate();
-
+			
+			$datastore_update	= &$dba->prepareStatement("UPDATE ". DATASTORE ." SET data=? WHERE varname=?");
+			
 			/* Set the datastore values */
 			$datastore					= $_DATASTORE['forumstats'];
-			$datastore['num_members']	+= 1;
+			$datastore['num_members']	= $dba->getValue("SELECT COUNT(*) FROM ". USERS);
 			
-			$datastore_update			= &$dba->prepareStatement("UPDATE ". DATASTORE ." SET data=? WHERE varname=?");
 			$datastore_update->setString(1, serialize($datastore));
 			$datastore_update->setString(2, 'forumstats');
+
 			$datastore_update->executeUpdate();
 
 			if(!@touch(CACHE_FILE, time()-86460)) {
@@ -474,6 +474,8 @@ class ForumInsertUser extends Event {
 				$verify_url->args		= array('act' => 'activate_accnt', 'key' => $priv_key);
 				$verify_url->file		= 'member.php';
 				$url					= $verify_url->__toString();
+
+				$dba->executeUpdate("UPDATE ". USERS ." SET usergroups = 'a:1:{i:0;i:2;}' WHERE id = ". intval($user_id));
 
 				$email					= sprintf($template->getVar('L_REGISTEREMAILRMSG'), $request['name'], $_SETTINGS['bbtitle'], $url, $_SETTINGS['bbtitle']);
 
@@ -503,6 +505,170 @@ class ForumInsertUser extends Event {
 		}
 
 		return FALSE;
+	}
+}
+
+class EmailUser extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_QUERYPARAMS;
+
+		/**
+		 * Error checking on this member
+		 */
+		if(!isset($request['id']) || intval($request['id']) == 0) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_USERDOESNTEXIST'), TRUE);
+			return TRUE;
+		}
+
+		$member = $dba->getRow("SELECT ". $_QUERYPARAMS['user'] . $_QUERYPARAMS['userinfo'] ." FROM ". USERS ." u LEFT JOIN ". USERINFO ." ui ON u.id = ui.user_id WHERE u.id = ". intval($request['id']));
+
+		if(!$member || !is_array($member) || empty($member)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_USERDOESNTEXIST'), TRUE);
+			return TRUE;
+		}
+
+		if(!is_a($session['user'], 'Member')) {
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setFile('content', 'login_form.html');
+			$template->show('no_perms');
+			return TRUE;
+		}
+		
+		foreach($member as $key => $val)
+			$template->setVar('member_'. $key, $val);
+				
+		/**
+		 * Set the info we need
+		 */
+		$template	= BreadCrumbs($template, $template->getVar('L_EMAILUSER'));
+		$template->setFile('content', 'email_user.html');
+		
+		return TRUE;
+	}
+}
+
+class SendEmailToUser extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_QUERYPARAMS;
+
+		/**
+		 * Error checking on this member
+		 */
+		if(!isset($request['id']) || intval($request['id']) == 0) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_USERDOESNTEXIST'), TRUE);
+			return TRUE;
+		}
+
+		$member = $dba->getRow("SELECT ". $_QUERYPARAMS['user'] . $_QUERYPARAMS['userinfo'] ." FROM ". USERS ." u LEFT JOIN ". USERINFO ." ui ON u.id = ui.user_id WHERE u.id = ". intval($request['id']));
+
+		if(!$member || !is_array($member) || empty($member)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_USERDOESNTEXIST'), TRUE);
+			return TRUE;
+		}
+
+		if(!is_a($session['user'], 'Member')) {
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setFile('content', 'login_form.html');
+			$template->show('no_perms');
+			return TRUE;
+		}
+		
+		if(!isset($request['subject']) || $request['subject'] == '') {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_INSERTMAILSUBJECT'), TRUE);
+			return TRUE;
+		}
+
+		if(!isset($request['message']) || $request['message'] == '') {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_INSERTMAILMESSAGE'), TRUE);
+			return TRUE;
+		}
+		$template	= BreadCrumbs($template, $template->getVar('L_EMAILUSER'));
+
+		if(!@mail($member['email'], htmlentities(stripslashes($request['subject']), ENT_QUOTES), htmlentities(stripslashes($request['message']), ENT_QUOTES), "Content-type: text/html; charset=iso-8859-1\r\nFrom: \"". iif($user['realname'] == '', $user['name'], $user['realname']) ." - k4 Bulletin Board Mailer\" <". $user['email'] .">")) {
+			$template->setInfo('content', sprintf($template->getVar('L_ERROREMAILING'), $member['name']));
+		} else {
+			$template->setInfo('content', sprintf($template->getVar('L_EMAILSENT'), $member['name']));
+			$template->setRedirect('member.php?id='. $member['id'], 3);
+		}
+		
+		return TRUE;
+	}
+}
+
+class FindPostsByUser extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_QUERYPARAMS;
+
+		/**
+		 * Error checking on this member
+		 */
+		if(!isset($request['id']) || intval($request['id']) == 0) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_USERDOESNTEXIST'), TRUE);
+			return TRUE;
+		}
+
+		$member = $dba->getRow("SELECT ". $_QUERYPARAMS['user'] . $_QUERYPARAMS['userinfo'] ." FROM ". USERS ." u LEFT JOIN ". USERINFO ." ui ON u.id = ui.user_id WHERE u.id = ". intval($request['id']));
+
+		if(!$member || !is_array($member) || empty($member)) {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setInfo('content', $template->getVar('L_USERDOESNTEXIST'), TRUE);
+			return TRUE;
+		}
+		
+		foreach($member as $key => $val)
+			$template->setVar('member_'. $key, $val);
+				
+		/**
+		 * Set the info we need
+		 */
+		$template	= BreadCrumbs($template, $template->getVar('L_FINDPOSTS'));
+		$template->setFile('content', 'user_posts.html');
+		
+		return TRUE;
+	}
+}
+
+class UsersIterator extends FAProxyIterator {
+	
+	var $result;
+	var $groups;
+
+	function UsersIterator(&$result) {
+		global $_USERGROUPS;
+
+		$this->result			= &$result;
+		$this->groups			= $_USERGROUPS;
+		
+		parent::FAProxyIterator($this->result);
+	}
+
+	function &current() {
+		$temp					= parent::current();
+		$group					= get_user_max_group($temp, $this->groups);
+		
+		$temp['group_color']	= !isset($group['color']) || $group['color'] == '' ? '000000' : $group['color'];
+		$temp['group_nicename']	= $group['nicename'];
+		$temp['group_avatar']	= $group['avatar'];
+
+		return $temp;
 	}
 }
 

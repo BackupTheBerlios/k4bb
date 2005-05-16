@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topic_review.class.php,v 1.2 2005/05/03 21:37:43 k4st Exp $
+* @version $Id: topic_review.class.php,v 1.3 2005/05/16 02:11:55 k4st Exp $
 * @package k42
 */
 
@@ -105,7 +105,7 @@ class RepliesReviewIterator extends FAProxyIterator {
 		
 		$this->users			= $users;
 		$this->qp				= $queryparams;
-		$this->dba				= &$_DBA;
+		$this->dba				= &$dba;
 		$this->result			= &$result;
 		$this->groups			= $groups;
 		$this->user				= &$user;

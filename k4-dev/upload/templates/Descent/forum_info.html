@@ -43,6 +43,7 @@
 				{$online_stats}
 				<br />
 				<if:if var="num_online_members" greater="0">
+				<maps:if var="can_see_WOloggedusers" method="can_view">
 				<list:list id="online_users">
 					{$L_REGISTEREDUSERS}:
 					<list:item list="online_users">
@@ -53,6 +54,7 @@
 					</if:if>
 					</list:item>
 				</list:list>
+				</maps:if>
 				</if:if>
 				</div>
 			</td>

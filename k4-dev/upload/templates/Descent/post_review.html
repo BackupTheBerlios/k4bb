@@ -51,9 +51,11 @@
 			</if:if>
 		</td>
 	</tr>
+	<maps:if forum="forum_id" var="bbcode" method="can_add">
 	<tr class="panel">
 		<td class="alt1">
 			<div align="right"><a href="javascript:;" onclick="add_review_quote('<if:if var="poster_name" eq="">{$L_GUEST}<if:else />{$poster_name}</if:if>', 'body_text{$id}', 'messagecodex')" title="{$L_QUOTE}"><img src="Images/{$IMG_DIR}/Buttons/{$LANG}/quote.gif" border="0" alt="{$L_QUOTE}" /></a></div>
 		</td>
 	</tr>
+	</maps:if>
 <!-- / Post Review -->

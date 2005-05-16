@@ -24,7 +24,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.js,v 1.4 2005/05/03 21:35:11 k4st Exp $
+* @version $Id: bbcode.js,v 1.5 2005/05/16 02:16:22 k4st Exp $
 * @package k42
 */
 
@@ -529,7 +529,7 @@ function add_review_quote(user_name, text_holder, messagecodex) {
 	
 	if(codex && textarea) {
 		if(codex.value != '')
-			codex.value = "\n\n";
+			codex.value += "\n\n";
 		codex.value		+= "[quote=" + user_name + "]\n" + textarea.value + "\n[/quote]";
 		codex.focus();
 	}

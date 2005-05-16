@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: categories.class.php,v 1.4 2005/04/24 02:11:13 k4st Exp $
+* @version $Id: categories.class.php,v 1.5 2005/05/16 02:11:54 k4st Exp $
 * @package k42
 */
 
@@ -60,7 +60,7 @@ class MarkCategoryForumsRead extends Event {
 					/* Get the forums of this Category */
 					$result						= $dba->executeQuery("SELECT * FROM ". INFO ." WHERE row_left > ". $forum['row_left'] ." AND row_right < ". $forum['row_right'] ." AND row_type = ". FORUM);
 					
-					$forums						= isset($request['forums']) && $request['forums'] != null && $request['forums'] != '' ? @unserialize($request['forums']) : array();
+					$forums						= isset($request['forums']) && $request['forums'] != null && $request['forums'] != '' ? iif(!unserialize($request['forums']), array(), nserialize($request['forums'])) : array();
 
 					/* Loop through the forums */
 					while($result->next()) {

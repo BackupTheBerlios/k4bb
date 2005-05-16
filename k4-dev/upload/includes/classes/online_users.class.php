@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: online_users.class.php,v 1.5 2005/04/24 02:11:13 k4st Exp $
+* @version $Id: online_users.class.php,v 1.6 2005/05/16 02:11:55 k4st Exp $
 * @package k42
 */
 
@@ -48,7 +48,7 @@ class OnlineUsersIterator extends FAProxyIterator {
 		$this->dba		= &$_DBA;
 		$expired		= time() - ini_get('session.gc_maxlifetime');
 		
-		$query			= "SELECT ". $_QUERYPARAMS['user'] . $_QUERYPARAMS['session'] ." FROM ". USERS ." u, ". SESSIONS ." s WHERE (u.id = s.user_id) OR (s.user_id = -1 AND s.name <> '') AND s.seen >= $expired $extra GROUP BY s.name ORDER BY s.seen DESC";
+		$query			= "SELECT ". $_QUERYPARAMS['user'] . $_QUERYPARAMS['session'] ." FROM ". USERS ." u, ". SESSIONS ." s WHERE s.seen >= $expired AND (u.id = s.user_id) OR (s.user_id = -1 AND s.name <> '') $extra GROUP BY s.name ORDER BY s.seen DESC";
 		
 		$this->result	= &$this->dba->executeQuery($query);
 

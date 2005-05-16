@@ -26,7 +26,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.php,v 1.10 2005/05/05 21:35:48 k4st Exp $
+* @version $Id: bbcode.php,v 1.11 2005/05/16 02:11:03 k4st Exp $
 * @package k42
 */
 
@@ -70,9 +70,9 @@ class BBCodex {
 		$this->text			= $text;
 		$this->instance->forum_id		= $forum_id;
 		
-		$this->html			= (bool)$html;
+		$this->html			= ($user['perms'] >= get_map($user, 'html', 'can_add', array('forum_id'=>$forum_id))) ? (bool)$html : FALSE;
 		$this->bbcode		= (bool)$bbcode;
-		$this->emoticons	= (bool)$emoticons;
+		$this->emoticons	= ($user['perms'] >= get_map($user, 'emoticons', 'can_add', array('forum_id'=>$forum_id))) ? (bool)$emoticons : FALSE;
 		$this->auto_urls	= (bool)$auto_urls;
 	}
 
@@ -107,13 +107,13 @@ class BBCodex {
 			$this->add_custom('list', new BBList($this));
 			$this->add_custom('code', new BBCode($this));
 			$this->add_custom('php', new PHPBBCode($this));
+			
+			if($this->emoticons)
+				$this->add_custom('emoticons', new BBEmoticons($this));
+
+			if($this->html)
+				$this->add_custom('html', new BBHtml($this));
 		}
-
-		if($this->emoticons && ($this->user['perms'] >= get_map($this->user, 'emoticons', 'can_add', array('forum_id'=>$this->forum_id)) ))
-			$this->add_custom('emoticons', new BBEmoticons($this));
-
-		if($this->html && ($this->user['perms'] >= get_map($this->user, 'html', 'can_add', array('forum_id'=>$this->forum_id))))
-			$this->add_custom('html', new BBHtml($this));
 	}
 
 	/**

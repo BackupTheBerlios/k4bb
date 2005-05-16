@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: cache.php,v 1.8 2005/05/12 01:33:49 k4st Exp $
+* @version $Id: cache.php,v 1.9 2005/05/16 02:11:04 k4st Exp $
 * @package k42
 */
 
@@ -96,7 +96,7 @@ function cache_forum($info) {
 			$data[$val]	= $info[$val];
 	}
 
-	$data['subforums']											= intval(@$info['subforums']);
+	$data['subforums']											= isset($info['subforums']) ? intval($info['subforums']) : 0;
 	
 	$_SESSION['bbcache']['forums'][$data['id']]					= $data;
 	$_SESSION['bbcache']['forums'][$data['id']]['forum_time']	= time();
@@ -236,36 +236,44 @@ class DBCache {
 
 		return $contents;
 	}
-	function createCache($allinfo, $serialize = FALSE) {
+	function createCache($allinfo) {
+		
 		$contents				= "<?php \nerror_reporting(E_ALL); \n\nif(!defined('IN_K4')) { \n\texit; \n}";
 		
-		if(!$serialize) {
-			
-			$contents			.= "\n\n\$cache = " . var_export($allinfo, TRUE) .";";
-			
+		$contents				.= "\n\n\$cache = " . var_export($allinfo, TRUE) .";";
 
-		} else {
-			$contents			.= "\n\n\$cache = '" . htmlentities(serialize($allinfo), ENT_QUOTES) ."';";
-		}
 		$contents				.= "\n?>";
 		
 		/* Create our file */
-		error::reset();
-
+		if(file_exists(CACHE_FILE))
+			unlink(CACHE_FILE);
+		
 		$handle = @fopen(CACHE_FILE, "w");
 		@chmod(CACHE_FILE, 0777);
 		@fwrite($handle, $contents);
 		@chmod(CACHE_FILE, 0777);
 		@fclose($handle);
-
+		
+		@touch(CACHE_FILE);
+		
+		/* Error checking on our newly created file */
 		if(!file_exists(CACHE_FILE) || !is_readable(CACHE_FILE) || !is_writeable(CACHE_FILE)) {
-			error::pitch(new FAError('An error occured while trying to create the forum cache file.', __FILE__, __LINE__));
+			
+			compile_error('An error occured while trying to create the forum cache file.', __FILE__, __LINE__);
 		} else {
+			
 			$lines = file(CACHE_FILE);
 
 			if(count($lines) <= 1 || empty($lines)) {
-				error::pitch(new FAError('An error occured while trying to create the forum cache file. It appears to be empty.', __FILE__, __LINE__));
+				compile_error('An error occured while trying to create the forum cache file. It appears to be empty.', __FILE__, __LINE__);
 			}
+			
+			return TRUE;
+			/**
+			 * Need the touch here because for some reason the file changes the mod time in
+			 * some php versions
+			 */
+			@touch(CACHE_FILE);
 		}
 	}
 }

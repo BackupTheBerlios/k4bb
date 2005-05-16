@@ -247,17 +247,18 @@ function emoticon(typed) {
 						<input type="checkbox" name="disable_bbcode" id="disable_bbcode" />&nbsp;<label for="disable_bbcode">{$L_DISABLEBBCODE}</label><br />
 						<input type="checkbox" name="disable_emoticons" id="disable_emoticons" />&nbsp;<label for="disable_emoticons">{$L_DISABLEEMOTICONS}</label><br />
 						<input type="checkbox" name="disable_aurls" id="disable_aurls" />&nbsp;<label for="disable_aurls">{$L_PARSEURLS}</label><br />
-						<input type="checkbox" name="enable_sig" id="enable_sig" checked="checked" />&nbsp;<label for="enable_sig">{$L_ATTACHSIGNATURE}</label><br />
-						<input type="checkbox" name="disable_areply" id="disable_areply" />&nbsp;<label for="disable_areply">{$L_NOTIFYONREPLY}</label>
+						<is:logged><input type="checkbox" name="enable_sig" id="enable_sig" checked="checked" />&nbsp;<label for="enable_sig">{$L_ATTACHSIGNATURE}</label><br />
+						<input type="checkbox" name="disable_areply" id="disable_areply" />&nbsp;<label for="disable_areply">{$L_NOTIFYONREPLY}</label></is:logged>
 					</fieldset>
 					<maps:if var="sticky" method="can_add" forum="forum_id">
 					<br />
 					<div align="center">
 						{$L_POSTTOPICAS}: 
-						<input type="radio" name="topic_type" value="1" checked="checked" /> {$L_NORMAL}
-						<maps:if var="sticky" method="can_add" forum="forum_id"><input type="radio" name="topic_type" value="2" /> {$L_STICKYTOPIC}</maps:if>
-						<maps:if var="announce" method="can_add" forum="forum_id"><input type="radio" name="topic_type" value="3" /> {$L_ANNOUNCEMENT}</maps:if>
-						<maps:if var="global" method="can_add" forum="forum_id"><input type="radio" name="topic_type" value="4" /> {$L_GLOBAL}</maps:if>
+						<input type="radio" name="topic_type" id="topic_type" value="1" checked="checked" /> {$L_NORMAL}
+						<maps:if var="sticky" method="can_add" forum="forum_id"><input type="radio" name="topic_type" id="topic_type" value="2" /> {$L_STICKYTOPIC}</maps:if>
+						<maps:if var="announce" method="can_add" forum="forum_id"><input type="radio" name="topic_type" id="topic_type" value="3" /> {$L_ANNOUNCEMENT}</maps:if>
+						<maps:if var="global" method="can_add" forum="forum_id"><input type="radio" name="topic_type" id="topic_type" value="4" /> {$L_GLOBAL}</maps:if>
+						<maps:if var="feature" method="can_add" forum="forum_id"><br /><br /><label for="feature"><input type="checkbox" name="is_feature" id="feature" value="yes" />&nbsp;{$L_FEATURETOPIC}</label></maps:if>
 						<br /><br />
 					</div>
 					<fieldset>
@@ -334,7 +335,15 @@ function emoticon(typed) {
 		disable_aurls.checked		= ({$topic_disable_aurls} == 1) ? true : false;
 		enable_sig.checked			= ({$topic_disable_sig} == 1) ? false : true;
 		disable_areply.checked		= ({$topic_disable_areply} == 1) ? true : false;
-	
+		
+		<maps:if var="sticky" method="can_add" forum="forum_id">
+		setRadio({$topic_topic_type}, 'topic_type');
+		</maps:if>
+		<maps:if var="feature" method="can_add" forum="forum_id">
+		var feature					= document.getElementById('feature');
+		feature.checked				= ({$topic_is_feature} == 1) ? true : false;
+		</maps:if>
+
 	} catch(e) {
 		alert(e.message);
 	}
