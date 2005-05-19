@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.20 2005/05/16 23:33:38 k4st Exp $
+* @version $Id: session.php,v 1.21 2005/05/19 23:44:54 k4st Exp $
 * @package k42
 */
 
@@ -89,7 +89,7 @@ class FADBSession {
 
 		$this->read_stmt->setString(1, $sessid);
 		
-		$result = $this->read_stmt->executeQuery();
+		$result				= $this->read_stmt->executeQuery();
 		
 		$this->is_new		= TRUE;
 		$this->is_first		= TRUE;
@@ -105,16 +105,7 @@ class FADBSession {
 			$this->is_first = ( ($data['location_file'] == $_URL->file) && ($data['location_act'] == @$_URL->args['act']) && ($data['location_id'] == @$_URL->args['id']) ) ? TRUE : FALSE;
 
 		}
-
-		/* Update our user if this person is logged in */
-		if(is_a($data['user'], 'Member')) {
-			$this->user_stmt->setInt(1, time());
-			$this->user_stmt->setString(2, USER_IP);
-			$this->user_stmt->setInt(3, $data['user']->info['id']);
-
-			$this->user_stmt->executeUpdate();
-		}
-	  
+		
 		return $data;
 	}
 
@@ -204,7 +195,8 @@ class FADBSession {
 				}
 			}
 		}
-
+		
+		/* If this person is a guest */
 		if(is_a($_SESSION['user'], 'Guest')) {
 			preg_match("~(". $_DATASTORE['search_spiders']['spiderstrings'] .")~is", USER_AGENT, $matches);
 			
@@ -213,6 +205,17 @@ class FADBSession {
 				$_SESSION['user']->info['name']		= $_DATASTORE['search_spiders']['spidernames'][$matches[1]];
 			}
 		}
+
+		/* Update our user if this person is logged in */
+		if(is_a($_SESSION['user'], 'Member')) {
+			
+			$this->user_stmt->setInt(1, time());
+			$this->user_stmt->setString(2, USER_IP);
+			$this->user_stmt->setInt(3, $_SESSION['user']->info['id']);
+
+			$this->user_stmt->executeUpdate();
+		}
+
 	}
 }
 

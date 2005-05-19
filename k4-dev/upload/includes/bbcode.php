@@ -26,7 +26,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.php,v 1.11 2005/05/16 02:11:03 k4st Exp $
+* @version $Id: bbcode.php,v 1.12 2005/05/19 23:44:53 k4st Exp $
 * @package k42
 */
 
@@ -169,7 +169,7 @@ class BBCodex {
 	 */
 	function bbcode_to_html() {
 		foreach($this->bbcodes as $bb) {
-			$this->text = preg_replace('~\['. $bb['open'] .'\]([^"]+?)\[\/'. $bb['close'] .'\]~i', "<". $bb['html_open'] .">$1</". $bb['html_close'] .">", $this->text);
+			$this->text = preg_replace('~\['. $bb['open'] .'\](.+?)\[\/'. $bb['close'] .'\]~i', "<". $bb['html_open'] .">$1</". $bb['html_close'] .">", $this->text);
 		}
 	}
 
@@ -178,7 +178,7 @@ class BBCodex {
 	 */
 	function html_to_bbcode() {
 		foreach($this->bbcodes as $bb) {
-			$this->text = preg_replace('~\<'. $bb['html_open'] .'\>([^"]+?)\<\/'. $bb['html_close'] .'\>~i', "[". $bb['open'] ."]$1[/". $bb['close'] ."]", $this->text);
+			$this->text = preg_replace('~\<'. $bb['html_open'] .'\>(.+?)\<\/'. $bb['html_close'] .'\>~i', "[". $bb['open'] ."]$1[/". $bb['close'] ."]", $this->text);
 		}
 	}
 	
@@ -212,19 +212,46 @@ class BBCodeTag {
 /**
  * Deal with URL tags
  */
-function bbcode_format_url($url, $type, $alt) {
+function bbcode_format_url($original_url, $type, $alt, $check = FALSE) {
 	
-	$nice_url		= $url;
+	global $_SETTINGS;
+
+	$url		= &new Url($original_url);
+	
+	/* Should we remove query parameters? */
+	if($check) {
+		if(isset($_SETTINGS[$check]) && $_SETTINGS[$check] == 0) {
+			$url->args		= array();
+			$url->anchor	= FALSE;
+		}			
+	}
+
+	$url		= $url->__toString();
+	
+	if(!$url || $url == '') {
+		return '';
+	}
+
+	$nice_url	= $url;
+
 	if(strlen($url) > 45)
 		$nice_url	= substr($url, 0, 15) .'...'. substr($url, -15);
 	
 	if($type == 'adv') {
 		$url	= '<!-- URLADV --><a class="bbcode_url" href="'. $url .'" title="'. $alt .'" target="_blank">'. $alt .'</a><!-- / URLADV -->';
-	} else {
+	} else if($type == 'basic') {
 		$url	= '<!-- URLBASIC --><a class="bbcode_url" href="'. $url .'" title="" target="_blank">'. $nice_url .'</a><!-- / URLBASIC -->';
+	} else {
+		return $url;
 	}
 
 	return $url;
+}
+function callback_format_url($matches) {
+	if(isset($matches[2]))
+		return bbcode_format_url($matches[1], 'adv', $matches[2]);
+	else
+		return bbcode_format_url($matches[1], 'basic', NULL);
 }
 class BBUrl extends BBCodeTag {
 	var $instance;
@@ -233,18 +260,18 @@ class BBUrl extends BBCodeTag {
 		$this->instance		= &$instance;
 	}
 	function to_html() {
-		$this->instance->text = preg_replace('~\[url\=(((https?://|www\.))([^<>*"?&]+|[a-z0-9/\\._\- !]+?))\](.+?)\[\/url\]~iUe', "bbcode_format_url('\\1', 'adv', '\\5')", $this->instance->text);
-		$this->instance->text = preg_replace('~\[url\](((https?://|www\.))([^<>*"?&]+|[a-z0-9/\\._\- !]+?))\[\/url\]~iUe', "bbcode_format_url('\\1', 'basic', NULL)", $this->instance->text);
+		$this->instance->text = preg_replace('~\[url\=(.+?)\](.+?)\[\/url\]~iUe', "bbcode_format_url('\\1', 'adv', '\\2')", $this->instance->text);
+		$this->instance->text = preg_replace('~\[url\](.+?)\[\/url\]~iUe', "bbcode_format_url('\\1', 'basic', NULL)", $this->instance->text);
 		
 		if($this->instance->auto_urls) {
-			$this->instance->text = preg_replace('~(\s|\n)(((https?://|www\.))([^<>*"?&]+|[a-z0-9/\\._\- !]+?))(\s|\n)~iUe', "bbcode_format_url('\\2', 'basic', NULL)", $this->instance->text);
+			$this->instance->text = preg_replace("~(\s|\n|\r|\r\n)(http:/{2}[\w\.]{2,}[/\w\-\.\?\&\=\#]*)(\s|\n|\r|\r\n)~e", "bbcode_format_url('\\2', 'basic', NULL)", $this->instance->text);
 		}
 
 		return $this->instance->text;
 	}
 	function to_bbcode() {
-		$this->instance->text = preg_replace('~\<!-- URLBASIC --><a class="bbcode_url" href="(((https?://|www\.))([^<>*"?&]+|[a-z0-9/\\._\- !]+?))" title="" target="_blank">(.*?)</a><!-- \/ URLBASIC -->~iU', '[url]\\1[/url]', $this->instance->text);
-		$this->instance->text = preg_replace('~\<!-- URLADV --><a class="bbcode_url" href="(((https?://|www\.))([^<>*"?&]+|[a-z0-9/\\._\- !]+?))" title="(.*?)" target="_blank">(.*?)</a><!-- \/ URLADV -->~iU', '[url=\\1]\\5[/url]', $this->instance->text);
+		$this->instance->text = preg_replace('~\<!-- URLBASIC --><a class="bbcode_url" href="(.+?)" title="" target="_blank">(.*?)</a><!-- \/ URLBASIC -->~iU', '[url]\\1[/url]', $this->instance->text);
+		$this->instance->text = preg_replace('~\<!-- URLADV --><a class="bbcode_url" href="(.+?)" title="(.*?)" target="_blank">(.*?)</a><!-- \/ URLADV -->~iU', '[url=\\1]\\2[/url]', $this->instance->text);
 	
 		return $this->instance->text;
 	}
@@ -253,6 +280,13 @@ class BBUrl extends BBCodeTag {
 /**
  * Deal with IMG tags
  */
+function callback_image($matches) {
+	$url		= bbcode_format_url($matches[1], NULL, NULL, 'allowdynimg');
+	if($url && $url != '')
+		return '<!-- IMG --><div class="bbcode_img"><img src="'. $url .'" alt="" border="0" /></div><!-- / IMG -->';
+	else
+		return '[img]'. $matches[1] .'[/img]';
+}
 class BBImg extends BBCodeTag {
 	var $instance;
 
@@ -260,12 +294,12 @@ class BBImg extends BBCodeTag {
 		$this->instance		= &$instance;
 	}
 	function to_html() {
-		$this->instance->text = preg_replace('~\[img\](https?://([^<>*"'. iif($this->instance->settings['allowdynimg'], '?&', '') .']+|[a-z0-9/\\._\- !]+?))\[\/img\]~iU','<!-- IMG --><div class="bbcode_img"><img src="\\1" alt="" border="0" /></div><!-- / IMG -->', $this->instance->text);
+		$this->instance->text = preg_replace_callback('~\[img\](.+?)\[\/img\]~iU', "callback_image", $this->instance->text);
 		
 		return $this->instance->text;
 	}
 	function to_bbcode() {
-		$this->instance->text = preg_replace('~\<!-- IMG --><div class="bbcode_img"><img src="(https?://([^<>*"'. iif($this->instance->settings['allowdynimg'], '?&', '') .']+|[a-z0-9/\\._\- !]+?))" alt="" border="0" /></div><!-- / IMG -->~iU', '[img]\\1[/img]', $this->instance->text);
+		$this->instance->text = preg_replace('~\<!-- IMG --><div class="bbcode_img"><img src="(.+?)" alt="" border="0" /></div><!-- / IMG -->~iU', '[img]\\1[/img]', $this->instance->text);
 	
 		return $this->instance->text;
 	}
@@ -302,12 +336,12 @@ class BBSize extends BBCodeTag {
 		$this->instance		= &$instance;
 	}
 	function to_html() {
-		$this->instance->text = preg_replace('~\[size=([0-9]+?)\]([^"]+?)\[\/size\]~i', '<span style="font-size: \\1pt;">\\2</span>', $this->instance->text);
+		$this->instance->text = preg_replace('~\[size=([0-9]+?)\](.+?)\[\/size\]~i', '<span style="font-size: \\1pt;">\\2</span>', $this->instance->text);
 		
 		return $this->instance->text;
 	}
 	function to_bbcode() {
-		$this->instance->text = preg_replace('~<span style="font-size: ([0-9]+?)pt;">([^"]+?)</span>~i', '[size=\\1]\\2[/size]', $this->instance->text);
+		$this->instance->text = preg_replace('~<span style="font-size: ([0-9]+?)pt;">(.+?)</span>~i', '[size=\\1]\\2[/size]', $this->instance->text);
 	
 		return $this->instance->text;
 	}
@@ -365,7 +399,7 @@ class BBQuote extends BBCodeTag {
 			$this->instance->text = preg_replace('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\: </div><div class="quotecontent" align="left">(.+)</div><br /></div>~isU', '[quote]\\1[/quote]', $this->instance->text);
 		
 		while(preg_match('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\ \( (.*?) \): </div><div class="quotecontent" align="left">(.+)</div><br /></div>~isU', $this->instance->text))
-			$this->instance->text = preg_replace('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\ \( ([^"]+?) \): </div><div class="quotecontent" align="left">(.+)</div><br /></div>~isU', '[quote=\\1]\\2[/quote]', $this->instance->text);
+			$this->instance->text = preg_replace('~<div align="center"><br /><div class="quotetitle" align="left">'. strtoupper($this->lang['L_QUOTE']) .'\ \( (.+?) \): </div><div class="quotecontent" align="left">(.+)</div><br /></div>~isU', '[quote=\\1]\\2[/quote]', $this->instance->text);
 		
 		unset($this->lang);
 
@@ -714,14 +748,14 @@ class BBHtml extends BBCodeTag {
 									
 				switch($tag) {
 					case 'a': {
-						$this->instance->text = preg_replace('~&lt;a href=&quot;(((https?://|www\.))([^<>*"?&]+|[a-z0-9/\\._\- !]+?))&quot;&gt;([^"]+)&lt;/a&gt;~i', '<!-- URLADV --><a class="bbcode_url" href="\\1" title="\\5" target="_blank">\\5</a><!-- / URLADV -->', $this->instance->text);
+						$this->instance->text = preg_replace_callback('~&lt;a href=&quot;(.+?)&quot;&gt;(.+?)&lt;/a&gt;~iU', "callback_format_url", $this->instance->text);
 						break;
 					}
 					case 'br': {
 						$this->instance->text = preg_replace('~&lt;br(([\s]/)?)&gt;~i', '<br />', $this->instance->text);
 					}
 					default: {
-						$this->instance->text = preg_replace('~&lt;'. $tag .'&gt;([^"]+)&lt;/'. $tag .'&gt;~i', '<!-- HTML '. $tag .' --><'. $tag .'>\\1</'. $tag .'><!-- / HTML '. $tag .' -->', $this->instance->text);
+						$this->instance->text = preg_replace('~&lt;'. $tag .'&gt;(.+)&lt;/'. $tag .'&gt;~i', '<!-- HTML '. $tag .' --><'. $tag .'>\\1</'. $tag .'><!-- / HTML '. $tag .' -->', $this->instance->text);
 						break;
 					}
 				}
@@ -749,7 +783,7 @@ class BBHtml extends BBCodeTag {
 						break;
 					}
 					default: {
-						$this->instance->text = preg_replace('~<!-- HTML '. $tag .' --><'. $tag .'>([^"]+)</'. $tag .'><!-- / HTML '. $tag .' -->~i', '<'. $tag .'>\\1</'. $tag .'>', $this->instance->text);
+						$this->instance->text = preg_replace('~<!-- HTML '. $tag .' --><'. $tag .'>(.+)</'. $tag .'><!-- / HTML '. $tag .' -->~i', '<'. $tag .'>\\1</'. $tag .'>', $this->instance->text);
 						break;
 					}
 				}

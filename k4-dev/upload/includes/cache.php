@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: cache.php,v 1.9 2005/05/16 02:11:04 k4st Exp $
+* @version $Id: cache.php,v 1.10 2005/05/19 23:44:53 k4st Exp $
 * @package k42
 */
 
@@ -236,7 +236,7 @@ class DBCache {
 
 		return $contents;
 	}
-	function createCache($allinfo) {
+	function createCache($allinfo, $filename) {
 		
 		$contents				= "<?php \nerror_reporting(E_ALL); \n\nif(!defined('IN_K4')) { \n\texit; \n}";
 		
@@ -245,24 +245,24 @@ class DBCache {
 		$contents				.= "\n?>";
 		
 		/* Create our file */
-		if(file_exists(CACHE_FILE))
-			unlink(CACHE_FILE);
+		if(file_exists($filename))
+			unlink($filename);
 		
-		$handle = @fopen(CACHE_FILE, "w");
-		@chmod(CACHE_FILE, 0777);
+		$handle = @fopen($filename, "w");
+		@chmod($filename, 0777);
 		@fwrite($handle, $contents);
-		@chmod(CACHE_FILE, 0777);
+		@chmod($filename, 0777);
 		@fclose($handle);
 		
-		@touch(CACHE_FILE);
+		@touch($filename);
 		
 		/* Error checking on our newly created file */
-		if(!file_exists(CACHE_FILE) || !is_readable(CACHE_FILE) || !is_writeable(CACHE_FILE)) {
+		if(!file_exists($filename) || !is_readable($filename) || !is_writeable($filename)) {
 			
 			compile_error('An error occured while trying to create the forum cache file.', __FILE__, __LINE__);
 		} else {
 			
-			$lines = file(CACHE_FILE);
+			$lines = file($filename);
 
 			if(count($lines) <= 1 || empty($lines)) {
 				compile_error('An error occured while trying to create the forum cache file. It appears to be empty.', __FILE__, __LINE__);
@@ -273,7 +273,7 @@ class DBCache {
 			 * Need the touch here because for some reason the file changes the mod time in
 			 * some php versions
 			 */
-			@touch(CACHE_FILE);
+			@touch($filename);
 		}
 	}
 }
