@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: functions.inc.php,v 1.7 2005/05/16 02:12:34 k4st Exp $
+* @version $Id: functions.inc.php,v 1.8 2005/05/24 20:03:44 k4st Exp $
 * @package k42
 */
 
@@ -40,6 +40,7 @@ if(!defined('IN_K4')) {
  * Function to force the usergroups out of a malformed serialized array
  */
 function force_usergroups($user) {
+
 	/* Auto-set our groups array so we can default back on it */
 	$groups = array();
 	
@@ -86,6 +87,107 @@ function force_usergroups($user) {
 	}
 
 	return $groups;
+}
+
+/**
+ * Function to check if a user belongs to a usergroup
+ */
+function is_in_group($my_groups, $groups, $my_perms) {
+	
+	if($my_perms >= ADMIN)
+		return TRUE;
+
+	$my_groups			= !is_array($my_groups) || empty($my_groups) ? @unserialize($my_groups) : $my_groups;
+	$groups				= !is_array($groups) || empty($groups) ? @unserialize($groups) : $groups;
+
+	foreach($my_groups as $group_id)
+		if(in_array($group_id, $groups))
+			return TRUE;
+
+	return FALSE;
+}
+
+/**
+ * Function to check if a user is a moderator of a forum
+ */
+function is_moderator($user, $forum) {
+	global $_USERGROUPS;
+
+	if($user['perms'] >= ADMIN)
+		return TRUE;
+
+	$moderators			= !@unserialize($forum['moderating_groups']) ? force_usergroups($forum['moderating_groups']) : unserialize($forum['moderating_groups']);
+				
+	/* Make _sure_ that the moderating groups for this forum are set */
+	//if(!is_array($moderators) || empty($moderators)) {
+	//	if(isset($_USERGROUPS[6]) && $_USERGROUPS[6]['min_perm'] >= ADMIN) {
+	//		$moderators		= array(6);
+	//	} else {
+	//		foreach($_USERGROUPS as $g)
+	//			if($g['min_perm'] >= ADMIN)
+	//				$moderators	= array($g['id']);
+	//	}
+	//}
+	
+	$groups				= array();
+
+	foreach($moderators as $g) {
+		if(isset($_USERGROUPS[$g]))
+			$groups[]	= $g;
+	}
+	
+	if(isset($user['usergroups'])) {
+		$my_groups			= !@unserialize($user['usergroups']) ? force_usergroups($user['usergroups']) : unserialize($user['usergroups']);
+
+		/* Do we toggle our moderator's panel? */
+		if(is_in_group($my_groups, $groups, $user['perms'])) {
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+function rewrite_file($filename, $time_interval) {
+	if(file_exists($filename) && is_readable($filename) && is_writable($filename)) {
+		
+		if(time() > (filemtime($filename) + $time_interval)) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+
+	} else {
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+function referer() {
+
+	$url			= &new Url($_SERVER['HTTP_REFERER']);
+	$url->scheme	= FALSE;
+	$url->user		= FALSE;
+	$url->host		= FALSE;
+	$url->path		= FALSE;
+
+	$url			= substr($url->__toString(), 1);
+	
+	return $url;
+}
+
+function forum_url() {
+	global $_URL;
+
+	$url			= &new Url($_URL->__toString());
+	$url->file		= FALSE;
+	$url->anchor	= FALSE;
+	$url->args		= array();
+
+	$url			= $url->__toString();
+	
+	return $url;
 }
 
 /**
@@ -215,6 +317,68 @@ function bbendofday() {
 	$endofday		= $hour_now + $min_now + $sec_now;
 
 	return time() + $endofday;
+}
+
+/* Function to make pagination */
+function paginate($count, $first, $prev, $separator, $next, $last, $limit, $id) {
+	
+	global $_URL;
+	
+	$page				= isset($_URL->args['page']) && ctype_digit($_URL->args['page']) ? intval($_URL->args['page']) : 1;
+	$limit				= isset($_URL->args['limit']) && ctype_digit($_URL->args['limit']) ? intval($_URL->args['limit']) : $limit;
+	
+	$url				= new Url($_URL->__toString());
+	$url->file			= 'viewtopic.php';
+	$url->args['id']	= intval($id);
+
+	$before				= 3;
+	$after				= 3;
+	
+	$num_pages			= ceil($count/$limit);
+
+	$page_start			= ($page - $before) < 1 ? 1 : $page - $before;
+	$page_end			= ($page + $after) > $num_pages ? $num_pages : $page + $after;
+	
+	$url->args['page'] = $page;
+	$url->args['limit']= $limit;
+
+	if($count > $limit) {
+		
+		$str = '<div style="float: right;"><table celpadding="0" cellspacing="1" border="0" class="forum_content"><tr>';
+		
+		if($page > 1 ) {
+			
+			$str .= '<td class="alt2" style="padding:2px;"><a href="'. $url->__toString() .'" class="minitext">'. $first .'</a></td>';
+			$url->args['page'] = ($page - 1) <= 0 ? 1 : ($page - 1);
+			$str .= '<td class="alt2" style="padding:2px;"><a href="'. $url->__toString() .'" class="minitext">'. $prev .'</a></td>';
+		}
+
+		//$str .= '(';
+		for($i = $page_start; $i <= $page_end; $i++) {
+			$url->args['page']		= $i;
+			
+			$str					.= '<td class="alt1" style="padding:2px;"><a href="'. $url->__toString() .'" class="minitext">'. $i .'</a></td>';
+			if($i != $page_end)
+				$str				.= $separator;
+
+		}
+		//$str .= ')';
+		
+		if($page != $num_pages) {
+			
+			if($page != $num_pages) {
+				$url->args['page']	= ($page + 1) < $num_pages ? ($page + 1) : $num_pages;
+				$str .= '<td class="alt2" style="padding:2px;"><a href="'. $url->__toString() .'" class="minitext">'. $next .'</a></td>';
+			}
+
+			$url->args['page']		= $num_pages;
+			$str					.= '<td class="alt2" style="padding:2px;"><a href="'. $url->__toString() .'" class="minitext">'. $last .'</a></td>';
+		}
+		
+		$str .= '</tr></table></div>';
+
+		return $str;
+	}
 }
 
 /* I got the following two functions, to check an email address from php.net comments,

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: javascript.js,v 1.6 2005/05/12 19:49:47 k4st Exp $
+* @version $Id: javascript.js,v 1.7 2005/05/24 20:07:17 k4st Exp $
 * @package k42
 */
 
@@ -102,6 +102,110 @@ function iif(condition, trueval, falseval) {
 		return trueval;
 	} else {
 		return falseval;
+	}
+}
+
+/**
+ * Select topic(s) for moderation
+ */
+var topics	= new Array()
+function select_topic(topic_id, button_id, input_id, savetopic_id) {
+	if(topics) {
+		var button		= document.getElementById(button_id);
+		var savetopic	= document.getElementById(savetopic_id);
+
+		if(button && savetopic) {
+			try {
+				if(in_array(topics, topic_id)) {
+					array_unset(topics, topic_id);
+					button_regex		= new RegExp("selected\\.gif$");
+					button.src			= button.src.replace(button_regex, 'unselected.gif');
+					savetopic.style.display = 'none';
+				} else {
+					array_push(topics, topic_id);
+					button_regex		= new RegExp("unselected\\.gif$");
+					button.src			= button.src.replace(button_regex, 'selected.gif');
+				}
+				collect_topics(input_id);
+			} catch(e) {
+				alert(e.message);
+			}
+		}
+	}
+}
+function collect_topics(id) {
+	
+	var str		= ''
+	var input	= document.getElementById(id);
+	
+	if(topics && input) {
+		for(var i = 0; i < sizeof(topics); i++) {
+			if(topics[i] && topics[i] != '' && topics[i] != 0) {
+				str	+= (i == 0) ? topics[i] : '|' + topics[i];
+			}
+		}
+		
+		input.value = str;
+	}	
+}
+function adv_edit(edit_id, topic_url, checkbox_id, submit_button, topics_list) {
+	var topic_name	= document.getElementById(edit_id);
+	var checkbox	= document.getElementById(checkbox_id);
+	var s_button	= document.getElementById(submit_button);
+	var topics		= document.getElementById(topics_list);
+	
+	if(topics && checkbox) {
+		topics		= topics.value.split("|");
+		id			= edit_id.substring(13)
+		
+		if(in_array(id, topics)) {
+			button_regex		= new RegExp("unselected\\.gif$");
+			checkbox.src		= checkbox.src.replace(button_regex, 'selected.gif');
+		}
+	}
+
+	if(topic_name && checkbox) {
+		
+		try {
+			topic_name.onfocus = function() {
+				
+				checkbox_regex	= new RegExp("unselected\\.gif$");
+				edit			= checkbox.src.match(checkbox_regex);
+				
+				if(edit) {
+					this.blur();
+				} else {
+					s_button.style.display = 'block';
+				}
+			}
+
+			topic_name.onclick = function() {
+
+				checkbox_regex	= new RegExp("unselected\\.gif$");
+				edit			= checkbox.src.match(checkbox_regex);
+				
+				if(edit) {
+					document.location = topic_url;
+				} else {
+					s_button.style.display = 'block';
+				}
+			}
+		
+			topic_name.onmouseover = function() {
+				
+				checkbox_regex	= new RegExp("unselected\\.gif$");
+				edit			= checkbox.src.match(checkbox_regex);
+
+				if(edit) {
+					try { topic_name.style.cursor = 'pointer'; } catch(e) { topic_name.style.cursor = 'hand'; }
+				} else {
+					topic_name.style.cursor = 'text';
+				}
+			}
+
+		} catch(e) {
+			alert(e.message);
+		}
 	}
 }
 

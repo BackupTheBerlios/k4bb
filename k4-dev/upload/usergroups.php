@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: usergroups.php,v 1.1 2005/05/16 02:10:03 k4st Exp $
+* @version $Id: usergroups.php,v 1.2 2005/05/24 20:09:16 k4st Exp $
 * @package k42
 */
 
@@ -82,7 +82,7 @@ class DefaultEvent extends Event {
 			if($group['mod_name'] == '' || $group['mod_id'] == 0) {
 				
 				/* Get our administrator */
-				$admin		= $dba->getRow("SELECT * FROM ". USERS ." WHERE perms >= ". intval(ADMIN) ." ORDER BY perms,id DESC LIMIT 1");
+				$admin		= $dba->getRow("SELECT * FROM ". USERS ." WHERE perms >= ". intval(ADMIN) ." ORDER BY perms,id ASC LIMIT 1");
 				$dba->executeUpdate("UPDATE ". USERGROUPS  ." SET mod_name = '". $dba->quote($admin['name']) ."', mod_id = ". intval($admin['id']) ." WHERE id = ". intval($group['id']));
 				
 				/* Change the file modification time of our cache file */

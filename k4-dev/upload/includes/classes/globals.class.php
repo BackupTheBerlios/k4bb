@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: globals.class.php,v 1.3 2005/04/19 21:51:27 k4st Exp $
+* @version $Id: globals.class.php,v 1.4 2005/05/24 20:01:31 k4st Exp $
 * @package k42
 */
 
@@ -70,6 +70,8 @@ class Globals {
 		
 		if(isset($stack->globals[$varname]))
 			return $stack->globals[$varname];
+
+		return FALSE;
 	}
 	function is_set($varname) {
 		$stack = &Globals::getStack();

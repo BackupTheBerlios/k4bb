@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewtopic.php,v 1.11 2005/05/16 02:10:03 k4st Exp $
+* @version $Id: viewtopic.php,v 1.12 2005/05/24 20:09:16 k4st Exp $
 * @package k42
 */
 
@@ -67,6 +67,22 @@ class DefaultEvent extends Event {
 			return TRUE;
 		}
 
+		if($topic['queue'] == 1) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPICVIEW'));
+			$template->setInfo('content', $template->getVar('L_TOPICPENDINGMOD'), FALSE);
+			
+			return TRUE;
+		}
+
+		if($topic['display'] == 0) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPICVIEW'));
+			$template->setInfo('content', $template->getVar('L_TOPICISHIDDEN'), FALSE);
+			
+			return TRUE;
+		}
+
 		/* Get the current forum */
 		$forum				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($topic['forum_id']));
 
@@ -97,7 +113,7 @@ class DefaultEvent extends Event {
 		$location_id		= isset($_URL->args['id']) ? $dba->Quote(intval($_URL->args['id'])) : 0;
 		
 		/* Set the extra SQL query fields to check */
-		$extra				= " AND s.location_file = '". $dba->Quote($_URL->file) ."' AND s.location_id = ". $location_id;	
+		$extra				= " AND (s.location_file = '". $dba->Quote($_URL->file) ."' AND s.location_id = ". $location_id .")";	
 		
 		$expired			= time() - ini_get('session.gc_maxlifetime');
 
@@ -110,9 +126,9 @@ class DefaultEvent extends Event {
 			/* Set the users browsing list */
 			$template->setList('users_browsing', $users_browsing);
 
-			$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members') + iif(is_a($session['user'], 'Member') && $_SESS->is_first, 1, 0),
+			$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members'),
 							'num_invisible'		=> Globals::getGlobal('num_online_invisible'),
-							'num_online_total'	=> $num_online_total + iif(is_a($session['user'], 'Guest') && $_SESS->is_first, 1, 0)
+							'num_online_total'	=> $num_online_total,
 							);
 		
 			$stats['num_guests'] = ($stats['num_online_total'] - $stats['num_online_members'] - $stats['num_invisible']);
@@ -147,6 +163,18 @@ class DefaultEvent extends Event {
 			}
 		}
 		
+		/**
+		 * Is this user subscribed to this topic?
+		 */
+		$subscription				= $dba->getRow("SELECT * FROM ". SUBSCRIPTIONS ." WHERE topic_id = ". intval($topic['id']) ." AND user_id = ". intval($user['id']));
+		if(is_array($subscription) && !empty($subscription)) {
+			
+			if($subscription['last_visit'] < $topic['reply_time']) {
+				/* Set the user to keep subscribing to this topic */
+				$dba->executeUpdate("UPDATE ". SUBSCRIPTIONS ." SET requires_revisit = 0, last_visit = ". time() ." WHERE topic_id = ". intval($topic['id']) ." AND user_id = ". intval($user['id']));
+			}
+		}
+			
 		/* Add the topic info to the template */
 		foreach($topic as $key => $val)
 			$template->setVar('topic_'. $key, $val);
@@ -172,9 +200,11 @@ class DefaultEvent extends Event {
 			$template->setRedirect('viewtopic.php?id='. $topic['id'] .'&limit='. $perpage .'&page='. $num_pages, 3);
 		}
 		
+		$sort_orders				= array('name','created','id','poster_name');
+
 		/* Get the replies for this topic */
 		$topic['daysprune']			= isset($request['daysprune']) && ctype_digit($request['daysprune']) ? iif(($request['daysprune'] == -1), 0, intval($request['daysprune'])) : 0;
-		$topic['sortorder']			= isset($request['order']) && ($request['order'] == 'ASC' || $request['order'] == 'DESC') ? $request['order'] : 'DESC';
+		$topic['sortorder']			= isset($request['order']) && ($request['order'] == 'ASC' || $request['order'] == 'DESC') ? $request['order'] : 'ASC';
 		$topic['sortedby']			= isset($request['sort']) && in_array($request['sort'], $sort_orders) ? $request['sort'] : 'created';
 		$topic['start']				= ($page - 1) * $perpage;
 		$topic['postsperpage']		= $perpage;
@@ -183,16 +213,19 @@ class DefaultEvent extends Event {
 		$result						= &$dba->executeQuery("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE ((lower(i.name) LIKE lower('%". $dba->quote($topic['name']) ."%') OR lower(i.name) LIKE lower('%". $dba->quote($topic['body_text']) ."%')) OR (lower(t.body_text) LIKE lower('%". $dba->quote($topic['name']) ."%') OR lower(t.body_text) LIKE lower('%". $dba->quote($topic['body_text']) ."%'))) AND t.is_draft = 0 AND i.id <> ". intval($topic['id']));
 		
 		if($result->numrows() > 0) {
-			$it							= &new TopicsIterator($result, &$session, $template->getVar('IMG_DIR'));
+			$it							= &new TopicsIterator($result, &$session, $template->getVar('IMG_DIR'), $forum);
 			$template->setList('similar_topics', $it);
 			$template->setFile('similar_topics', 'similar_topics.html');
 		}
 
 		/* set the topic iterator */
 		$topic_list					= &new TopicIterator($topic, TRUE);
-		
 		$template->setList('topic', $topic_list);
 		
+		$template->setVar('next_oldest', intval($dba->getValue("SELECT id FROM ". INFO ." WHERE id < ". $topic['id'] ." AND row_type = ". TOPIC ." LIMIT 1")));
+		$template->setVar('next_newest',intval($dba->getValue("SELECT id FROM ". INFO ." WHERE id > ". $topic['id'] ." AND row_type = ". TOPIC ." LIMIT 1")));
+		
+		/* Set the file we need */
 		$template->setFile('content', 'viewtopic.html');
 
 		return TRUE;
@@ -201,6 +234,8 @@ class DefaultEvent extends Event {
 
 $app = new Forum_Controller('forum_base.html');
 
+$app->AddEvent('track', new SubscribeTopic);
+$app->AddEvent('untrack', new UnsubscribeTopic);
 //$app->AddEvent('markforums', new MarkCategoryForumsRead);
 
 $app->ExecutePage();

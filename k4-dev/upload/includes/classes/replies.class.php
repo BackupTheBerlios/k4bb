@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: replies.class.php,v 1.7 2005/05/16 02:51:28 k4st Exp $
+* @version $Id: replies.class.php,v 1.8 2005/05/24 20:01:31 k4st Exp $
 * @package k42
 */
 
@@ -46,7 +46,7 @@ class PostReply extends Event {
 	}
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
-		global $_QUERYPARAMS, $_DATASTORE;
+		global $_QUERYPARAMS, $_DATASTORE, $_SETTINGS;
 
 		$this->dba			= &$dba;
 		
@@ -183,6 +183,7 @@ class PostReply extends Event {
 		$created			= time();
 		
 		/* Initialize the bbcode parser with the topic message */
+		$request['message']	= substr($request['message'], $_SETTINGS['postmaxchars']);
 		$bbcode	= &new BBCodex(&$user, $request['message'], $forum['id'], 
 			iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), FALSE, TRUE), 
 			iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), FALSE, TRUE), 
@@ -197,6 +198,8 @@ class PostReply extends Event {
 			/**
 			 * Build the queries
 			 */
+			
+			$dba->beginTransaction();
 
 			/* Prepare the queries */
 			$update_a			= &$dba->prepareStatement("UPDATE ". INFO ." SET row_right = row_right+2 WHERE row_left < ? AND row_right >= ?");
@@ -287,6 +290,8 @@ class PostReply extends Event {
 			$forum_update->executeUpdate();
 			$topic_update->executeUpdate();
 			$datastore_update->executeUpdate();
+			
+			$dba->commitTransaction();
 
 			/* set the breadcrumbs bit */
 			$template	= BreadCrumbs($template, $template->getVar('L_POSTREPLY'), $parent['row_left'], $parent['row_right']);
@@ -296,6 +301,25 @@ class PostReply extends Event {
 				@unlink(CACHE_FILE);
 			}
 			
+			set_send_reply_mail($topic['id']);
+			
+			/**
+			 * Subscribe this user to the topic
+			 */
+			$is_subscribed		= $dba->getRow("SELECT * FROM ". SUBSCRIPTIONS ." WHERE user_id = ". intval($user['id']) ." AND topic_id = ". intval($topic['id']));
+			if(isset($request['disable_areply']) && $request['disable_areply'] == 'on') {
+				if(!is_array($is_subscribed) || empty($is_subscribed)) {
+					$subscribe			= &$dba->prepareStatement("INSERT INTO ". SUBSCRIPTIONS ." (user_id,user_name,topic_id,forum_id,email,category_id) VALUES (?,?,?,?,?,?)");
+					$subscribe->setInt(1, $user['id']);
+					$subscribe->setString(2, $user['name']);
+					$subscribe->setInt(3, $topic['id']);
+					$subscribe->setInt(4, $forum['id']);
+					$subscribe->setString(5, $user['email']);
+					$subscribe->setInt(6, $forum['category_id']);
+					$subscribe->executeUpdate();
+				}
+			}
+
 			/* Redirect the user */
 			$template->setInfo('content', sprintf($template->getVar('L_ADDEDREPLY'), htmlentities($request['name'], ENT_QUOTES), $topic['name']));
 			$template->setRedirect('findpost.php?id='. $reply_id, 3);
@@ -321,7 +345,8 @@ class PostReply extends Event {
 			/* Set the forum info to the template */
 			foreach($forum as $key => $val)
 				$template->setVar('forum_'. $key, $val);
-									
+			
+			/* Set template information for this iterator */								
 			$reply_preview	= array(
 								'name' => htmlentities($request['name'], ENT_QUOTES),
 								'body_text' => $body_text,
@@ -508,7 +533,7 @@ class EditReply extends Event {
 class UpdateReply extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
-		global $_QUERYPARAMS, $_DATASTORE;
+		global $_QUERYPARAMS, $_DATASTORE, $_SETTINGS;
 
 		/* Check the request ID */
 		if(!isset($request['forum_id']) || !$request['forum_id'] || intval($request['forum_id']) == 0) {
@@ -569,6 +594,24 @@ class UpdateReply extends Event {
 			$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
 			return TRUE;
 		}
+		
+		/* is this topic part of the moderator's queue? */
+		if($topic['queue'] == 1) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPICVIEW'));
+			$template->setInfo('content', $template->getVar('L_TOPICPENDINGMOD'), FALSE);
+			
+			return TRUE;
+		}
+
+		/* Is this topic hidden? */
+		if($topic['display'] == 0) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPICVIEW'));
+			$template->setInfo('content', $template->getVar('L_TOPICISHIDDEN'), FALSE);
+			
+			return TRUE;
+		}
 
 		if(!$reply || !is_array($reply) || empty($reply)) {
 			/* set the breadcrumbs bit */
@@ -595,6 +638,7 @@ class UpdateReply extends Event {
 		$template	= BreadCrumbs($template, $template->getVar('L_EDITREPLY'), $reply['row_left'], $reply['row_right']);
 				
 		/* Initialize the bbcode parser with the topic message */
+		$request['message']	= substr($request['message'], $_SETTINGS['postmaxchars']);
 		$bbcode	= &new BBCodex(&$user, $request['message'], $forum['id'], 
 			iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), FALSE, TRUE), 
 			iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), FALSE, TRUE), 
@@ -637,6 +681,30 @@ class UpdateReply extends Event {
 			$update_a->executeUpdate();
 			$update_b->executeUpdate();
 			
+			/**
+			 * Subscribe/Unsubscribe this user to the topic
+			 */
+			$is_subscribed		= $dba->getRow("SELECT * FROM ". SUBSCRIPTIONS ." WHERE user_id = ". intval($user['id']) ." AND topic_id = ". intval($topic['id']));
+			if(isset($request['disable_areply']) && $request['disable_areply'] == 'on') {
+				if(!is_array($is_subscribed) || empty($is_subscribed)) {
+					$subscribe			= &$dba->prepareStatement("INSERT INTO ". SUBSCRIPTIONS ." (user_id,user_name,topic_id,forum_id,email,category_id) VALUES (?,?,?,?,?,?)");
+					$subscribe->setInt(1, $user['id']);
+					$subscribe->setString(2, $user['name']);
+					$subscribe->setInt(3, $topic['id']);
+					$subscribe->setInt(4, $forum['id']);
+					$subscribe->setString(5, $user['email']);
+					$subscribe->setInt(6, $forum['category_id']);
+					$subscribe->executeUpdate();
+				}
+			} else if(!isset($request['disable_areply']) || !$request['disable_areply']) {
+				if(is_array($is_subscribed) && !empty($is_subscribed)) {
+					$subscribe			= &$dba->prepareStatement("DELETE FROM ". SUBSCRIPTIONS ." WHERE user_id=? AND topic_id=?");
+					$subscribe->setInt(1, $user['id']);
+					$subscribe->setInt(2, $topic['id']);
+					$subscribe->executeUpdate();
+				}
+			}
+
 			/* Redirect the user */
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDREPLY'), htmlentities($request['name'], ENT_QUOTES)));
 			$template->setRedirect('findpost.php?id='. $reply['id'], 3);
@@ -825,11 +893,11 @@ class DeleteReply extends Event {
 		$num_replies		= @intval(($reply['row_right'] - $reply['row_left'] - 1) / 2);
 		
 		/* Get that last topic in this forum */
-		$last_topic			= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE t.is_draft=0 ORDER BY i.created DESC LIMIT 1");
+		$last_topic			= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE t.is_draft=0 AND t.forum_id=". intval($reply['forum_id']) ." ORDER BY i.created DESC LIMIT 1");
 		$last_topic			= !$last_topic || !is_array($last_topic) ? array() : $last_topic;
 		
 		/* Get that last post in this forum that's not part of/from this topic */
-		$last_post			= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['reply'] ." FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON r.reply_id = i.id WHERE r.reply_id <> ". intval($reply['id']) ." ORDER BY i.created DESC LIMIT 1");
+		$last_post			= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['reply'] ." FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON r.reply_id = i.id WHERE r.reply_id <> ". intval($reply['id']) ." AND r.forum_id=". intval($reply['forum_id']) ." ORDER BY i.created DESC LIMIT 1");
 		$last_post			= !$last_post || !is_array($last_post) ? $last_topic : $last_post;
 		
 		/* Should the last post be the last topic? */
@@ -839,6 +907,8 @@ class DeleteReply extends Event {
 		 * Update the forum and the datastore
 		 */
 		
+		$dba->beginTransaction();
+
 		$forum_update		= &$dba->prepareStatement("UPDATE ". FORUMS ." SET posts=posts-?,replies=replies-?,post_created=?,post_name=?,post_uname=?,post_id=?,post_uid=?,post_posticon=? WHERE forum_id=?");
 		$datastore_update	= &$dba->prepareStatement("UPDATE ". DATASTORE ." SET data=? WHERE varname=?");
 			
@@ -883,10 +953,12 @@ class DeleteReply extends Event {
 		/* Now remove the information stored in the topics and replies table */
 		$dba->executeUpdate("DELETE FROM ". REPLIES ." WHERE reply_id = ". intval($reply['id']));
 		
+		$dba->commitTransaction();
+
 		if(!@touch(CACHE_FILE, time()-86460)) {
 			@unlink(CACHE_FILE);
 		}
-
+		
 		/* Redirect the user */
 		$template->setInfo('content', sprintf($template->getVar('L_DELETEDREPLY'), $reply['name'], $topic['name']));
 		$template->setRedirect('viewtopic.php?id='. $topic['id'], 3);

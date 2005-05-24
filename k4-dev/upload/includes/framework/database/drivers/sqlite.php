@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: sqlite.php,v 1.8 2005/05/12 01:37:42 k4st Exp $
+* @version $Id: sqlite.php,v 1.9 2005/05/24 20:04:07 k4st Exp $
 * @package k42
 */
 
@@ -108,6 +108,11 @@ class SQLiteConnection extends FADBConnection {
 		if (!isset($info['database']) || !isset($info['directory'])) {
 			$this->valid = FALSE;
 			return Error::pitch(new FAError("Missing required connection information.", __FILE__, __LINE__));
+		}
+		
+		if(!function_exists('sqlite_open')) {
+			$this->valid = FALSE;
+			return Error::pitch(new FAError("Please make sure that SQLite is properly installed.", '--', '--'));
 		}
 
 		$link = @sqlite_open($info['directory'] .'/'. $info['database'], 0666);
@@ -299,7 +304,7 @@ class SQLiteConnection extends FADBConnection {
 							$createtesttableSQL				= substr($createtesttableSQL,0,strlen($createtesttableSQL)-1).',';
 							
 							for($i = 1; $i < sizeof($defparts); $i++) {
-								$createtesttableSQL.=' '.$defparts[$i];
+								$createtesttableSQL			.= ' '.$defparts[$i];
 							}
 							
 							$createtesttableSQL				.= ')';
@@ -401,7 +406,7 @@ class SQLiteConnection extends FADBConnection {
 				 */
 				
 				/* Begin the transaction */
-				$this->executeUpdate("BEGIN TRANSACTION");
+				$this->beginTransaction();
 				
 				/* Create our temporary table */
 				$this->executeUpdate($createtemptableSQL);
@@ -422,7 +427,7 @@ class SQLiteConnection extends FADBConnection {
 				$this->executeUpdate($droptempsql);
 				
 				/* Finish the transaction */
-				$this->executeUpdate("COMMIT");
+				$this->commitTransaction();
 
 			} else {
 				error::pitch(new FAError('Non-existant table: '. $table, __FILE__, __LINE__));
@@ -431,6 +436,12 @@ class SQLiteConnection extends FADBConnection {
 
 			return true;
 		}
+	}
+	function beginTransaction() {
+		$this->executeUpdate("BEGIN TRANSACTION");
+	}
+	function commitTransaction() {
+		$this->executeUpdate("COMMIT");
 	}
 }
 

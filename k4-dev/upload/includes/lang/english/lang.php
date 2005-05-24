@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author James Logsdon
-* @version $Id: lang.php,v 1.9 2005/05/07 15:32:20 k4st Exp $
+* @version $Id: lang.php,v 1.10 2005/05/24 20:05:09 k4st Exp $
 * @package k42
 */
 
@@ -41,6 +41,8 @@ define('LANG_DIR', dirname(__FILE__));
 include LANG_DIR . '/general.php';
 include LANG_DIR . '/blog.php';
 include LANG_DIR . '/admin.php';
+include LANG_DIR . '/mod.php';
+include LANG_DIR . '/mail.php';
 
 $GLOBALS['lang'] = $lang;
 

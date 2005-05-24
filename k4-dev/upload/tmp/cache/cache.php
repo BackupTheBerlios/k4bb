@@ -5,19 +5,19 @@ if(!defined('IN_K4')) {
 	exit; 
 }
 
-$cache = array (
+$cache += array (
   'k4_datastore' => 
   array (
     'maxloggedin' => 
     array (
-      'maxonline' => 2,
-      'maxonlinedate' => 1115924545,
+      'maxonline' => 100,
+      'maxonlinedate' => 1116773399,
     ),
     'forumstats' => 
     array (
-      'num_topics' => 0,
+      'num_topics' => '2',
       'num_replies' => 0,
-      'num_members' => 1,
+      'num_members' => 2,
     ),
     'search_spiders' => 
     array (
@@ -36,9 +36,9 @@ $cache = array (
   ),
   'k4_usergroups' => 
   array (
-    4 => 
+    6 => 
     array (
-      'id' => '4',
+      'id' => '6',
       'name' => 'Administrators',
       'nicename' => 'Board Admin',
       'description' => 'Administrators of this board.',
@@ -68,9 +68,9 @@ $cache = array (
       'color' => '0E9A04',
       'avatar' => 'moderator.gif',
     ),
-    3 => 
+    4 => 
     array (
-      'id' => '3',
+      'id' => '4',
       'name' => 'Moderators',
       'nicename' => 'Moderator',
       'description' => 'Moderators of this board.',
@@ -84,9 +84,9 @@ $cache = array (
       'color' => '3500CC',
       'avatar' => 'moderator.gif',
     ),
-    6 => 
+    3 => 
     array (
-      'id' => '6',
+      'id' => '3',
       'name' => 'Super Members',
       'nicename' => 'Super Member',
       'description' => 'Super Members of this board.',
@@ -100,9 +100,9 @@ $cache = array (
       'color' => 'D58A32',
       'avatar' => '',
     ),
-    1 => 
+    2 => 
     array (
-      'id' => '1',
+      'id' => '2',
       'name' => 'Registered Users',
       'nicename' => 'Member',
       'description' => 'Registered users of this board.',
@@ -116,9 +116,9 @@ $cache = array (
       'color' => '000000',
       'avatar' => '',
     ),
-    2 => 
+    1 => 
     array (
-      'id' => '2',
+      'id' => '1',
       'name' => 'Pending Users',
       'nicename' => 'Wannabe',
       'description' => 'Users pending registration on this board.',
@@ -167,7 +167,6 @@ $cache = array (
     'displayemails' => '0',
     'secureemail' => '1',
     'allowsignatures' => '1',
-    'newuseremail' => '',
     'requireuniqueemail' => '1',
     'allowregistration' => '1',
     'verifyemail' => '1',
@@ -178,18 +177,17 @@ $cache = array (
     'enablememberlist' => '1',
     'usememberlistadvsearch' => '1',
     'memberlistperpage' => '30',
-    'maxposts' => '15',
     'postmaxchars' => '10000',
     'stopshoutingtitle' => '1',
     'stopshoutingmessage' => '1',
-    'maxthreads' => '25',
     'hotnumberviews' => '150',
     'hotnumberposts' => '15',
     'linktopages' => '1',
-    'movedthreadprefix' => 'Moved: ',
-    'announcementthreadprefix' => 'Announcement: ',
-    'stickythreadprefix' => 'Sticky: ',
-    'pollthreadprefix' => 'Poll: ',
+    'movedtopicprefix' => 'Moved:',
+    'announcementtopicprefix' => 'Announcement:',
+    'stickytopicprefix' => 'Sticky:',
+    'polltopicprefix' => 'Poll:',
+    'featuretopicprefix' => 'Feature:',
     'enablesearches' => '1',
     'searchperpage' => '25',
     'minsearchlength' => '4',
@@ -232,6 +230,7 @@ $cache = array (
   array (
     'field1' => 
     array (
+      'id' => '1',
       'name' => 'field1',
       'title' => 'Address',
       'description' => 'Your home address.',
@@ -257,6 +256,7 @@ $cache = array (
     ),
     'field2' => 
     array (
+      'id' => '2',
       'name' => 'field2',
       'title' => 'Occupation',
       'description' => 'Your occupation.',
@@ -282,6 +282,7 @@ $cache = array (
     ),
     'field3' => 
     array (
+      'id' => '3',
       'name' => 'field3',
       'title' => 'Interests',
       'description' => 'A list of your interests.',
@@ -307,6 +308,7 @@ $cache = array (
     ),
     'field4' => 
     array (
+      'id' => '4',
       'name' => 'field4',
       'title' => 'Biography',
       'description' => 'A short description of yourself.',
@@ -332,6 +334,7 @@ $cache = array (
     ),
     'field5' => 
     array (
+      'id' => '5',
       'name' => 'field5',
       'title' => 'Homepage',
       'description' => 'Your website homepage.',
@@ -372,6 +375,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '0',
       'can_view' => '1',
       'can_add' => '0',
       'can_edit' => '0',
@@ -392,6 +396,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '1',
       'can_view' => '1',
       'can_add' => '0',
       'can_edit' => '0',
@@ -412,6 +417,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '1',
       'can_view' => '1',
       'can_add' => '0',
       'can_edit' => '0',
@@ -432,6 +438,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '3',
       'can_view' => '1',
       'can_add' => '0',
       'can_edit' => '0',
@@ -452,6 +459,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '3',
       'can_view' => '1',
       'can_add' => '0',
       'can_edit' => '0',
@@ -472,6 +480,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '1',
       'can_view' => '1',
       'can_add' => '0',
       'can_edit' => '0',
@@ -492,6 +501,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '1',
       'can_view' => '1',
       'can_add' => '0',
       'can_edit' => '0',
@@ -512,6 +522,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '0',
       'can_view' => '1',
       'can_add' => '9',
       'can_edit' => '9',
@@ -532,6 +543,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '0',
       'can_view' => '1',
       'can_add' => '5',
       'can_edit' => '5',
@@ -552,6 +564,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '9',
       'can_view' => '5',
       'can_add' => '0',
       'can_edit' => '0',
@@ -572,6 +585,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '9',
       'can_view' => '5',
       'can_add' => '0',
       'can_edit' => '0',
@@ -592,6 +606,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '9',
       'can_view' => '5',
       'can_add' => '0',
       'can_edit' => '0',
@@ -612,6 +627,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '0',
       'can_view' => '1',
       'can_add' => '9',
       'can_edit' => '9',
@@ -632,6 +648,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '0',
       'can_view' => '1',
       'can_add' => '9',
       'can_edit' => '9',
@@ -652,6 +669,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '0',
       'can_view' => '1',
       'can_add' => '9',
       'can_edit' => '9',
@@ -672,6 +690,7 @@ $cache = array (
       'forum_id' => '0',
       'user_id' => '0',
       'group_id' => '0',
+      'parent_id' => '0',
       'can_view' => '0',
       'can_add' => '10',
       'can_edit' => '0',

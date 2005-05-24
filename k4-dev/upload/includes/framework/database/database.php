@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: database.php,v 1.2 2005/04/13 02:53:48 k4st Exp $
+* @version $Id: database.php,v 1.3 2005/05/24 20:03:56 k4st Exp $
 * @package k42
 */
 
@@ -64,7 +64,7 @@ class Database {
 
 		if (!is_a($dba, 'FADBConnection'))
 			return Error::pitch(new FAError("Driver class does not extend FADBConnection.", __FILE__, __LINE__));
-
+		
 		// Error is thrown in the constructor (hopefully)
 		$dba->connect($info);
 

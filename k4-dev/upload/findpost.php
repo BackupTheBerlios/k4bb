@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: findpost.php,v 1.3 2005/05/08 23:12:17 k4st Exp $
+* @version $Id: findpost.php,v 1.4 2005/05/24 20:09:16 k4st Exp $
 * @package k42
 */
 
@@ -40,10 +40,18 @@ class DefaultEvent extends Event {
 		
 		global $_QUERYPARAMS;
 		
+		$next		= FALSE;
+		$prev		= FALSE;
+
+		if(isset($request['next']) && intval($request['next']) == 1)
+			$next = TRUE;
+		if(isset($request['prev']) && intval($request['prev']) == 1)
+			$prev = TRUE;
+
 		/**
 		 * Error Checking
 		 */
-		if(!isset($request['id']) || !$request['id'] || intval($request['id']) == 0) {
+		if(!isset($request['id']) || !$request['id'] || intval($request['id']) <= 0) {
 			/* set the breadcrumbs bit */
 			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDPOST'));
 			$template->setInfo('content', $template->getVar('L_POSTDOESNTEXIST'), FALSE);
@@ -51,8 +59,21 @@ class DefaultEvent extends Event {
 
 		$post	= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] ." FROM ". INFO ." i WHERE i.id = ". intval($request['id']));
 		
+		if(!is_array($post) || !$post || empty($post)) {
+			
+			if($next || $prev)
+				header("Location: ". referer());
+
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDPOST'));
+			$template->setInfo('content', $template->getVar('L_POSTDOESNTEXIST'), FALSE);
+		}
+
 		if($post['row_type'] != TOPIC && $post['row_type'] != REPLY) {
 			
+			if($next || $prev)
+				header("Location: ". referer());
+
 			/* set the breadcrumbs bit */
 			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDPOST'));
 			$template->setInfo('content', $template->getVar('L_POSTDOESNTEXIST'), FALSE);
@@ -72,7 +93,10 @@ class DefaultEvent extends Event {
 		/* If this is a reply */	
 		} else {
 			
-			$reply				= $dba->getRow("SELECT ". substr($_QUERYPARAMS['reply'], 1) ." FROM ". REPLIES ." r WHERE r.reply_id = ". intval($post['id']));
+			if($next || $prev)
+				header("Location: ". referer());
+
+			$reply				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['reply'] ." FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON i.id=r.reply_id WHERE r.reply_id = ". intval($post['id']));
 			
 			if(!$reply || !is_array($reply) || empty($reply)) {
 				/* set the breadcrumbs bit */
@@ -116,11 +140,12 @@ class DefaultEvent extends Event {
 			/* If the number of replies on this topic is greater than the posts per page for this forum */
 			if($num_replies > $forum['postsperpage']) {
 				
-				$whereinline	= $dba->getValue("SELECT COUNT(r.reply_id) FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON i.id = r.reply_id WHERE r.topic_id = ". $reply['topic_id'] ." AND i.created < ". $reply['created']);
+				$whereinline	= $dba->getValue("SELECT COUNT(r.reply_id) FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON i.id = r.reply_id WHERE r.topic_id = ". intval($reply['topic_id']) ." AND i.created < ". intval($reply['created']) ." ORDER BY i.created ASC");
 				
-				$page			= ceil($whereinline / $forum['postsperpage']);
+				$page		= ceil($whereinline / $forum['postsperpage']);
+				$page		= $page <= 0 ? 1 : $page;
 
-				header("Location: viewtopic.php?id=". $topic['id'] ."&start=". ($page * $forum['postsperpage']) ."&limit=". $forum['postsperpage'] ."&order=DESC&sort=created&daysprune=0#". $post['id']);
+				header("Location: viewtopic.php?id=". $topic['id'] ."&page=". intval($page) ."&limit=". $forum['postsperpage'] ."&order=ASC&sort=created&daysprune=0#". $post['id']);
 				exit;
 
 			} else {

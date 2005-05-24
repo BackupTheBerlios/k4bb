@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: lazyload.php,v 1.1 2005/05/19 23:44:54 k4st Exp $
+* @version $Id: lazyload.php,v 1.2 2005/05/24 20:03:26 k4st Exp $
 * @package k42
 */
 
@@ -123,7 +123,71 @@ class LazyLoad {
 
 */
 
-function set_send_topic_mail($topic_id) {
+
+/**
+ * This sets the mail queue items for emails that need to be sent out
+ * because people have posted a topic in a forum
+ */
+function set_send_topic_mail($forum_id, $poster_name) {
+
+	global $_DBA, $_QUERYPARAMS, $_SETTINGS, $lang;
+
+	if(ctype_digit($forum_id) && intval($forum_id) != 0) {
+		
+		$forum				= $_DBA->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($forum_id));
+		
+		if(is_array($forum) && !empty($forum)) {
+			
+
+			/**
+			 * Get the subscribers of this topic
+			 */
+			$users			= &$_DBA->executeQuery("SELECT * FROM ". SUBSCRIPTIONS ." WHERE topic_id = 0 AND forum_id = ". intval($forum['id']) ." AND requires_revisit = 0");
+			
+			$subscribers	= array();
+
+			while($users->next()) {
+				
+				$u				= $users->current();
+				$subscribers[]	= array('name' => $u['user_name'], 'id' => $u['id'], 'email' => $u['email'], 'poster_name' => $poster_name);
+
+			}
+			
+			/* Memory Saving */
+			$users->freeResult();
+			unset($users);
+
+			/**
+			 * Insert the data into the mail queue
+			 */
+			$subject			= $lang['L_TOPICPOSTIN'] .": ". $forum['name'];
+			$message			= sprintf($lang['L_FORUMSUBSCRIBEEMAIL'], "%s", "%s", $forum['name'], $forum['id'], $_SETTINGS['bbtitle'], $forum['id']);
+			$userinfo			= serialize($subscribers);
+			
+			$insert				= &$_DBA->prepareStatement("INSERT INTO ". MAILQUEUE ." (subject,message,row_id,row_type,userinfo) VALUES (?,?,?,?,?)");
+			$insert->setString(1, $subject);
+			$insert->setString(2, $message);
+			$insert->setInt(3, $forum['id']);
+			$insert->setInt(4, FORUM);
+			$insert->setString(5, $userinfo);
+
+			$insert->executeUpdate();
+			
+			/* Memory saving */
+			unset($_SETTINGS, $lang, $_QUERYPARAMS, $_DBA);
+
+			if(!@touch(CACHE_EMAIL_FILE, time()-86460)) {
+				@unlink(CACHE_EMAIL_FILE);
+			}
+		}
+	}
+}
+
+/**
+ * This sets the mail queue items for emails that need to be sent out
+ * because people have replied to a topic
+ */
+function set_send_reply_mail($topic_id) {
 
 	global $_DBA, $_QUERYPARAMS, $_SETTINGS, $lang;
 
@@ -144,8 +208,7 @@ function set_send_topic_mail($topic_id) {
 			while($users->next()) {
 				
 				$u				= $users->current();
-				$subscribers[]	= array('name' => $u['name'], 'id' => $u['id'], 'email' => $u['email'], 'poster_name' => $topic['poster_name']);
-
+				$subscribers[]	= array('name' => $u['user_name'], 'id' => $u['id'], 'email' => $u['email'], 'poster_name' => $topic['poster_name'], 'topic_id' => $topic['id']);
 			}
 			
 			/* Memory Saving */
@@ -156,7 +219,7 @@ function set_send_topic_mail($topic_id) {
 			 * Insert the data into the mail queue
 			 */
 			$subject			= $lang['L_REPLYTO'] .": ". $topic['name'];
-			$message			= sprintf($lang['L_TOPICSUBSCRIBEEMAIL'], '%s', $topic['name'], $topic['id'], $_SETTINGS['bbtitle'], $topic['id']);
+			$message			= sprintf($lang['L_TOPICSUBSCRIBEEMAIL'], "%s", "%s", $topic['name'], $topic['id'], $_SETTINGS['bbtitle'], $topic['id']);
 			$userinfo			= serialize($subscribers);
 			
 			$insert				= &$_DBA->prepareStatement("INSERT INTO ". MAILQUEUE ." (subject,message,row_id,row_type,userinfo) VALUES (?,?,?,?,?)");
@@ -167,6 +230,9 @@ function set_send_topic_mail($topic_id) {
 			$insert->setString(5, $userinfo);
 
 			$insert->executeUpdate();
+			
+			/* Memory saving */
+			unset($_SETTINGS, $lang, $_QUERYPARAMS, $_DBA);
 
 			if(!@touch(CACHE_EMAIL_FILE, time()-86460)) {
 				@unlink(CACHE_EMAIL_FILE);
@@ -175,58 +241,145 @@ function set_send_topic_mail($topic_id) {
 	}
 }
 
+/**
+ * Execute our mail queue by sending out an appropriate amount of emails at once
+ */
 function execute_mail_queue() {
 	global $_DBA, $_MAILQUEUE, $_SETTINGS;
 	
-	array_values($_MAILQUEUE);
-	
-	$page				= &new Url(forum_url());
-	$page->args			= array();
-	$page->file			= FALSE;
-	$page->path			= FALSE;
-	$page->anchor		= FALSE;
-	$page->scheme		= FALSE;
-
-	if(isset($_MAILQUEUE[0])) {
+	if(is_array($_MAILQUEUE) && !empty($_MAILQUEUE)) {
+		array_values($_MAILQUEUE);
 		
-		$queue			= $_MAILQUEUE[0];
-	
-		$users			= @unserialize($_EMAILQUEUE[0]['userinfo']);
+		$page				= &new Url(forum_url());
+		$page->args			= array();
+		$page->file			= FALSE;
+		$page->path			= FALSE;
+		$page->anchor		= FALSE;
+		$page->scheme		= FALSE;
 
-		if(is_array($users) && !empty($users)) {
+		if(isset($_MAILQUEUE[0])) {
 			
-			/* Reset the starting point of this array */
-			$users		= array_values($users);
+			$queue			= $_MAILQUEUE[0];
 			
-			/* Loop through the users */
-			for($i = 0; $i < 20; $i++) {
+			$users			= unserialize($_MAILQUEUE[0]['userinfo']);
+
+			if(is_array($users) && !empty($users)) {
 				
-				if(isset($users[$i]) && is_array($users[$i])) {
-					
-					$message	= sprintf($_EMAILQUEUE[0]['message'], $users[$i]['name']);
+				/* Reset the starting point of this array */
+				$users		= array_values($users);
+				$count		= count($users);
+				$user_query	= '';
 
-					/* Email our user */
-					@mail($users[$i]['email'], $_EMAILQUEUE[0]['subject'], $message, "From: \"". $_SETTINGS['bbtitle'] ." Forums\" <noreply@". $page->__toString() .">");
+				/* Loop through the users */
+				for($i = 0; $i < EMAIL_INTERVAL; $i++) {
+					
+					if(isset($users[$i]) && is_array($users[$i]) && intval($users[$i]['id']) != 0) {
+						
+						if($users[$i]['name'] != $users[$i]['poster_name']) {
+
+							$message	= sprintf($_MAILQUEUE[0]['message'], $users[$i]['name'], $users[$i]['poster_name']);
+
+							/* Email our user */
+							@mail($users[$i]['email'], $_MAILQUEUE[0]['subject'], $message, "From: \"". $_SETTINGS['bbtitle'] ." Forums\" <noreply@". $page->__toString() .">");
+							
+							unset($users[$i]);
+						}
+
+						$user_query	.= $i == 0 ? 'user_id = '. intval($users[$i]['id']) : ' OR user_id = '. intval($users[$i]['id']);
+					}
+
 				}
 
-			}
-			
-			/* If we have finished with this queue item */
-			if(count($users) <= 20) {
-				$_DBA->executeUpdate("DELETE FROM ". MAILQUEUE ." WHERE id = ". intval($_MAILQUEUE[0]['id']));
-			}
-			
-			/* Reset the filetime on our email cache file */
-			if(!@touch(CACHE_EMAIL_FILE, time()-86460)) {
-				@unlink(CACHE_EMAIL_FILE);
-			}
-
-		} else {
-			$_DBA->executeUpdate("DELETE FROM ". MAILQUEUE ." WHERE id = ". intval($_MAILQUEUE[0]['id']));
+				/* Update the subscriptions 'requires revisit' field */
+				$_DBA->executeUpdate("UPDATE ". SUBSCRIPTIONS ." SET requires_revisit = 1 WHERE topic_id = ". $queue['row_id'] ." AND (". $user_query .")");
 				
-			/* Reset the filetime on our email cache file */
-			if(!@touch(CACHE_EMAIL_FILE, time()-86460)) {
-				@unlink(CACHE_EMAIL_FILE);
+				/* If we have finished with this queue item */
+				if($count <= EMAIL_INTERVAL) {
+					$_DBA->executeUpdate("DELETE FROM ". MAILQUEUE ." WHERE id = ". intval($_MAILQUEUE[0]['id']));
+				} else {
+					
+					$users		= array_values($users);
+					$update		= $_DBA->prepareStatement("UPDATE ". MAILQUEUE ." SET userinfo=? WHERE id=?");
+					$update->setString(1, serialize($users));
+					$update->setInt(2, $_MAILQUEUE[0]['id']);
+					$update->executeUpdate();
+				}
+				
+				/* Reset the filetime on our email cache file */
+				if(!@touch(CACHE_EMAIL_FILE, time()-86460)) {
+					@unlink(CACHE_EMAIL_FILE);
+				}
+
+			} else {
+				$_DBA->executeUpdate("DELETE FROM ". MAILQUEUE ." WHERE id = ". intval($_MAILQUEUE[0]['id']));
+					
+				/* Reset the filetime on our email cache file */
+				if(!@touch(CACHE_EMAIL_FILE, time()-86460)) {
+					@unlink(CACHE_EMAIL_FILE);
+				}
+			}
+		}
+	}
+}
+
+/**
+ * Execute our topic queue to delete moderated topics
+ */
+function execute_topic_queue() {
+	global $_DBA, $_TOPICQUEUE;
+	
+	if(is_array($_TOPICQUEUE) && !empty($_TOPICQUEUE)) {
+		array_values($_TOPICQUEUE);
+		
+		if(isset($_TOPICQUEUE[0])) {
+			
+			$queue			= $_TOPICQUEUE[0];
+			
+			$topics			= unserialize($_TOPICQUEUE[0]['topicinfo']);
+			
+			if(is_array($topics) && !empty($topics)) {
+				
+				/* Reset the starting point of this array */
+				$topics		= array_values($topics);
+				$count		= count($topics);
+				
+				/* Loop through the users */
+				for($i = 0; $i < TOPIC_INTERVAL; $i++) {
+					
+					if(isset($topics[$i]) && intval($topics[$i]) != 0) {
+						
+						/* Remove this topic */
+						remove_item(intval($topics[$i]), 'topic_id');
+						
+						unset($topics[$i]);
+					}
+
+				}
+				
+				/* If we have finished with this queue item */
+				if($count <= TOPIC_INTERVAL) {
+					$_DBA->executeUpdate("DELETE FROM ". TOPICQUEUE ." WHERE id = ". intval($_TOPICQUEUE[0]['id']));
+				} else {
+					
+					$topics		= array_values($topics);
+					$update		= $_DBA->prepareStatement("UPDATE ". TOPICQUEUE ." SET topicinfo=? WHERE id=?");
+					$update->setString(1, serialize($topics));
+					$update->setInt(2, $_TOPICQUEUE[0]['id']);
+					$update->executeUpdate();
+				}
+				
+				/* Reset the filetime on our email cache file */
+				if(!@touch(CACHE_TOPIC_FILE, time()-86460)) {
+					@unlink(CACHE_TOPIC_FILE);
+				}
+
+			} else {
+				$_DBA->executeUpdate("DELETE FROM ". TOPICQUEUE ." WHERE id = ". intval($_TOPICQUEUE[0]['id']));
+					
+				/* Reset the filetime on our email cache file */
+				if(!@touch(CACHE_TOPIC_FILE, time()-86460)) {
+					@unlink(CACHE_TOPIC_FILE);
+				}
 			}
 		}
 	}

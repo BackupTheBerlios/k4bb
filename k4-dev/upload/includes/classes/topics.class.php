@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topics.class.php,v 1.16 2005/05/16 02:51:28 k4st Exp $
+* @version $Id: topics.class.php,v 1.17 2005/05/24 20:01:31 k4st Exp $
 * @package k42
 */
 
@@ -44,7 +44,7 @@ class PostTopic extends Event {
 	}
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
-		global $_QUERYPARAMS, $_DATASTORE;
+		global $_QUERYPARAMS, $_DATASTORE, $_SETTINGS;
 
 		$this->dba			= &$dba;
 		
@@ -140,6 +140,7 @@ class PostTopic extends Event {
 		/* Set the topic created time */
 		$created			= time();
 		
+		$request['message']	= substr($request['message'], $_SETTINGS['postmaxchars']);
 		/* Initialize the bbcode parser with the topic message */
 		$bbcode	= &new BBCodex(&$user, $request['message'], $forum['id'], 
 			iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), FALSE, TRUE), 
@@ -150,6 +151,25 @@ class PostTopic extends Event {
 		/* Parse the bbcode */
 		$body_text = $bbcode->parse();
 		
+		/**
+		 * Figure out what type of topic type this is
+		 */
+		$topic_type			= isset($request['topic_type']) && intval($request['topic_type']) != 0 ? $request['topic_type'] : TOPIC_NORMAL;
+
+		if($topic_type == TOPIC_STICKY && $user['perms'] < get_map($user, 'sticky', 'can_add', array('forum_id'=>$forum['id']))) {
+			$topic_type		= TOPIC_NORMAL;
+		} else if($topic_type == TOPIC_ANNOUNCE && $user['perms'] < get_map($user, 'announce', 'can_add', array('forum_id'=>$forum['id']))) {
+			$topic_type		= TOPIC_NORMAL;
+		} else if($topic_type == TOPIC_GLOBAL && $user['perms'] < get_map($user, 'global', 'can_add', array('forum_id'=>$forum['id']))) {
+			$topic_type		= TOPIC_NORMAL;
+		}
+
+		$is_feature			= isset($request['is_feature']) && $request['is_feature'] == 'yes' ? 1 : 0;
+		
+		if($is_feature == 1 && $user['perms'] < get_map($user, 'feature', 'can_add', array('forum_id'=>$forum['id']))) {
+			$is_feature		= 0;
+		}
+
 		if($request['submit'] == $template->getVar('L_SUBMIT') || $request['submit'] == $template->getVar('L_SAVEDRAFT')) {
 			
 			/* Does this person have permission to post a draft? */
@@ -162,27 +182,10 @@ class PostTopic extends Event {
 			}
 
 			/**
-			 * Figure out what type of topic type this is
-			 */
-			$topic_type			= isset($request['topic_type']) && intval($request['topic_type']) != 0 ? $request['topic_type'] : TOPIC_NORMAL;
-
-			if($topic_type == TOPIC_STICKY && $user['perms'] < get_map($user, 'sticky', 'can_add', array('forum_id'=>$forum['id']))) {
-				$topic_type		= TOPIC_NORMAL;
-			} else if($topic_type == TOPIC_ANNOUNCE && $user['perms'] < get_map($user, 'announce', 'can_add', array('forum_id'=>$forum['id']))) {
-				$topic_type		= TOPIC_NORMAL;
-			} else if($topic_type == TOPIC_GLOBAL && $user['perms'] < get_map($user, 'global', 'can_add', array('forum_id'=>$forum['id']))) {
-				$topic_type		= TOPIC_NORMAL;
-			}
-
-			$is_feature			= isset($request['is_feature']) && $request['is_feature'] == 'yes' ? 1 : 0;
-			
-			if($is_feature == 1 && $user['perms'] < get_map($user, 'feature', 'can_add', array('forum_id'=>$forum['id']))) {
-				$is_feature		= 0;
-			}
-
-			/**
 			 * Build the queries
 			 */
+			
+			$dba->beginTransaction();
 
 			/* Prepare the queries */
 			$update_a			= &$dba->prepareStatement("UPDATE ". INFO ." SET row_right = row_right+2 WHERE row_left < ? AND row_right >= ?");
@@ -235,6 +238,8 @@ class PostTopic extends Event {
 			$insert_b->setInt(18, $is_feature);
 			$insert_b->executeUpdate();
 			
+			$dba->commitTransaction();
+
 			/** 
 			 * Update the forum, and update the datastore 
 			 */
@@ -288,6 +293,23 @@ class PostTopic extends Event {
 				if(!@touch(CACHE_FILE, time()-86460)) {
 					@unlink(CACHE_FILE);
 				}
+				
+
+				/**
+				 * Subscribe this user to the topic
+				 */
+				if(isset($request['disable_areply']) && $request['disable_areply'] == 'on') {
+					$subscribe			= &$dba->prepareStatement("INSERT INTO ". SUBSCRIPTIONS ." (user_id,user_name,topic_id,forum_id,email,category_id) VALUES (?,?,?,?,?,?)");
+					$subscribe->setInt(1, $user['id']);
+					$subscribe->setString(2, $user['name']);
+					$subscribe->setInt(3, $topic_id);
+					$subscribe->setInt(4, $forum['id']);
+					$subscribe->setString(5, $user['email']);
+					$subscribe->setInt(6, $forum['category_id']);
+					$subscribe->executeUpdate();
+				}
+				
+				set_send_topic_mail($forum['id'], $user['name']);
 
 				/* Redirect the user */
 				$template->setInfo('content', sprintf($template->getVar('L_ADDEDTOPIC'), htmlentities($request['name'], ENT_QUOTES), $forum['name']));
@@ -306,10 +328,12 @@ class PostTopic extends Event {
 			/* Get and set the emoticons and post icons to the template */
 			$emoticons	= &$dba->executeQuery("SELECT * FROM ". EMOTICONS ." WHERE clickable = 1");
 			$posticons	= &$dba->executeQuery("SELECT * FROM ". POSTICONS);
-
+			
+			/* Add the emoticons and the post icons to the template */
 			$template->setList('emoticons', $emoticons);
 			$template->setList('posticons', $posticons);
-
+			
+			/* Set some emoticon information */
 			$template->setVar('emoticons_per_row', $template->getVar('smcolumns'));
 			$template->setVar('emoticons_per_row_remainder', $template->getVar('smcolumns')-1);
 			
@@ -320,7 +344,8 @@ class PostTopic extends Event {
 				$template->setVar('forum_'. $key, $val);
 			
 			$template->setVar('newtopic_action', 'newtopic.php?act=posttopic');
-						
+			
+			/* Set topic array items to be passed to the iterator */			
 			$topic_preview	= array(
 								'name' => htmlentities($request['name'], ENT_QUOTES),
 								'body_text' => $body_text,
@@ -328,6 +353,8 @@ class PostTopic extends Event {
 								'poster_id' => $user['id'],
 								'row_left' => 0,
 								'row_right' => 0,
+								'topic_type' => $topic_type,
+								'is_feature' => $is_feature,
 								'posticon' => iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'),
 								'disable_html' => iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0),
 								'disable_sig' => iif((isset($request['enable_sig']) && $request['enable_sig'] == 'on'), 0, 1),
@@ -343,6 +370,7 @@ class PostTopic extends Event {
 			
 			/* Assign the topic preview values to the template */
 			$topic_preview['body_text'] = $request['message'];
+			
 			foreach($topic_preview as $key => $val)
 				$template->setVar('topic_'. $key, $val);
 			
@@ -355,6 +383,7 @@ class PostTopic extends Event {
 			$template->show('edit_topic');
 			$template->show('topic_id');
 			
+			/* Should she show/hide the 'load draft' button? */
 			$drafts		= $dba->executeQuery("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE t.forum_id = ". intval($forum['id']) ." AND t.is_draft = 1 AND t.poster_id = ". intval($user['id']));
 			if($drafts->numrows() > 0)
 				$template->show('load_button');
@@ -379,7 +408,7 @@ class PostTopic extends Event {
 class PostDraft extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
-		global $_QUERYPARAMS, $_DATASTORE;
+		global $_QUERYPARAMS, $_DATASTORE, $_SETTINGS;
 
 		$this->dba			= &$dba;
 
@@ -448,6 +477,7 @@ class PostDraft extends Event {
 		$created			= time();
 		
 		/* Initialize the bbcode parser with the topic message */
+		$request['message']	= substr($request['message'], $_SETTINGS['postmaxchars']);
 		$bbcode	= &new BBCodex(&$user, $request['message'], $forum['id'], 
 			iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), FALSE, TRUE), 
 			iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), FALSE, TRUE), 
@@ -457,6 +487,26 @@ class PostDraft extends Event {
 		/* Parse the bbcode */
 		$body_text = $bbcode->parse();
 		
+		/**
+		 * Figure out what type of topic type this is
+		 */
+		$topic_type			= isset($request['topic_type']) && intval($request['topic_type']) != 0 ? $request['topic_type'] : TOPIC_NORMAL;
+
+		if($topic_type == TOPIC_STICKY && $user['perms'] < get_map($user, 'sticky', 'can_add', array('forum_id'=>$forum['id']))) {
+			$topic_type		= TOPIC_NORMAL;
+		} else if($topic_type == TOPIC_ANNOUNCE && $user['perms'] < get_map($user, 'announce', 'can_add', array('forum_id'=>$forum['id']))) {
+			$topic_type		= TOPIC_NORMAL;
+		} else if($topic_type == TOPIC_GLOBAL && $user['perms'] < get_map($user, 'global', 'can_add', array('forum_id'=>$forum['id']))) {
+			$topic_type		= TOPIC_NORMAL;
+		}
+
+		$is_feature			= isset($request['is_feature']) && $request['is_feature'] == 'yes' ? 1 : 0;
+		
+		if($is_feature == 1 && $user['perms'] < get_map($user, 'feature', 'can_add', array('forum_id'=>$forum['id']))) {
+			$is_feature		= 0;
+		}
+
+		/* If we are submitting or saving a draft */
 		if($request['submit'] == $template->getVar('L_SUBMIT') || $request['submit'] == $template->getVar('L_SAVEDRAFT')) {
 
 			/**
@@ -464,12 +514,14 @@ class PostDraft extends Event {
 			 */
 			
 			$update_a			= $dba->prepareStatement("UPDATE ". INFO ." SET name=?,created=? WHERE id=?");
-			$update_b			= $dba->prepareStatement("UPDATE ". TOPICS ." SET body_text=?,posticon=?,disable_html=?,disable_bbcode=?,disable_emoticons=?,disable_sig=?,disable_areply=?,disable_aurls=?,is_draft=? WHERE topic_id=?");
+			$update_b			= $dba->prepareStatement("UPDATE ". TOPICS ." SET body_text=?,posticon=?,disable_html=?,disable_bbcode=?,disable_emoticons=?,disable_sig=?,disable_areply=?,disable_aurls=?,is_draft=?,topic_type=?,is_feature=? WHERE topic_id=?");
 			
+			/* Set the informtion */
 			$update_a->setString(1, htmlentities($request['name'], ENT_QUOTES));
 			$update_a->setInt(2, $created);
 			$update_a->setInt(3, $draft['id']);
 			
+			/* Set the topic information */
 			$update_b->setString(1, $body_text);
 			$update_b->setString(2, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
 			$update_b->setInt(3, iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0));
@@ -479,7 +531,9 @@ class PostDraft extends Event {
 			$update_b->setInt(7, iif((isset($request['disable_areply']) && $request['disable_areply'] == 'on'), 1, 0));
 			$update_b->setInt(8, iif((isset($request['disable_aurls']) && $request['disable_aurls'] == 'on'), 1, 0));
 			$update_b->setInt(9, 0);
-			$update_b->setInt(10, $draft['id']);
+			$update_b->setInt(10, $topic_type);
+			$update_b->setInt(11, $is_feature);
+			$update_b->setInt(12, $draft['id']);
 			
 			/**
 			 * Do the queries
@@ -525,10 +579,27 @@ class PostDraft extends Event {
 				@unlink(CACHE_FILE);
 			}
 
+			/**
+			 * Subscribe this user to the topic
+			 */
+			if(isset($request['disable_areply']) && $request['disable_areply'] == 'on') {
+				$subscribe			= &$dba->prepareStatement("INSERT INTO ". SUBSCRIPTIONS ." (user_id,user_name,topic_id,forum_id,email,category_id) VALUES (?,?,?,?,?,?)");
+				$subscribe->setInt(1, $user['id']);
+				$subscribe->setString(2, $user['name']);
+				$subscribe->setInt(3, $draft['id']);
+				$subscribe->setInt(4, $forum['id']);
+				$subscribe->setString(5, $user['email']);
+				$subscribe->setInt(6, $forum['category_id']);
+				$subscribe->executeUpdate();
+			}
+
+			set_send_topic_mail($forum['id'], $user['name']);
+
 			/* Redirect the user */
 			$template->setInfo('content', sprintf($template->getVar('L_ADDEDTOPIC'), htmlentities($request['name'], ENT_QUOTES), $forum['name']));
 			$template->setRedirect('viewtopic.php?id='. $draft['id'], 3);
 		
+		/* If we are previewing */
 		} else {
 			
 			/**
@@ -538,17 +609,20 @@ class PostDraft extends Event {
 			/* Get and set the emoticons and post icons to the template */
 			$emoticons	= &$dba->executeQuery("SELECT * FROM ". EMOTICONS ." WHERE clickable = 1");
 			$posticons	= &$dba->executeQuery("SELECT * FROM ". POSTICONS);
-
+			
+			/* Add the emoticons and posticons */
 			$template->setList('emoticons', $emoticons);
 			$template->setList('posticons', $posticons);
-
+			
+			/* Set some emoticon information */
 			$template->setVar('emoticons_per_row', $template->getVar('smcolumns'));
 			$template->setVar('emoticons_per_row_remainder', $template->getVar('smcolumns')-1);
 			
 			$template->setVar('newtopic_action', 'newtopic.php?act=postdraft');
 
 			$template		= topic_post_options($template, $user, $forum);
-						
+			
+			/* Set topic iterator array elements to be passed to the template */
 			$topic_preview	= array(
 								'id' => @$draft['id'],
 								'name' => htmlentities($request['name'], ENT_QUOTES),
@@ -558,6 +632,8 @@ class PostDraft extends Event {
 								'poster_id' => $user['id'],
 								'row_left' => 0,
 								'row_right' => 0,
+								'topic_type' => $topic_type,
+								'is_feature' => $is_feature,
 								'posticon' => iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'),
 								'disable_html' => iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0),
 								'disable_sig' => iif((isset($request['enable_sig']) && $request['enable_sig'] == 'on'), 0, 1),
@@ -748,7 +824,7 @@ class EditTopic extends Event {
 		$template->show('topic_id');
 		$template->hide('post_topic');
 		$template->show('edit_post');
-		
+
 		/* set the breadcrumbs bit */
 		$template	= BreadCrumbs($template, $template->getVar('L_EDITTOPIC'), $forum['row_left'], $forum['row_right']);
 		
@@ -766,7 +842,7 @@ class EditTopic extends Event {
 class UpdateTopic extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
-		global $_QUERYPARAMS, $_DATASTORE;
+		global $_QUERYPARAMS, $_DATASTORE, $_SETTINGS;
 
 		/* Check the request ID */
 		if(!isset($request['forum_id']) || !$request['forum_id'] || intval($request['forum_id']) == 0) {
@@ -846,6 +922,7 @@ class UpdateTopic extends Event {
 		$template	= BreadCrumbs($template, $template->getVar('L_EDITTOPIC'), $forum['row_left'], $forum['row_right']);
 				
 		/* Initialize the bbcode parser with the topic message */
+		$request['message']	= substr($request['message'], $_SETTINGS['postmaxchars']);
 		$bbcode	= &new BBCodex(&$user, $request['message'], $forum['id'], 
 			iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), FALSE, TRUE), 
 			iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), FALSE, TRUE), 
@@ -857,26 +934,29 @@ class UpdateTopic extends Event {
 		
 		$template->setVar('newtopic_action', 'newtopic.php?act=updatetopic');
 		
+		/* Get the topic type */
+		$topic_type			= isset($request['topic_type']) && intval($request['topic_type']) != 0 ? $request['topic_type'] : TOPIC_NORMAL;
+		
+		/* Check the topic type and check if this user has permission to post that type of topic */
+		if($topic_type == TOPIC_STICKY && $user['perms'] < get_map($user, 'sticky', 'can_add', array('forum_id'=>$forum['id']))) {
+			$topic_type		= TOPIC_NORMAL;
+		} else if($topic_type == TOPIC_ANNOUNCE && $user['perms'] < get_map($user, 'announce', 'can_add', array('forum_id'=>$forum['id']))) {
+			$topic_type		= TOPIC_NORMAL;
+		} else if($topic_type == TOPIC_GLOBAL && $user['perms'] < get_map($user, 'global', 'can_add', array('forum_id'=>$forum['id']))) {
+			$topic_type		= TOPIC_NORMAL;
+		}
+		
+		/* Is this a featured topic? */
+		$is_feature			= isset($request['is_feature']) && $request['is_feature'] == 'yes' ? 1 : 0;
+		if($is_feature == 1 && $user['perms'] < get_map($user, 'feature', 'can_add', array('forum_id'=>$forum['id']))) {
+			$is_feature		= 0;
+		}
+
+		/* If we are saving thos topic */
 		if($request['submit'] == $template->getVar('L_SUBMIT')) {
-			
-			$topic_type			= isset($request['topic_type']) && intval($request['topic_type']) != 0 ? $request['topic_type'] : TOPIC_NORMAL;
-
-			if($topic_type == TOPIC_STICKY && $user['perms'] < get_map($user, 'sticky', 'can_add', array('forum_id'=>$forum['id']))) {
-				$topic_type		= TOPIC_NORMAL;
-			} else if($topic_type == TOPIC_ANNOUNCE && $user['perms'] < get_map($user, 'announce', 'can_add', array('forum_id'=>$forum['id']))) {
-				$topic_type		= TOPIC_NORMAL;
-			} else if($topic_type == TOPIC_GLOBAL && $user['perms'] < get_map($user, 'global', 'can_add', array('forum_id'=>$forum['id']))) {
-				$topic_type		= TOPIC_NORMAL;
-			}
-
-			$is_feature			= isset($request['is_feature']) && $request['is_feature'] == 'yes' ? 1 : 0;
-			
-			if($is_feature == 1 && $user['perms'] < get_map($user, 'feature', 'can_add', array('forum_id'=>$forum['id']))) {
-				$is_feature		= 0;
-			}
 
 			/**
-			 * Build the queries to add the draft
+			 * Build the queries to update the topic
 			 */
 			
 			$update_a			= $dba->prepareStatement("UPDATE ". INFO ." SET name=? WHERE id=?");
@@ -908,6 +988,30 @@ class UpdateTopic extends Event {
 			$update_a->executeUpdate();
 			$update_b->executeUpdate();
 			
+			/**
+			 * Subscribe/Unsubscribe this user to the topic
+			 */
+			$is_subscribed		= $dba->getRow("SELECT * FROM ". SUBSCRIPTIONS ." WHERE user_id = ". intval($user['id']) ." AND topic_id = ". intval($topic['id']));
+			if(isset($request['disable_areply']) && $request['disable_areply'] == 'on') {
+				if(!is_array($is_subscribed) || empty($is_subscribed)) {
+					$subscribe			= &$dba->prepareStatement("INSERT INTO ". SUBSCRIPTIONS ." (user_id,user_name,topic_id,forum_id,email,category_id) VALUES (?,?,?,?,?,?)");
+					$subscribe->setInt(1, $user['id']);
+					$subscribe->setString(2, $user['name']);
+					$subscribe->setInt(3, $topic['id']);
+					$subscribe->setInt(4, $forum['id']);
+					$subscribe->setString(5, $user['email']);
+					$subscribe->setInt(6, $forum['category_id']);
+					$subscribe->executeUpdate();
+				}
+			} else if(!isset($request['disable_areply']) || !$request['disable_areply']) {
+				if(is_array($is_subscribed) && !empty($is_subscribed)) {
+					$subscribe			= &$dba->prepareStatement("DELETE FROM ". SUBSCRIPTIONS ." WHERE user_id=? AND topic_id=?");
+					$subscribe->setInt(1, $user['id']);
+					$subscribe->setInt(2, $topic['id']);
+					$subscribe->executeUpdate();
+				}
+			}
+
 			/* Redirect the user */
 			$template->setInfo('content', sprintf($template->getVar('L_UPDATEDTOPIC'), htmlentities($request['name'], ENT_QUOTES)));
 			$template->setRedirect('viewtopic.php?id='. $topic['id'], 3);
@@ -939,6 +1043,8 @@ class UpdateTopic extends Event {
 								'poster_id' => $user['id'],
 								'row_left' => 0,
 								'row_right' => 0,
+								'topic_type' => $topic_type,
+								'is_feature' => $is_feature,
 								'disable_html' => iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), 1, 0),
 								'disable_sig' => iif((isset($request['enable_sig']) && $request['enable_sig'] == 'on'), 0, 1),
 								'disable_bbcode' => iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), 1, 0),
@@ -1032,7 +1138,7 @@ class DeleteTopic extends Event {
 
 		/* Does this person have permission to remove this topic? */
 		if($topic['poster_id'] == $user['id']) {
-			if(get_map($type, 'can_del', array('forum_id'=>$forum['id'])) > $user['perms']) {
+			if(get_map($user, $type, 'can_del', array('forum_id'=>$forum['id'])) > $user['perms']) {
 				$template->setInfo('content', $template->getVar('L_YOUNEEDPERMS'), FALSE);
 				return TRUE;
 			}
@@ -1069,111 +1175,22 @@ class DeleteTopic extends Event {
 				return TRUE;
 			}
 		}
-				
-		$num_replies		= @intval(($topic['row_right'] - $topic['row_left'] - 1) / 2);
 		
-		/* Get that last topic in this forum that's not this topic */
-		$last_topic			= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id <> ". intval($topic['id']) ." AND t.is_draft=0 ORDER BY i.created DESC LIMIT 1");
-		$last_topic			= !$last_topic || !is_array($last_topic) ? array() : $last_topic;
-		
-		/* Get that last post in this forum that's not part of/from this topic */
-		$last_post			= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['reply'] ." FROM ". REPLIES ." r LEFT JOIN ". INFO ." i ON r.reply_id = i.id WHERE r.topic_id <> ". intval($topic['id']) ." ORDER BY i.created DESC LIMIT 1");
-		$last_post			= !$last_post || !is_array($last_post) ? $last_topic : $last_post;
-		
-		/**
-		 * Update the forum and the datastore
-		 */
-		
-		$forum_update		= &$dba->prepareStatement("UPDATE ". FORUMS ." SET topics=topics-1,posts=posts-?,replies=replies-?,topic_created=?,topic_name=?,topic_uname=?,topic_id=?,topic_uid=?,topic_posticon=?,post_created=?,post_name=?,post_uname=?,post_id=?,post_uid=?,post_posticon=? WHERE forum_id=?");
-		$datastore_update	= &$dba->prepareStatement("UPDATE ". DATASTORE ." SET data=? WHERE varname=?");
-			
-		/* Set the forum values */
-		$forum_update->setInt(1, intval($num_replies)+1);
-		$forum_update->setInt(2, intval($num_replies));
-		$forum_update->setInt(3, @$last_topic['created']);
-		$forum_update->setString(4, @$last_topic['name']);
-		$forum_update->setString(5, @$last_topic['poster_name']);
-		$forum_update->setInt(6, @$last_topic['id']);
-		$forum_update->setInt(7, @$last_topic['poster_id']);
-		$forum_update->setString(8, @$last_topic['posticon']);
-		$forum_update->setInt(9, @$last_post['created']);
-		$forum_update->setString(10, @$last_post['name']);
-		$forum_update->setString(11, @$last_post['poster_name']);
-		$forum_update->setInt(12, @$last_post['id']);
-		$forum_update->setInt(13, @$last_post['poster_id']);
-		$forum_update->setString(14, @$last_post['posticon']);
-		$forum_update->setInt(15, @$forum['id']);
-		
-		/* Set the datastore values */
-		$datastore					= $_DATASTORE['forumstats'];
-		$datastore['num_topics']	= $dba->getValue("SELECT COUNT(*) FROM ". TOPICS ." WHERE is_draft = 0") - 1;
-		$datastore['num_replies']	= $dba->getValue("SELECT COUNT(*) FROM ". REPLIES ." WHERE is_draft = 0") - intval($num_replies);
-		
-		$datastore_update->setString(1, serialize($datastore));
-		$datastore_update->setString(2, 'forumstats');
-		
-		/* Execute the forum and datastore update queries */
-		$forum_update->executeUpdate();
-		$datastore_update->executeUpdate();
-
-		/**
-		 * Change user post counts
-		 */
-		
-		/* Update the user that posted this topic */
-		if($topic['poster_id'] > 0)
-			$dba->executeUpdate("UPDATE ". USERINFO ." SET num_posts=num_posts-1 WHERE user_id=". intval($topic['poster_id']));
-
-		$users						= array();
-		
-		/* Only if there are more than 0 replies should we update post counts */
-		if(intval($num_replies) > 0) {
-			
-			/* Get all of the replies */
-			$replies				= $dba->executeQuery("SELET poster_id FROM ". REPLIES ." WHERE topic_id = ". intval($topic['id']));
-			
-			while($replies->next()) {
-				$reply				= $replies->current();
-				
-				if(!isset($users[$reply]) && $reply > 0)
-					$users[$reply] = 1;
-				
-				$users[$reply] += 1;
-			}
-			
-			/* Memory saving */
-			$replies->freeResult();
-			unset($replies);
-
-			/* Update all of the users that posted */
-			if(count($users) > 0) {
-				
-				/* Loop through the users and change their post counts */
-				foreach($users as $user_id => $num_posts) {
-					$dba->executeUpdate("UPDATE ". USERINFO ." SET num_posts=num_posts-". intval($num_posts) ." WHERE user_id=". intval($user_id));
-				}
-			}
-
-			/* Memory saving */
-			unset($users);
-		}
-
 		/**
 		 * Remove the topic and all of its replies
 		 */
 		
 		/* Remove the topic and all replies from the information table */
-		$h				= &new Heirarchy();
-		$h->removeNode($topic, INFO);
+		remove_item($topic['id'], 'topic_id');
 		
-		/* Now remove the information stored in the topics and replies table */
-		$dba->executeUpdate("DELETE FROM ". TOPICS ." WHERE topic_id = ". intval($topic['id']));
-		$dba->executeUpdate("DELETE FROM ". REPLIES ." WHERE topic_id = ". intval($topic['id']));
-		
+
 		if(!@touch(CACHE_FILE, time()-86460)) {
 			@unlink(CACHE_FILE);
 		}
-
+		if(!@touch(CACHE_EMAIL_FILE, time()-86460)) {
+			@unlink(CACHE_EMAIL_FILE);
+		}
+		
 		/* Redirect the user */
 		$template->setInfo('content', sprintf($template->getVar('L_DELETEDTOPIC'), $topic['name'], $forum['name']));
 		$template->setRedirect('viewforum.php?id='. $forum['id'], 3);
@@ -1314,6 +1331,112 @@ class UnlockTopic extends Event {
 }
 
 /**
+ * Subscribe to a topic
+ */
+class SubscribeTopic extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_QUERYPARAMS;
+		
+		if(!is_a($session['user'], 'Member')) {
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setFile('content', 'login_form.html');
+			$template->show('no_perms');
+			return TRUE;
+		}
+
+		if(!isset($request['id']) || !$request['id'] || intval($request['id']) == 0) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
+			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+		
+		/* Get our topic */
+		$topic				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id = ". intval($request['id']));
+		
+		if(!$topic || !is_array($topic) || empty($topic)) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
+			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
+
+			return TRUE;
+		}
+
+		$is_subscribed		= $dba->getRow("SELECT * FROM ". SUBSCRIPTIONS ." WHERE user_id = ". intval($user['id']) ." AND topic_id = ". intval($topic['id']));
+		
+		if(is_array($is_subscribed) && !empty($is_subscribed)) {
+			$template		= BreadCrumbs($template, $template->getVar('L_SUBSCRIPTION'), $topic['row_left'], $topic['row_right']);
+			$template->setInfo('content', $template->getVar('L_ALREADYSUBSCRIBED'), FALSE);
+			return TRUE;
+		}
+		
+		$subscribe			= &$dba->prepareStatement("INSERT INTO ". SUBSCRIPTIONS ." (user_id,user_name,topic_id,forum_id,email,category_id) VALUES (?,?,?,?,?,?)");
+		$subscribe->setInt(1, $user['id']);
+		$subscribe->setString(2, $user['name']);
+		$subscribe->setInt(3, $topic['id']);
+		$subscribe->setInt(4, $topic['forum_id']);
+		$subscribe->setString(5, $user['email']);
+		$subscribe->setInt(6, $forum['category_id']);
+		$subscribe->executeUpdate();
+
+		/* Redirect the user */
+		$template		= BreadCrumbs($template, $template->getVar('L_SUBSCRIPTIONS'), $topic['row_left'], $topic['row_right']);
+		$template->setInfo('content', sprintf($template->getVar('L_SUBSCRIBEDTOPIC'), $topic['name']));
+		$template->setRedirect('viewtopic.php?id='. $topic['id'], 3);
+		
+		return TRUE;
+	}
+}
+
+/**
+ * Unsubscribe from a topic
+ */
+class UnsubscribeTopic extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_QUERYPARAMS;
+		
+		if(!is_a($session['user'], 'Member')) {
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setFile('content', 'login_form.html');
+			$template->show('no_perms');
+			return TRUE;
+		}
+
+		if(!isset($request['id']) || !$request['id'] || intval($request['id']) == 0) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
+			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+
+		/* Get our topic */
+		$topic				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.id = ". intval($request['id']));
+		
+		if(!$topic || !is_array($topic) || empty($topic)) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDTOPIC'));
+			$template->setInfo('content', $template->getVar('L_TOPICDOESNTEXIST'), FALSE);
+
+			return TRUE;
+		}
+		
+		$subscribe			= &$dba->prepareStatement("DELETE FROM ". SUBSCRIPTIONS ." WHERE user_id=? AND topic_id=?");
+		$subscribe->setInt(1, $user['id']);
+		$subscribe->setInt(2, $topic['id']);
+		$subscribe->executeUpdate();
+
+		/* Redirect the user */
+		$template		= BreadCrumbs($template, $template->getVar('L_SUBSCRIPTIONS'), $topic['row_left'], $topic['row_right']);
+		$template->setInfo('content', sprintf($template->getVar('L_UNSUBSCRIBEDTOPIC'), $topic['name']));
+		$template->setRedirect('viewtopic.php?id='. $topic['id'], 3);
+		
+		return TRUE;
+	}
+}
+
+/**
  * Make the topic image for a specified topic
  */
 function topic_image($topic, &$user, $img_dir, $lastactive) {
@@ -1395,7 +1518,7 @@ class TopicsIterator extends FAProxyIterator {
 	var $forums;
 	var $dba;
 
-	function TopicsIterator($result, &$session, $img_dir) {
+	function TopicsIterator($result, &$session, $img_dir, $forum) {
 		
 		global $_DBA;
 
@@ -1403,6 +1526,7 @@ class TopicsIterator extends FAProxyIterator {
 		$this->session			= &$session;
 		$this->img_dir			= $img_dir;
 		$this->dba				= $_DBA;
+		$this->forum			= $forum;
 
 		//$this->forums			= isset($_COOKIE['forums']) && $_COOKIE['forums'] != NULL && $_COOKIE['forums'] != '' ? iif(!unserialize($_COOKIE['forums']), array(), unserialize($_COOKIE['forums'])) : array();
 
@@ -1423,6 +1547,12 @@ class TopicsIterator extends FAProxyIterator {
 		/* Set the number of replies */
 		$temp['num_replies']	= @(($temp['row_right'] - $temp['row_left'] - 1) / 2);
 		
+		if($this->forum['postsperpage'] < $temp['num_replies']) {
+			
+			/* Create a pager */
+			$temp['pager']		= paginate($temp['num_replies'], '&laquo;', '&lt;', '', '&gt;', '&raquo;', $this->forum['postsperpage'], $temp['id']);
+		}
+
 		/* Check if this topic has been read or not */
 		//if(($temp['created'] > $last_seen && $temp['poster_id'] != $this->session['user']->info['id'])
 		//|| (isset($this->forums[$temp['forum_id']][$temp['id']]) && $this->forums[$temp['forum_id']][$temp['id']])

@@ -25,11 +25,13 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: mod.php,v 1.3 2005/05/05 21:34:30 k4st Exp $
+* @version $Id: mod.php,v 1.4 2005/05/24 20:09:16 k4st Exp $
 * @package k42
 */
 
 error_reporting(E_ALL);
+
+ob_start();
 
 require 'forum.inc.php';
 
@@ -49,6 +51,12 @@ $app->AddEvent('deletereply', new DeleteReply);
 $app->AddEvent('locktopic', new LockTopic);
 $app->AddEvent('unlocktopic', new UnlockTopic);
 
+$app->AddEvent('moderate_forum', new ModerateForum);
+$app->AddEvent('topic_simpleupdate', new SimpleUpdateTopic);
+$app->AddEvent('move_topics', new MoveTopics);
+
 $app->ExecutePage();
+
+ob_flush();
 
 ?>

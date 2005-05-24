@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Geoffrey Goodman
-* @version $Id: page.php,v 1.2 2005/04/13 02:54:29 k4st Exp $
+* @version $Id: page.php,v 1.3 2005/05/24 20:04:24 k4st Exp $
 * @package k42
 */
 
@@ -106,10 +106,10 @@ class Page_List_Compiler extends TPL_Tag_Compiler {
 class Page_Link_Compiler extends TPL_Tag_Compiler {
 	function getOpen(&$element) {
 		$attribs = $this->getAttribString($element->attribs);
-		return "<?php if (\$pager->page_num != \$context->getVar(\"pagenum\")): ?><a$attribs href=\"<?php echo \$context->getVar(\"pagelink\"); ?>\"><?php else: ?><span$attribs><?php endif; ?>";
+		return "<?php if (\$pager->page_num != \$context->getVar(\"pagenum\")): ?><a$attribs href=\"<?php echo \$context->getVar(\"pagelink\"); ?>\"><?php else: ?><strong$attribs><?php endif; ?>";
 	}
 	function getClose(&$element) {
-		return "<?php if (\$pager->page_num != \$context->getVar(\"pagenum\")): ?></a><?php else: ?></span><?php endif; ?>";
+		return "<?php if (\$pager->page_num != \$context->getVar(\"pagenum\")): ?></a><?php else: ?></strong><?php endif; ?>";
 	}
 }
 

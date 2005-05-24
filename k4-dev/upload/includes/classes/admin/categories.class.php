@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: categories.class.php,v 1.10 2005/05/12 01:34:26 k4st Exp $
+* @version $Id: categories.class.php,v 1.11 2005/05/24 20:02:18 k4st Exp $
 * @package k42
 */
 
@@ -102,6 +102,8 @@ class AdminInsertCategory extends Event {
 			$left				= $abs_right && $abs_right !== false && $abs_right != 0 ? $abs_right+1 : 1;
 			$right				= $left + 1;
 			
+			$dba->beginTransaction();
+
 			/* Build the queries */
 			$insert_a			= &$dba->prepareStatement("INSERT INTO ". INFO ." (name,row_left,row_right,row_type,row_level,created,row_order) VALUES (?,?,?,?,?,?,?)");
 			$insert_b			= &$dba->prepareStatement("INSERT INTO ". CATEGORIES ." (category_id,description) VALUES (?,?)");
@@ -127,6 +129,8 @@ class AdminInsertCategory extends Event {
 			/* Insert the extra category info */
 			$insert_b->executeUpdate();
 			
+			$dba->commitTransaction();
+
 			if(!@touch(CACHE_FILE, time()-86460)) {
 				@unlink(CACHE_FILE);
 			}
@@ -162,6 +166,8 @@ class AdminInsertCategoryMaps extends Event {
 			}
 
 			$parent_id					= $dba->getValue("SELECT id FROM ". MAPS ." WHERE varname = 'categories'");
+			
+			$dba->beginTransaction();
 
 			/* Insert the main category MAP item */
 			$map						= &new AdminInsertMap();
@@ -206,6 +212,8 @@ class AdminInsertCategoryMaps extends Event {
 				}
 			}
 			
+			$dba->commitTransaction();
+
 			/**
 			 * If we've gotten to this point.. redirect
 			 */
@@ -401,6 +409,8 @@ class AdminRemoveCategory extends Event {
 				return TRUE;
 			}
 			
+			$dba->beginTransaction();
+
 			$category_maps	= $dba->getRow("SELECT * FROM ". MAPS ." WHERE varname = 'category". $category['id'] ."'");
 			
 			$dba->executeUpdate("DELETE FROM ". CATEGORIES ." WHERE category_id=". intval($category['id']));
@@ -426,8 +436,15 @@ class AdminRemoveCategory extends Event {
 
 			$heirarchy->removeNode($category_maps, MAPS);
 			
+			$dba->executeUpdate("DELETE FROM ". SUBSCRIPTIONS ." WHERE category_id=". intval($category['id']));
+
+			$dba->commitTransaction();
+
 			if(!@touch(CACHE_FILE, time()-86460)) {
 				@unlink(CACHE_FILE);
+			}
+			if(!@touch(CACHE_EMAIL_FILE, time()-86460)) {
+				@unlink(CACHE_EMAIL_FILE);
 			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_REMOVEDCATEGORY'), $category['name']), FALSE);

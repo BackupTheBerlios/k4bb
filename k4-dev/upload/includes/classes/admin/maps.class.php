@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: maps.class.php,v 1.8 2005/05/12 01:34:26 k4st Exp $
+* @version $Id: maps.class.php,v 1.9 2005/05/24 20:02:19 k4st Exp $
 * @package k42
 */
 
@@ -204,7 +204,9 @@ class AdminInsertMap {
 			$left			= $last_node['row_right']+1;
 			$level			= 1;
 			$parent			= array('category_id' => intval($category_id), 'forum_id' => intval($forum_id), 'group_id' => intval($group_id), 'user_id' => intval($user_id));
-		
+			
+			$parent_id		= 0;
+				
 		/* If we are actually dealing with a parent node */
 		} else if(intval($request['parent_id']) > 0) {
 			
@@ -224,6 +226,8 @@ class AdminInsertMap {
 			} else {
 				$left			= $parent['row_left'] + 1;
 			}
+
+			$parent_id			= $parent['id'];
 			
 			/* Should we need to reset some of the $parent values? */
 			$parent['category_id']	= !$category_id ? $parent['category_id'] : intval($category_id);
@@ -246,7 +250,7 @@ class AdminInsertMap {
 		/* Prepare the queries */
 		$update_a			= &$this->dba->prepareStatement("UPDATE ". MAPS ." SET row_right = row_right+2 WHERE row_left < ? AND row_right >= ?");
 		$update_b			= &$this->dba->prepareStatement("UPDATE ". MAPS ." SET row_left = row_left+2, row_right=row_right+2 WHERE row_left >= ?");
-		$insert				= &$this->dba->prepareStatement("INSERT INTO ". MAPS ." (row_left,row_right,row_level,name,varname,category_id,forum_id,user_id,group_id,can_view,can_add,can_edit,can_del,inherit,value) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		$insert				= &$this->dba->prepareStatement("INSERT INTO ". MAPS ." (row_left,row_right,row_level,name,varname,category_id,forum_id,user_id,group_id,can_view,can_add,can_edit,can_del,inherit,value,parent_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 		
 		/* Set the insert variables needed */
 		$update_a->setInt(1, $left);
@@ -269,6 +273,7 @@ class AdminInsertMap {
 		$insert->setInt(13, @$request['can_del']);
 		$insert->setInt(14, @$request['inherit']);
 		$insert->setString(15, @$request['value']);
+		$insert->setInt(16, $parent_id);
 		
 
 		/**

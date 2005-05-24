@@ -26,7 +26,7 @@
 *
 * @author Geoffrey Goodman
 * @author Peter Goodman
-* @version $Id: mysql.php,v 1.9 2005/05/12 23:40:49 k4st Exp $
+* @version $Id: mysql.php,v 1.10 2005/05/24 20:04:07 k4st Exp $
 * @package k42
 */
 
@@ -110,13 +110,18 @@ class MysqlConnection extends FADBConnection {
 			return Error::pitch(new FAError("Missing required connection information.", __FILE__, __LINE__));
 		}
 
+		if(!function_exists('mysql_pconnect') || !function_exists('mysql_connect')) {
+			$this->valid = FALSE;
+			return Error::pitch(new FAError("Please make sure that MySQL is properly installed.", '--', '--'));
+		}
+		
 		$link = @mysql_pconnect($info['server'], $info['user'], $info['pass']);
-
+		
 		if (!is_resource($link)) {
 			$this->valid = FALSE;
 			return Error::pitch(new FAError("Unable to connect to the database: ".mysql_errno(), __FILE__, __LINE__));
 		}
-
+		
 		if (!mysql_select_db($info['database'])) {
 			$error = mysql_error($link);
 			mysql_close($link);
@@ -134,6 +139,7 @@ class MysqlConnection extends FADBConnection {
 	}
 
 	function executeUpdate($stmt) {
+		
 		$result = mysql_query($stmt, $this->link);
 
 		if ($result == FALSE)
@@ -235,6 +241,12 @@ class MysqlConnection extends FADBConnection {
 	}
 	function alterTable($table, $stmt) {
 		$this->executeUpdate("ALTER TABLE $table $stmt");
+	}
+	function beginTransaction() {
+		return TRUE;
+	}
+	function commitTransaction() {
+		return TRUE;
 	}
 }
 

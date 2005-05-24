@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.21 2005/05/19 23:44:54 k4st Exp $
+* @version $Id: session.php,v 1.22 2005/05/24 20:03:26 k4st Exp $
 * @package k42
 */
 
@@ -55,6 +55,7 @@ class FADBSession {
 	
 	var $location_act;
 	var $location_id;
+	var $location_file;
 
 	function FADBSession() {
 		global $_DBA, $_URL;
@@ -64,6 +65,7 @@ class FADBSession {
 
 		$this->location_act	= isset($this->url->args['act']) && $this->url->args['act'] != '' ? $this->url->args['act'] : NULL;
 		$this->location_id	= isset($this->url->args['id']) && intval($this->url->args['id']) != 0 ? intval($this->url->args['id']) : 0;
+		$this->location_file= $this->url->file;
 
 		$this->read_stmt	= $this->dba->prepareStatement("SELECT * FROM ". SESSIONS ." WHERE id=? GROUP BY user_id ORDER BY seen DESC LIMIT 1");
 		$this->user_stmt	= $this->dba->prepareStatement("UPDATE ". USERS ." SET seen=?,ip=? WHERE id=?");
@@ -85,7 +87,6 @@ class FADBSession {
 	}
 
 	function read($sessid) {
-		global $_URL;
 
 		$this->read_stmt->setString(1, $sessid);
 		
@@ -102,36 +103,37 @@ class FADBSession {
 			$data			= $result->get('data');
 			
 			/* Is this this users first visit to this page? */
-			$this->is_first = ( ($data['location_file'] == $_URL->file) && ($data['location_act'] == @$_URL->args['act']) && ($data['location_id'] == @$_URL->args['id']) ) ? TRUE : FALSE;
-
+			//$this->is_first = ( ($data['location_file'] == $this->location_file) && ($data['location_act'] == $this->location_act) && ($data['location_id'] == $this->location_id) ) ? TRUE : FALSE;
+			
 		}
+		
+		//Globals::setGlobal('sessid', $sessid);
 		
 		return $data;
 	}
 
 	function write($sessid, $data) {
-		global $_URL;
 		
 		if ($this->is_new) {
-
+			
 			/**
 			 * This is the initial creation of the session
 			 */
 
 			//(id, seen, name, user_id, user_agent, data, location_file, location_act, location_id)
 			$this->write_stmt->setString(1, $sessid);
-			$this->write_stmt->setInt(2,    time()); // bbtime()
+			$this->write_stmt->setInt(2,    time());
 			$this->write_stmt->setString(3, $_SESSION['user']->info['name']);
 			$this->write_stmt->setInt(4,    $_SESSION['user']->info['id']);
 			$this->write_stmt->setString(5, USER_AGENT);
 			$this->write_stmt->setString(6, $data);
-			$this->write_stmt->setString(7, $_URL->file);
+			$this->write_stmt->setString(7, $this->location_file);
 			$this->write_stmt->setString(8, $this->location_act );
-			$this->write_stmt->setInt(9,    $this->location_id );
+			$this->write_stmt->setInt(9, $this->location_id );
 			
 			$this->write_stmt->executeUpdate();
 		} else {
-
+			
 			/**
 			 * The session already exists, only update
 			 */
@@ -142,12 +144,13 @@ class FADBSession {
 			$this->update_stmt->setString(3,	serialize($data));
 			$this->update_stmt->setInt(4,		time());
 			$this->update_stmt->setString(5,	USER_AGENT);
-			$this->update_stmt->setString(6,	$_URL->file);
+			$this->update_stmt->setString(6,	$this->location_file);
 			$this->update_stmt->setString(7,	$this->location_act);
 			$this->update_stmt->setInt(8,		$this->location_id);
 			$this->update_stmt->setString(9,	$sessid);
 			
 			$this->update_stmt->executeUpdate();
+			
 		}
 					
 		return TRUE;
@@ -181,14 +184,14 @@ class FADBSession {
 			if(!is_a($_SESSION['user'], 'Member') && isset($_COOKIE['k4_autolog'])) {
 				
 				/* Get this session ID */
-				$id                                            = &$_SESSION['user']->ValidateLoginKey($_COOKIE);
+				$id											= &$_SESSION['user']->ValidateLoginKey($_COOKIE);
 				
 				/* If this session exists, log the user in */
 				if ($id !== FALSE) {
 
 					/* Log the user in */
-					$_SESSION['user']                        = &new Member($id);
-					$_SESSION['user']->info['rememberme']    = 'on';
+					$_SESSION['user']						= &new Member($id);
+					$_SESSION['user']->info['rememberme']	= 'on';
 					$_SESSION['user']->Login();
 					
 					$_DBA->executeUpdate("UPDATE ". USERS ." SET last_seen = ". time() ." WHERE id = ". intval($id));
@@ -219,9 +222,26 @@ class FADBSession {
 	}
 }
 
-$instance        = &new FADBSession;
+$instance       = &new FADBSession;
 $instance->setUserStatus();
 
+/*
+$sessid			= Globals::getGlobal('sessid');
+
+if($sessid) {
+	$instance->update_stmt->setString(1,	$_SESSION['user']->info['name']);
+	$instance->update_stmt->setInt(2,		$_SESSION['user']->info['id']);
+	$instance->update_stmt->setString(3,	'');
+	$instance->update_stmt->setInt(4,		time());
+	$instance->update_stmt->setString(5,	USER_AGENT);
+	$instance->update_stmt->setString(6,	$instance->location_file);
+	$instance->update_stmt->setString(7,	$instance->location_act);
+	$instance->update_stmt->setInt(8,		$instance->location_id);
+	$instance->update_stmt->setString(9,	$sessid);
+	
+	$instance->update_stmt->executeUpdate();
+}
+*/
 /*
 	Ok, I have changed it so that creating an instance of FADBSession
 	starts the session.  What you need to do is to modify

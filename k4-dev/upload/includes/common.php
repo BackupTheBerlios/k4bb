@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: common.php,v 1.20 2005/05/19 23:44:53 k4st Exp $
+* @version $Id: common.php,v 1.21 2005/05/24 20:03:26 k4st Exp $
 * @package k42
 */
 
@@ -39,6 +39,7 @@ if(!defined('IN_K4')) {
 }
 
 define('DEBUG_SQL', TRUE);
+define('MPTT', TRUE);
 
 
 /**
@@ -81,9 +82,8 @@ define('POLLVOTES',			'k4_pollvotes');
 define('PROFILEFIELDS',		'k4_userprofilefields');
 define('BADUSERNAMES',		'k4_badusernames');
 define('SUBSCRIPTIONS',		'k4_subscriptions');
-define('LAZYLOAD',			'k4_lazyload');
 define('MAILQUEUE',			'k4_mailqueue');
-define('LOADTRACKER',		'k4_lazyloadtracker');
+define('TOPICQUEUE',		'k4_topicqueue');
 
 
 /**
@@ -116,12 +116,15 @@ define('TOPIC_ANNOUNCE',	3);
 define('TOPIC_GLOBAL',		4);
 
 /**
- * The interval between cache reloads, and post impulse limit
+ * The interval between cache reloads, and all of the cache files
  */
-define('CACHE_INTERVAL',	86400);
+define('CACHE_INTERVAL',	86400); // 24 hours
 define('CACHE_FILE',		FORUM_BASE_DIR .'/tmp/cache/cache.php');
 define('CACHE_EMAIL_FILE',	FORUM_BASE_DIR .'/tmp/cache/emailqueue.php');
-define('POST_IMPULSE_LIMIT',15);
+define('CACHE_TOPIC_FILE',	FORUM_BASE_DIR .'/tmp/cache/topicqueue.php');
+define('POST_IMPULSE_LIMIT',15); // seconds allowed between posts, 15 at least
+define('EMAIL_INTERVAL',	15); // 20 at most (frequency).
+define('TOPIC_INTERVAL',	1); // 2 at most (frequency).
 
 /**
  * Query Parameters for things such as forums, categories, users, etc
@@ -132,7 +135,7 @@ $query_params['forum']		= ", f.forum_id AS forum_id, f.category_id AS category_i
 $query_params['user']		= "u.id AS id, u.ip as ip, u.name AS name, u.email AS email, u.pass AS pass, u.priv_key AS priv_key, u.created AS created, u.login AS login, u.seen AS seen, u.last_seen AS last_seen, u.perms AS perms, u.invisible AS invisible, u.usergroups AS usergroups";
 $query_params['userinfo']	= ", ui.user_id AS user_id, ui.fullname AS fullname, ui.num_posts AS num_posts, ui.timezone AS timezone, ui.icq AS icq, ui.aim AS aim, ui.msn AS msn, ui.yahoo AS yahoo, ui.jabber AS jabber, ui.avatar AS avatar, ui.signature AS signature, ui.birthday AS birthday, ui.language AS language, ui.styleset AS styleset, ui.imgset AS imgset, ui.tplset AS tplset, ui.banned AS banned, ui.topic_display AS topic_display, ui.lastpage AS lastpage, ui.notify_pm AS notify_pm, ui.popup_pm AS popup_pm, ui.viewflash AS viewflash, ui.viewemoticons AS viewemoticons, ui.viewsigs AS viewsigs, ui.viewavatars AS viewavatars, ui.viewcensors AS viewcensors, ui.attachsig AS attachsig";
 $query_params['session']	= ", s.id AS sid, s.seen AS seen, s.name AS name, s.user_id AS user_id, s.data AS data, s.location_file AS location_file, s.location_act AS location_act, s.location_id AS location_id, s.user_agent as user_agent";
-$query_params['maps']		= "m.id AS id, m.row_left AS row_left, m.row_right AS row_right, m.row_level AS row_level, m.name AS name, m.varname AS varname, m.is_global AS is_global, m.category_id AS category_id, m.forum_id AS forum_id, m.user_id AS user_id, m.group_id AS group_id, m.can_view AS can_view, m.can_add AS can_add, m.can_edit AS can_edit, m.can_del AS can_del, m.inherit AS inherit, m.value as value";
+$query_params['maps']		= "m.id AS id, m.row_left AS row_left, m.row_right AS row_right, m.row_level AS row_level, m.name AS name, m.varname AS varname, m.is_global AS is_global, m.category_id AS category_id, m.forum_id AS forum_id, m.user_id AS user_id, m.group_id AS group_id, m.can_view AS can_view, m.can_add AS can_add, m.can_edit AS can_edit, m.can_del AS can_del, m.inherit AS inherit, m.value as value, m.parent_id AS parent_id";
 $query_params['topic']		= ", t.topic_id AS topic_id, t.forum_id AS forum_id, t.category_id AS category_id, t.edited_time AS edited_time, t.edited_username AS edited_username, t.edited_userid AS edited_userid, t.ratings_sum AS ratings_sum, t.ratings_num AS ratings_num, t.disable_html AS disable_html, t.disable_bbcode AS disable_bbcode, t.disable_emoticons AS disable_emoticons, t.disable_sig AS disable_sig, t.disable_areply AS disable_areply, t.disable_aurls AS disable_aurls, t.topic_locked AS topic_locked, t.description AS description, t.body_text AS body_text, t.posticon AS posticon, t.poster_name AS poster_name, t.poster_id AS poster_id, t.reply_time AS reply_time, t.reply_uname AS reply_uname, t.reply_id AS reply_id, t.reply_uid AS reply_uid, t.poll AS poll, t.poll_question AS poll_question, t.poll_id AS poll_id, t.poll_votes AS poll_votes, t.views AS views, t.is_draft AS is_draft, t.last_viewed as last_viewed, t.topic_type as topic_type, t.poster_ip as poster_ip, t.topic_expire AS topic_expire, t.is_feature AS is_feature, t.display AS display, t.queue AS queue, t.moved AS moved";
 $query_params['reply']		= ", r.reply_id AS reply_id, r.topic_id AS topic_id, r.forum_id AS forum_id, r.category_id AS category_id, r.is_draft AS is_draft, r.body_text AS body_text, r.poster_name AS poster_name, r.poster_id AS poster_id, r.poster_ip AS poster_ip, r.edited_time AS edited_time, r.edited_username AS edited_username, r.edited_userid AS edited_userid, r.disable_html AS disable_html, r.disable_bbcode AS disable_bbcode, r.disable_emoticons AS disable_emoticons, r.disable_sig AS disable_sig, r.disable_areply AS disable_areply, r.disable_aurls AS disable_aurls, r.posticon AS posticon";
 $query_params['pfield']		= ", pf.name AS name, pf.title AS title, pf.description AS description, pf.default_value AS default_value, pf.inputtype AS inputtype, pf.user_maxlength AS user_maxlength, pf.inputoptions AS inputoptions, pf.min_perm AS min_perm, pf.display_register AS display_register, pf.display_profile AS display_profile, pf.display_topic AS display_topic, pf.display_post AS display_post, pf.display_image AS display_image, pf.display_memberlist AS display_memberlist, pf.display_size AS display_size, pf.display_rows AS display_rows, pf.display_order AS display_order, pf.is_editable AS is_editable, pf.is_private AS is_private, pf.is_required AS is_required, pf.special_pcre AS special_pcre";
@@ -159,6 +162,9 @@ $map_items['forum'][]		= array('varname' => 'announce',		'can_view' => GUEST, 'c
 $map_items['forum'][]		= array('varname' => 'global',			'can_view' => GUEST, 'can_add' => ADMIN, 'can_edit' => ADMIN, 'can_del' => ADMIN);
 $map_items['forum'][]		= array('varname' => 'feature',			'can_view' => GUEST, 'can_add' => ADMIN, 'can_edit' => ADMIN, 'can_del' => ADMIN);
 $map_items['forum'][]		= array('varname' => 'move',			'can_view' => 0, 'can_add' => MODERATOR, 'can_edit' => 0, 'can_del' => 0);
+$map_items['forum'][]		= array('varname' => 'queue',			'can_view' => 0, 'can_add' => MODERATOR, 'can_edit' => 0, 'can_del' => 0);
+$map_items['forum'][]		= array('varname' => 'normalize',		'can_view' => 0, 'can_add' => MODERATOR, 'can_edit' => 0, 'can_del' => 0);
+$map_items['forum'][]		= array('varname' => 'delete',			'can_view' => 0, 'can_add' => MODERATOR, 'can_edit' => 0, 'can_del' => 0);
 $map_items['forum'][]		= array('varname' => 'closed',			'can_view' => GUEST, 'can_add' => SUPERMEMBER, 'can_edit' => SUPERMEMBER, 'can_del' => SUPERMEMBER);
 $map_items['forum'][]		= array('varname' => 'avatars',			'can_view' => GUEST, 'can_add' => 0, 'can_edit' => 0, 'can_del' => 0);
 $map_items['forum'][]		= array('varname' => 'signatures',		'can_view' => GUEST, 'can_add' => 0, 'can_edit' => 0, 'can_del' => 0);
@@ -196,7 +202,7 @@ $map_items['blog'][]		= array('varname' => 'private_blog',	'can_view' => 0, 'can
  * Set our error handler
  */
 function error_handler($errorno, $string, $file, $line) {
-	if($errorno != 2048 && $errorno != 8) //  E_STRICT & E_NOTICE
+	if($errorno != 2048 && $errorno != 8) //  E_STRICT & E_NOTICE  && $errorno != 8
 		return compile_error($string, $file, $line); 
 }
 set_error_handler("error_handler");
@@ -230,38 +236,12 @@ exit;
  * Create some cache files to reduce queries, but only if it needs to be re/created
  */
 
-/* Should we rewrite the email cache file? */
-if(rewrite_file(CACHE_EMAIL_FILE, CACHE_INTERVAL)) {
-	
-	/**
-	 * Get all of the lazy loads that need to be executed
-	 */
-	$cache[MAILQUEUE]						= array();
-	
-	$result									= &$_DBA->executeQuery("SELECT * FROM ". MAILQUEUE ." WHERE finished = 0 LIMIT 1");
-	while($result->next()) {
-		$temp								= $result->current();
-		
-		$cache[MAILQUEUE][]					= $temp;
-	}
-	$result->freeResult();
+$cache										= array();
 
-	DBCache::createCache($cache, CACHE_EMAIL_FILE);
-
-} else {
-	
-	/* Include the cache file */
-	include_once CACHE_EMAIL_FILE;
-	
-	if(!isset($cache) || !is_array($cache) || empty($cache)) {
-		compile_error('The cached email queue array does not exist or it is empty.', __FILE__, __LINE__);
-	}
-}
-
-/* Should we have to rewrite the cache file? */
+/**
+ * Should we have to rewrite the cache file? 
+ */
 if(rewrite_file(CACHE_FILE, CACHE_INTERVAL)) {
-	
-	$cache									= array();
 
 	/**
 	 * Get the datastore 
@@ -332,17 +312,6 @@ if(rewrite_file(CACHE_FILE, CACHE_INTERVAL)) {
 	}
 	$result->freeResult();
 	
-	
-	/*
-	$cache[LAZYLOAD]						= array();
-	$result									= &$_DBA->executeQuery("SELECT ". $query_params['lazyload'] . $query_params['loadtracker'] ." FROM ". LAZYLOAD ." ll LEFT JOIN ". LOADTRACKER ." llt ON ll.id=llt.load_id WHERE llt.load_status = 'processing' ORDER BY ll.id ASC");
-	while($result->next()) {
-		$temp								= $result->current();
-		$cache[LAZYLOAD][$temp['id']]		= $temp;
-	}
-	$result->freeResult();
-	*/
-
 	/* Memory saving */
 	unset($result);
 	
@@ -369,6 +338,66 @@ if(rewrite_file(CACHE_FILE, CACHE_INTERVAL)) {
 }
 
 /**
+ * Should we rewrite the email cache file? 
+ */
+if(rewrite_file(CACHE_EMAIL_FILE, CACHE_INTERVAL)) {
+	
+	/**
+	 * Get all of the lazy loads that need to be executed
+	 */
+	$cache[MAILQUEUE]						= array();
+	
+	$result									= &$_DBA->executeQuery("SELECT * FROM ". MAILQUEUE ." WHERE finished = 0 LIMIT 1");
+	while($result->next()) {
+		$temp								= $result->current();
+		
+		$cache[MAILQUEUE][]					= $temp;
+	}
+	$result->freeResult();
+	
+	DBCache::createCache(array(MAILQUEUE => $cache[MAILQUEUE]), CACHE_EMAIL_FILE);
+
+} else {
+	
+	/* Include the cache file */
+	include_once CACHE_EMAIL_FILE;
+	
+	if(!isset($cache) || !is_array($cache) || empty($cache)) {
+		compile_error('The cached email queue array does not exist or it is empty.', __FILE__, __LINE__);
+	}
+}
+
+/**
+ * Should we reqrite our topic deletion cache file?
+ */
+if(rewrite_file(CACHE_TOPIC_FILE, CACHE_INTERVAL)) {
+	
+	/**
+	 * Get all of the lazy loads that need to be executed
+	 */
+	$cache[TOPICQUEUE]						= array();
+	
+	$result									= &$_DBA->executeQuery("SELECT * FROM ". TOPICQUEUE ." WHERE finished = 0 LIMIT 1");
+	while($result->next()) {
+		$temp								= $result->current();
+		
+		$cache[TOPICQUEUE][]				= $temp;
+	}
+	$result->freeResult();
+
+	DBCache::createCache(array(TOPICQUEUE => $cache[TOPICQUEUE]), CACHE_TOPIC_FILE);
+
+} else {
+	
+	/* Include the cache file */
+	include_once CACHE_TOPIC_FILE;
+	
+	if(!isset($cache) || !is_array($cache) || empty($cache)) {
+		compile_error('The cached topic queue array does not exist or it is empty.', __FILE__, __LINE__);
+	}
+}
+
+/**
  * Set the super-globals 
  */
 $GLOBALS['_URL']					= &new Url('http://'. $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
@@ -383,6 +412,7 @@ $GLOBALS['_DEBUGITEMS']				= array();
 $GLOBALS['_ALLFORUMS']				= $cache['all_forums'];
 //$GLOBALS['_LAZYLOAD']				= $cache[LAZYLOAD];
 $GLOBALS['_MAILQUEUE']				= $cache[MAILQUEUE];
+$GLOBALS['_TOPICQUEUE']				= $cache[TOPICQUEUE];
 
 /* Memory Saving */
 unset($cache);

@@ -26,7 +26,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: bbcode.php,v 1.12 2005/05/19 23:44:53 k4st Exp $
+* @version $Id: bbcode.php,v 1.13 2005/05/24 20:03:26 k4st Exp $
 * @package k42
 */
 
@@ -36,6 +36,7 @@ if(!defined('IN_K4')) {
 	exit;
 }
 
+/* Main BBCode Parsing class */
 class BBCodex {
 	
 	var $settings;

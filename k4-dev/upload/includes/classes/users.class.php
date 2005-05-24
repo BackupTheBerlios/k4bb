@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: users.class.php,v 1.9 2005/05/16 12:19:33 k4st Exp $
+* @version $Id: users.class.php,v 1.10 2005/05/24 20:01:31 k4st Exp $
 * @package k42
 */
 
@@ -79,6 +79,19 @@ function get_user_max_group($temp, $all_groups) {
 	return $group;
 }
 
+function email_user($id) {
+	if(ctype_digit($id) && intval($id) > 0) {
+
+		global $_DBA, $lang, $_SETTINGS;
+
+		$user		= $_DBA->getRow("SELECT * FROM ". USERS ." WHERE id = ". intval($id));
+
+		if($user && is_array($user) && !empty($user)) {
+			@mail($user['email'], sprintf($lang('L_REGISTEREMAILTITLE'), $_SETTINGS['bbtitle']), $email, "From: \"". $_SETTINGS['bbtitle'] ." Forums\" <noreply@". $verify_url->__toString() .">");
+		}
+	}
+}
+
 class LoginEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
@@ -121,15 +134,15 @@ class LoginEvent extends Event {
 			
 			if($session['user']->info['banned'] == 0) {
 				
+				/* Set the rememberme setting to this user */
+				if (isset($request['rememberme']))
+					$session['user']->info['rememberme']	= 'on';
+
 				/**
 				 * Log our user in 
 				 */
 				$session['user']->Login();
 				$user			= &$session['user']->info;
-				
-				/* Set the rememberme setting to this user */
-				if (isset($request['rememberme']))
-					$session['user']->info['rememberme']	= 'on';
 				
 				/* Set the auto-log cookie */
 				if(isset($user['rememberme']) && $user['rememberme'] == 'on') {
@@ -440,7 +453,7 @@ class ForumInsertUser extends Event {
 			$insert_a->setString(3, md5($request['pass']));
 			$insert_a->setInt(4, PENDING_MEMBER);
 			$insert_a->setString(5, $priv_key);
-			$insert_a->setString(6, 'a:1:{i:0;i:1;}'); // Registered Users
+			$insert_a->setString(6, 'a:1:{i:0;i:2;}'); // Registered Users
 			$insert_a->setInt(7, time());
 			
 			$insert_a->executeUpdate();
@@ -476,7 +489,7 @@ class ForumInsertUser extends Event {
 				$verify_url->file		= 'member.php';
 				$url					= $verify_url->__toString();
 
-				$dba->executeUpdate("UPDATE ". USERS ." SET usergroups = 'a:1:{i:0;i:2;}' WHERE id = ". intval($user_id));
+				$dba->executeUpdate("UPDATE ". USERS ." SET usergroups = 'a:1:{i:0;i:1;}' WHERE id = ". intval($user_id));
 
 				$email					= sprintf($template->getVar('L_REGISTEREMAILRMSG'), $request['name'], $_SETTINGS['bbtitle'], $url, $_SETTINGS['bbtitle']);
 
@@ -495,7 +508,7 @@ class ForumInsertUser extends Event {
 			$verify_url->file			= FALSE;
 			$verify_url->anchor			= FALSE;
 			$verify_url->scheme			= FALSE;
-			$verify_url->user			= FALSE;
+			$verify_url->path			= FALSE;
 			
 			/* Finally, mail our user */
 			@mail($request['email'], sprintf($template->getVar('L_REGISTEREMAILTITLE'), $_SETTINGS['bbtitle']), $email, "From: \"". $_SETTINGS['bbtitle'] ." Forums\" <noreply@". $verify_url->__toString() .">");

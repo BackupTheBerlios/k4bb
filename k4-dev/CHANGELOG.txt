@@ -1,6 +1,7 @@
 CHANGELOG 
-$Id: CHANGELOG.txt,v 1.7 2005/05/12 01:41:44 k4st Exp $
+$Id: CHANGELOG.txt,v 1.8 2005/05/24 20:09:43 k4st Exp $
 
+21/05/2005 - added parent_id column to the MAPs table
 11/05/2005 - added flood protection, constant in the common.php
 11/05/2005 - fixed the problem with forum links, etc
 09/05/2005 - added disallowed usernames management (admin/users.class.php)

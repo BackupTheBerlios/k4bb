@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.9 2005/05/16 02:11:55 k4st Exp $
+* @version $Id: forums.class.php,v 1.10 2005/05/24 20:01:31 k4st Exp $
 * @package k42
 */
 
@@ -120,6 +120,110 @@ class MarkForumsRead extends Event {
 		$template->setInfo('content', $template->getVar('L_MARKEDFORUMSREAD'), TRUE);
 		$template->setRedirect('index.php', 3);
 
+		return TRUE;
+	}
+}
+/**
+ * Subscribe to a forum
+ */
+class SubscribeForum extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_QUERYPARAMS;
+		
+		if(!is_a($session['user'], 'Member')) {
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setFile('content', 'login_form.html');
+			$template->show('no_perms');
+			return TRUE;
+		}
+
+		if(!isset($request['id']) || !$request['id'] || intval($request['id']) == 0) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+		
+		/* Get our forum */
+		$forum				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($request['id']));
+		
+		if(!$forum || !is_array($forum) || empty($forum)) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+
+			return TRUE;
+		}
+
+		$is_subscribed		= $dba->getRow("SELECT * FROM ". SUBSCRIPTIONS ." WHERE user_id = ". intval($user['id']) ." AND forum_id = ". intval($forum['id']) ." AND topic_id = 0");
+		
+		if(is_array($is_subscribed) && !empty($is_subscribed)) {
+			$template		= BreadCrumbs($template, $template->getVar('L_SUBSCRIPTION'), $forum['row_left'], $forum['row_right']);
+			$template->setInfo('content', $template->getVar('L_ALREADYSUBSCRIBED'), FALSE);
+			return TRUE;
+		}
+		
+		$subscribe			= &$dba->prepareStatement("INSERT INTO ". SUBSCRIPTIONS ." (user_id,user_name,forum_id,email,category_id) VALUES (?,?,?,?,?)");
+		$subscribe->setInt(1, $user['id']);
+		$subscribe->setString(2, $user['name']);
+		$subscribe->setInt(3, $forum['id']);
+		$subscribe->setString(4, $user['email']);
+		$subscribe->setInt(5, $forum['category_id']);
+		$subscribe->executeUpdate();
+
+		/* Redirect the user */
+		$template		= BreadCrumbs($template, $template->getVar('L_SUBSCRIPTIONS'), $forum['row_left'], $forum['row_right']);
+		$template->setInfo('content', sprintf($template->getVar('L_SUBSCRIBEDFORUM'), $forum['name']));
+		$template->setRedirect('viewforum.php?id='. $forum['id'], 3);
+		
+		return TRUE;
+	}
+}
+
+/**
+ * Unsubscribe from a forum
+ */
+class UnsubscribeForum extends Event {
+	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
+		global $_QUERYPARAMS;
+		
+		if(!is_a($session['user'], 'Member')) {
+			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
+			$template->setFile('content', 'login_form.html');
+			$template->show('no_perms');
+			return TRUE;
+		}
+
+		if(!isset($request['id']) || !$request['id'] || intval($request['id']) == 0) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+			return TRUE;
+		}
+
+		/* Get our forum */
+		$forum				= $dba->getRow("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($request['id']));
+		
+		if(!$topic || !is_array($topic) || empty($topic)) {
+			/* set the breadcrumbs bit */
+			$template		= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+
+			return TRUE;
+		}
+		
+		$subscribe			= &$dba->prepareStatement("DELETE FROM ". SUBSCRIPTIONS ." WHERE user_id=? AND topic_id=0 AND forum_id=?");
+		$subscribe->setInt(1, $user['id']);
+		$subscribe->setInt(2, $forum['id']);
+		$subscribe->executeUpdate();
+
+		/* Redirect the user */
+		$template		= BreadCrumbs($template, $template->getVar('L_SUBSCRIPTIONS'), $forum['row_left'], $forum['row_right']);
+		$template->setInfo('content', sprintf($template->getVar('L_UNSUBSCRIBEDFORUM'), $forum['name']));
+		$template->setRedirect('viewforum.php?id='. $forum['id'], 3);
+		
 		return TRUE;
 	}
 }

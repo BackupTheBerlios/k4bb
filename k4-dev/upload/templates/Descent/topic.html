@@ -17,7 +17,13 @@
 				<core:date format="%b %d %y">{$created}</core:date>&nbsp;<span class="date_color"><core:date format="%I:%M%p">{$created}</core:date></span>
 			</div>
 			<div class="smalltext">
-				<strong>{$L_POSTSUBJECT}:</strong> {$name}&nbsp;<img src="tmp/upload/posticons/{$posticon}" alt="" border="0" />
+				<strong>{$L_POSTSUBJECT}:</strong>
+				<span class="smalltext">
+				<if:if var="topic_type" eq="2">{$stickytopicprefix}<else:if var="topic_type" geq="3" />{$announcementtopicprefix}</if:if>
+				<if:if var="is_feature" eq="1">{$featuretopicprefix}</if:if>
+				<if:if var="poll" eq="1">{$polltopicprefix}</if:if>
+				</span>
+				{$name}&nbsp;<img src="tmp/upload/posticons/{$posticon}" alt="" border="0" />
 			</div>
 		</td>
 	</tr>

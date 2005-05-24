@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: controller.class.php,v 1.13 2005/05/16 02:12:34 k4st Exp $
+* @version $Id: controller.class.php,v 1.14 2005/05/24 20:03:44 k4st Exp $
 * @package k42
 */
 
@@ -273,9 +273,17 @@ class Controller {
 				debug_sql();
 			}
 		}
+		
+		/* Do the mail queue */
+		execute_mail_queue();
 
-		/* Render the template */
+		/* Do the topic queue */
+		execute_topic_queue();
+		
 
+		/**
+		 * Render the template 
+		 */
 		error::reset();
 		$template->Render();
 		

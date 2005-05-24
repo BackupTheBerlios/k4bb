@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: forums.class.php,v 1.11 2005/05/16 02:12:15 k4st Exp $
+* @version $Id: forums.class.php,v 1.12 2005/05/24 20:02:18 k4st Exp $
 * @package k42
 */
 
@@ -192,6 +192,8 @@ class AdminInsertForum extends Event {
 
 			$right				= $left + 1;
 			
+			$dba->beginTransaction();
+
 			/* Build the queries */
 			$update_a			= &$this->dba->prepareStatement("UPDATE ". INFO ." SET row_right = row_right+2 WHERE row_left < ? AND row_right >= ?");
 			$update_b			= &$this->dba->prepareStatement("UPDATE ". INFO ." SET row_left = row_left+2, row_right=row_right+2 WHERE row_left >= ?");
@@ -250,10 +252,12 @@ class AdminInsertForum extends Event {
 
 			/* Insert the extra forum info */
 			$insert_b->executeUpdate();
-
+			
 			if(!($forum['row_type'] & CATEGORY)) {
 				$dba->executeUpdate("UPDATE ". FORUMS ." SET subforums = 1 WHERE forum_id = ". $forum['id']);
 			}
+			
+			$dba->commitTransaction();
 
 			if(!@touch(CACHE_FILE, time()-86460)) {
 				@unlink(CACHE_FILE);
@@ -289,6 +293,8 @@ class AdminInsertForumMaps extends Event {
 
 			$parent_id						= $dba->getValue("SELECT id FROM ". MAPS ." WHERE varname = 'forums'");
 			
+			$dba->beginTransaction();
+
 			/* Insert the main forum MAP item */
 			$map							= &new AdminInsertMap();
 			
@@ -333,6 +339,8 @@ class AdminInsertForumMaps extends Event {
 					}
 				}
 			}
+
+			$dba->commitTransaction();
 
 			if(!@touch(CACHE_FILE, time()-86460)) {
 				@unlink(CACHE_FILE);
@@ -581,6 +589,8 @@ class AdminRemoveForum extends Event {
 
 			$forums			= &$dba->executeQuery("SELECT * FROM ". INFO ." WHERE row_left >= ". intval($forum['row_left']) ." AND row_right <= ". intval($forum['row_right']) ." AND row_type = ". FORUM);
 			
+			$dba->beginTransaction();
+
 			$heirarchy		= &new Heirarchy();
 			
 			/* Deal with this forum and any sub-forums */
@@ -593,12 +603,20 @@ class AdminRemoveForum extends Event {
 				$dba->executeUpdate("DELETE FROM ". TOPICS ." WHERE forum_id=". intval($f['id']));
 				$dba->executeUpdate("DELETE FROM ". REPLIES ." WHERE forum_id=". intval($f['id']));
 			}
+
+			$dba->executeUpdate("DELETE FROM ". SUBSCRIPTIONS ." WHERE forum_id = ". intval($forum['id']));
+			$dba->executeUpdate("DELETE FROM ". MAILQUEUE ." WHERE row_id = ". intval($forum['id']) ." AND row_type = ". FORUM);
 			
 			/* This will take care of everything in the INFO table */
 			$heirarchy->removeNode($forum, INFO);
 			
+			$dba->commitTransaction();
+
 			if(!@touch(CACHE_FILE, time()-86460)) {
 				@unlink(CACHE_FILE);
+			}
+			if(!@touch(CACHE_EMAIL_FILE, time()-86460)) {
+				@unlink(CACHE_EMAIL_FILE);
 			}
 
 			$template->setInfo('content', sprintf($template->getVar('L_REMOVEDFORUM'), $forum['name']), FALSE);

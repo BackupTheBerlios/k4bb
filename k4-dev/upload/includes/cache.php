@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: cache.php,v 1.10 2005/05/19 23:44:53 k4st Exp $
+* @version $Id: cache.php,v 1.11 2005/05/24 20:03:26 k4st Exp $
 * @package k42
 */
 
@@ -36,53 +36,8 @@ if(!defined('IN_K4')) {
 }
 
 /**
- * MAPS Caching function
- */
-
-function get_cached_maps() {
-	
-	if(!isset($_SESSION['bbcache']))
-		$_SESSION['bbcache'] = array();
-
-	if(!isset($_SESSION['bbcache']['maps'])) {
-		$_SESSION['bbcache']['maps_time']	= time();
-		$_SESSION['bbcache']['maps']		= get_maps();
-	} else {
-
-		/* If 10 minutes has passed since the last update of the map's */
-		if((time() - $_SESSION['bbcache']['maps_time']) > 600) {
-			$_SESSION['bbcache']['maps_time']	= time();
-			$_SESSION['bbcache']['maps']		= get_maps();
-		}
-	}
-	
-	return $_SESSION['bbcache']['maps'];
-}
-
-/**
  * Forums Caching functions
  */
-
-function get_cached_forum($id) {
-	global $_DBA, $_ALLFORUMS;
-
-	$id														= intval($id);
-	
-	/* This should _always_ return the forum */
-	if(isset($_ALLFORUMS[$id])) {
-		
-		/* Return the info */
-		return $_ALLFORUMS[$id];
-
-	} else {
-		
-		/* Get the info */
-		$result												= $_DBA->getRow("SELECT i.* FROM ". INFO ." i WHERE id = ". $id);
-
-		/* Return the info */
-		return $result;
-	}
-}
 
 function cache_forum($info) {
 
@@ -240,7 +195,7 @@ class DBCache {
 		
 		$contents				= "<?php \nerror_reporting(E_ALL); \n\nif(!defined('IN_K4')) { \n\texit; \n}";
 		
-		$contents				.= "\n\n\$cache = " . var_export($allinfo, TRUE) .";";
+		$contents				.= "\n\n\$cache += " . var_export($allinfo, TRUE) .";";
 
 		$contents				.= "\n?>";
 		

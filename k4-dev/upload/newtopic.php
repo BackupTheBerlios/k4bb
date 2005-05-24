@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: newtopic.php,v 1.10 2005/05/12 01:33:21 k4st Exp $
+* @version $Id: newtopic.php,v 1.11 2005/05/24 20:09:16 k4st Exp $
 * @package k42
 */
 
@@ -62,9 +62,12 @@ class DefaultEvent extends Event {
 			$template->setInfo('content', $template->getVar('L_CANTPOSTTOCATEGORY'), FALSE);
 			return TRUE;
 		}
+		
+		$is_poll		= (isset($request['poll']) && intval($request['poll']) == 1) ? TRUE : FALSE;
+		$perm			= $is_poll ? 'polls' : 'topics';
 
 		/* Do we have permission to post to this forum? */
-		if($user['perms'] < get_map($user, 'topics', 'can_add', array('forum_id'=>$forum['id']))) {
+		if($user['perms'] < get_map($user, $perm, 'can_add', array('forum_id'=>$forum['id']))) {
 			/* set the breadcrumbs bit */
 			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
 			$template->setInfo('content', $template->getVar('L_PERMCANTPOST'), FALSE);
@@ -97,6 +100,8 @@ class DefaultEvent extends Event {
 		 * Start setting useful template information
 		 */
 		
+		if($is_poll)
+			$template->setVar('poll', 1);
 
 		/* Get and set the emoticons and post icons to the template */
 		$emoticons	= &$dba->executeQuery("SELECT * FROM ". EMOTICONS ." WHERE clickable = 1");

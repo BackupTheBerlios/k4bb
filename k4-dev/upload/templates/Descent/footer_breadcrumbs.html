@@ -6,10 +6,10 @@
 				<img src="Images/{$IMG_DIR}/Icons/navbits_start.gif" alt="{$bbtitle}" />&nbsp;<a href="index.php" title="{$bbtitle}"><strong>{$bbtitle}</strong></a>
 				<list:list id="breadcrumbs">
 				<list:item list="breadcrumbs">
-				&gt; <a href="{$location}" title="{$name}"><strong>{$name}</strong></a>
+				&gt; <a href="{$location}" title="{$name}"><strong><core:truncate length="40" append="...">{$name}</core:truncate></strong></a>
 				</list:item>
 				</list:list>
-				&gt;&nbsp;<strong>{$current_location}</strong>
+				&gt;&nbsp;<strong><core:truncate length="40" append="...">{$current_location}</core:truncate></strong>
 			</div>
 		</td>
 	</tr>

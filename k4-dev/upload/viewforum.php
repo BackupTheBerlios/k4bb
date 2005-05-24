@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.17 2005/05/16 02:10:03 k4st Exp $
+* @version $Id: viewforum.php,v 1.18 2005/05/24 20:09:16 k4st Exp $
 * @package k42
 */
 
@@ -38,7 +38,7 @@ require 'forum.inc.php';
 class DefaultEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
 		
-		global $_URL, $_QUERYPARAMS, $_USERGROUPS, $_SESS;
+		global $_URL, $_QUERYPARAMS, $_USERGROUPS, $_SESS, $_ALLFORUMS;
 
 		if(!isset($request['id']) || !$request['id'] || intval($request['id']) == 0) {
 			/* set the breadcrumbs bit */
@@ -48,7 +48,7 @@ class DefaultEvent extends Event {
 		}
 			
 		/* Get the current forum/category */
-		$forum					= get_cached_forum($request['id']);
+		$forum					= $_ALLFORUMS[$request['id']];
 		$query					= $forum['row_type'] & FORUM ? "SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'] ." FROM ". FORUMS ." f LEFT JOIN ". INFO ." i ON f.forum_id = i.id WHERE i.id = ". intval($request['id']) : "SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'] ." FROM ". CATEGORIES ." c LEFT JOIN ". INFO ." i ON c.category_id = i.id WHERE i.id = ". intval($request['id']);
 		$forum					= $dba->getRow($query);
 
@@ -75,7 +75,7 @@ class DefaultEvent extends Event {
 		$location_id		= isset($_URL->args['id']) ? $dba->Quote(intval($_URL->args['id'])) : 0;
 		
 		/* Set the extra SQL query fields to check */
-		$extra				= " AND s.location_file = '". $dba->Quote($_URL->file) ."' AND s.location_id = ". $location_id;	
+		$extra				= " AND (s.location_file = '". $dba->Quote($_URL->file) ."' AND s.location_id = ". $location_id .")";	
 
 		$forum_can_view		= $forum['row_type'] & CATEGORY ? get_map($user, 'categories', 'can_view', array()) : get_map($user, 'forums', 'can_view', array());
 		
@@ -91,9 +91,9 @@ class DefaultEvent extends Event {
 			/* Set the users browsing list */
 			$template->setList('users_browsing', $users_browsing);
 
-			$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members') + iif(is_a($session['user'], 'Member') && $_SESS->is_first, 1, 0),
+			$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members'),
 							'num_invisible'		=> Globals::getGlobal('num_online_invisible'),
-							'num_online_total'	=> $num_online_total + iif(is_a($session['user'], 'Guest') && $_SESS->is_first, 1, 0)
+							'num_online_total'	=> $num_online_total
 							);
 			
 			$stats['num_guests']	= ($stats['num_online_total'] - $stats['num_online_members'] - $stats['num_invisible']);
@@ -125,115 +125,131 @@ class DefaultEvent extends Event {
 			$template->setInfo('content', $template->getVar('L_PERMCANTVIEW'), FALSE);
 			
 			return TRUE;
-		} else {
+		}
 
-			/* Set the breadcrumbs bit */
-			$template	= BreadCrumbs($template, NULL, $forum['row_left'], $forum['row_right']);
+		/* Set the breadcrumbs bit */
+		$template	= BreadCrumbs($template, NULL, $forum['row_left'], $forum['row_right']);
+		
+		/* Set all of the category/forum info to the template */
+		$template->setVarArray($forum);
+
+		/* If we are looking at a category */
+		if($forum['row_type'] & CATEGORY) {
 			
-			/* Set all of the category/forum info to the template */
-			$template->setVarArray($forum);
-
-			/* If we are looking at a category */
-			if($forum['row_type'] & CATEGORY) {
+			if(get_map($user, 'categories', 'can_view', array()) > $user['perms']) {
+				/* set the breadcrumbs bit */
+				$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
+				$template->setInfo('content', $template->getVar('L_PERMCANTVIEW'));
 				
-				if(get_map($user, 'categories', 'can_view', array()) > $user['perms']) {
-					/* set the breadcrumbs bit */
-					$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
-					$template->setInfo('content', $template->getVar('L_PERMCANTVIEW'));
-					
-					return TRUE;
-				}
+				return TRUE;
+			}
 
+			/* Set the proper query params */
+			$query_params	= $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'];
+
+			/* Set the Categories list */
+			$categories = &new CategoriesIterator("SELECT $query_params FROM ". INFO ." i LEFT JOIN ". CATEGORIES ." c ON c.category_id = i.id WHERE i.row_type = ". CATEGORY ." AND i.row_left = ". $forum['row_left'] ." AND i.row_right = ". $forum['row_right'] ." AND i.id = ". $forum['id'] ." ORDER BY i.row_order ASC");
+			$template->setList('categories', $categories);
+
+			/* Hide the welcome message at the top of the forums.html template */
+			$template->hide('welcome_msg');
+			
+			/* Show the forum status icons */
+			$template->show('forum_status_icons');
+
+			/* Show the 'Mark these forums Read' link */
+			$template->show('mark_these_forums');
+			
+			/* Set the forums template to content variable */
+			$template->setFile('content', 'forums.html');
+		
+		/* If we are looking at a forum */
+		} else if($forum['row_type'] & FORUM) {						
+			
+			/* Add the forum info to the template */
+			foreach($forum as $key => $val)
+				$template->setVar('forum_'. $key, $val);
+			
+			/* If this forum has sub-forums */
+			if( (isset_forum_cache_item('subforums', $forum['id']) && $forum['subforums'] == 1)) {
+				
+				/* Cache this forum as having subforums */
+				set_forum_cache_item('subforums', 1, $forum['id']);
+				
+				/* Show the table that holds the subforums */
+				$template->show('subforums');
+				
 				/* Set the proper query params */
-				$query_params	= $_QUERYPARAMS['info'] . $_QUERYPARAMS['category'];
-
-				/* Set the Categories list */
-				$categories = &new CategoriesIterator("SELECT $query_params FROM ". INFO ." i LEFT JOIN ". CATEGORIES ." c ON c.category_id = i.id WHERE i.row_type = ". CATEGORY ." AND i.row_left = ". $forum['row_left'] ." AND i.row_right = ". $forum['row_right'] ." AND i.id = ". $forum['id'] ." ORDER BY i.row_order ASC");
-				$template->setList('categories', $categories);
-
-				/* Hide the welcome message at the top of the forums.html template */
-				$template->hide('welcome_msg');
+				$query_params	= $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'];
 				
-				/* Show the forum status icons */
-				$template->show('forum_status_icons');
+				/* Set the sub-forums list */
+				$template->setList('subforums', new ForumsIterator("SELECT $query_params FROM ". INFO ." i LEFT JOIN ". FORUMS ." f ON f.forum_id = i.id WHERE i.row_left > ". $forum['row_left'] ." AND i.row_right < ". $forum['row_right'] ." AND i.row_type = ". FORUM ." AND i.parent_id = ". $forum['id'] ." ORDER BY i.row_order ASC"));
+				$template->setFile('content', 'subforums.html');
+			}
 
-				/* Show the 'Mark these forums Read' link */
-				$template->show('mark_these_forums');
-				
-				/* Set the forums template to content variable */
-				$template->setFile('content', 'forums.html');
+			if(get_map($user, 'topics', 'can_view', array('forum_id'=>$forum['id'])) > $user['perms']) {
+				/* set the breadcrumbs bit */
+				$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
+				$template->setInfo('content_extra', $template->getVar('L_CANTVIEWFORUMTOPICS'), FALSE);
 			
-			/* If we are looking at a forum */
-			} else if($forum['row_type'] & FORUM) {						
-				
-				/* Add the forum info to the template */
-				foreach($forum as $key => $val)
-					$template->setVar('forum_'. $key, $val);
+				return TRUE;
+			}
+			
+			
+			/**
+			 * Forum settings
+			 */
 
-				/* If this forum has sub-forums */
-				if( (isset_forum_cache_item('subforums', $forum['id']) && $forum['subforums'] == 1)) {
-					
-					/* Cache this forum as having subforums */
-					set_forum_cache_item('subforums', 1, $forum['id']);
-					
-					/* Show the table that holds the subforums */
-					$template->show('subforums');
-					
-					/* Set the proper query params */
-					$query_params	= $_QUERYPARAMS['info'] . $_QUERYPARAMS['forum'];
-					
-					/* Set the sub-forums list */
-					$template->setList('subforums', new ForumsIterator("SELECT $query_params FROM ". INFO ." i LEFT JOIN ". FORUMS ." f ON f.forum_id = i.id WHERE i.row_left > ". $forum['row_left'] ." AND i.row_right < ". $forum['row_right'] ." AND i.row_type = ". FORUM ." AND i.parent_id = ". $forum['id'] ." ORDER BY i.row_order ASC"));
-					$template->setFile('content', 'subforums.html');
-				}
+			/* Set the topics template to the content variable */
+			$template->setFile('content_extra', 'topics.html');
+			
+			/* Set what this user can/cannot do in this forum */
+			$template->setVar('forum_user_topic_options', sprintf($template->getVar('L_FORUMUSERTOPICPERMS'),
+			iif((get_map($user, 'topics', 'can_add', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+			iif((get_map($user, 'topics', 'can_edit', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+			iif((get_map($user, 'topics', 'can_del', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+			iif((get_map($user, 'attachments', 'can_add', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN'))));
 
-				if(get_map($user, 'topics', 'can_view', array('forum_id'=>$forum['id'])) > $user['perms']) {
-					/* set the breadcrumbs bit */
-					$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'), $forum['row_left'], $forum['row_right']);
-					$template->setInfo('content_extra', $template->getVar('L_CANTVIEWFORUMTOPICS'), FALSE);
-				
-					return TRUE;
-				}
+			$template->setVar('forum_user_reply_options', sprintf($template->getVar('L_FORUMUSERREPLYPERMS'),
+			iif((get_map($user, 'replies', 'can_add', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+			iif((get_map($user, 'replies', 'can_edit', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
+			iif((get_map($user, 'replies', 'can_del', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN'))));
+			
+			/* Create an array with all of the possible sort orders we can have */						
+			$sort_orders		= array('name', 'reply_time', 'num_replies', 'views', 'reply_uname', 'rating');
+			
+			
+			/**
+			 * Pagination
+			 */
 
-				/* Set the topics template to the content variable */
-				$template->setFile('content_extra', 'topics.html');
-				
-				/* Set what this user can/cannot do in this forum */
-				$template->setVar('forum_user_topic_options', sprintf($template->getVar('L_FORUMUSERTOPICPERMS'),
-				iif((get_map($user, 'topics', 'can_add', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
-				iif((get_map($user, 'topics', 'can_edit', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
-				iif((get_map($user, 'topics', 'can_del', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
-				iif((get_map($user, 'attachments', 'can_add', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN'))));
+			/* Create the Pagination */
+			$resultsperpage		= $forum['topicsperpage'];
+			$num_results		= $forum['topics'];
 
-				$template->setVar('forum_user_reply_options', sprintf($template->getVar('L_FORUMUSERREPLYPERMS'),
-				iif((get_map($user, 'replies', 'can_add', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
-				iif((get_map($user, 'replies', 'can_edit', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN')),
-				iif((get_map($user, 'replies', 'can_del', array('forum_id'=>$forum['id'])) > $user['perms']), $template->getVar('L_CANNOT'), $template->getVar('L_CAN'))));
-				
-				/* Create an array with all of the possible sort orders we can have */						
-				$sort_orders		= array('name', 'reply_time', 'num_replies', 'views', 'reply_uname', 'rating');
-				
-				/* Create the Pagination */
-				$resultsperpage		= $forum['topicsperpage'];
-				$num_results		= $forum['topics'];
+			$perpage			= isset($request['limit']) && ctype_digit($request['limit']) && intval($request['limit']) > 0 ? intval($request['limit']) : $resultsperpage;
+			$num_pages			= ceil($num_results / $perpage);
+			$page				= isset($request['page']) && ctype_digit($request['page']) && intval($request['page']) > 0 ? intval($request['page']) : 1;
+			$pager				= &new TPL_Paginator($_URL, $num_results, $page, $perpage);
+			
+			if($num_results > $perpage) {
+				$template->setPager('topics_pager', $pager);
+			}
 
-				$perpage			= isset($request['limit']) && ctype_digit($request['limit']) && intval($request['limit']) > 0 ? intval($request['limit']) : $resultsperpage;
-				$num_pages			= ceil($num_results / $perpage);
-				$page				= isset($request['page']) && ctype_digit($request['page']) && intval($request['page']) > 0 ? intval($request['page']) : 1;
-				$pager				= &new TPL_Paginator($_URL, $num_results, $page, $perpage);
-				
-				if($num_results > $perpage) {
-					$template->setPager('topics_pager', $pager);
-				}
+			/* Get the topics for this forum */
+			$daysprune			= isset($request['daysprune']) && ctype_digit($request['daysprune']) ? iif(($request['daysprune'] == -1), 0, intval($request['daysprune'])) : 30;
+			$sortorder			= isset($request['order']) && ($request['order'] == 'ASC' || $request['order'] == 'DESC') ? $request['order'] : 'DESC';
+			$sortedby			= isset($request['sort']) && in_array($request['sort'], $sort_orders) ? $request['sort'] : 'created';
+			$start				= ($page - 1) * $perpage;
+			
+			if($forum['topics'] > 0) {
 
-				/* Get the topics for this forum */
-				$daysprune			= isset($request['daysprune']) && ctype_digit($request['daysprune']) ? iif(($request['daysprune'] == -1), 0, intval($request['daysprune'])) : 30;
-				$sortorder			= isset($request['order']) && ($request['order'] == 'ASC' || $request['order'] == 'DESC') ? $request['order'] : 'DESC';
-				$sortedby			= isset($request['sort']) && in_array($request['sort'], $sort_orders) ? $request['sort'] : 'created';
-				$start				= ($page - 1) * $perpage;
-				
-				/* Create the query */
-				$topics				= &$dba->prepareStatement("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.created>=? AND t.is_draft = 0 AND i.row_type = ". TOPIC ." AND ((t.topic_type = ". TOPIC_NORMAL ." AND t.forum_id = ". intval($forum['id']) .") OR t.topic_type = ". TOPIC_GLOBAL .") ORDER BY t.topic_type DESC, $sortedby $sortorder LIMIT ?,?");
+				/**
+				 * Topic Setting
+				 */
+
+				/* get the topics */
+				$topics				= &$dba->prepareStatement("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE i.created>=? AND t.is_draft=0 AND t.queue = 0 AND t.display = 1 AND i.row_type=". TOPIC ." AND t.forum_id = ". intval($forum['id']) ." AND (t.topic_type <> ". TOPIC_GLOBAL ." AND t.topic_type <> ". TOPIC_ANNOUNCE ." AND t.topic_type <> ". TOPIC_STICKY ." AND t.is_feature = 0) ORDER BY $sortedby $sortorder LIMIT ?,?");
 				
 				/* Set the query values */
 				$topics->setInt(1, $daysprune * (3600 * 24));
@@ -244,32 +260,61 @@ class DefaultEvent extends Event {
 				$result				= &$topics->executeQuery();
 				
 				/* Apply the topics iterator */
-				$it					= &new TopicsIterator($result, &$session, $template->getVar('IMG_DIR'));
+				$it					= &new TopicsIterator($result, &$session, $template->getVar('IMG_DIR'), $forum);
 				$template->setList('topics', $it);
 				
 
+				/**
+				 * Get announcement/global topics
+				 */
+				if($page == 1) {
+					$announcements		= &$dba->executeQuery("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE t.is_draft=0 AND t.queue = 0 AND t.display = 1 AND i.row_type=". TOPIC ." AND t.forum_id = ". intval($forum['id']) ." AND (t.topic_type = ". TOPIC_GLOBAL ." OR t.topic_type = ". TOPIC_ANNOUNCE .") ORDER BY i.created DESC");
+					if($announcements->numrows() > 0) {
+						$a_it				= &new TopicsIterator($announcements, &$session, $template->getVar('IMG_DIR'), $forum);
+						$template->setList('announcements', $a_it);
+					}
+				}
+				
+				/**
+				 * Get sticky/feature topics
+				 */
+				$importants			= &$dba->executeQuery("SELECT ". $_QUERYPARAMS['info'] . $_QUERYPARAMS['topic'] ." FROM ". TOPICS ." t LEFT JOIN ". INFO ." i ON t.topic_id = i.id WHERE t.is_draft=0 AND t.queue = 0 AND t.display = 1 AND i.row_type=". TOPIC ." AND t.forum_id = ". intval($forum['id']) ." AND (t.topic_type <> ". TOPIC_GLOBAL ." AND t.topic_type <> ". TOPIC_ANNOUNCE .") AND (t.topic_type = ". TOPIC_STICKY ." OR t.is_feature = 1) ORDER BY i.created DESC");
+				if($importants->numrows() > 0) {
+					$i_it				= &new TopicsIterator($importants, &$session, $template->getVar('IMG_DIR'), $forum);
+					$template->setList('importants', $i_it);
+				}
+				
 				/* Outside valid page range, redirect */
 				if(!$pager->hasPage($page) && $num_results > $resultsperpage) {
 					$template->setVar('topics_message', $template->getVar('L_PASTPAGELIMIT'));
 					$template->setRedirect('viewforum.php?id='. $forum['id'] .'&limit='. $perpage .'&page='. $num_pages, 3);
 					return TRUE;
 				}
+			}
 
-				/* If there are no topics, set the right messageto display */
-				if($result->numrows() == 0) {
-					$template->setVar('topics_message', iif($daysprune == 0, $template->getVar('L_NOPOSTSINFORUM'), sprintf($template->getVar('L_FORUMNOPOSTSSINCE'), $daysprune)));
-					return TRUE;
-				}
-
-			} else {
-				/* set the breadcrumbs bit */
-				$template	= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
-				$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
-
+			/* If there are no topics, set the right messageto display */
+			if($forum['topics'] <= 0) {
+				$template->show('no_topics');
+				$template->setVar('topics_message', iif($daysprune == 0, $template->getVar('L_NOPOSTSINFORUM'), sprintf($template->getVar('L_FORUMNOPOSTSSINCE'), $daysprune)));
 				return TRUE;
 			}
+			
+			/**
+			 * Moderator functions
+			 */
+			$template->setVar('modpanel', 0);
+
+			if(is_moderator($user, $forum))
+				$template->setVar('modpanel', 1);
+			
+		} else {
+			/* set the breadcrumbs bit */
+			$template	= BreadCrumbs($template, $template->getVar('L_INVALIDFORUM'));
+			$template->setInfo('content', $template->getVar('L_FORUMDOESNTEXIST'), FALSE);
+
+			return TRUE;
 		}
-		
+				
 		/* Add the cookies for this forum's topics */
 		bb_execute_topiccache();
 
@@ -280,6 +325,8 @@ class DefaultEvent extends Event {
 $app = new Forum_Controller('forum_base.html');
 
 $app->AddEvent('markforums', new MarkCategoryForumsRead);
+$app->AddEvent('track', new SubscribeForum);
+$app->AddEvent('untrack', new UnsubscribeForum);
 
 $app->ExecutePage();
 

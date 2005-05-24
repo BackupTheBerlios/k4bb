@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: index.php,v 1.16 2005/05/16 02:10:03 k4st Exp $
+* @version $Id: index.php,v 1.17 2005/05/24 20:09:16 k4st Exp $
 * @package k42
 */
 
@@ -60,9 +60,14 @@ exit; */
 
 class DefaultEvent extends Event {
 	function Execute(&$template, $request, &$dba, &$session, &$user) {
+		
 		//$dba->executeUpdate("UPDATE ". USERINFO ." SET msn = 'peter.goodman@gmail.com' WHERE user_id = 1");
 		global $_DATASTORE, $_USERGROUPS, $_SESS;
+
+		//$str = "[poll][question=hello?][answer]maybe[/answer][answer]good[/answer][/question][question=yes][answer]maybe[/answer][answer]good[/answer][/question][/poll]";
 		
+		//$dba->executeUpdate("UPDATE k4_topics set display=1");
+
 		/*
 		
 		//echo str_replace('"','\"', serialize(array('spiderstrings'=>'googlebot|lycos|ask jeeves|scooter|fast-webcrawler|slurp@inktomi|turnitinbot','spidernames'=>array('googlebot' => 'Google','lycos' => 'Lycos','ask jeeves' => 'Ask Jeeves','scooter' => 'Altavista','fast-webcrawler' => 'AllTheWeb','slurp@inktomi' => 'Inktomi','turnitinbot' => 'Turnitin.com'))));
@@ -90,6 +95,8 @@ class DefaultEvent extends Event {
 		$dba->executeQuery("delete from k4_topics");
 		$dba->executeQuery("delete from k4_replies");
 		$dba->executeQuery("delete from k4_maps");
+		$dba->executeQuery("delete from k4_topicqueue");
+		$dba->executeQuery("delete from k4_mailqueue");
 		$dba->executeUpdate("UPDATE ". USERINFO ." SET num_posts = 0");*/
 		
 		//print_r($dba->getRow("SELECT sql, name, type FROM sqlite_master WHERE tbl_name = '". USERINFO ."' ORDER BY type DESC"));
@@ -113,7 +120,7 @@ class DefaultEvent extends Event {
 		$newest_user						= $dba->getRow("SELECT name, id FROM ". USERS ." ORDER BY id DESC LIMIT 1");
 		$expired							= time() - ini_get('session.gc_maxlifetime');
 
-		$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members') + iif(is_a($session['user'], 'Member') && $_SESS->is_new, 1, 0),
+		$stats = array('num_online_members'	=> Globals::getGlobal('num_online_members'),
 						'num_invisible'		=> Globals::getGlobal('num_online_invisible'),
 						'num_topics'		=> intval($_DATASTORE['forumstats']['num_topics']),
 						'num_replies'		=> intval($_DATASTORE['forumstats']['num_replies']),

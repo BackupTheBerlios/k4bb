@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: general.php,v 1.9 2005/05/16 02:14:03 k4st Exp $
+* @version $Id: general.php,v 1.10 2005/05/24 20:05:09 k4st Exp $
 * @package k42
 */
 
@@ -56,7 +56,7 @@ $lang += array(
 'L_TOP'					=> 'Top',
 'L_ONLINEUSERS'			=> 'Online Users',
 'L_FORUMINFO'			=> 'Neat Forum Info',
-'L_CALENDAR'			=> 'Calendar',
+'L_CALENDER'			=> 'Calender',
 'L_MEMBERLIST'			=> 'Member List',
 'L_QUICKLINKS'			=> 'Quick Links',
 'L_USERCONTROLPANEL'	=> 'User Control Panel',
@@ -201,7 +201,7 @@ $lang += array(
 'L_GLOBALPMMESSAGE'		=> 'This will send out a private message to everyone. They will not be able to remove it.',
 
 'L_PRUNEFORUM'			=> 'Prune Forum(s)',
-'L_PRUNETHREADS'		=> 'Prune topics with no replies in this many days',
+'L_PRUNETOPICS'		=> 'Prune topics with no replies in this many days',
 'L_DAYS'				=> 'Days',
 'L_PRUNESUCCESS'		=> 'Successfully pruned topics.',
 'L_EDITUSER'			=> 'Edit User',
@@ -251,20 +251,6 @@ $lang += array(
 'L_EMPTY'				=> 'Empty',
 'L_DROP'				=> 'Drop',
 
-/* Permission Things */
-'L_VIEW'				=> 'View',
-'L_READ'				=> 'Read',
-'L_POST'				=> 'Post',
-'L_ATTACH'				=> 'Attach',
-'L_EDIT'				=> 'Edit',
-'L_ANNOUNCE'			=> 'Announce',
-'L_POLLCREATE'			=> 'Poll Create',
-
-'L_ALL'					=> 'ALL',
-'L_REG'					=> 'REGISTERED',
-'L_PRIVATE'				=> 'PRIVATE',
-'L_MODS'				=> 'MODERATORS',
-'L_ADMINS'				=> 'ADMINS',
 
 /* All of the things on the board options part of the acp & email settings */
 'L_TEMPLATESET'			=> 'Template Set',
@@ -412,6 +398,10 @@ $lang += array(
 'L_ADDUSER'				=> 'Add User to Group',
 
 /* Single topic & replies view */
+'L_SUBSCRIBEDTOPIC'		=> 'Successfully subscribed to the topic <strong>%s</strong>.',
+'L_ALREADYSUBSCRIBED'	=> 'You are already subscribed to this topic/forum.',
+'L_UNSUBSCRIBEDTOPIC'	=> 'You have now been unsubscribed from the topic <strong>%s</strong>.',
+'L_SUBSCRIPTION'		=> 'Subscription',
 'L_SIMILARTOPICS'		=> 'Similar Topics',
 'L_EDITEDON'			=> 'Edited on',
 'L_JOINED'				=> 'Joined',
@@ -421,13 +411,16 @@ $lang += array(
 'L_RATE'				=> 'Rate',
 'L_RATING'				=> 'Rating',
 'L_VOTES'				=> 'Votes',
-'L_RATETHREAD'			=> 'Rate Topic',
+'L_RATETOPIC'			=> 'Rate Topic',
 'L_POSTREPLY'			=> 'Post Reply',
 'L_REPLY'				=> 'Reply',
 'L_OPTIONAL'			=> 'Optional',
 'L_LINEAR'				=> 'Linear',
 'L_HYBRID'				=> 'Hybrid',
-'L_THREADED'			=> 'Threaded',
+'L_OUTLINE'				=> 'Outline',
+'L_TRACKTOPIC'			=> 'Track this Topic',
+'L_NEXTOLDEST'			=> 'Next Oldest',
+'L_NEXTNEWEST'			=> 'Next Newest',
 'L_HORIZAUNTAL'			=> 'Horizauntal',
 'L_VERTICAL'			=> 'Vertical',
 'L_VOTE'				=> 'Vote',
@@ -439,6 +432,11 @@ $lang += array(
 'L_TOPICDISPLAY'		=> 'Topic Display Mode',
 
 /* Single forum view */
+'L_SUBSCRIBEFORUM'		=> 'Subscribe to this Forum',
+'L_SUBSCRIBEDFORUM'		=> 'Successfully subscribed to the forum <strong>%s</strong>.',
+'L_UNSUBSCRIBEDFORUM'	=> 'Successfully subscribed to the forum <strong>%s</strong>.',
+'L_IMPORTANTTOPICS'		=> 'Important Topics',
+'L_ANNOUNCEMENTS'		=> 'Announcements',
 'L_PREV'				=> '&lt;',
 'L_FIRST'				=> '&laquo;',
 'L_NEXT'				=> '&gt;',
@@ -453,6 +451,7 @@ $lang += array(
 'L_POLL'				=> 'Poll',
 'L_POSTTOPIC'			=> 'Post Topic',
 'L_POSTPOLL'			=> 'Post Poll',
+
 'L_TOPIC'				=> 'Topic',
 'L_VIEWS'				=> 'Views',
 'L_REPLIES'				=> 'Replies',
@@ -479,7 +478,7 @@ $lang += array(
 'L_CANNOT'				=> '<strong>cannot</strong>',
 'L_FORUMUSERREPLYPERMS'	=> 'You %s reply to topics in this forum<br />You %s edit your replies in this forum<br />You %s delete your replies in this forum',
 'L_FORUMUSERTOPICPERMS'	=> 'You %s post new topics in this forum<br />You %s edit your topics in this forum<br />You %s delete your topics in this forum<br />You %s post attachments in this forum',
-'L_FORUMNOPOSTSSINCE'	=> '<strong>There have been no posts in the last %s days in this forum.</strong><br /><span class="smalltext">Try using the controls below to search for any older posts that may exist.</span>',
+'L_FORUMNOPOSTSSINCE'	=> '<strong>There have been no regular posts in the last %s days in this forum.</strong><br /><span class="smalltext">Try using the controls below to search for any older posts that may exist.</span>',
 'L_NOPOSTSINFORUM'		=> '<strong>There are no posts in this forum.</strong>',
 
 /* User CP stuff */
@@ -656,8 +655,8 @@ $lang += array(
 'L_EXACTNAME'			=> 'Exact Name',
 'L_FINDPOSTSBYUSER'		=> 'Find posts by this user',
 'L_FINDPOSTS'			=> 'Find Posts',
-'L_FINDTHREADSBYUSER'	=> 'Find topics started by user',
-'L_FINDTHREADSWITH'		=> 'Find topics with',
+'L_FINDTOPICSBYUSER'	=> 'Find topics started by user',
+'L_FINDTOPICSWITH'		=> 'Find topics with',
 'L_ATLEAST'				=> 'At Least',
 'L_ATMOST'				=> 'At Most',
 'L_SEARCHPARAMS'		=> 'Search Parameters',
@@ -687,17 +686,9 @@ $lang += array(
 'L_MISCOPTIONS'			=> 'Miscellaneous Options',
 'L_TOPICEXPIREEXPLAIN'	=> 'Enter 0 or leave blank for a never ending Sticky/Announcement/Feature',
 'L_POSTTOPICAS'			=> 'Post topic as',
-'L_GLOBAL'				=> 'Global',
-'L_NORMAL'				=> 'Normal',
-'L_FEATURE'				=> 'Featured Topics',
-'L_FEATURETOPIC'		=> 'Feature topic',
 'L_EDITPOST'			=> 'Edit Post',
 'L_EDITTOPIC'			=> 'Edit Topic',
 'L_EDITREPLY'			=> 'Edit Reply',
-'L_DELETEREPLY'			=> 'Delete Reply',
-'L_DELETETOPIC'			=> 'Delete Topic',
-'L_LOCKTOPIC'			=> 'Lock Topic',
-'L_UNLOCKTOPIC'			=> 'Unlock Topic',
 'L_NEITHER'				=> 'Neither',
 'L_MAKEANNOUNCEMENT'	=> 'Make this post an Announcement',
 'L_MAKEGLOBALANNOUNCEMENT'=> 'Make this post a Global Announcement',
@@ -705,6 +696,7 @@ $lang += array(
 'L_POSTOPTIONS'			=> 'Post Options',
 'L_POLLQUESTION'		=> 'Poll Question',
 'L_POLLOPTIONS'			=> 'Poll Options',
+'L_POLLSETTINGS'		=> 'Poll Settings',
 'L_OPTIONSPERLINE'		=> 'One option per line',
 'L_EMOTICONS'			=> 'Emoticons',
 'L_MANAGE_ATTACHMENTS'	=> 'Manage Attachments',
@@ -855,14 +847,14 @@ $lang += array(
 'L_SENTPMESSAGE'		=> 'Successfully sent the private message.',
 'L_MESSAGENOTSETNSAVED'	=> 'The message was not sent to the specified member because he or she has you on their blacklist. Hwowver, this message may have been saved in your \'Sent Items\' folder.',
 'L_FOLDERDOESNTEXIST'	=> 'The selected Private Messages Folder does not exist.',
-'L_NONEXISTANTTHREAD'	=> 'The selected Topic does not exist.',
+'L_NONEXISTANTTOPIC'	=> 'The selected Topic does not exist.',
 'L_CANNOTRATEOWNPOSTS'	=> 'You are not allowed to rate your own posts.',
 'L_NEEDCHOOSERATE'		=> 'You need to choose a Rating to give to this Topic.',
 'L_ALREADYRATED'		=> 'You have already Rated this Topic.',
-'L_RATEDTHREAD'			=> 'Successfully Rated the Topic.',
+'L_RATEDTOPIC'			=> 'Successfully Rated the Topic.',
 'L_ERRORUSINGFEATURE'	=> 'An error occured while trying to use the selected feature of k4 Bulletin Board.',
 'L_DELETEDFORUMCAT'		=> 'Successfully deleted the selected category/forum and all of its topics and posts.',
-'L_DELETEDPOSTTHREAD'	=> 'Successfully deleted the selected topic/post and all of its children posts.',
+'L_DELETEDPOSTTOPIC'	=> 'Successfully deleted the selected topic/post and all of its children posts.',
 'L_DELETEDUSER'			=> 'Successfully deleted the user from the database.',
 'L_CANNOTDELETEADMIN'	=> 'You are not allowed to remove this boards Administrator from the database.',
 'L_ERROREMAILING'		=> 'An error occured while trying to email <strong>%s</strong>. Make sure that the server that is running k4 supports email mailing.',
@@ -930,7 +922,7 @@ $lang += array(
 'L_ERRORVIEWFORUM'		=> 'An error occured while trying to view the selected category or forum.',
 'L_PERMCANTVIEW'		=> 'You do not have permission to view this Category or Forum.',
 'L_PERMCANTVIEWTOPIC'	=> 'You do not have permission to view topics in this forum.',
-'L_INVALIDTHREADID'		=> 'You have chosen an invalid topic to view.',
+'L_INVALIDTOPICID'		=> 'You have chosen an invalid topic to view.',
 'L_PERMSEDITPOST'		=> 'You do not have permission to edit this post.',
 'L_INVALIDPOSTID'		=> 'The selected post does not exist.',
 'L_CHOOSEPOLLOPTION'	=> 'You must choose a poll option to vote on.',

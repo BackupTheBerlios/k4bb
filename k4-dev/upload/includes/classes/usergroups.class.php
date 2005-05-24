@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: usergroups.class.php,v 1.1 2005/05/16 02:11:55 k4st Exp $
+* @version $Id: usergroups.class.php,v 1.2 2005/05/24 20:01:31 k4st Exp $
 * @package k42
 */
 
@@ -61,7 +61,7 @@ class AddUserToGroup extends Event {
 		
 		$member			= $dba->getRow("SELECT ". $_QUERYPARAMS['user'] . $_QUERYPARAMS['userinfo'] ." FROM ". USERS ." u LEFT JOIN ". USERINFO ." ui ON u.id=ui.user_id WHERE u.name = '". $dba->quote($request['name']) ."'");
 		
-		if(!$member || !is_array($member) || !empty($member)) {
+		if(!$member || !is_array($member) || empty($member)) {
 			/* set the breadcrumbs bit */
 			$template	= BreadCrumbs($template, $template->getVar('L_INFORMATION'));
 			$template->setInfo('content', $template->getVar('L_USERDOESNTEXIST'), TRUE);
@@ -70,7 +70,7 @@ class AddUserToGroup extends Event {
 		
 		/* Should we set the group moderator? */
 		if($group['mod_name'] == '' || $group['mod_id'] == 0) {
-			$admin		= $dba->getRow("SELECT * FROM ". USERS ." WHERE perms >= ". intval(ADMIN) ." ORDER BY perms,id DESC LIMIT 1");
+			$admin		= $dba->getRow("SELECT * FROM ". USERS ." WHERE perms >= ". intval(ADMIN) ." ORDER BY perms,id ASC LIMIT 1");
 			$dba->executeUpdate("UPDATE ". USERGROUPS  ." SET mod_name = '". $dba->quote($admin['name']) ."', mod_id = ". intval($admin['id']) ." WHERE id = ". intval($group['id']));
 		
 			if(!@touch(CACHE_FILE, time()-86460)) {
