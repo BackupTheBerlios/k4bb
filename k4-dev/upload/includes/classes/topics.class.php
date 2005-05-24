@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topics.class.php,v 1.17 2005/05/24 20:01:31 k4st Exp $
+* @version $Id: topics.class.php,v 1.18 2005/05/24 21:48:18 k4st Exp $
 * @package k42
 */
 
@@ -140,7 +140,7 @@ class PostTopic extends Event {
 		/* Set the topic created time */
 		$created			= time();
 		
-		$request['message']	= substr($request['message'], $_SETTINGS['postmaxchars']);
+		$request['message']	= substr($request['message'], 0, $_SETTINGS['postmaxchars']);
 		/* Initialize the bbcode parser with the topic message */
 		$bbcode	= &new BBCodex(&$user, $request['message'], $forum['id'], 
 			iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), FALSE, TRUE), 
@@ -477,7 +477,7 @@ class PostDraft extends Event {
 		$created			= time();
 		
 		/* Initialize the bbcode parser with the topic message */
-		$request['message']	= substr($request['message'], $_SETTINGS['postmaxchars']);
+		$request['message']	= substr($request['message'], 0, $_SETTINGS['postmaxchars']);
 		$bbcode	= &new BBCodex(&$user, $request['message'], $forum['id'], 
 			iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), FALSE, TRUE), 
 			iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), FALSE, TRUE), 
@@ -922,7 +922,7 @@ class UpdateTopic extends Event {
 		$template	= BreadCrumbs($template, $template->getVar('L_EDITTOPIC'), $forum['row_left'], $forum['row_right']);
 				
 		/* Initialize the bbcode parser with the topic message */
-		$request['message']	= substr($request['message'], $_SETTINGS['postmaxchars']);
+		$request['message']	= substr($request['message'], 0, $_SETTINGS['postmaxchars']);
 		$bbcode	= &new BBCodex(&$user, $request['message'], $forum['id'], 
 			iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), FALSE, TRUE), 
 			iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), FALSE, TRUE), 

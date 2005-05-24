@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: replies.class.php,v 1.8 2005/05/24 20:01:31 k4st Exp $
+* @version $Id: replies.class.php,v 1.9 2005/05/24 21:48:18 k4st Exp $
 * @package k42
 */
 
@@ -183,7 +183,7 @@ class PostReply extends Event {
 		$created			= time();
 		
 		/* Initialize the bbcode parser with the topic message */
-		$request['message']	= substr($request['message'], $_SETTINGS['postmaxchars']);
+		$request['message']	= substr($request['message'], 0, $_SETTINGS['postmaxchars']);
 		$bbcode	= &new BBCodex(&$user, $request['message'], $forum['id'], 
 			iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), FALSE, TRUE), 
 			iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), FALSE, TRUE), 
@@ -638,7 +638,7 @@ class UpdateReply extends Event {
 		$template	= BreadCrumbs($template, $template->getVar('L_EDITREPLY'), $reply['row_left'], $reply['row_right']);
 				
 		/* Initialize the bbcode parser with the topic message */
-		$request['message']	= substr($request['message'], $_SETTINGS['postmaxchars']);
+		$request['message']	= substr($request['message'], 0, $_SETTINGS['postmaxchars']);
 		$bbcode	= &new BBCodex(&$user, $request['message'], $forum['id'], 
 			iif((isset($request['disable_html']) && $request['disable_html'] == 'on'), FALSE, TRUE), 
 			iif((isset($request['disable_bbcode']) && $request['disable_bbcode'] == 'on'), FALSE, TRUE), 
