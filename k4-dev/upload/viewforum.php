@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewforum.php,v 1.18 2005/05/24 20:09:16 k4st Exp $
+* @version $Id: viewforum.php,v 1.19 2005/05/26 18:34:54 k4st Exp $
 * @package k42
 */
 
@@ -71,18 +71,15 @@ class DefaultEvent extends Event {
 			return TRUE;
 		}
 			
-		/* Get the users Browsing this category or forum */
-		$location_id		= isset($_URL->args['id']) ? $dba->Quote(intval($_URL->args['id'])) : 0;
-		
 		/* Set the extra SQL query fields to check */
-		$extra				= " AND (s.location_file = '". $dba->Quote($_URL->file) ."' AND s.location_id = ". $location_id .")";	
-
+		$extra				= " AND s.location_file = '". $dba->Quote($_URL->file) ."' AND s.location_id = ". intval($forum['id']);	
+		
 		$forum_can_view		= $forum['row_type'] & CATEGORY ? get_map($user, 'categories', 'can_view', array()) : get_map($user, 'forums', 'can_view', array());
 		
 		$expired			= time() - ini_get('session.gc_maxlifetime');
 
 		$num_online_total	= $dba->getValue("SELECT COUNT(s.id) as num_online_total FROM ". SESSIONS ." s WHERE s.seen >= $expired $extra");
-		
+				
 		/* If there are more than 0 people browsing the forum, display the stats */
 		if($num_online_total > 0 && $forum_can_view <= $user['perms'] && ($forum['row_type'] & CATEGORY || $forum['row_type'] & FORUM)) {
 

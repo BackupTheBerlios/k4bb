@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: viewtopic.php,v 1.12 2005/05/24 20:09:16 k4st Exp $
+* @version $Id: viewtopic.php,v 1.13 2005/05/26 18:34:54 k4st Exp $
 * @package k42
 */
 
@@ -110,10 +110,8 @@ class DefaultEvent extends Event {
 		/** 
 		 * Get the users Browsing this topic 
 		 */
-		$location_id		= isset($_URL->args['id']) ? $dba->Quote(intval($_URL->args['id'])) : 0;
-		
 		/* Set the extra SQL query fields to check */
-		$extra				= " AND (s.location_file = '". $dba->Quote($_URL->file) ."' AND s.location_id = ". $location_id .")";	
+		$extra				= " AND s.location_file = '". $dba->Quote($_URL->file) ."' AND s.location_id = ". intval($topic['id']);	
 		
 		$expired			= time() - ini_get('session.gc_maxlifetime');
 

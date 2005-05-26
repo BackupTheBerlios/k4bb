@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: session.php,v 1.22 2005/05/24 20:03:26 k4st Exp $
+* @version $Id: session.php,v 1.23 2005/05/26 18:35:27 k4st Exp $
 * @package k42
 */
 
@@ -181,7 +181,7 @@ class FADBSession {
 		if(!$logout && $this->is_new) {
 			
 			/* Check to see if we should auto-log this person in or not */
-			if(!is_a($_SESSION['user'], 'Member') && isset($_COOKIE['k4_autolog'])) {
+			if(is_a($_SESSION['user'], 'Guest') && isset($_COOKIE['k4_autolog'])) {
 				
 				/* Get this session ID */
 				$id											= &$_SESSION['user']->ValidateLoginKey($_COOKIE);
@@ -193,6 +193,7 @@ class FADBSession {
 					$_SESSION['user']						= &new Member($id);
 					$_SESSION['user']->info['rememberme']	= 'on';
 					$_SESSION['user']->Login();
+					$_SESSION['user']->GenerateLoginKey();
 					
 					$_DBA->executeUpdate("UPDATE ". USERS ." SET last_seen = ". time() ." WHERE id = ". intval($id));
 				}

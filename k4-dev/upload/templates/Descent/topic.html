@@ -30,7 +30,9 @@
 	<tr class="panel">
 		<td width="20%" valign="top" rowspan="2" class="alt1">
 			<div class="smalltext">
-			<if:if var="poster_id" greater="0">
+			<if:if var="poster_id" eq="0">
+			{$L_GUEST}
+			<if:else />
 				<if:if var="post_user_avatar" noteq="">
 				<img src="images.php?avatar={$poster_id}" alt="" border="" />
 				<br /><br />

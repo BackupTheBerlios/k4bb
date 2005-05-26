@@ -27,7 +27,7 @@
 * @author Peter Goodman
 * @author Geoffrey Goodman
 * @author James Logsdon
-* @version $Id: replies.class.php,v 1.9 2005/05/24 21:48:18 k4st Exp $
+* @version $Id: replies.class.php,v 1.10 2005/05/26 18:35:44 k4st Exp $
 * @package k42
 */
 
@@ -227,6 +227,8 @@ class PostReply extends Event {
 			/* Add the main topic information to the database */
 			$insert_a->executeUpdate();
 
+			$poster_name		= iif($user['id'] <= 0, htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']);
+
 			$reply_id			= $dba->getInsertId();
 			
 			//topic_id,forum_id,category_id,poster_name,poster_id,body_text,posticon
@@ -235,7 +237,7 @@ class PostReply extends Event {
 			$insert_b->setInt(2, $topic['id']);
 			$insert_b->setInt(3, $forum['id']);
 			$insert_b->setInt(4, $forum['category_id']);
-			$insert_b->setString(5, iif($user['id'] <= 0, htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
+			$insert_b->setString(5, $poster_name);
 			$insert_b->setInt(6, $user['id']);
 			$insert_b->setString(7, USER_IP);
 			$insert_b->setString(8, $body_text);
@@ -264,7 +266,7 @@ class PostReply extends Event {
 			/* Set the forum values */
 			$forum_update->setInt(1, $created);
 			$forum_update->setString(2, htmlentities($request['name'], ENT_QUOTES));
-			$forum_update->setString(3, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
+			$forum_update->setString(3, $poster_name);
 			$forum_update->setInt(4, $reply_id);
 			$forum_update->setInt(5, $user['id']);
 			$forum_update->setString(6, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
@@ -272,7 +274,7 @@ class PostReply extends Event {
 
 			/* Set the topic values */
 			$topic_update->setInt(1, $created);
-			$topic_update->setString(2, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
+			$topic_update->setString(2, $poster_name);
 			$topic_update->setInt(3, $reply_id);
 			$topic_update->setInt(4, $user['id']);
 			$topic_update->setInt(5, $topic['id']);
@@ -301,7 +303,7 @@ class PostReply extends Event {
 				@unlink(CACHE_FILE);
 			}
 			
-			set_send_reply_mail($topic['id']);
+			set_send_reply_mail($topic['id'], iif($poster_name == '', $template->getVar('L_GUEST'), $poster_name));
 			
 			/**
 			 * Subscribe this user to the topic

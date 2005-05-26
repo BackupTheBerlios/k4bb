@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: topics.class.php,v 1.18 2005/05/24 21:48:18 k4st Exp $
+* @version $Id: topics.class.php,v 1.19 2005/05/26 18:35:44 k4st Exp $
 * @package k42
 */
 
@@ -185,6 +185,8 @@ class PostTopic extends Event {
 			 * Build the queries
 			 */
 			
+			$poster_name		= iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']);
+
 			$dba->beginTransaction();
 
 			/* Prepare the queries */
@@ -220,7 +222,7 @@ class PostTopic extends Event {
 			$insert_b->setInt(1, $topic_id);
 			$insert_b->setInt(2, $forum['id']);
 			$insert_b->setInt(3, $forum['category_id']);
-			$insert_b->setString(4, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
+			$insert_b->setString(4, $poster_name);
 			$insert_b->setInt(5, $user['id']);
 			$insert_b->setString(6, USER_IP);
 			$insert_b->setString(7, $body_text);
@@ -255,13 +257,13 @@ class PostTopic extends Event {
 				/* Set the forum values */
 				$forum_update->setInt(1, $created);
 				$forum_update->setString(2, htmlentities($request['name'], ENT_QUOTES));
-				$forum_update->setString(3, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
+				$forum_update->setString(3, $poster_name);
 				$forum_update->setInt(4, $topic_id);
 				$forum_update->setInt(5, $user['id']);
 				$forum_update->setString(6, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
 				$forum_update->setInt(7, $created);
 				$forum_update->setString(8, htmlentities($request['name'], ENT_QUOTES));
-				$forum_update->setString(9, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
+				$forum_update->setString(9, $poster_name);
 				$forum_update->setInt(10, $topic_id);
 				$forum_update->setInt(11, $user['id']);
 				$forum_update->setString(12, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
@@ -309,7 +311,7 @@ class PostTopic extends Event {
 					$subscribe->executeUpdate();
 				}
 				
-				set_send_topic_mail($forum['id'], $user['name']);
+				set_send_topic_mail($forum['id'], iif($poster_name == '', $template->getVar('L_GUEST'), $poster_name));
 
 				/* Redirect the user */
 				$template->setInfo('content', sprintf($template->getVar('L_ADDEDTOPIC'), htmlentities($request['name'], ENT_QUOTES), $forum['name']));
@@ -513,6 +515,8 @@ class PostDraft extends Event {
 			 * Build the queries to add the draft
 			 */
 			
+			$poster_name		= iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']);
+
 			$update_a			= $dba->prepareStatement("UPDATE ". INFO ." SET name=?,created=? WHERE id=?");
 			$update_b			= $dba->prepareStatement("UPDATE ". TOPICS ." SET body_text=?,posticon=?,disable_html=?,disable_bbcode=?,disable_emoticons=?,disable_sig=?,disable_areply=?,disable_aurls=?,is_draft=?,topic_type=?,is_feature=? WHERE topic_id=?");
 			
@@ -550,13 +554,13 @@ class PostDraft extends Event {
 			/* Set the forum values */
 			$forum_update->setInt(1, $created);
 			$forum_update->setString(2, htmlentities($request['name'], ENT_QUOTES));
-			$forum_update->setString(3, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
+			$forum_update->setString(3, $poster_name);
 			$forum_update->setInt(4, $draft['id']);
 			$forum_update->setInt(5, $user['id']);
 			$forum_update->setString(6, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
 			$forum_update->setInt(7, $created);
 			$forum_update->setString(8, htmlentities($request['name'], ENT_QUOTES));
-			$forum_update->setString(9, iif($user['id'] <= 0,  htmlentities((isset($request['poster_name']) ? $request['poster_name'] : '') , ENT_QUOTES), $user['name']));
+			$forum_update->setString(9, $poster_name);
 			$forum_update->setInt(10, $draft['id']);
 			$forum_update->setInt(11, $user['id']);
 			$forum_update->setString(12, iif(($user['perms'] >= get_map($user, 'posticons', 'can_add', array('forum_id'=>$forum['id']))), (isset($request['posticon']) ? $request['posticon'] : 'clear.gif'), 'clear.gif'));
@@ -593,7 +597,7 @@ class PostDraft extends Event {
 				$subscribe->executeUpdate();
 			}
 
-			set_send_topic_mail($forum['id'], $user['name']);
+			set_send_topic_mail($forum['id'], iif($poster_name == '', $template->getVar('L_GUEST'), $poster_name));
 
 			/* Redirect the user */
 			$template->setInfo('content', sprintf($template->getVar('L_ADDEDTOPIC'), htmlentities($request['name'], ENT_QUOTES), $forum['name']));

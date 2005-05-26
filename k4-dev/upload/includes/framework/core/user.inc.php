@@ -26,7 +26,7 @@
 *
 * @author Peter Goodman
 * @author Geoffrey Goodman
-* @version $Id: user.inc.php,v 1.6 2005/05/11 17:41:55 k4st Exp $
+* @version $Id: user.inc.php,v 1.7 2005/05/26 18:36:02 k4st Exp $
 * @package k42
 */
 
@@ -142,7 +142,7 @@ class Member extends User {
 
 		parent::User();
 		
-		$this->id	= $id;
+		$this->id	= intval($id);
 
 		$this->ReadInfo();
 	}
@@ -161,7 +161,7 @@ class Member extends User {
 		global $_DBA;
 
 		$time		= time();
-		$this->id	= is_array($this->id) ? $this->id[0] : $this->id;
+		//$this->id	= is_array($this->id) ? $this->id[0] : $this->id;
 		
 		Error::reset();
 
@@ -181,7 +181,7 @@ class Member extends User {
 
 		$key		= md5(microtime() + rand());
 		
-		$this->id	= is_array($this->id) ? $this->id[0] : $this->id;
+		//$this->id	= is_array($this->id) ? $this->id[0] : $this->id;
 		
 		Error::reset();
 		
@@ -189,6 +189,9 @@ class Member extends User {
 		$update->setString(1, $key);
 		$update->setInt(2, $this->id);
 		$update->executeUpdate();
+
+		@setcookie('k4_autolog', $this->info['name'] . $key, time()+(3600*24*60));
+		bb_setcookie_cache('k4_autolog', $this->info['name'] . $key, time()+(3600*24*60));
 		
 		if(Error::grab())
 			return trigger_error("Could not update the sessions table.", E_USER_ERROR);
@@ -199,7 +202,7 @@ class Member extends User {
 	function ReadInfo() {
 		global $_DBA, $_URL, $_QUERYPARAMS;
 
-		$this->id		= is_array($this->id) ? intval($this->id[0]) : intval($this->id);
+		//$this->id		= is_array($this->id) ? intval($this->id[0]) : intval($this->id);
 		
 		$query_params	= $_QUERYPARAMS['user'] . $_QUERYPARAMS['userinfo'];
 

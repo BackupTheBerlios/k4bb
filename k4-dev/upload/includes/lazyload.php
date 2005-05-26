@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: lazyload.php,v 1.2 2005/05/24 20:03:26 k4st Exp $
+* @version $Id: lazyload.php,v 1.3 2005/05/26 18:35:27 k4st Exp $
 * @package k42
 */
 
@@ -187,7 +187,7 @@ function set_send_topic_mail($forum_id, $poster_name) {
  * This sets the mail queue items for emails that need to be sent out
  * because people have replied to a topic
  */
-function set_send_reply_mail($topic_id) {
+function set_send_reply_mail($topic_id, $poster_name) {
 
 	global $_DBA, $_QUERYPARAMS, $_SETTINGS, $lang;
 
@@ -208,7 +208,7 @@ function set_send_reply_mail($topic_id) {
 			while($users->next()) {
 				
 				$u				= $users->current();
-				$subscribers[]	= array('name' => $u['user_name'], 'id' => $u['id'], 'email' => $u['email'], 'poster_name' => $topic['poster_name'], 'topic_id' => $topic['id']);
+				$subscribers[]	= array('name' => $u['user_name'], 'id' => $u['user_id'], 'email' => $u['email'], 'poster_name' => $poster_name, 'topic_id' => $topic['id']);
 			}
 			
 			/* Memory Saving */
@@ -276,11 +276,11 @@ function execute_mail_queue() {
 					if(isset($users[$i]) && is_array($users[$i]) && intval($users[$i]['id']) != 0) {
 						
 						if($users[$i]['name'] != $users[$i]['poster_name']) {
-
+							
 							$message	= sprintf($_MAILQUEUE[0]['message'], $users[$i]['name'], $users[$i]['poster_name']);
 
 							/* Email our user */
-							@mail($users[$i]['email'], $_MAILQUEUE[0]['subject'], $message, "From: \"". $_SETTINGS['bbtitle'] ." Forums\" <noreply@". $page->__toString() .">");
+							mail($users[$i]['email'], $_MAILQUEUE[0]['subject'], $message, "From: \"". $_SETTINGS['bbtitle'] ." Forums\" <noreply@". $page->__toString() .">");
 							
 							unset($users[$i]);
 						}

@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: users.class.php,v 1.10 2005/05/24 20:01:31 k4st Exp $
+* @version $Id: users.class.php,v 1.11 2005/05/26 18:35:44 k4st Exp $
 * @package k42
 */
 
@@ -148,11 +148,12 @@ class LoginEvent extends Event {
 				if(isset($user['rememberme']) && $user['rememberme'] == 'on') {
 					
 					/* Create a safe cookie */
-					$userinfo	= $user['name'] . $session['user']->GenerateLoginKey();
+					$session['user']->GenerateLoginKey();
+					//$userinfo	= $user['name'] . $session['user']->GenerateLoginKey();
 
 					/* Set the auto-logging in cookie, be persistent about it */
-					@setcookie('k4_autolog', $userinfo, time()+(3600*24*60));
-					bb_setcookie_cache('k4_autolog', $userinfo, time()+(3600*24*60));
+					//@setcookie('k4_autolog', $userinfo, time()+(3600*24*60));
+					//bb_setcookie_cache('k4_autolog', $userinfo, time()+(3600*24*60));
 				}
 				
 				$dba->executeUpdate("UPDATE ". USERS ." SET last_seen = ". time() ." WHERE id = ". intval($u['id']));
