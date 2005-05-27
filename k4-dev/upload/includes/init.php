@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: init.php,v 1.15 2005/05/19 23:44:54 k4st Exp $
+* @version $Id: init.php,v 1.16 2005/05/27 00:17:31 k4st Exp $
 * @package k42
 */
 
@@ -73,5 +73,9 @@ require FORUM_BASE_DIR. '/includes/classes/admin/users.class.php';
 
 /* Sessions */
 include FORUM_BASE_DIR.	'/includes/session.php';
+
+/* JPSpan */
+require FORUM_BASE_DIR. '/includes/external/JPSpan.php';
+require JPSPAN . 'Server/PostOffice.php';
 
 ?>

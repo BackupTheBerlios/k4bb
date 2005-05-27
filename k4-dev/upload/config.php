@@ -25,7 +25,7 @@
 * SOFTWARE.
 *
 * @author Peter Goodman
-* @version $Id: config.php,v 1.1 2005/04/05 03:10:22 k4st Exp $
+* @version $Id: config.php,v 1.2 2005/05/27 00:17:55 k4st Exp $
 * @package k42
 */
 
@@ -34,8 +34,6 @@ $CONFIG['application']['lang']			= 'english';
 $CONFIG['application']['dba_name']		= 'k4_forum';
 
 $CONFIG['template']['path']				= dirname(__FILE__) . '/templates';
-//$CONFIG['template']['tplfolder']		= 'Descent';
-//$CONFIG['template']['imgfolder']		= 'Descent';
 $CONFIG['template']['force_compile']	= FALSE;
 $CONFIG['template']['ignore_white']		= FALSE;
 
@@ -45,11 +43,11 @@ $CONFIG['ftp']['password']				= '';
 $CONFIG['ftp']['server']				= '';
 
 $CONFIG['dba']['driver']				= 'sqlite';
-$CONFIG['dba']['database']				= 'k4_forum.sqlite';
+$CONFIG['dba']['database']				= 'k4_forum';
 $CONFIG['dba']['directory']				= dirname(__FILE__) . '/includes/sqlite';
-$CONFIG['dba']['server']				= 'localhost:3306';
-$CONFIG['dba']['user']					= '';
-$CONFIG['dba']['pass']					= '';
+$CONFIG['dba']['server']				= 'localhost';
+$CONFIG['dba']['user']					= '...';
+$CONFIG['dba']['pass']					= '...';
 
 $GLOBALS['_CONFIG']						= &$CONFIG;
 
