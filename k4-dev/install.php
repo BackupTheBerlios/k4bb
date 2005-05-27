@@ -1,101 +1,640 @@
 <?php
 
+error_reporting(E_ALL);
+@set_time_limit(120);
 
-/*
-$x = "id
-seen
-name
-user_id
-data
-location_file
-location_act
-location_id";
+/**
+ * Start our session
+ */
+session_start();
 
-foreach(explode("\r\n", $x) as $item) {
-	echo ", s.". $item ." AS $item";
+
+/**
+ * Define some base-line constants to work the install
+ */
+define('INSTALL_BASE_DIR', dirname(__FILE__));
+define('FORUM_BASE_DIR', INSTALL_BASE_DIR .'/upload');
+define('IN_K4', TRUE);
+define('DEBUG_SQL', FALSE);
+
+
+/**
+ * Does the upload directory exist?
+ */
+if(!file_exists(FORUM_BASE_DIR)) {
+	echo "Please make sure that k4 BB has been uploaded properly and that the 'upload' folder is intact.";
+	exit;
 }
 
-/*
-global $_CONFIG;
-$dba = Database::open($_CONFIG['dba']);
-
-//$dba->Execute("INSERT INTO ". STYLES ." (name, description) VALUES ('Descent', 'Default theme for the k4 Bulletin Board.')");
-$dba->executeUpdate("DELETE FROM ". CSS);
-
-$styleset = $dba->GetValue("SELECT MAX(id) FROM ". STYLES );
-
-class CSS {
-	var $dba;
-	function CSS() {
-		global $CONFIG;
-
-		$this->dba			= Database::open($CONFIG['dba']);
-	}
-	function AddClass($name, $properties, $style_id, $description) {
-		$style_id		= intval($style_id);
-		$name			= $this->dba->Quote(($name));
-		$properties		= $this->dba->Quote(str_replace("\r\n", "", $properties));
-		$description	= $this->dba->Quote(htmlspecialchars($description));
-		return $this->dba->executeUpdate("INSERT INTO ". CSS ." (name, properties, style_id, description) VALUES ('{$name}', '{$properties}', $style_id, '{$description}')");
-	}
+/**
+ * Does the functions.inc.php k4 file exist?
+ */
+if(!file_exists(FORUM_BASE_DIR .'/includes/framework/core/functions.inc.php')) {
+	echo "Could not locate a critical PHP file within k4 Bulletin Board. Please make sure that k4 BB has been uploaded properly and that the 'upload' folder is intact.";
+	exit;
 }
 
-$css = new CSS;
+/**
+ * Does the database.php k4 file exist?
+ */
+if(!file_exists(FORUM_BASE_DIR .'/includes/framework/database/database.php')) {
+	echo "Could not locate a critical PHP file within k4 Bulletin Board. Please make sure that k4 BB has been uploaded properly and that the 'upload' folder is intact.";
+	exit;
+}
 
-$css->AddClass("*", "font-family: verdana, geneva, lucida, arial, helvetica, sans-serif;font-size: 12px;", $styleset, "This applies to every tag.");
-$css->AddClass(".alt1", "background-color: #f7f7f7;color: #000000;", $styleset, "This goes for some of the lighter background colored things.");
-$css->AddClass(".alt2", "background-color: #dedfdf;color: #000000;", $styleset, "This goes for some of the darker background colored things.");
-$css->AddClass(".alt3", "background-color: #E4E7F5;color: #000000;", $styleset, "This goes for some of the darkest background colored things.");
-$css->AddClass(".answer", "border: 1px solid #999999;list-style-type: none;background-color: #FFFFFF;padding: 5px;top:-2px;position: relative;width: 90%;text-align: left;", $styleset, "What an answer looks like in the FAQ section.");
-$css->AddClass(".button", "font-size: 11px;font-family: verdana, geneva, lucida, arial, helvetica, sans-serif;", $styleset, "This applies to all form buttons.");
-$css->AddClass(".cat_name", "cursor: pointer;cursor: hand;", $styleset, "What a category looks like on the FAQ.");
-$css->AddClass(".color_picker", "position: absolute;top: 1em;left: 0;", $styleset, "Another class added to the color picker.");
-$css->AddClass(".colorpicker", "border: 1px solid black;", $styleset, "What the general color picker looks like.");
-$css->AddClass(".colorpicker td", "width: 10px;height: 10px;max-width: 10px;max-height: 10px;cursor: hand;cursor: pointer;", $styleset, "This goes for all the colors in the color picker.");
-$css->AddClass(".forum_base", "width: 100%;", $styleset, "This is the table which surounds the entire forum.");
-//$css->AddClass(".forum_base table", "background-color: #FFFFFF;", $styleset, "This just applies a white background to tables within the forum.");
-$css->AddClass(".forum_content", "background-color: #045975;", $styleset, "This applies to all primary tables within forum_base.");
-//$css->AddClass(".forum_content tr.panel td, .forum_content tr.alt1 td, .forum_content tr.alt2 td, .forum_content tr.alt3 td", "border-right: 1px solid #CCCCCC;border-bottom: 1px solid #CCCCCC;", $styleset, "Table cells within forum_content.");
-$css->AddClass(".forum_footer", "padding-left: 10px;padding-right: 10px;padding-bottom: 10px;background-color: #FFFFFF;", $styleset, "The footer stuff in the forum, not including contact info, etc.");
-$css->AddClass(".forum_header", "padding-left: 10px;padding-right: 10px;background-color: #FFFFFF;", $styleset, "The header, not including logo image");
-$css->AddClass(".forum_main", "padding-left: 10px;padding-right: 10px;background-color: #FFFFFF;", $styleset, "The main body part of the forum.");
-$css->AddClass(".hidden", "display: none;", $styleset, "A category in the Advanced CSS editor which is hidden.");
-$css->AddClass(".inputbox", " border : 1px solid #999999;font-size:11px;", $styleset, "This applies to all of the inputfields.");
-$css->AddClass(".inputbox:focus", "border : 1px solid #666666;font-size:11px;", $styleset, "This only works in Mozilla browsers. It makes all input fields wit hthis class, when clicked, have a highlighted border.");
-$css->AddClass(".inputfailed", "border: 1px solid #FF0000;font-size:11px;background-color:#FFEEFF;", $styleset, "This is for failed input fields. It''''s only toggled by JavaScript.");
-$css->AddClass(".inputnone", "background-color: #E4E7F5;font-size:11px;text-decoration: underline;border: 0px;color: #003366;", $styleset, "This is for listing the attachments.");
-$css->AddClass(".logo_header td", "background-color: #E1E1E2;margin:0px 0px 0px 0px;padding: 0px 0px 0px 0px;", $styleset, "This applies to the area which contains the k4 (or yours if set) logo.");
-$css->AddClass(".minitext, .minitext *", "font-size:10px; padding:0px;text-decoration: none;", $styleset, "This is the smallest text, and this applies to all elements within the smalltext.");
-$css->AddClass(".outset_box", "border: 2px outset;background-color: #f7f7f7;padding: 10px;", $styleset, "This goes for the white box with outset borders.");
-$css->AddClass(".pagination", "font-size:10px;background-color: #5C7099;border: 1px solid #363636;", $styleset, "The thing that goes around the pagination box.");
-$css->AddClass(".pagination td", "padding: 3px;border:0px;font-size:10px;color: #FFFFFF;", $styleset, "Table columns within the pagination boxes.");
-$css->AddClass(".panel", "background-color: #E4E7F5;color: #000000;padding: 10px;border: outset 2px;", $styleset, "This is the main light background colored region, and when put on a table column directly; applies an outset border.");
-$css->AddClass(".panelsurround", "background-color: #D5D8E5;color: #000000;", $styleset, "I don''''t remember.");
-$css->AddClass(".question", "list-style-type: none;margin: 0px;background-color: #fcfcfc;padding: 5px;border: 1px solid #999999;color: #000000;font-size: 11px;width: 90%;margin-bottom: 1px;cursor: pointer;cursor: hand;", $styleset, "What a question looks like in the FAQ section.");
-$css->AddClass(".quote", "border: 1px solid #999999;", $styleset, "This is for the bbcode quote elements.");
-$css->AddClass(".quote *", "font-size: 11px;color: #666666;", $styleset, "This applies to all quote elemenets, and all elements inside quotes.");
-$css->AddClass(".quote legend", "font-weight: bold;color: #333333;", $styleset, "This applies to the quote''''s legend.");
-$css->AddClass(".smalltext, .smalltext *", "font-size:11px; padding:0px;color: #000000; text-decoration: none;", $styleset, "This is the second smallest text, and this applies to all elements within the minitext.");
-$css->AddClass(".special_panel", "background-color: #FFDDDD;color: #000000;padding: 10px;border: outset 2px;", $styleset, "Shows on suspended forums/categories.");
-$css->AddClass(".tcat a:hover", "color: #FFFF66;text-decoration: underline;", $styleset, "This applies to all links in the main header regions when you hover your mouse over them.");
-$css->AddClass(".tcat a:link, .tcat a:visited, .tcat a:active", "color: #FFFFFF;text-decoration: none;", $styleset, "This applies to all links within the main header regions, on the default template, they are black.");
-$css->AddClass(".tcat, .tcat td", "padding: 4px;cursor: default; background-color: #333333;", $styleset, "This is the main header region.");
-$css->AddClass(".tcat *", "color: #FFFFFF;font-size: 11px;font-weight: bold;font-family: arial, helvetica, sans-serif;", $styleset, "This applies to anything within a tcat class");
-$css->AddClass(".tcat input", "color: #000000;font-size: 11px;font-weight: bold;font-family: arial, helvetica, sans-serif;", $styleset, "This applies to any input's within a tcat class");
-$css->AddClass(".thead", "background-color: #045975;color: #FFFFFF;font-size: 11px;font-weight: bold;font-family: tahoma, verdana, geneva, lucida, arial, helvetica, sans-serif;", $styleset, "This is the secondary header region.");
-$css->AddClass(".thead a, .thead div", "font-size: 12px;color: #FFFFFF;", $styleset, "This applies to all links within the secondary header regions.");
-$css->AddClass(".threaded_off td", "background-color: #FEFEFE;padding: 0px;margin:0px;color: #000000;", $styleset, "This goes for the table rows in the threaded and hybrid thread views when they are not selected.");
-$css->AddClass(".threaded_on, .threaded_on td", "background-color: #CCCCCC;padding: 0px;margin:0px;height: 20px;", $styleset, "This goes for the table rows in the threaded and hybrid thread views when you select one of them.");
-$css->AddClass(".visible", "display: block;border: 1px solid #BDD786;padding: 3px;width: 95%;", $styleset, "A category in the Advanced CSS editor which is visible.");
-$css->AddClass("a", "color: #000000;text-decoration: none;", $styleset, "This applies to every link.");
-$css->AddClass("a:hover", "text-decoration: underline;", $styleset, "This applies to every link when you hover your mouse over them.");
-$css->AddClass("body", "background-color: #E1E1E2;padding: 0px 0px 0px 0px;margin: 0px 0px 0px 0px;", $styleset, "This sets the body of the page''''s properties.");
-$css->AddClass("fieldset", "border: 1px solid #003366;padding: 5px;margin: 3px;", $styleset, "This applies to every fieldset. (those cool table like things with a name which intersects the top border.");
-$css->AddClass("form", "margin:0px 0px 0px 0px;padding: 0px 0px 0px 0px;", $styleset, "This applies to every form.");
-$css->AddClass("h1", "margin: 0px;padding: 0px;font-size: 20px;", $styleset, "This applies to every h1 element.");
-$css->AddClass("legend", "color: #22229C;font: 11px tahoma, verdana, geneva, lucida, arial, helvetica, sans-serif;", $styleset, "This applies to the names within the top border of all fieldsets.");
-$css->AddClass("td", "padding: 3px;", $styleset, "This applies to every table column.");
-$css->AddClass("td, th, p, li", "font-size: 10pt;font-family: verdana, geneva, lucida, arial, helvetica, sans-serif;", $styleset, "This applies to all table headers, table columns, paragraphs and list items simultaneously.");
-$css->AddClass("td.thead, div.thead", "padding: 4px;", $styleset, "This applies to all secondary header divs and table columns.");
+/**
+ * Include functions.inc.php
+ */
+include FORUM_BASE_DIR .'/includes/framework/core/functions.inc.php';
+include FORUM_BASE_DIR .'/includes/framework/core/iterator.php';
+include FORUM_BASE_DIR .'/includes/framework/core/error.class.php';
+include FORUM_BASE_DIR .'/includes/framework/database/database.php';
+
+/**
+ * Does our config file exist?
+ */
+if(!file_exists(FORUM_BASE_DIR .'/config.php')) {
+	compile_error("The config.php file does not exist.", '--', '--');
+}
+
+/**
+ * Set this function because it is present but we don't want it
+ */
+function set_debug_item($stmt, $result) { }
+
+
+/**
+ * Unset all _REQUEST variables, and global ones in that case
+ */
+unset($_REQUEST);
+
+
+/**
+ * Set up a more 'solid' request variable to deal with, and the same for sessions
+ */
+$request			= $_GET + $_POST + $_COOKIE;
+$session			= &$_SESSION;
+
+
+/**
+ * Display the HEADER portion of our install file
+ */
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+<head>
+	<title>k4 v2.0 - Install - Powered by k4 BB</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<meta name="generator" content="k4 Bulletin Board 2.0" />
+	<meta name="robots" content="all" />
+	<meta name="revisit-after" content="1 Days" />
+	<meta http-equiv="Expires" content="1" />
+	<meta name="description" content="k4 v2.0 - Powered by k4 Bulletin Board" />
+	<meta name="keywords" content="k4, k4bb, bb, bulletin, board, bulletin board, forum, forums, message, board, message board, software, php, php5, mit, open, source, free" />
+	<meta name="author" content="k4 Bulletin Board" />
+	<meta name="distribution" content="GLOBAL" />
+	<meta name="rating" content="general" />
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+	<style type="text/css">
+	* {
+		font-family: Arial, Helvetica, Sans-Serif;
+	}
+	body {
+		background-color: #FFFFFF;
+		padding: 0px;
+		margin: 0px;
+	}
+	a {
+		font-size: 12px;
+		color: #00000;
+		text-decoration: none;
+	}
+	h5 {
+		color: #045975;
+		padding: 0px;
+		margin: 0px;
+		font-weight: bold;
+		font-size: 18px;
+	}
+	h3 {
+		padding-left: 15px;
+		font-size: 16px;
+		color: #E07591;
+	}
+	form {
+		padding: 0px;
+		margin: 0px;
+	}
+	.info_box {
+		width: 520px;
+		padding: 10px;
+		text-align: justify;
+	}
+	.main_box_header {
+		width: 520px;
+		height: 10px;
+		background-image: url('main_box_header.gif');
+		background-position: left bottom;
+		background-repeat: repeat-x;
+		position: relative;
+		top: 3px;
+	}
+	.main_box_footer {
+		width: 520px;
+		height: 10px;
+		background-image: url('main_box_footer.gif');
+		background-position: left top;
+		background-repeat: repeat-x;
+		position: relative;
+		top: -3px;
+	}
+	.main_box {
+		width: 520px;
+		background-color: #FEF4F7;
+		background-image: url('main_box_gradient.gif');
+		background-position: left bottom;
+		background-repeat: repeat-x;
+		border-left: 1px solid #FEEAEF;
+		border-right: 1px solid #FEE4EB;
+		padding-bottom: 5px;
+		text-align: left;
+	}
+	.main_box td {
+		text-align: left;
+		font-size: 13px;
+		padding: 5px;
+		border-bottom: 1px solid #FEEAEF;
+	}
+	.search_box {
+		border: 1px solid #666666;
+	}
+	.button { 
+		background-image: url('http://www.k4bb.org/k4/Images/Descent/background_button.gif');
+		background-position: left top;
+		background-repeat: repeat-x;
+		font-size: 11px;
+		font-family: verdana, geneva, lucida, arial, helvetica, sans-serif;
+		border-right: 1px solid #B3B3B3;
+		border-left: 1px solid #B3B3B3;
+		border-top: 1px solid #F6F6F7;
+		border-bottom: 1px solid #919194;
+		margin-top: 5px;
+	}
+	.copyright {
+		width: 175px;
+		color: #666666;
+		border-top: 1px dashed #666666;
+		padding-top: 2px;
+		font-size: 10px;
+	}
+	.copyright a {
+		color: #000000;
+		font-size: 10px;
+	}
+	.smalltext {
+		font-size: 12px;
+		color: #333333;
+	}
+	.inputbox {
+		border: 1px solid #666666;
+	}
+	.inputfailed {
+		border: 1px solid #FF0000;
+	}
+	</style>
+	<script type="text/javascript">
+	function document_location(url) {
+		return document.location = url;
+	}
+	function redirect_page(seconds, url) {
+		try {
+			setTimeout("document_location('" + url + "')", (seconds * 1000));
+		} catch(e) { }
+	}
+
+	var elements = new Array();
+	var matches = new Array();
+	var regexs = new Array();
+	var errors = new Array();
+	var messages = new Array();
+	var error_classes = new Array();
+	var base_classes = new Array();
+
+	function resetErrors() {
+		for (var i = 0; i < elements.length; i++)
+		{
+			var error = document.getElementById(errors[i]);
+			if (error) error.style.display = 'none';
+
+			var element = document.getElementById(elements[i]);
+			if (element) element.className = base_classes[i];
+
+			var message = document.getElementById(messages[i]);
+			if (message) message.style.display = 'block';
+		}
+	}
+
+	function showError(num)
+	{
+		var error = document.getElementById(errors[num]);
+		if (error) error.style.display = 'block';
+
+		var element = document.getElementById(elements[num]);
+		if (element) element.className = error_classes[num];
+
+		var message = document.getElementById(messages[num]);
+		if (message) message.style.display = 'none';
+	}
+	function checkForm(form)
+	{
+		var valid = true;
+
+		resetErrors();
+
+		for (var i = 0; i < form.elements.length; i++)
+		{
+			var element = form.elements[i];
+			for (var j = 0; j < elements.length; j++)
+			{
+				if (elements[j] == element.id)
+				{
+					var value = (element.options) ? element[element.selectedIndex].value : element.value;
+					if (regexs[j] != '' && !regexs[j].test(value))
+					{
+						showError(j);
+						valid = false;
+						break;
+					}
+					if (matches[j]) {
+						var match = document.getElementById(matches[j]);
+
+						if (element.value != match.value)
+						{
+							element.value = '';
+							match.value = '';
+
+							showError(j);
+							valid = false;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		return valid;
+	}
+	function addMessage(id, message)
+	{
+		for (var i = 0; i < elements.length; i++) {
+			if (elements[i] == id)
+			{
+				messages[i] = message;
+			}
+		}
+	}
+	function addVerification(id, regex, error, classname)
+	{
+		var num = elements.length;
+
+		elements[num] = id;
+		regexs[num] = new RegExp('^'+regex+'$');
+		matches[num] = '';
+		errors[num] = error;
+
+		element = document.getElementById(id);
+		base_classes[num] = element.className;
+		error_classes[num] = (classname) ? classname : element.className;
+	}
+	function addCompare(id, match, error, classname)
+	{
+		var num = elements.length;
+
+		elements[num] = id;
+		regexs[num] = '';
+		matches[num] = match;
+		errors[num] = error;
+
+		element = document.getElementById(id);
+		base_classes[num] = element.className;
+		error_classes[num] = (classname) ? classname : element.className;
+	}
+	</script>
+</head>
+<body>
+<div align="center">
+	<br />
+	<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td><img src="http://www.k4bb.org/k4/Images/k4.gif" alt="k4 Bulletin Board" border="0" style="position:relative;left:-10px;" /></td>
+			<td valign="bottom"><h5>Install k4 Bulletin Board</h5></td>
+		</tr>
+	</table>
+	<br />
+	<div class="info_box">
+		<span class="smalltext">For this installation to work, you will be required to fill in fields concerning your server setup and where k4 will be located therein. If you do not feel that you will be able to fill these fields in, please contact your hosting service and ask them kindly for help.</span>
+	</div>
+	<div class="main_box_header">&nbsp;</div>
+	<div class="main_box" align="center">
+		<br />
+<?php
+
+
+$config_file				= "<?php
+/**
+* k4 Bulletin Board, config.php
+*
+* Copyright (c) 2005, Peter Goodman
+*
+* Permission is hereby granted, free of charge, to any person obtaining
+* a copy of this software and associated documentation files (the
+* \"Software\"), to deal in the Software without restriction, including
+* without limitation the rights to use, copy, modify, merge, publish,
+* distribute, sublicense, and/or sell copies of the Software, and to
+* permit persons to whom the Software is furnished to do so, subject to
+* the following conditions:
+*
+* The above copyright notice and this permission notice shall be
+* included in all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,
+* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+* BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+* ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+* CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*
+* @author Peter Goodman
+* @version \$Id: install.php,v 1.2 2005/05/27 00:23:32 k4st Exp $
+* @package k42
 */
+
+\$CONFIG['application']['action_var']	= 'act';
+\$CONFIG['application']['lang']			= 'english';
+\$CONFIG['application']['dba_name']		= '%s';
+
+\$CONFIG['template']['path']				= dirname(__FILE__) . '/templates';
+\$CONFIG['template']['force_compile']	= FALSE;
+\$CONFIG['template']['ignore_white']		= FALSE;
+
+\$CONFIG['ftp']['use_ftp']				= FALSE;
+\$CONFIG['ftp']['username']				= '';
+\$CONFIG['ftp']['password']				= '';
+\$CONFIG['ftp']['server']				= '';
+
+\$CONFIG['dba']['driver']				= '%s';
+\$CONFIG['dba']['database']				= '%s';
+\$CONFIG['dba']['directory']				= dirname(__FILE__) . '/includes/sqlite';
+\$CONFIG['dba']['server']				= '%s';
+\$CONFIG['dba']['user']					= '%s';
+\$CONFIG['dba']['pass']					= '%s';
+
+\$GLOBALS['_CONFIG']						= &\$CONFIG;
+
+?>";
+
+
+/**
+ * Are we looking at the HTML form to install the forum?
+ */
+if(!isset($request['act']) || $request['act'] == ''):
+
+	?>
+	<h3>General Information</h3>
+	<form action="install.php?act=install" method="post" enctype="multipart/form-data" onsubmit="return checkForm(this);" onreset="resetErrors();">
+	<script type="text/javascript">resetErrors();</script>
+	<table width="100%" cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td width="50%"><strong>Board Name:</strong></td>
+			<td width="50%">
+				<input type="text" name="bbtitle" id="bbtitle" value="" class="inputbox" class="inputbox" />
+				<script type="text/javascript">addVerification('bbtitle', '.+', 'bbtitle_error', 'inputfailed');</script>
+				<div id="bbtitle_error" style="display: none;">Please insert a name for your forum.</div>
+			</td>
+		</tr>
+		<tr>
+			<td width="50%"><strong>Board Description:</strong></td>
+			<td width="50%">
+				<input type="text" name="bbdescription" id="bbdescription" value="" class="inputbox" />
+				<script type="text/javascript">addVerification('bbdescription', '.+', 'bbdescription_error', 'inputfailed');</script>
+				<div id="bbdescription_error" style="display: none;">Please insert a short description of your forum.</div>
+			</td>
+		</tr>
+	</table>
+	<br />
+	<h3>Database Information</h3>
+	<form action="install.php?act=install" method="post" enctype="multipart/form-data">
+	<table width="100%" cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td width="50%"><strong>Database Type:</strong></td>
+			<td width="50%">
+				<select name="dba" id="dba">
+					<option value="mysql">MySQL</option>
+					<option value="mysqli">MySQLi</option>
+					<option value="sqlite">SQLite</option>
+				</select>
+				<script type="text/javascript">
+					var dba		= document.getElementById('dba');
+					var db_type	= dba[dba.selectedIndex].value;
+				</script>
+			</td>
+		</tr>
+		<tr>
+			<td width="50%"><strong>Database User Name:</strong></td>
+			<td width="50%">
+				<input type="text" name="dba_username" id="dba_username" value="" class="inputbox" />
+				<script type="text/javascript">if(db_type != 'sqlite') { addVerification('dba_username', '.+', 'dba_username_error', 'inputfailed'); } </script>
+				<div id="dba_username_error" style="display: none;">Please insert a Database User Name.</div>
+			</td>
+		</tr>
+		<tr>
+			<td width="50%"><strong>Database User Password:</strong></td>
+			<td width="50%">
+				<input type="text" name="dba_password" id="dba_password" value="" class="inputbox" />
+				<script type="text/javascript">if(db_type != 'sqlite') { addVerification('dba_password', '.+', 'dba_password_error', 'inputfailed'); } </script>
+				<div id="dba_password_error" style="display: none;">Please insert a Database Password.</div>
+			</td>
+		</tr>
+		<tr>
+			<td width="50%"><strong>Database Name:</strong></td>
+			<td width="50%">
+				<input type="text" name="dba_name" id="dba_name" value="" class="inputbox" />
+				<script type="text/javascript">addVerification('dba_name', '.+', 'dba_name_error', 'inputfailed');</script>
+				<div id="dba_name_error" style="display: none;">Please insert a Database Name.</div>
+			</td>
+		</tr>
+		<tr>
+			<td width="50%"><strong>Database Server:</strong></td>
+			<td width="50%">
+				<input type="text" name="dba_server" id="dba_server" value="localhost" class="inputbox" />
+				<script type="text/javascript">addVerification('dba_server', '.+', 'dba_server_error', 'inputfailed');</script>
+				<div id="dba_server_error" style="display: none;">Please insert a Database Server.</div>
+			</td>
+		</tr>
+	</table>
+	<br />
+	<h3>Administrator Information</h3>
+	<form action="install.php?act=install" method="post" enctype="multipart/form-data">
+	<table width="100%" cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td width="50%"><strong>Administrator User Name:</strong></td>
+			<td width="50%">
+				<input type="text" name="username" id="username" value="" class="inputbox" />
+				<script type="text/javascript">addVerification('username', '.+', 'username_error', 'inputfailed');</script>
+				<div id="username_error" style="display: none;">Please insert an Administrator Username.</div>
+			</td>
+		</tr>
+		<tr>
+			<td width="50%"><strong>Administrator Password:</strong></td>
+			<td width="50%">
+				<input type="password" name="password" id="password" value="" class="inputbox" />
+				<script type="text/javascript">addVerification('password', '.+', 'password_error', 'inputfailed');</script>
+				<div id="password_error" style="display: none;">Please insert an Administrator Password.</div>
+			</td>
+		</tr>
+		<tr>
+			<td width="50%"><strong>Administrator Email:</strong></td>
+			<td width="50%">
+				<input type="text" name="email" id="email" value="" class="inputbox" />
+				<script type="text/javascript">addVerification('email', '.+', 'email_error', 'inputfailed');</script>
+				<div id="email_error" style="display: none;">Please insert an Administrator Email.</div>
+			</td>
+		</tr>
+	</table>
+	<br />
+
+	<div align="center">
+		<input type="submit" value="Install Forum" class="button" />
+	</div>
+	</form>		
+	<?php
+
+elseif(isset($request['act']) && $request['act'] == 'install'):
+	
+	/**
+	 * Add the tables to the database
+	 */
+
+	$session['install_vars']		= $request;
+
+	$_CONFIG['dba']['driver']		= strtolower($request['dba']);
+	$_CONFIG['dba']['user']			= $request['dba_username'];
+	$_CONFIG['dba']['pass']			= $request['dba_password'];
+	$_CONFIG['dba']['database']		= $request['dba_name'];
+	$_CONFIG['dba']['server']		= $request['dba_server'];
+	$_CONFIG['dba']['directory']	= FORUM_BASE_DIR . '/includes/sqlite';
+
+	if(!file_exists(INSTALL_BASE_DIR .'/k4.'. $_CONFIG['dba']['driver'] .'.schema'))
+		compile_error('You have chosen an invalid Database type. Please make sure that all of the database schema\'s are all present.', '--', '--');
+	
+	if(!file_exists(INSTALL_BASE_DIR .'/k4.data.schema'))
+		compile_error('The SQL data file for k4 Bulletin Board does not exist.', '--', '--');
+
+	$str							= file_get_contents(INSTALL_BASE_DIR .'/k4.'. $_CONFIG['dba']['driver'] .'.schema');
+	$tables							= explode(";", $str);
+
+	error::reset();
+	$dba							= &Database::open($_CONFIG['dba']);
+	if(error::grab())
+		return critical_error();
+	
+	/* Loop through the database tables and add them to the database */
+	foreach($tables as $table) {
+		if($table != '') {
+			$dba->executeUpdate($table);
+		}
+	}
+	
+	/**
+	 * Display our current progress
+	 */
+	?>
+	<h3>Database Tables Added...</h3>
+	<script type="text/javascript">redirect_page(3, 'install.php?act=install2');</script>
+	<meta http-equiv="refresh" content="3; url=install.php?act=install2" />
+	<?php
+
+elseif(isset($request['act']) && $request['act'] == 'install2'):
+	
+	/**
+	 * Add the data to the database
+	 */
+
+	$_CONFIG['dba']['driver']		= strtolower($session['install_vars']['dba']);
+	$_CONFIG['dba']['user']			= $session['install_vars']['dba_username'];
+	$_CONFIG['dba']['pass']			= $session['install_vars']['dba_password'];
+	$_CONFIG['dba']['database']		= $session['install_vars']['dba_name'];
+	$_CONFIG['dba']['server']		= $session['install_vars']['dba_server'];
+	$_CONFIG['dba']['directory']	= FORUM_BASE_DIR . '/includes/sqlite';
+
+	if(!file_exists(INSTALL_BASE_DIR .'/k4.data.schema'))
+		compile_error('The SQL data file for k4 Bulletin Board does not exist.', '--', '--');
+	
+	$str							= file_get_contents(INSTALL_BASE_DIR .'/k4.data.schema');
+	$str							= @sprintf($str, $session['install_vars']['username'], $session['install_vars']['email'], md5($session['install_vars']['password']), $session['install_vars']['bbtitle'], $session['install_vars']['bbdescription'], $session['install_vars']['email'], $session['install_vars']['email']);
+	$str							= preg_replace("~(\r\n|\r|\n)~", "\n", $str);
+	$queries						= explode("\n", $str);
+
+	error::reset();
+	$dba							= &Database::open($_CONFIG['dba']);
+	if(error::grab())
+		return critical_error();
+	
+	/* Loop through the database tables and add them to the database */
+	foreach($queries as $query) {
+		if($query != '') {
+			$dba->executeUpdate($query);
+		}
+	}
+
+	/**
+	 * Display our current progress
+	 */
+	?>
+	<h3>Database Information Added...</h3>
+	<script type="text/javascript">redirect_page(3, 'install.php?act=install3');</script>
+	<meta http-equiv="refresh" content="3; url=install.php?act=install3" />
+	<?php
+
+elseif(isset($request['act']) && $request['act'] == 'install3'):
+	
+	$config_file			= sprintf($config_file, $session['install_vars']['dba_name'], $session['install_vars']['dba'], $session['install_vars']['dba_name'], $session['install_vars']['dba_server'], $session['install_vars']['dba_username'], $session['install_vars']['dba_password']);
+
+	$handle					= fopen(FORUM_BASE_DIR .'/config.php', 'w');
+	@chmod(FORUM_BASE_DIR .'/config.php', 0777);
+	@fwrite($handle, $config_file);
+	@fclose($handle);
+	
+	?>
+	<h3>Config File Created...</h3>
+	<script type="text/javascript">redirect_page(3, 'upload/index.php');</script>
+	<meta http-equiv="refresh" content="3; url=upload/index.php" />
+	<?php
+
+endif;
+
+
+/**
+ * Display the FOOTER html for our install
+ */
+?>
+	</div>
+	<div class="main_box_footer">&nbsp;</div>
+</div>
+<br /><br />
+<div align="center">
+	<span class="copyright">
+		[ <a href="http://www.k4bb.org" title="k4 Bulletin Board" target="_blank">Powered By: k4 Bulletin Board</a> ]
+	</span>
+	<br />
+</div>
+</body>
+</html>
+<?php
+
+$_SESSION							=& $session;
+
 ?>
